@@ -134,7 +134,8 @@ const Form = _ref => {
       });
     }
   };
-  const handleFormCancel = function handleFormCancel() {
+  const handleFormCancel = function handleFormCancel(e) {
+    e.preventDefault();
     navigate('./');
   };
   const handleDelete = async function handleDelete() {
@@ -181,7 +182,7 @@ const Form = _ref => {
     variant: "contained",
     type: "cancel",
     color: "error",
-    onClick: handleFormCancel
+    onClick: e => handleFormCancel(e)
   }, "Cancel"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",

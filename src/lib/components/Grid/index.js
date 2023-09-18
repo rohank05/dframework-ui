@@ -42,7 +42,7 @@ const actionTypes = {
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
-    permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER" },
+    permissions: { edit: true, add: true, export: false, delete: true, clearFilterText: "CLEAR THIS FILTER" },
 }
 
 const gridColumnTypes = {
