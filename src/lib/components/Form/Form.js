@@ -93,7 +93,8 @@ const Form = ({
             breadcrumbs.push({ text: localValue });
         }
     }
-    const handleFormCancel = function () {
+    const handleFormCancel = function (e) {
+        e.preventDefault();
         navigate('./');
     }
     const handleDelete = async function () {
@@ -125,7 +126,7 @@ const Form = ({
                 <form>
                     <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
                         {permissions.edit && <Button variant="contained" type="submit" color="success" onClick={formik.handleSubmit}>Save</Button>}
-                        <Button variant="contained" type="cancel" color="error" onClick={handleFormCancel}>Cancel</Button>
+                        <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>Cancel</Button>
                         {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>Delete</Button>}
                     </Stack>
                     <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} />

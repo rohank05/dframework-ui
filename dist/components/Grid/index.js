@@ -64,7 +64,7 @@ const constants = {
   permissions: {
     edit: true,
     add: true,
-    export: true,
+    export: false,
     delete: true,
     clearFilterText: "CLEAR THIS FILTER"
   }
