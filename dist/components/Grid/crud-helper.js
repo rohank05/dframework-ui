@@ -21,8 +21,8 @@ var _httpRequest = require("./httpRequest");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
 const getList = async _ref => {
   var _filterModel$items;
@@ -160,6 +160,7 @@ const getList = async _ref => {
 };
 exports.getList = getList;
 const getRecord = async _ref3 => {
+  var _Object$keys;
   let {
     api,
     id,
@@ -182,7 +183,7 @@ const getRecord = async _ref3 => {
     }
   });
   searchParams.set("lookups", lookupsToFetch);
-  if (where && Object.keys(where).length) {
+  if (where && (_Object$keys = Object.keys(where)) !== null && _Object$keys !== void 0 && _Object$keys.length) {
     searchParams.set("where", JSON.stringify(where));
   }
   ;
@@ -200,7 +201,8 @@ const getRecord = async _ref3 => {
       let title = record[modelConfig.linkColumn];
       const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
       if (columnConfig && columnConfig.lookup) {
-        if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup].length) {
+        var _lookups$columnConfig;
+        if (lookups && lookups[columnConfig.lookup] && (_lookups$columnConfig = lookups[columnConfig.lookup]) !== null && _lookups$columnConfig !== void 0 && _lookups$columnConfig.length) {
           const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
           if (lookupValue) {
             title = lookupValue.label;
@@ -224,7 +226,7 @@ const getRecord = async _ref3 => {
   }
 };
 exports.getRecord = getRecord;
-const deleteRecord = async function deleteRecord(_ref4) {
+const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
   let {
     id,
     api,
@@ -250,8 +252,7 @@ const deleteRecord = async function deleteRecord(_ref4) {
     setIsLoading(false);
   }
 };
-exports.deleteRecord = deleteRecord;
-const saveRecord = async function saveRecord(_ref5) {
+const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
   let {
     id,
     api,
@@ -305,4 +306,3 @@ const saveRecord = async function saveRecord(_ref5) {
   }
   return false;
 };
-exports.saveRecord = saveRecord;

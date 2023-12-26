@@ -1,0 +1,28 @@
+import actionsStateProvider from "./actions";
+const stateReducer = (state, action) => {
+    switch (action.type) {
+        case actionsStateProvider.UPDATE_LOCALIZATION:
+            return { ...state, dataLocalization: action.payload };
+        case actionsStateProvider.UPDATE_DATE_TIME:
+            return { ...state, dateTime: action.payload };
+        case actionsStateProvider.UPDATE_FORM_MODE:
+            return { ...state, dataForm: action.payload };
+        case actionsStateProvider.PAGE_TITLE_DETAILS:
+            return { ...state, pageTitleDetails: action.payload };
+        case actionsStateProvider.OPEN_MODAL:
+            return { ...state, modal: action.payload };
+        case actionsStateProvider.SET_PAGE_BACK_BUTTON:
+            return { ...state, pageBackButton: action.payload };
+        case actionsStateProvider.SET_GRID_SETTINGS:
+            return { ...state, gridSettings: action.payload };
+        case actionsStateProvider.SET_LOCAL_LOCALIZATION:
+            return { ...state, getLocal: action.payload };
+        case actionsStateProvider.USER_DATA:
+            return { ...state, getUserData: action.payload };
+            case actionsStateProvider.ACOSTA_REPORT_COLUMNS:
+                return { ...state, getAcostaColumns: action.payload };
+        default:
+            return state;
+    }
+};
+export default stateReducer;

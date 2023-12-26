@@ -2,6 +2,8 @@ import React from 'react';
 import { useCallback, useState } from 'react';
 import { Avatar, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup, styled, useTheme } from '@mui/material';
 import { deepOrange, grey } from '@mui/material/colors';
+import { brandBackgroundColor } from './CustomRenderCell';
+
 
 const days = [
     { label: 'Sunday', value: 0, display: 'S' },
@@ -13,20 +15,22 @@ const days = [
     { label: 'Saturday', value: 6, display: 'S' },
 ];
 
-export const CustomAvator = styled(Avatar)(({ backgroundColor }) => ({
+const CustomAvator = styled(Avatar)(({ theme, isSelected }) => ({
     width: 34,
     height: 34,
     padding: 1,
     margin: 1,
-    backgroundColor: backgroundColor,
+    backgroundColor: isSelected ? brandBackgroundColor : '#ffffff',
+    border: `1px solid ${grey[500]}`,
+    color: isSelected ? 'white' : 'black',
 }));
 
-const DayAvatar = ({ day, onClick, backgroundColor }) => {
+const DayAvatar = ({ day, onClick, isSelected }) => {
     return (
         <CustomAvator
             key={day.value}
             onClick={() => onClick(day.value)}
-            backgroundColor={backgroundColor}
+            isSelected={isSelected}
             style={{ margin: '4px' }}
         >
             {day.display}
@@ -90,16 +94,15 @@ const DaySelection = ({ name, field, formik, expired, ...props }) => {
                         }
                     }}
                 >
-                    <FormControlLabel value={isWeekend} control={<Radio />} label="Weekends (Sat - Sun)" onClick={() => onAssignChange([0, 6])} />
-                    <FormControlLabel value={isWeekdays} control={<Radio />} label="Weekdays (Mon - Fri)" onClick={() => onAssignChange([1, 2, 3, 4, 5])} />
-                    <FormControlLabel value={'Custom'} control={<Radio />} label="Days of the week" />
+                    <FormControlLabel value={isWeekend} control={<Radio />} label={"Weekends (Sat - Sun)"} onClick={() => onAssignChange([0, 6])} />
+                    <FormControlLabel value={isWeekdays} control={<Radio />} label={"Weekdays (Mon - Fri)"} onClick={() => onAssignChange([1, 2, 3, 4, 5])} />
+                    <FormControlLabel value={'Custom'} control={<Radio />} label={"Specific days"} />
                     {days.map((day, index) => (
                         <DayAvatar
                             key={day.value}
                             day={day}
-                            selectedItems={selectedDays}
                             onClick={() => onAssignChange(index)}
-                            backgroundColor={radioValue === 'Custom' && selectedDays[index] === "1" ? deepOrange[300] : grey[500]}
+                            isSelected={radioValue === 'Custom' && selectedDays[index] === "1"}
                             disabled={expired}
                         />
                     ))}

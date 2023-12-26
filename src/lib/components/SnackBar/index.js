@@ -7,7 +7,6 @@ const SnackbarContext = createContext(null);
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 const SnackbarProvider = ({ children }) => {
     const [message, setMessage] = useState(null);
     const [open, setOpen] = useState(false);
@@ -38,7 +37,6 @@ const SnackbarProvider = ({ children }) => {
             handleAction()
         }
     }
-
     return (
         <>
             <SnackbarContext.Provider
@@ -52,7 +50,6 @@ const SnackbarProvider = ({ children }) => {
         </>
     )
 }
-
 const useSnackbar = function () {
     return useContext(SnackbarContext)
 }

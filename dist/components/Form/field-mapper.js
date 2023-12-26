@@ -77,11 +77,12 @@ var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _dayRadio = _interopRequireDefault(require("./fields/dayRadio"));
 var _core = require("@material-ui/core");
 var _material = require("@mui/material");
+var _Form = require("./Form");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-const fieldMappers = {
+const fieldMappers = exports.fieldMappers = {
   "boolean": _boolean.default,
   "select": _select.default,
   "string": _string.default,
@@ -96,7 +97,6 @@ const fieldMappers = {
   "autocomplete": _autocomplete.default,
   "dayRadio": _dayRadio.default
 };
-exports.fieldMappers = fieldMappers;
 const useStyles = (0, _core.makeStyles)({
   root: {
     marginTop: "1rem",
@@ -105,6 +105,15 @@ const useStyles = (0, _core.makeStyles)({
   childStyles: {
     paddingTop: "2.5px",
     paddingBottom: "2.5px"
+  },
+  stepLabel: {
+    fontSize: "20px !important"
+  },
+  stepperMain: {
+    marginBottom: "20px"
+  },
+  renderSteps: {
+    marginTop: "20px"
   }
 });
 const RenderSteps = _ref => {
@@ -116,10 +125,16 @@ const RenderSteps = _ref => {
     onChange,
     combos,
     lookups,
-    fieldConfigs
+    fieldConfigs,
+    mode,
+    handleSubmit
   } = _ref;
-  const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+  const {
+    activeStep,
+    setActiveStep
+  } = React.useContext(_Form.ActiveStepContext);
+  const classes = useStyles();
   let skipSteps = {};
   for (let index = 0, len = model.columns.length; index < len; index++) {
     const {
@@ -146,8 +161,9 @@ const RenderSteps = _ref => {
     while (skipSteps[nextStep]) {
       nextStep++;
     }
+    setSkipped(prevSkipped => new Set(prevSkipped).add(activeStep));
     if (nextStep >= tabColumns.length || isLastStep()) {
-      formik.handleSubmit();
+      handleSubmit();
     } else {
       setActiveStep(nextStep);
     }
@@ -164,7 +180,8 @@ const RenderSteps = _ref => {
   }
   const currentStep = tabColumns[activeStep];
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(_Stepper.default, {
-    activeStep: activeStep
+    activeStep: activeStep,
+    className: classes.stepperMain
   }, tabColumns.map((_ref2, index) => {
     let {
       title,
@@ -173,7 +190,9 @@ const RenderSteps = _ref => {
     return /*#__PURE__*/React.createElement(_Step.default, {
       key: key,
       completed: isStepSkipped(index)
-    }, /*#__PURE__*/React.createElement(_StepLabel.default, null, title));
+    }, /*#__PURE__*/React.createElement(_StepLabel.default, null, /*#__PURE__*/React.createElement(_material.Typography, {
+      className: classes.stepLabel
+    }, title)));
   })), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(RenderColumns, {
     formElements: currentStep.items,
     model: model,
@@ -182,23 +201,27 @@ const RenderSteps = _ref => {
     onChange: onChange,
     combos: combos,
     lookups: lookups,
-    fieldConfigs: fieldConfigs
+    fieldConfigs: fieldConfigs,
+    mode: mode
   }), /*#__PURE__*/React.createElement(_Box.default, {
     sx: {
       display: 'flex',
       flexDirection: 'row',
-      pt: 2
+      pt: 2,
+      mr: 2
     }
-  }, /*#__PURE__*/React.createElement(_Button.default, {
+  }, activeStep !== 0 ? /*#__PURE__*/React.createElement(_Button.default, {
     color: "inherit",
     disabled: activeStep === 0,
     onClick: handleBack,
+    variant: "contained",
     sx: {
-      mr: 1
+      mr: 2
     }
-  }, "Back"), /*#__PURE__*/React.createElement(_Button.default, {
-    onClick: handleNext
-  }, isLastStep() ? 'Finish' : 'Next'))));
+  }, " ", 'Back') : null, /*#__PURE__*/React.createElement(_Button.default, {
+    onClick: handleNext,
+    variant: "contained"
+  }, isLastStep() ? "Finish" : "Next"))));
 };
 const RenderColumns = _ref3 => {
   let {
@@ -209,7 +232,8 @@ const RenderColumns = _ref3 => {
     onChange,
     combos,
     lookups,
-    fieldConfigs
+    fieldConfigs,
+    mode
   } = _ref3;
   const classes = useStyles();
   if (!(formElements !== null && formElements !== void 0 && formElements.length)) {
@@ -230,22 +254,23 @@ const RenderColumns = _ref3 => {
       key: key,
       className: classes.root,
       alignItems: isGridComponent ? "flex-start" : "center"
-    }, /*#__PURE__*/React.createElement(_Grid.default, {
+    }, (column === null || column === void 0 ? void 0 : column.showLabel) !== false ? /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
-      xs: 1,
+      xs: 1.5,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
       sx: {
         fontSize: '16px',
         fontWeight: isGridComponent ? 'bold' : 'normal'
       }
-    }, " ", column.label, ": ")), /*#__PURE__*/React.createElement(_Grid.default, {
+    }, column.label, ":")) : null, /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
-      xs: isGridComponent ? 12 : 11,
+      xs: isGridComponent ? 12 : 10.5,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
       model: model,
       fieldConfigs: fieldConfigs[field],
+      mode: mode,
       column: column,
       field: field,
       fieldLabel: fieldLabel,
@@ -317,8 +342,11 @@ const FormLayout = _ref6 => {
     onChange,
     lookups,
     id: displayId,
-    fieldConfigs
+    fieldConfigs,
+    mode,
+    handleSubmit
   } = _ref6;
+  const classes = useStyles();
   const {
     formElements,
     tabColumns,
@@ -347,8 +375,11 @@ const FormLayout = _ref6 => {
     onChange: onChange,
     combos: combos,
     lookups: lookups,
-    fieldConfigs: fieldConfigs
-  }), /*#__PURE__*/React.createElement(RenderSteps, {
+    fieldConfigs: fieldConfigs,
+    mode: mode
+  }), /*#__PURE__*/React.createElement("div", {
+    className: classes.renderSteps
+  }, /*#__PURE__*/React.createElement(RenderSteps, {
     tabColumns: tabColumns,
     model: model,
     formik: formik,
@@ -356,8 +387,9 @@ const FormLayout = _ref6 => {
     onChange: onChange,
     combos: combos,
     lookups: lookups,
-    fieldConfigs: fieldConfigs
-  }));
+    fieldConfigs: fieldConfigs,
+    mode: mode,
+    handleSubmit: handleSubmit
+  })));
 };
-var _default = FormLayout;
-exports.default = _default;
+var _default = exports.default = FormLayout;

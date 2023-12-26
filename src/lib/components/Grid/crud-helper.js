@@ -126,7 +126,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         }
     });
     searchParams.set("lookups", lookupsToFetch);
-    if (where && Object.keys(where).length) {
+    if (where && Object.keys(where)?.length) {
         searchParams.set("where", JSON.stringify(where));
     };
     try {
@@ -140,7 +140,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             let title = record[modelConfig.linkColumn];
             const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
             if (columnConfig && columnConfig.lookup) {
-                if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup].length) {
+                if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup]?.length) {
                     const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
                     if (lookupValue) {
                         title = lookupValue.label;

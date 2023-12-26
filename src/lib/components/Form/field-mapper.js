@@ -19,7 +19,7 @@ import Button from '@mui/material/Button';
 import DaySelection from './fields/dayRadio';
 import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
-
+import { ActiveStepContext } from './Form';
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -44,12 +44,23 @@ const useStyles = makeStyles({
     childStyles: {
         paddingTop: "2.5px",
         paddingBottom: "2.5px"
+    },
+    stepLabel: {
+        fontSize: "20px !important"
+    },
+    stepperMain: {
+        marginBottom: "20px"
+    },
+    renderSteps: {
+        marginTop: "20px"
     }
 })
 
-const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs }) => {
-    const [activeStep, setActiveStep] = React.useState(0);
+const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, handleSubmit }) => {
     const [skipped, setSkipped] = React.useState(new Set());
+
+    const { activeStep, setActiveStep } = React.useContext(ActiveStepContext);
+    const classes = useStyles();
 
     let skipSteps = {};
     for (let index = 0, len = model.columns.length; index < len; index++) {
@@ -77,12 +88,15 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
             nextStep++;
         }
 
+        setSkipped((prevSkipped) => new Set(prevSkipped).add(activeStep));
+
         if (nextStep >= tabColumns.length || isLastStep()) {
-            formik.handleSubmit();
+            handleSubmit();
         } else {
             setActiveStep(nextStep);
         }
     };
+
     const handleBack = () => {
         let prevStep = activeStep - 1;
 
@@ -99,27 +113,29 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     const currentStep = tabColumns[activeStep];
     return (
         <>
-            <Stepper activeStep={activeStep}>
+            <Stepper activeStep={activeStep} className={classes.stepperMain}>
                 {tabColumns.map(({ title, key }, index) => {
                     return (
                         <Step key={key} completed={isStepSkipped(index)}>
-                            <StepLabel>{title}</StepLabel>
+                            <StepLabel>
+                                <Typography className={classes.stepLabel}>{title}</Typography>
+                            </StepLabel>
                         </Step>
                     );
                 })}
             </Stepper>
             <React.Fragment>
-                <RenderColumns formElements={currentStep.items} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} />
-                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                    <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }} >Back</Button>
-                    <Button onClick={handleNext}>{isLastStep() ? 'Finish' : 'Next'}</Button>
+                <RenderColumns formElements={currentStep.items} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
+                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, mr: 2 }}>
+                    {activeStep !== 0 ? <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} variant="contained" sx={{ mr: 2 }}> {'Back'}</Button> : null}
+                    <Button onClick={handleNext} variant="contained">{isLastStep() ? "Finish" : "Next"}</Button>
                 </Box>
             </React.Fragment>
         </>
     )
 }
 
-const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs }) => {
+const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode }) => {
     const classes = useStyles();
     if (!formElements?.length) {
         return null;
@@ -131,11 +147,14 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                     let isGridComponent = typeof column.relation === 'function';
                     return (
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
-                            <Grid item xs={1} className={classes.childStyles}>
-                                <Typography sx={{ fontSize: '16px', fontWeight: isGridComponent ? 'bold' : 'normal' }}> {column.label}: </Typography>
-                            </Grid>
-                            <Grid item xs={isGridComponent ? 12 : 11} className={classes.childStyles}>
-                                <Component model={model} fieldConfigs={fieldConfigs[field]} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
+                            {column?.showLabel !== false ?
+                                <Grid item xs={1.5} className={classes.childStyles}>
+                                    <Typography sx={{ fontSize: '16px', fontWeight: isGridComponent ? 'bold' : 'normal' }}>{column.label}:</Typography>
+                                </Grid>
+                                : null
+                            }
+                            <Grid item xs={isGridComponent ? 12 : 10.5} className={classes.childStyles}>
+                                <Component model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
                             </Grid>
                         </Grid >
                     )
@@ -174,7 +193,8 @@ const getFormConfig = function ({ columns, tabs = {} }) {
     return { formElements, tabColumns: tabsData };
 }
 
-const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs }) => {
+const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit }) => {
+    const classes = useStyles();
     const { formElements, tabColumns, showTabs } = React.useMemo(() => {
         let showTabs = model?.formConfig?.showTabbed;
         const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {} });
@@ -182,8 +202,10 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
     }, [model]);
     return (
         <div>
-            <RenderColumns formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} />
-            <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} />
+            <RenderColumns formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
+            <div className={classes.renderSteps}>
+                <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} />
+            </div>
         </div>
     )
 };

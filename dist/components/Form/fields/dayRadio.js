@@ -4,14 +4,15 @@ require("core-js/modules/es.weak-map.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.CustomAvator = void 0;
+exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _material = require("@mui/material");
 var _colors = require("@mui/material/colors");
+var _CustomRenderCell = require("./CustomRenderCell");
 const _excluded = ["name", "field", "formik", "expired"];
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 const days = [{
@@ -45,27 +46,29 @@ const days = [{
 }];
 const CustomAvator = (0, _material.styled)(_material.Avatar)(_ref => {
   let {
-    backgroundColor
+    theme,
+    isSelected
   } = _ref;
   return {
     width: 34,
     height: 34,
     padding: 1,
     margin: 1,
-    backgroundColor: backgroundColor
+    backgroundColor: isSelected ? _CustomRenderCell.brandBackgroundColor : '#ffffff',
+    border: "1px solid ".concat(_colors.grey[500]),
+    color: isSelected ? 'white' : 'black'
   };
 });
-exports.CustomAvator = CustomAvator;
 const DayAvatar = _ref2 => {
   let {
     day,
     onClick: _onClick,
-    backgroundColor
+    isSelected
   } = _ref2;
   return /*#__PURE__*/_react.default.createElement(CustomAvator, {
     key: day.value,
     onClick: () => _onClick(day.value),
-    backgroundColor: backgroundColor,
+    isSelected: isSelected,
     style: {
       margin: '4px'
     }
@@ -149,13 +152,12 @@ const DaySelection = _ref3 => {
   }), /*#__PURE__*/_react.default.createElement(_material.FormControlLabel, {
     value: 'Custom',
     control: /*#__PURE__*/_react.default.createElement(_material.Radio, null),
-    label: "Days of the week"
+    label: "Specific days"
   }), days.map((day, index) => /*#__PURE__*/_react.default.createElement(DayAvatar, {
     key: day.value,
     day: day,
-    selectedItems: selectedDays,
     onClick: () => onAssignChange(index),
-    backgroundColor: radioValue === 'Custom' && selectedDays[index] === "1" ? _colors.deepOrange[300] : _colors.grey[500],
+    isSelected: radioValue === 'Custom' && selectedDays[index] === "1",
     disabled: expired
   })))), isError && /*#__PURE__*/_react.default.createElement(_material.FormHelperText, {
     style: {
@@ -163,5 +165,4 @@ const DaySelection = _ref3 => {
     }
   }, formik.errors[field]));
 };
-var _default = DaySelection;
-exports.default = _default;
+var _default = exports.default = DaySelection;

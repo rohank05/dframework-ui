@@ -13,6 +13,7 @@ require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.object.assign.js");
+require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.array.includes.js");
@@ -21,6 +22,7 @@ require("core-js/modules/es.parse-int.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
+var _dayjs = _interopRequireDefault(require("dayjs"));
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
 var _FileCopy = _interopRequireDefault(require("@mui/icons-material/FileCopy"));
 var _Edit = _interopRequireDefault(require("@mui/icons-material/Edit"));
@@ -29,26 +31,36 @@ var _Add = _interopRequireDefault(require("@mui/icons-material/Add"));
 var _Remove = _interopRequireDefault(require("@mui/icons-material/Remove"));
 var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
 var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
-var _dfameworkUi = require("@durlabh/dfamework-ui");
+var _index = require("../SnackBar/index");
+var _index2 = require("../Dialog/index");
 var _crudHelper = require("./crud-helper");
 var _propTypes = _interopRequireDefault(require("prop-types"));
 var _footer = require("./footer");
 var _useRouter = require("../useRouter/useRouter");
 var _template = _interopRequireDefault(require("./template"));
+var _material = require("@mui/material");
+var _Check = _interopRequireDefault(require("@mui/icons-material/Check"));
+var _Close = _interopRequireDefault(require("@mui/icons-material/Close"));
+var _core = require("@material-ui/core");
+var _PageTitle = _interopRequireDefault(require("../PageTitle"));
+var _StateProvider = require("../useRouter/StateProvider");
+var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker"));
+var _actions = _interopRequireDefault(require("../useRouter/actions"));
 const _excluded = ["row", "field", "id"];
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
+function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
+const recordCounts = 60000;
 const actionTypes = {
   Copy: "Copy",
   Edit: "Edit",
@@ -64,21 +76,31 @@ const constants = {
   permissions: {
     edit: true,
     add: true,
-    export: false,
+    export: true,
     delete: true,
     clearFilterText: "CLEAR THIS FILTER"
   }
 };
-const gridColumnTypes = {
-  "radio": {
-    "type": "singleSelect",
-    "valueOptions": "lookup"
-  },
-  "select": {
-    "type": "singleSelect",
-    "valueOptions": "lookup"
+const booleanIconRenderer = params => {
+  if (params.value) {
+    return /*#__PURE__*/_react.default.createElement(_Check.default, {
+      style: {
+        color: 'green'
+      }
+    });
+  } else {
+    return /*#__PURE__*/_react.default.createElement(_Close.default, {
+      style: {
+        color: 'gray'
+      }
+    });
   }
 };
+const useStyles = (0, _core.makeStyles)({
+  buttons: {
+    margin: '6px !important'
+  }
+});
 const convertDefaultSort = defaultSort => {
   const orderBy = [];
   if (typeof defaultSort === 'string') {
@@ -101,24 +123,30 @@ const ExportMenuItem = _ref => {
   let {
     handleExport,
     contentType,
-    type
+    type,
+    isPivotExport = false
   } = _ref;
   return /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     onClick: handleExport,
     "data-type": type,
-    "data-content-type": contentType
-  }, "\"Export\" ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+    "data-content-type": contentType,
+    "data-is-pivot-export": isPivotExport
+  }, "Export", " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
 };
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
 };
-const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   type: "csv",
   contentType: "text/csv"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   type: "excel",
   contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-})), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+})), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  type: "excel With Pivot",
+  contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  isPivotExport: true
+})), (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   type: "xml",
   contentType: "text/xml"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
@@ -127,26 +155,7 @@ const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_x
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   type: "json",
   contentType: "application/json"
-})));
-
-/*
-    model:
-    {
-        title: 'Market',
-        module: 'market',
-        defaultSort: 'MarketName ASC',
-        columns: [
-            { field: 'MarketName', headerName: 'Market', width: 200, headerFilter: true },
-            { field: 'Classification', headerName: 'Classification', width: 200, headerFilter: true },
-        ],
-        api: 'market',
-        useLinkColumn: true,
-        linkColumn: 'MarketName',
-        readOnly: true,
-    }
-
-*/
-
+}))));
 const areEqual = function areEqual() {
   let prevProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   let nextProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -174,6 +183,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
+  var _stateData$gridSettin, _stateData$gridSettin2;
   let {
     useLinkColumn = true,
     model,
@@ -187,14 +197,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     title,
     showModal,
     OrderModal,
-    permissions = constants.permissions,
+    permissions,
     selected,
     assigned,
     available,
     onAssignChange,
     customStyle,
     onCellClick,
-    showRowsSelected
+    showRowsSelected,
+    chartFilters,
+    clearChartFilter,
+    showFullScreenLoader,
+    onRowDoubleClick
   } = _ref2;
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
     pageSize: defaultPageSize,
@@ -217,7 +231,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }, model === null || model === void 0 ? void 0 : model.columnVisibilityModel));
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const [record, setRecord] = (0, _react.useState)(null);
-  const snackbar = (0, _dfameworkUi.useSnackbar)();
+  const snackbar = (0, _index.useSnackbar)();
   const isClient = model.isClient === true ? 'client' : 'server';
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
   const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
@@ -233,27 +247,84 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       initialFilterModel.items.push(ele);
     });
   }
-  const [filterModel, setFilterModel] = (0, _react.useState)(initialFilterModel);
+  const [filterModel, setFilterModel] = (0, _react.useState)(_objectSpread({}, initialFilterModel));
   const {
     pathname,
     navigate
   } = (0, _useRouter.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
   const {
-    idProperty = "id"
+    idProperty = "id",
+    showHeaderFilters = true
   } = model;
   const isReadOnly = model.readOnly === true;
+  const isDoubleClicked = model.doubleClicked === false;
+  const customExportRef = (0, _react.useRef)();
   const dataRef = (0, _react.useRef)(data);
+  const showAddIcon = model.showAddIcon === true;
+  const toLink = model.columns.map(item => item.link);
+  const classes = useStyles();
+  const {
+    systemDateTimeFormat,
+    stateData,
+    dispatchData,
+    formatDate
+  } = (0, _StateProvider.useStateContext)();
+  const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
+  const {
+    ClientId
+  } = stateData.getUserData && stateData.getUserData.tags ? stateData.getUserData.tags : 0;
+  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url;
+  const acostaValidateReportUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.AcostaValidateReportUrl;
+  const EXCEL_FORMAT = 'XLSX';
+  const ACOSTA_REPORT_COLUMNS = stateData.getAcostaColumns;
+  const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
+  const filterFieldDataTypes = {
+    Number: 'number',
+    String: 'string',
+    Boolean: 'boolean'
+  };
+  const gridColumnTypes = {
+    "radio": {
+      "type": "singleSelect",
+      "valueOptions": "lookup"
+    },
+    "date": {
+      "valueFormatter": _ref3 => {
+        let {
+          value
+        } = _ref3;
+        return formatDate(value, true, false, stateData.dateTime);
+      },
+      "filterOperators": (0, _LocalizedDatePicker.default)({
+        columnType: "date"
+      })
+    },
+    "dateTime": {
+      "valueFormatter": _ref4 => {
+        let {
+          value
+        } = _ref4;
+        return formatDate(value, false, false, stateData.dateTime);
+      },
+      "filterOperators": (0, _LocalizedDatePicker.default)({
+        columnType: "datetime"
+      })
+    },
+    "boolean": {
+      renderCell: booleanIconRenderer
+    }
+  };
   (0, _react.useEffect)(() => {
     dataRef.current = data;
   }, [data]);
-  const lookupOptions = _ref3 => {
+  const lookupOptions = _ref5 => {
     let {
         row,
         field,
         id
-      } = _ref3,
-      others = _objectWithoutProperties(_ref3, _excluded);
+      } = _ref5,
+      others = _objectWithoutProperties(_ref5, _excluded);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -293,6 +364,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (column.linkTo) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
+      if (column.link) {
+        overrides.cellClassName = "mui-grid-linkColumn";
+      }
       finalColumns.push(_objectSpread(_objectSpread({
         headerName: column.headerName || column.label
       }, column), overrides));
@@ -304,51 +378,79 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     const auditColumns = model.standard === true;
     if (auditColumns && (model === null || model === void 0 ? void 0 : model.addCreatedModifiedColumns) !== false) {
-      finalColumns.push({
-        field: "CreatedOn",
-        type: "dateTime",
-        headerName: "Created On",
-        width: 200,
-        filterOperators: (0, _xDataGridPremium.getGridDateOperators)()
-      }, {
-        field: "CreatedByUser",
-        type: "string",
-        headerName: "Created By",
-        width: 200
-      }, {
-        field: "ModifiedOn",
-        type: "dateTime",
-        headerName: "Modified On",
-        width: 200,
-        filterOperators: (0, _xDataGridPremium.getGridDateOperators)()
-      }, {
-        field: "ModifiedByUser",
-        type: "string",
-        headerName: "Modified By",
-        width: 200
-      });
+      if ((model === null || model === void 0 ? void 0 : model.addCreatedOnColumn) !== false) {
+        finalColumns.push({
+          field: "CreatedOn",
+          type: "dateTime",
+          headerName: "Created On",
+          width: 200,
+          filterOperators: (0, _LocalizedDatePicker.default)({
+            columnType: "date"
+          }),
+          valueFormatter: gridColumnTypes.dateTime.valueFormatter,
+          keepLocal: true
+        });
+      }
+      if ((model === null || model === void 0 ? void 0 : model.addCreatedByColumn) !== false) {
+        finalColumns.push({
+          field: "CreatedByUser",
+          type: "string",
+          headerName: "Created By",
+          width: 200
+        });
+      }
+      if ((model === null || model === void 0 ? void 0 : model.addModifiedOnColumn) !== false) {
+        finalColumns.push({
+          field: "ModifiedOn",
+          type: "dateTime",
+          headerName: "Modified On",
+          width: 200,
+          filterOperators: (0, _LocalizedDatePicker.default)({
+            columnType: "date"
+          }),
+          valueFormatter: gridColumnTypes.dateTime.valueFormatter,
+          keepLocal: true
+        });
+      }
+      if ((model === null || model === void 0 ? void 0 : model.addModifiedByColumn) !== false) {
+        finalColumns.push({
+          field: "ModifiedByUser",
+          type: "string",
+          headerName: "Modified By",
+          width: 200
+        });
+      }
     }
     if (!forAssignment && !isReadOnly) {
       const actions = [];
-      if (model.addEdit && permissions.edit) {
+      if (effectivePermissions !== null && effectivePermissions !== void 0 && effectivePermissions.edit) {
         actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-          icon: /*#__PURE__*/_react.default.createElement(_Edit.default, null),
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "Edit"
+          }, "   ", /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
           "data-action": actionTypes.Edit,
-          label: "Edit"
+          label: "Edit",
+          color: "primary"
         }));
       }
-      if (model.addCopy && permissions.add) {
+      if (effectivePermissions.add) {
         actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-          icon: /*#__PURE__*/_react.default.createElement(_FileCopy.default, null),
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "Copy"
+          }, /*#__PURE__*/_react.default.createElement(_FileCopy.default, null), " "),
           "data-action": actionTypes.Copy,
-          label: "Copy"
+          label: "Copy",
+          color: "primary"
         }));
       }
-      if (model.delete && permissions.delete) {
+      if (effectivePermissions.delete) {
         actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-          icon: /*#__PURE__*/_react.default.createElement(_Delete.default, null),
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "Delete"
+          }, /*#__PURE__*/_react.default.createElement(_Delete.default, null), " "),
           "data-action": actionTypes.Delete,
-          label: "Delete"
+          label: "Delete",
+          color: "error"
         }));
       }
       if (actions.length > 0) {
@@ -369,16 +471,44 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     };
   }, [columns, model, parent, permissions, forAssignment]);
   const fetchData = function fetchData() {
+    var _chartFilters$items;
     let action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "list";
     let extraParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     let contentType = arguments.length > 2 ? arguments[2] : undefined;
     let columns = arguments.length > 3 ? arguments[3] : undefined;
+    let isPivotExport = arguments.length > 4 ? arguments[4] : undefined;
     const {
       pageSize,
       page
     } = paginationModel;
+    let gridApi = "".concat(url).concat(model.api || api);
+    let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
+    if (isPivotExport) {
+      gridApi = model === null || model === void 0 ? void 0 : model.pivotAPI;
+      controllerType = 'cs';
+    }
     if (assigned || available) {
       extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(',') : selected;
+    }
+    let filters = _objectSpread({}, filterModel),
+      finalFilters = _objectSpread({}, filterModel);
+    if ((chartFilters === null || chartFilters === void 0 || (_chartFilters$items = chartFilters.items) === null || _chartFilters$items === void 0 ? void 0 : _chartFilters$items.length) > 0) {
+      let {
+        columnField: field,
+        operatorValue: operator
+      } = chartFilters.items[0];
+      field = constants.chartFilterFields[field];
+      const chartFilter = [{
+        field: field,
+        operator: operator,
+        isChartFilter: false
+      }];
+      filters.items = [...chartFilter];
+      if (JSON.stringify(filterModel) !== JSON.stringify(filters)) {
+        setFilterModel(_objectSpread({}, filters));
+        finalFilters = filters;
+        chartFilters.items.length = 0;
+      }
     }
     (0, _crudHelper.getList)({
       action,
@@ -386,8 +516,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       pageSize: !contentType ? pageSize : 1000000,
       sortModel,
       filterModel,
-      controllerType: model === null || model === void 0 ? void 0 : model.controllerType,
-      api: api || (model === null || model === void 0 ? void 0 : model.api),
+      controllerType: controllerType,
+      api: gridApi,
       setIsLoading,
       setData,
       gridColumns,
@@ -396,7 +526,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       extraParams,
       setError: snackbar.showError,
       contentType,
-      columns
+      columns,
+      template: isPivotExport ? model === null || model === void 0 ? void 0 : model.template : null,
+      configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null
     });
   };
   const openForm = function openForm(id) {
@@ -421,8 +553,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     if (mode === "copy") {
       path += "0-" + id;
+      dispatchData({
+        type: 'UPDATE_FORM_MODE',
+        payload: 'copy'
+      });
     } else {
       path += id;
+      dispatchData({
+        type: 'UPDATE_FORM_MODE',
+        payload: ''
+      });
     }
     navigate(path);
   };
@@ -474,11 +614,25 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         });
       }
     }
+    if (isReadOnly && toLink) {
+      if (model !== null && model !== void 0 && model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+        onCellClick(cellParams.row);
+        return;
+      }
+      const {
+        row: record
+      } = cellParams;
+      const columnConfig = lookupMap[cellParams.field] || {};
+      navigate({
+        pathname: _template.default.replaceTags(columnConfig.linkTo, record)
+      });
+    }
   };
   const handleDelete = async function handleDelete() {
+    let gridApi = "".concat(url).concat(model.api || api);
     const result = await (0, _crudHelper.deleteRecord)({
       id: record === null || record === void 0 ? void 0 : record.id,
-      api: api || (model === null || model === void 0 ? void 0 : model.api),
+      api: gridApi,
       setIsLoading,
       setError: snackbar.showError,
       setErrorMessage
@@ -497,39 +651,54 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setErrorMessage(null);
     setIsDeleting(false);
   };
+  const onCellDoubleClick = event => {
+    if (!isReadOnly && !isDoubleClicked) {
+      const {
+        row: record
+      } = event;
+      openForm(record[idProperty]);
+    }
+    if (onRowDoubleClick) {
+      onRowDoubleClick(event);
+    }
+  };
   const handleCloseOrderDetailModal = () => {
     setIsOrderDetailModalOpen(false);
     setSelectedOrder(null);
     fetchData();
   };
-  const onCellDoubleClick = event => {
-    if (model.showModal) {
-      setIsOrderDetailModalOpen(true);
-      const {
-        row
-      } = event;
-      setSelectedOrder(row);
-    } else {
-      if (!isReadOnly) {
-        const {
-          row: record
-        } = event;
-        openForm(record[idProperty]);
-      }
-      return null;
-    }
-  };
+  // const onCellDoubleClick = (event) => {
+  //     if (model.showModal) {
+  //         setIsOrderDetailModalOpen(true);
+  //         const { row } = event;
+  //         setSelectedOrder(row);
+  //     } else {
+  //         if (!isReadOnly) {
+  //             const { row: record } = event;
+  //             openForm(record[idProperty]);
+  //         }
+  //         return null;
+  //     }
+  // };
+
   const onAdd = () => {
     openForm(0);
   };
   const clearFilters = () => {
-    setFilterModel(constants.gridFilterModel);
+    var _filterModel$items;
+    if ((filterModel === null || filterModel === void 0 || (_filterModel$items = filterModel.items) === null || _filterModel$items === void 0 ? void 0 : _filterModel$items.length) > 0) {
+      const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
+      setFilterModel(filters);
+      if (clearChartFilter) {
+        clearChartFilter();
+      }
+    }
   };
-  const updateAssignment = _ref4 => {
+  const updateAssignment = _ref6 => {
     let {
       unassign,
       assign
-    } = _ref4;
+    } = _ref6;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -550,89 +719,221 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, (isReadOnly || !permissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
       sx: {
         ml: 1
       }
-    }, " ", isReadOnly ? "" : model.title), model.addForm && !forAssignment && permissions.add && !isReadOnly && /*#__PURE__*/_react.default.createElement(_Button.default, {
-      startIcon: /*#__PURE__*/_react.default.createElement(_Add.default, null),
+    }, " ", isReadOnly ? "" : model.title), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
-      size: "small"
-    }, model !== null && model !== void 0 && model.customAddTextTitle ? model.customAddTextTitle : "Add".concat(" ", model.title)), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
-      startIcon: /*#__PURE__*/_react.default.createElement(_Add.default, null),
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, model !== null && model !== void 0 && model.customAddTextTitle ? model.customAddTextTitle : " ".concat(!showAddIcon ? "" : "Add", " ").concat(model.title)), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
-      size: "small"
-    }, "\"Assign\""), assigned && /*#__PURE__*/_react.default.createElement(_Button.default, {
-      startIcon: /*#__PURE__*/_react.default.createElement(_Remove.default, null),
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, "Assign"), assigned && /*#__PURE__*/_react.default.createElement(_Button.default, {
+      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Remove.default, null),
       onClick: onUnassign,
-      size: "small"
-    }, "\"Remove\""), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, "Remove"), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"
-    }, "Clear Filters"), permissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
-      handleExport: handleExport
+    }, "CLEAR THIS FILTER"), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
+      handleExport: handleExport,
+      showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
+      showOnlyExcelExport: model.showOnlyExcelExport
     })));
   };
   const getGridRowId = row => {
     return row[idProperty];
   };
   const handleExport = e => {
-    const {
-      orderedFields,
-      columnVisibilityModel,
-      lookup
-    } = apiRef.current.state.columns;
-    const columns = {};
-    const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-    const visibleColumns = orderedFields.filter(ele => !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
-    if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
-      snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
+    if ((data === null || data === void 0 ? void 0 : data.recordCount) > recordCounts) {
+      snackbar.showMessage('Cannot export more than 60k records, please apply filters or reduce your results using filters');
+      return;
+    } else {
+      const {
+        orderedFields,
+        columnVisibilityModel,
+        lookup
+      } = apiRef.current.state.columns;
+      const columns = {};
+      const isPivotExport = e.target.dataset.isPivotExport === 'true';
+      const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
+      const visibleColumns = orderedFields.filter(ele => !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
+      if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
+        snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
+        return;
+      }
+      visibleColumns.forEach(ele => {
+        columns[ele] = {
+          field: ele,
+          width: lookup[ele].width,
+          headerName: lookup[ele].headerName,
+          type: lookup[ele].type,
+          keepLocal: lookup[ele].keepLocal === true
+        };
+      });
+      const fixedFilterFormat = {
+        dateTime: "MM/DD/YYYY hh:mm:ss A",
+        date: "MM/DD/YYYY"
+      };
+      if (model.isAcostaController) {
+        var _apiRef$current;
+        const filters = apiRef === null || apiRef === void 0 || (_apiRef$current = apiRef.current) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.state) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.filter) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.filterModel) === null || _apiRef$current === void 0 ? void 0 : _apiRef$current.items;
+        const dateFilters = filters === null || filters === void 0 ? void 0 : filters.filter(ele => ele.field === constants.acostaReportStatusDateEnum.StatusDate);
+        let newParams = {
+          clientId: ClientId
+        };
+        (filters === null || filters === void 0 ? void 0 : filters.length) > 0 && filters.forEach(element => {
+          const {
+            field,
+            value
+          } = element;
+          if (constants.acostaReportFieldEnums[field]) {
+            newParams = _objectSpread(_objectSpread({}, newParams), {
+              [constants.acostaReportFieldEnums[field]]: value
+            });
+          } else if (field === constants.acostaReportStatusDateEnum.StatusDate) {
+            var _dateFilters$find, _dateFilters$find2;
+            const fromDate = (_dateFilters$find = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.after)) === null || _dateFilters$find === void 0 ? void 0 : _dateFilters$find.value;
+            const toDate = (_dateFilters$find2 = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.before)) === null || _dateFilters$find2 === void 0 ? void 0 : _dateFilters$find2.value;
+            if (fromDate && (0, _dayjs.default)(fromDate).isValid()) {
+              newParams = _objectSpread(_objectSpread({}, newParams), {
+                startDate: (0, _dayjs.default)(fromDate).format(fixedFilterFormat.date)
+              });
+            }
+            if (toDate && (0, _dayjs.default)(toDate).isValid()) {
+              newParams = _objectSpread(_objectSpread({}, newParams), {
+                endDate: (0, _dayjs.default)(toDate).format(fixedFilterFormat.date)
+              });
+            }
+          }
+        });
+        customExportRef.current.setExportParams({
+          ExportCols: ACOSTA_REPORT_COLUMNS,
+          filters: newParams,
+          title: "Acosta Report",
+          fileName: "Acosta_Report",
+          format: EXCEL_FORMAT
+        });
+      } else {
+        fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
+      }
+    }
+  };
+  (0, _react.useEffect)(fetchData, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters]);
+  (0, _react.useEffect)(() => {
+    if (forAssignment) {
       return;
     }
-    visibleColumns.forEach(ele => {
-      columns[ele] = {
-        field: ele,
-        width: lookup[ele].width,
-        headerName: lookup[ele].headerName,
-        type: lookup[ele].type,
-        keepLocal: lookup[ele].keepLocal === true
+    dispatchData({
+      type: _actions.default.PAGE_TITLE_DETAILS,
+      payload: /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+        icon: "",
+        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
+        titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
+        title: model === null || model === void 0 ? void 0 : model.title
+      })
+    });
+  }, []);
+  (0, _react.useEffect)(() => {
+    let backRoute = pathname;
+
+    // we do not need to show the back button for these routes
+    if (['/Installations', '/UserLogin'].includes(backRoute)) {
+      dispatchData({
+        type: _actions.default.SET_PAGE_BACK_BUTTON,
+        payload: {
+          status: false,
+          backRoute: ''
+        }
+      });
+      return;
+    }
+    backRoute = backRoute.split("/");
+    backRoute.pop();
+    backRoute = backRoute.join("/");
+    dispatchData({
+      type: _actions.default.SET_PAGE_BACK_BUTTON,
+      payload: {
+        status: true,
+        backRoute: backRoute
+      }
+    });
+  }, []);
+  const updateFilters = e => {
+    var _e$items, _chartFilters$items2;
+    const {
+      items
+    } = e;
+    const updatedItems = items.map(item => {
+      const {
+        field,
+        operator,
+        type,
+        value
+      } = item;
+      const column = gridColumns.find(col => col.field === field);
+      const isNumber = column.type === filterFieldDataTypes.Number;
+      if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
+        return item;
+      }
+      const updatedValue = isNumber ? null : value;
+      return {
+        field,
+        operator,
+        type,
+        value: updatedValue
       };
     });
-    fetchData(undefined, undefined, e.target.dataset.contentType, columns);
+    e.items = updatedItems;
+    setFilterModel(e);
+    if ((e === null || e === void 0 || (_e$items = e.items) === null || _e$items === void 0 ? void 0 : _e$items.findIndex(ele => ele.isChartFilter && !['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) {
+      if (clearChartFilter) {
+        clearChartFilter();
+      }
+    }
+    if ((chartFilters === null || chartFilters === void 0 || (_chartFilters$items2 = chartFilters.items) === null || _chartFilters$items2 === void 0 ? void 0 : _chartFilters$items2.length) > 0) {
+      if (e.items.length === 0) {
+        if (clearChartFilter) {
+          clearChartFilter();
+        }
+      } else {
+        const chartFilterIndex = chartFilters === null || chartFilters === void 0 ? void 0 : chartFilters.items.findIndex(ele => ele.columnField === e.items[0].field);
+        if (chartFilterIndex > -1) {
+          if (clearChartFilter) {
+            clearChartFilter();
+          }
+        }
+      }
+    }
   };
-  (0, _react.useEffect)(fetchData, [paginationModel, sortModel, filterModel, isLoading]);
-
-  // useEffect(
-  //     fetchData,
-  //     [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available]
-  // );
-
-  // useEffect(() => {
-  //     if (forAssignment) {
-  //         return;
-  //     }
-  //     dispatch({ type: actions.SET_PAGE_TITLE_DETAILS, pageTitleDetails: <PageTitle icon="" titleHeading={model?.pageTitle || model?.title} titleDescription={model?.titleDescription} title={model?.title} /> });
-  // }, [])
-
-  // useEffect(() => {
-  //     let backRoute = location.pathname;
-  //     backRoute = backRoute.split("/");
-  //     backRoute.pop();
-  //     backRoute = backRoute.join("/");
-  //     dispatch({
-  //         type: actions.SET_PAGE_BACK_BUTTON,
-  //         pageBackButton: { status: true, backRoute: backRoute },
-  //     });
-  // }, []);
-
   return /*#__PURE__*/_react.default.createElement("div", {
     style: customStyle
   }, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
-    unstable_headerFilters: true,
+    sx: {
+      "& .MuiTablePagination-selectLabel": {
+        marginTop: 2
+      },
+      "& .MuiTablePagination-displayedRows": {
+        marginTop: 2
+      },
+      "& .MuiDataGrid-columnHeader .MuiInputLabel-shrink": {
+        display: "none"
+      }
+    },
+    unstable_headerFilters: showHeaderFilters,
     checkboxSelection: forAssignment,
     loading: isLoading,
     className: "pagination-fix",
@@ -651,7 +952,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     filterMode: isClient,
     keepNonExistentRowsSelected: true,
     onSortModelChange: setSortModel,
-    onFilterModelChange: setFilterModel,
+    onFilterModelChange: updateFilters,
     rowSelection: selection,
     onRowSelectionModelChange: setSelection,
     filterModel: filterModel,
@@ -676,6 +977,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     apiRef: apiRef,
     disableAggregation: true,
     disableRowGrouping: true,
+    disableRowSelectionOnClick: true,
     autoHeight: true,
     initialState: {
       columns: {
@@ -693,18 +995,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     customerName: selectedOrder.CustomerName,
     customerEmail: selectedOrder.CustomerEmailAddress,
     onClose: handleCloseOrderDetailModal
-  }), errorMessage && /*#__PURE__*/_react.default.createElement(_dfameworkUi.DialogComponent, {
+  }), errorMessage && /*#__PURE__*/_react.default.createElement(_index2.DialogComponent, {
     open: !!errorMessage,
     onConfirm: clearError,
     onCancel: clearError,
     title: "Info",
     hideCancelButton: true
-  }, " ", errorMessage), isDeleting && !errorMessage && /*#__PURE__*/_react.default.createElement(_dfameworkUi.DialogComponent, {
+  }, " ", errorMessage), isDeleting && !errorMessage && /*#__PURE__*/_react.default.createElement(_index2.DialogComponent, {
     open: isDeleting,
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")));
+  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")), model.ExportExcelFile && /*#__PURE__*/_react.default.createElement(model.ExportExcelFile, {
+    ref: customExportRef,
+    url: acostaValidateReportUrl
+  }));
 }, areEqual);
-var _default = GridBase;
-exports.default = _default;
+var _default = exports.default = GridBase;
