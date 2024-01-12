@@ -8,7 +8,10 @@ const initialState = {
     gridSettings:{},
     getLocal:{},
     getUserData:null,
-    getAcostaColumns:null
+    getAcostaColumns:null,
+    preferences: [],
+    currentPreference: null,
+    totalPreferences: null
   };
 
   export default initialState;

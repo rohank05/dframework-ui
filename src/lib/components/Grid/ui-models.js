@@ -19,15 +19,14 @@ const defaultValueConfigs = {
 class UiModel {
 
   constructor(modelConfig) {
-    const { title, controllerType, url } = modelConfig;
+    const { title, controllerType } = modelConfig;
     let { api, idProperty = api + 'Id' } = modelConfig;
 
     if (!api) {
       api = `${title.replaceAll(nonAlphaNumeric, '-').toLowerCase()}`;
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
-    // api = controllerType === 'cs' ? `${api}.ashx` : `internal-reporting/api/${api}`;
-    // api = url
+    api = controllerType === 'cs' ? `${api}.ashx` : `${api}`;
     const defaultValues = { ...modelConfig.defaultValues };
     Object.assign(this, { standard: true, idProperty, ...modelConfig, api });
     const columnVisibilityModel = {};

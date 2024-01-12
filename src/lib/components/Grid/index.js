@@ -8,6 +8,7 @@ import {
     GridToolbarExportContainer,
     getGridDateOperators,
     GRID_CHECKBOX_SELECTION_COL_DEF,
+    getGridStringOperators,
 } from '@mui/x-data-grid-premium';
 import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -28,16 +29,17 @@ import { DialogComponent } from '../Dialog/index';
 import { getList, getRecord, deleteRecord } from './crud-helper';
 import PropTypes from 'prop-types';
 import { Footer } from './footer';
-import { useRouter } from '../useRouter/useRouter'
 import template from './template';
 import { Tooltip } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from "@material-ui/core";
 import PageTitle from '../PageTitle';
-import { useStateContext } from '../useRouter/StateProvider';
+import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
+import GridPreferences from './GridPreference';
+import CustomDropdownmenu from './CustomDropdownmenu';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -145,6 +147,7 @@ const GridBase = memo(({
     selected,
     assigned,
     available,
+    disableCellRedirect = false,
     onAssignChange,
     customStyle,
     onCellClick,
@@ -152,7 +155,13 @@ const GridBase = memo(({
     chartFilters,
     clearChartFilter,
     showFullScreenLoader,
-    onRowDoubleClick
+    customFilters,
+    onRowDoubleClick,
+    baseFilters,
+    onRowClick = () => { },
+    gridStyle,
+    reRenderKey,
+    additionalFilters
 }) => {
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
     const [data, setData] = useState({ recordCount: 0, records: [], lookups: {} });
@@ -179,18 +188,23 @@ const GridBase = memo(({
     const [filterModel, setFilterModel] = useState({ ...initialFilterModel });
     const { pathname, navigate } = useRouter()
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false } = model;
     const isReadOnly = model.readOnly === true;
     const isDoubleClicked = model.doubleClicked === false;
     const customExportRef = useRef();
     const dataRef = useRef(data);
     const showAddIcon = model.showAddIcon === true;
     const toLink = model.columns.map(item => item.link);
+    const [isGridPreferenceFetched, setIsGridPreferenceFetched] = useState(false);
     const classes = useStyles();
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate } = useStateContext();
+    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
-    const { ClientId } = stateData.getUserData && stateData.getUserData.tags ? stateData.getUserData.tags : 0;
+    const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
+    const { Username } = stateData?.getUserData ? stateData.getUserData : {};
+    const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
     const url = stateData?.gridSettings?.permissions?.Url;
+    const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
+    const currentPreference = stateData?.currentPreference;
     const acostaValidateReportUrl = stateData?.gridSettings?.permissions?.AcostaValidateReportUrl;
     const EXCEL_FORMAT = 'XLSX';
     const ACOSTA_REPORT_COLUMNS = stateData.getAcostaColumns;
@@ -200,6 +214,7 @@ const GridBase = memo(({
         String: 'string',
         Boolean: 'boolean'
     };
+    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const gridColumnTypes = {
         "radio": {
             "type": "singleSelect",
@@ -217,6 +232,12 @@ const GridBase = memo(({
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "datetime" }),
         },
+        "dateTimeLocal": {
+            "valueFormatter": ({ value }) => (
+                formatDate(value, false, false, stateData.dateTime)
+            ),
+            "filterOperators": LocalizedDatePicker({ type: "dateTimeLocal", convert: true }),
+        },
         "boolean": {
             renderCell: booleanIconRenderer
         }
@@ -225,6 +246,47 @@ const GridBase = memo(({
     useEffect(() => {
         dataRef.current = data;
     }, [data]);
+
+    useEffect(() => {
+
+        if (customFilters && Object.keys(customFilters) != 0) {
+            if (customFilters.clear) {
+                let filterObject = {
+                    items: [],
+                    logicOperator: "and",
+                    quickFilterValues: [],
+                    quickFilterLogicOperator: "and"
+                }
+                setFilterModel(filterObject)
+                return
+            } else {
+                const newArray = [];
+                for (const key in customFilters) {
+                    if (key === 'startDate' || key === 'endDate') {
+                        newArray.push(customFilters[key])
+                    } else {
+                        if (customFilters.hasOwnProperty(key)) {
+                            const newObj = {
+                                field: key,
+                                value: customFilters[key],
+                                operator: "equals",
+                                type: "string"
+                            };
+                            newArray.push(newObj);
+                        }
+                    }
+                }
+                let filterObject = {
+                    items: newArray,
+                    logicOperator: "and",
+                    quickFilterValues: [],
+                    quickFilterLogicOperator: "and"
+                }
+                setFilterModel(filterObject)
+            }
+        }
+    }, [customFilters]);
+
     const lookupOptions = ({ row, field, id, ...others }) => {
         const lookupData = dataRef.current.lookups || {};
         return lookupData[lookupMap[field].lookup] || [];
@@ -255,6 +317,20 @@ const GridBase = memo(({
             }
             if (overrides.valueOptions === "lookup") {
                 overrides.valueOptions = lookupOptions;
+                let lookupFilters = [...getGridDateOperators(), ...getGridStringOperators()].filter((operator) => ['is', 'not', 'isAnyOf'].includes(operator.value))
+                overrides.filterOperators = lookupFilters.map((operator) => ({
+                    ...operator,
+                    InputComponent: operator.InputComponent ? (params) => (
+                        <CustomDropdownmenu
+                            column={{
+                                ...column,
+                                dataRef: dataRef
+                            }}
+                            {...params}
+                            autoHighlight
+                        />
+                    ) : undefined
+                }));
             }
             if (column.linkTo) {
                 overrides.cellClassName = "mui-grid-linkColumn";
@@ -325,13 +401,13 @@ const GridBase = memo(({
 
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
     }, [columns, model, parent, permissions, forAssignment]);
-    const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport) => {
+    const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
-        let gridApi = `${url}${model.api || api}`
+        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
-            gridApi = model?.pivotAPI;
+            gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model?.pivotAPI}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
@@ -348,6 +424,9 @@ const GridBase = memo(({
                 finalFilters = filters;
                 chartFilters.items.length = 0;
             }
+        }
+        if (additionalFilters) {
+            finalFilters.items = [...finalFilters.items, ...additionalFilters];
         }
         getList({
             action,
@@ -367,7 +446,12 @@ const GridBase = memo(({
             contentType,
             columns,
             template: isPivotExport ? model?.template : null,
-            configFileName: isPivotExport ? model?.configFileName : null
+            configFileName: isPivotExport ? model?.configFileName : null,
+            dispatch: dispatchData,
+            showFullScreenLoader,
+            history: navigate,
+            baseFilters,
+            isElasticExport
         });
     };
     const openForm = (id, { mode } = {}) => {
@@ -440,7 +524,8 @@ const GridBase = memo(({
     };
 
     const handleDelete = async function () {
-        let gridApi = `${url}${model.api || api}`
+
+        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
         const result = await deleteRecord({ id: record?.id, api: gridApi, setIsLoading, setError: snackbar.showError, setErrorMessage });
         if (result === true) {
             setIsDeleting(false);
@@ -457,7 +542,7 @@ const GridBase = memo(({
         setIsDeleting(false);
     };
     const onCellDoubleClick = (event) => {
-        if (!isReadOnly && !isDoubleClicked) {
+        if ((!isReadOnly && !isDoubleClicked) && !disableCellRedirect) {
             const { row: record } = event;
             openForm(record[idProperty]);
         }
@@ -465,24 +550,13 @@ const GridBase = memo(({
             onRowDoubleClick(event);
         }
     };
+
     const handleCloseOrderDetailModal = () => {
         setIsOrderDetailModalOpen(false);
         setSelectedOrder(null);
         fetchData();
     };
-    // const onCellDoubleClick = (event) => {
-    //     if (model.showModal) {
-    //         setIsOrderDetailModalOpen(true);
-    //         const { row } = event;
-    //         setSelectedOrder(row);
-    //     } else {
-    //         if (!isReadOnly) {
-    //             const { row: record } = event;
-    //             openForm(record[idProperty]);
-    //         }
-    //         return null;
-    //     }
-    // };
+
 
     const onAdd = () => {
         openForm(0);
@@ -511,6 +585,12 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
+    useEffect(() => {
+        removeCurrentPreferenceName({ dispatchData });
+        getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi });
+        applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi });
+    }, [])
+
     const CustomToolbar = function (props) {
 
         return (
@@ -520,6 +600,7 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
+                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title}`}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
@@ -532,6 +613,9 @@ const GridBase = memo(({
                     {effectivePermissions.export && (
                         <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
+                    {model.preferenceId &&
+                        <GridPreferences preferenceName={model.preferenceId} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
+                    }
                 </GridToolbarContainer>
             </div >
         );
@@ -588,13 +672,14 @@ const GridBase = memo(({
             }
         }
     };
-    useEffect(
-        fetchData,
-        [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters]
-    );
+    useEffect(() => {
+        if (isGridPreferenceFetched) {
+            fetchData();
+        }
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched])
 
     useEffect(() => {
-        if (forAssignment) {
+        if (forAssignment || !updatePageTitle) {
             return;
         }
         dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: <PageTitle icon="" titleHeading={model?.pageTitle || model?.title} titleDescription={model?.titleDescription} title={model?.title} /> })
@@ -604,7 +689,7 @@ const GridBase = memo(({
         let backRoute = pathname;
 
         // we do not need to show the back button for these routes
-        if (['/Installations', '/UserLogin'].includes(backRoute)) {
+        if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
             dispatchData({
                 type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
                 payload: { status: false, backRoute: '' },
@@ -627,6 +712,10 @@ const GridBase = memo(({
             const column = gridColumns.find(col => col.field === field);
             const isNumber = column.type === filterFieldDataTypes.Number;
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
+                const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === item.field)[0]?.isKeywordField;
+                if (isKeywordField) {
+                    item.filterField = `${item.field}.keyword`;
+                }
                 return item;
             }
             const updatedValue = isNumber ? null : value;
@@ -655,8 +744,16 @@ const GridBase = memo(({
         }
     }
 
+    const updateSort = (e) => {
+        const sort = e.map((ele) => {
+            const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === ele.field)[0]?.isKeywordField
+            return { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
+        })
+        setSortModel(sort);
+    }
+
     return (
-        <div style={customStyle}>
+        <div style={gridStyle || customStyle}>
             <DataGridPremium
                 sx={{
                     "& .MuiTablePagination-selectLabel": {
@@ -687,12 +784,13 @@ const GridBase = memo(({
                 sortingMode={isClient}
                 filterMode={isClient}
                 keepNonExistentRowsSelected
-                onSortModelChange={setSortModel}
+                onSortModelChange={updateSort}
                 onFilterModelChange={updateFilters}
                 rowSelection={selection}
                 onRowSelectionModelChange={setSelection}
                 filterModel={filterModel}
                 getRowId={getGridRowId}
+                onRowClick={onRowClick}
                 slots={{
                     headerFilterMenu: false,
                     toolbar: CustomToolbar,
@@ -713,7 +811,7 @@ const GridBase = memo(({
                 apiRef={apiRef}
                 disableAggregation={true}
                 disableRowGrouping={true}
-                disableRowSelectionOnClick
+                disableRowSelectionOnClick={disableRowSelectionOnClick}
                 autoHeight
                 initialState={{
                     columns: {
@@ -738,9 +836,9 @@ const GridBase = memo(({
             {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
             }
             {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-           
+
             {model.ExportExcelFile && (<model.ExportExcelFile ref={customExportRef} url={acostaValidateReportUrl} />)}
-       </div >
+        </div >
     );
 }, areEqual);
 

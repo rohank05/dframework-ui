@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import  {useSnackbar} from '../SnackBar/index';
+// import { useSnackbar } from '../SnackBar';
 let pendingRequests = 0;
 const transport = axios.create({ withCredentials: true });
 const HTTP_STATUS_CODES = {
@@ -32,7 +32,6 @@ const exportRequest = (url, query) => {
 }
 
 const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false }) => {
-   const snackbar = useSnackbar();
 
     if (params.exportData) {
         return exportRequest(url, params);
@@ -58,7 +57,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
                 let json = response.data;
                 if (json.success === false) {
                     if (json.info === 'Session has expired!') {
-                        snackbar.showError('error: Your session has expired. Please login again.');
+                        // snackbar.showError('error: Your session has expired. Please login again.');
                         history.push('/login');
                         return;
                     }
@@ -76,10 +75,10 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
     } catch (ex) {
         pendingRequests--;
         if (ex?.response?.status === 401) {
-            snackbar.showError('error: You are not authorized to access this page');
+            // snackbar.showError('error: You are not authorized to access this page');
             history.push('/login');
         } else if (ex?.response?.status === 500) {
-            snackbar.showError(`error: ${ex?.response?.data?.info}` );
+            // snackbar.showError(`error: ${ex?.response?.data?.info}` );
         }
         else {
             console.error(ex);
