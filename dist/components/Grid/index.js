@@ -618,7 +618,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       columns,
       template: isPivotExport ? model === null || model === void 0 ? void 0 : model.template : null,
       configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null,
-      dispatch: dispatchData,
+      dispatchData,
       showFullScreenLoader,
       history: navigate,
       baseFilters,

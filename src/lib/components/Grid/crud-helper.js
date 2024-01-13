@@ -1,3 +1,4 @@
+import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 import request from "./httpRequest";
 
@@ -5,11 +6,11 @@ const dateDataTypes = ['date', 'dateTime'];
 
 const exportRecordSize = 10000;
 
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatch, showFullScreenLoader = false, oderStatusId = 0, history = null, modelConfig = null, baseFilters = null, isElasticExport }) => {
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
         setIsLoading(true);
         if (showFullScreenLoader) {
-            dispatch({ type: 'UPDATE_LOADER_STATE', loaderOpen: true });
+            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
         }
     }
 
@@ -79,7 +80,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
 
     const headers = {};
     let url = controllerType === 'cs' ? `${api}?action=${action}&asArray=0` : `${api}/${action}`;
-    
+
     if (template !== null) {
         url += `&template=${template}`;
     }
@@ -166,7 +167,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         if (!contentType) {
             setIsLoading(false);
             if (showFullScreenLoader) {
-                dispatch({ type: 'UPDATE_LOADER_STATE', loaderOpen: false });
+                dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
             }
         }
     }
@@ -271,7 +272,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
         method = 'POST';
     }
 
-    
+
     try {
         setIsLoading(true);
         const response = await transport({

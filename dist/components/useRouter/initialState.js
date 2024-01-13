@@ -20,6 +20,7 @@ const initialState = {
   getAcostaColumns: null,
   preferences: [],
   currentPreference: null,
-  totalPreferences: null
+  totalPreferences: null,
+  loaderOpen: false
 };
 var _default = exports.default = initialState;

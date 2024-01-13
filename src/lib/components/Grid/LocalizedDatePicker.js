@@ -3,7 +3,9 @@ import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { getGridDateOperators } from '@mui/x-data-grid-premium';
+import utcPlugin from 'dayjs/plugin/utc.js';
 import { useStateContext } from '../useRouter/StateProvider';
+dayjs.extend(utcPlugin);
 const fixedFilterFormat = {
     date: "YYYY-MM-DD",
     datetime: "YYYY-MM-DD hh:mm:ss a",
@@ -52,11 +54,10 @@ const LocalizedDatePicker = (props) => {
             return parts.length === 3 ? parts[1] : null;
         }
     }
-
     const ComponentToRender = componentMap[columnType];
     const Dateformatvalue = columnType === "dateTimeLocal"
-    ? item.value ? dayjs(item.value.$d) : null
-    : item.value ? dayjs(item.value) : null;
+        ? item?.value ? dayjs(item?.value.$d) : null
+        : item?.value ? dayjs(item.value) : null;
     return <ComponentToRender
         fullWidth
         format={format}
@@ -73,9 +74,11 @@ const LocalizedDatePicker = (props) => {
     />
 }
 
-const localizedDateFormat = (props) => getGridDateOperators().map((operator) => ({
+const localizedDateFormat = (colProps) => getGridDateOperators().map((operator) => ({
     ...operator,
-    InputComponent: LocalizedDatePicker(props)
+    InputComponent: operator.InputComponent
+        ? (props) => <LocalizedDatePicker {...props} {...colProps} />
+        : undefined,
 }));
 
 export default localizedDateFormat;

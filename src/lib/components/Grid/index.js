@@ -197,10 +197,10 @@ const GridBase = memo(({
     const toLink = model.columns.map(item => item.link);
     const [isGridPreferenceFetched, setIsGridPreferenceFetched] = useState(false);
     const classes = useStyles();
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
+    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists  } = useStateContext();
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
-    const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
-    const { Username } = stateData?.getUserData ? stateData.getUserData : {};
+    const { ClientId } = stateData?.getUserData  ? stateData.getUserData : {};
+    const { Username } = stateData?.getUserData  ? stateData.getUserData: {};
     const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
@@ -447,9 +447,9 @@ const GridBase = memo(({
             columns,
             template: isPivotExport ? model?.template : null,
             configFileName: isPivotExport ? model?.configFileName : null,
-            dispatch: dispatchData,
+            dispatchData,
             showFullScreenLoader,
-            history: navigate,
+            history : navigate,
             baseFilters,
             isElasticExport
         });
@@ -524,7 +524,7 @@ const GridBase = memo(({
     };
 
     const handleDelete = async function () {
-
+        
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
         const result = await deleteRecord({ id: record?.id, api: gridApi, setIsLoading, setError: snackbar.showError, setErrorMessage });
         if (result === true) {
@@ -600,7 +600,7 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
-                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
+                                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title}`}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
@@ -836,9 +836,9 @@ const GridBase = memo(({
             {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
             }
             {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-
+           
             {model.ExportExcelFile && (<model.ExportExcelFile ref={customExportRef} url={acostaValidateReportUrl} />)}
-        </div >
+       </div >
     );
 }, areEqual);
 

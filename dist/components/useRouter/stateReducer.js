@@ -68,6 +68,10 @@ const stateReducer = (state, action) => {
       return _objectSpread(_objectSpread({}, state), {}, {
         totalPreferences: action.payload
       });
+    case _actions.default.UPDATE_LOADER_STATE:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        loaderOpen: action.payload
+      });
     default:
       return state;
   }
