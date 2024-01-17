@@ -40,7 +40,7 @@ const StateProvider = ({ children }) => {
       id: preferenceName,
       Username
     }
-    const response = await request({ url: preferenceApi, params, history, dispatch: dispatchData });
+    const response = await request({ url: preferenceApi, params, history, dispatchData });
     dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: response?.preferences });
     dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response.totalCount });
   }
@@ -51,7 +51,7 @@ const StateProvider = ({ children }) => {
       Username
     }
 
-    const response = await request({ url: preferenceApi, params, history });
+    const response = await request({ url: preferenceApi, params, history, dispatchData });
     if (response?.prefValue) {
       let userPreferenceCharts = JSON.parse(response.prefValue);
       userPreferenceCharts?.gridColumn.forEach(ele => {

@@ -65,7 +65,7 @@ const StateProvider = _ref => {
       url: preferenceApi,
       params,
       history,
-      dispatch: dispatchData
+      dispatchData
     });
     dispatchData({
       type: _actions.default.UDPATE_PREFERENCES,
@@ -94,7 +94,8 @@ const StateProvider = _ref => {
     const response = await (0, _httpRequest.default)({
       url: preferenceApi,
       params,
-      history
+      history,
+      dispatchData
     });
     if (response !== null && response !== void 0 && response.prefValue) {
       let userPreferenceCharts = JSON.parse(response.prefValue);

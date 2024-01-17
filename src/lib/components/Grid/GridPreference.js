@@ -42,7 +42,7 @@ const initialValues = {
 
 
 const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists  } = useStateContext();
+    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
     const { pathname, navigate } = useRouter();
     const apiRef = useGridApiRef();
     const snackbar = useSnackbar();
@@ -52,9 +52,9 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const [formType, setFormType] = useState();
     const [menuAnchorEl, setMenuAnchorEl] = useState();
     const [openPreferenceExistsModal, setOpenPreferenceExistsModal] = useState(false);
-    const { Username } = stateData?.getUserData  ? stateData.getUserData: {};
+    const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const preferences = stateData?.preferences;
-    const totalPreferences  = stateData?.totalPreferences;
+    const totalPreferences = stateData?.totalPreferences;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);
@@ -98,7 +98,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             Username,
             prefIdArray: id
         }
-        const response = await request({ url: apis.Preference, params, history: navigate });
+        const response = await request({ url: apis.Preference, params, history: navigate, dispatchData });
         if (response === true) {
             removeCurrentPreferenceName({ dispatchData });
             snackbar.showMessage('Preference Deleted Successfully.');
@@ -143,7 +143,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         if (values.prefId) {
             params["prefId"] = values.prefId;
         }
-        const response = await request({ url: preferenceApi, params, history : navigate });
+        const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
         if (response === true) {
             snackbar.showMessage('Preference Saved Successfully.');
         }
@@ -157,7 +157,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             Username,
             prefId
         }
-        const response = await request({ url: preferenceApi, params, history: navigate });
+        const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
         if (response?.prefValue) {
             let userPreferenceCharts = JSON.parse(response.prefValue);
             userPreferenceCharts?.gridColumn.forEach(ele => {
@@ -205,6 +205,8 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username });
         }
     }
+
+    const prefName = formik.values.prefName.trim();
 
     return (
         <Box>
@@ -406,13 +408,10 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 )}
             </Dialog>
             <Dialog open={openPreferenceExistsModal} maxWidth='xs' fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#e0e0e0', mb: 2 }}>
-                    Preference name can not be duplicated
-                </DialogTitle>
-                <DialogContent>
-                    This name is already in use, please use another name
+                <DialogContent sx={{ fontSize: '16px' }}>
+                    "{prefName}" name already in use, please use another name.
                 </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center' }}>
+                <DialogActions sx={{ justifyContent: 'center', marginTop: '4%' }}>
                     <Button color="success" variant="contained" size="small" onClick={() => setOpenPreferenceExistsModal(false)} disableElevation>
                         Ok
                     </Button>

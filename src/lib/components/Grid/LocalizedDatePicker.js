@@ -4,6 +4,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { getGridDateOperators } from '@mui/x-data-grid-premium';
 import utcPlugin from 'dayjs/plugin/utc.js';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import AdapterDayjs from '@mui/x-date-pickers/AdapterDayjs';
 import { useStateContext } from '../useRouter/StateProvider';
 dayjs.extend(utcPlugin);
 const fixedFilterFormat = {
@@ -58,20 +60,23 @@ const LocalizedDatePicker = (props) => {
     const Dateformatvalue = columnType === "dateTimeLocal"
         ? item?.value ? dayjs(item?.value.$d) : null
         : item?.value ? dayjs(item.value) : null;
-    return <ComponentToRender
-        fullWidth
-        format={format}
-        value={Dateformatvalue}
-        onChange={handleFilterChange}
-        slotProps={{ textField: { variant: "standard", label: "Value" } }}
-        localeText={{
-            fieldMonthPlaceholder: () => {
-                const monthAbbreviation = getMonthAbbreviation(format);
-                return monthAbbreviation === "MMM" ? 'MMM' : 'MM';
-
-            },
-        }}
-    />
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <ComponentToRender
+                fullWidth
+                format={format}
+                value={Dateformatvalue}
+                onChange={handleFilterChange}
+                slotProps={{ textField: { variant: "standard", label: "Value" } }}
+                localeText={{
+                    fieldMonthPlaceholder: () => {
+                        const monthAbbreviation = getMonthAbbreviation(format);
+                        return monthAbbreviation === "MMM" ? 'MMM' : 'MM';
+                    },
+                }}
+            />
+        </LocalizationProvider>
+    );
 }
 
 const localizedDateFormat = (colProps) => getGridDateOperators().map((operator) => ({

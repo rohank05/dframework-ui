@@ -17,6 +17,7 @@ require("core-js/modules/es.promise.js");
 require("core-js/modules/es.array.push.js");
 var _react = _interopRequireDefault(require("react"));
 var _axios = _interopRequireDefault(require("axios"));
+var _actions = _interopRequireDefault(require("../useRouter/actions"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -62,10 +63,17 @@ const request = async _ref => {
     jsonPayload = false,
     additionalParams = {},
     additionalHeaders = {},
-    disableLoader = false
+    disableLoader = false,
+    dispatchData
   } = _ref;
   if (params.exportData) {
     return exportRequest(url, params);
+  }
+  if (!disableLoader) {
+    dispatchData({
+      type: _actions.default.UPDATE_LOADER_STATE,
+      payload: true
+    });
   }
   pendingRequests++;
   let reqParams = _objectSpread({
@@ -84,6 +92,12 @@ const request = async _ref => {
     pendingRequests--;
     let data = response.data;
     if (response) {
+      if (pendingRequests === 0 && !disableLoader) {
+        dispatchData({
+          type: 'UPDATE_LOADER_STATE',
+          loaderOpen: false
+        });
+      }
       if (response.status === 200) {
         let json = response.data;
         if (json.success === false) {

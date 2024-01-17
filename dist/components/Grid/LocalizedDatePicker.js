@@ -14,6 +14,8 @@ var _DatePicker = require("@mui/x-date-pickers/DatePicker");
 var _DateTimePicker = require("@mui/x-date-pickers/DateTimePicker");
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
 var _utc = _interopRequireDefault(require("dayjs/plugin/utc.js"));
+var _LocalizationProvider = require("@mui/x-date-pickers/LocalizationProvider");
+var _AdapterDayjs = _interopRequireDefault(require("@mui/x-date-pickers/AdapterDayjs"));
 var _StateProvider = require("../useRouter/StateProvider");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
@@ -85,7 +87,9 @@ const LocalizedDatePicker = props => {
   };
   const ComponentToRender = componentMap[columnType];
   const Dateformatvalue = columnType === "dateTimeLocal" ? item !== null && item !== void 0 && item.value ? (0, _dayjs.default)(item === null || item === void 0 ? void 0 : item.value.$d) : null : item !== null && item !== void 0 && item.value ? (0, _dayjs.default)(item.value) : null;
-  return /*#__PURE__*/_react.default.createElement(ComponentToRender, {
+  return /*#__PURE__*/_react.default.createElement(_LocalizationProvider.LocalizationProvider, {
+    dateAdapter: _AdapterDayjs.default
+  }, /*#__PURE__*/_react.default.createElement(ComponentToRender, {
     fullWidth: true,
     format: format,
     value: Dateformatvalue,
@@ -102,7 +106,7 @@ const LocalizedDatePicker = props => {
         return monthAbbreviation === "MMM" ? 'MMM' : 'MM';
       }
     }
-  });
+  }));
 };
 const localizedDateFormat = colProps => (0, _xDataGridPremium.getGridDateOperators)().map(operator => _objectSpread(_objectSpread({}, operator), {}, {
   InputComponent: operator.InputComponent ? props => /*#__PURE__*/_react.default.createElement(LocalizedDatePicker, _extends({}, props, colProps)) : undefined

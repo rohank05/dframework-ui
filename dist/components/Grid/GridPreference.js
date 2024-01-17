@@ -10,6 +10,7 @@ exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.array.push.js");
+require("core-js/modules/es.string.trim.js");
 var _react = _interopRequireWildcard(require("react"));
 var _Close = _interopRequireDefault(require("@mui/icons-material/Close"));
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
@@ -170,7 +171,8 @@ const GridPreferences = _ref => {
     const response = await (0, _httpRequest.default)({
       url: apis.Preference,
       params,
-      history: navigate
+      history: navigate,
+      dispatchData
     });
     if (response === true) {
       removeCurrentPreferenceName({
@@ -244,7 +246,8 @@ const GridPreferences = _ref => {
     const response = await (0, _httpRequest.default)({
       url: preferenceApi,
       params,
-      history: navigate
+      history: navigate,
+      dispatchData
     });
     if (response === true) {
       snackbar.showMessage('Preference Saved Successfully.');
@@ -267,7 +270,8 @@ const GridPreferences = _ref => {
     const response = await (0, _httpRequest.default)({
       url: preferenceApi,
       params,
-      history: navigate
+      history: navigate,
+      dispatchData
     });
     if (response !== null && response !== void 0 && response.prefValue) {
       let userPreferenceCharts = JSON.parse(response.prefValue);
@@ -321,6 +325,7 @@ const GridPreferences = _ref => {
       });
     }
   };
+  const prefName = formik.values.prefName.trim();
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     id: "grid-preferences-btn",
     "aria-controls": menuAnchorEl ? 'basic-menu' : undefined,
@@ -515,14 +520,14 @@ const GridPreferences = _ref => {
     open: openPreferenceExistsModal,
     maxWidth: "xs",
     fullWidth: true
-  }, /*#__PURE__*/_react.default.createElement(_material.DialogTitle, {
+  }, /*#__PURE__*/_react.default.createElement(_material.DialogContent, {
     sx: {
-      backgroundColor: '#e0e0e0',
-      mb: 2
+      fontSize: '16px'
     }
-  }, "Preference name can not be duplicated"), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, "This name is already in use, please use another name"), /*#__PURE__*/_react.default.createElement(_material.DialogActions, {
+  }, "\"", prefName, "\" name already in use, please use another name."), /*#__PURE__*/_react.default.createElement(_material.DialogActions, {
     sx: {
-      justifyContent: 'center'
+      justifyContent: 'center',
+      marginTop: '4%'
     }
   }, /*#__PURE__*/_react.default.createElement(_material.Button, {
     color: "success",
