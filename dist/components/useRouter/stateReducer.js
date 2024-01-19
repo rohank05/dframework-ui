@@ -52,10 +52,6 @@ const stateReducer = (state, action) => {
       return _objectSpread(_objectSpread({}, state), {}, {
         getUserData: action.payload
       });
-    case _actions.default.ACOSTA_REPORT_COLUMNS:
-      return _objectSpread(_objectSpread({}, state), {}, {
-        getAcostaColumns: action.payload
-      });
     case _actions.default.UDPATE_PREFERENCES:
       return _objectSpread(_objectSpread({}, state), {}, {
         preferences: action.payload

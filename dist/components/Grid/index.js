@@ -301,7 +301,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const acostaValidateReportUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.AcostaValidateReportUrl;
   const EXCEL_FORMAT = 'XLSX';
-  const ACOSTA_REPORT_COLUMNS = stateData.getAcostaColumns;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const filterFieldDataTypes = {
     Number: 'number',
@@ -935,7 +934,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           }
         });
         customExportRef.current.setExportParams({
-          ExportCols: ACOSTA_REPORT_COLUMNS,
+          ExportCols: [],
           filters: newParams,
           title: "Acosta Report",
           fileName: "Acosta_Report",
