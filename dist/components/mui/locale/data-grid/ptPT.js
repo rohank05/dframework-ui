@@ -4,14 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-// import data from 'pt-pt';
-// Object.assign(data.components.MuiDataGrid.defaultProps.localeText, {
-// });
-// const addButton = ({ onClick }) => {
-//   return (
-//     <Button onClick={onClick}>getLocalizedString("df", "Add")</Button>
-//   )
-// }
 var _default = exports.default = {
   components: {
     MuiDataGrid: {

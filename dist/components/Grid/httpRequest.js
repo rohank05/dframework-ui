@@ -24,7 +24,6 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-// import { useSnackbar } from '../SnackBar';
 let pendingRequests = 0;
 const transport = exports.transport = _axios.default.create({
   withCredentials: true
@@ -102,7 +101,6 @@ const request = async _ref => {
         let json = response.data;
         if (json.success === false) {
           if (json.info === 'Session has expired!') {
-            // snackbar.showError('error: Your session has expired. Please login again.');
             history.push('/login');
             return;
           } else if (response.status === 200) {
@@ -119,11 +117,8 @@ const request = async _ref => {
     var _ex$response, _ex$response2;
     pendingRequests--;
     if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === 401) {
-      // snackbar.showError('error: You are not authorized to access this page');
       history.push('/login');
-    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {
-      // snackbar.showError(`error: ${ex?.response?.data?.info}` );
-    } else {
+    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {} else {
       console.error(ex);
       return {
         error: ex.response

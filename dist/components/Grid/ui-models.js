@@ -144,18 +144,6 @@ class UiModel {
             config = config.max(Number(max), "".concat(formLabel, " must be at most ").concat(max, " characters long"));
           }
           break;
-        //Validation "oneToMany" type for grid to show snackbar - commenting out for use in future
-        // case 'oneToMany':
-        //     config = yup.string().label(formLabel).test(value => {
-        //         const valueArray = (value && value.length > 0) ? value.split(',').map(item => item.trim()) : [];
-        //         if (valueArray.length < 2) {
-        //             snackbar.showError(`Please assign at least 2 ${formLabel}`, null, "error");
-        //             return false;
-        //         } else {
-        //             return true;
-        //         }
-        //     });
-        //     break;
         case 'boolean':
           config = yup.bool().nullable().transform((value, originalValue) => {
             if (originalValue === '') return null;
