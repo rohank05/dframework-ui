@@ -207,7 +207,6 @@ const GridBase = memo(({
     const currentPreference = stateData?.currentPreference;
     const acostaValidateReportUrl = stateData?.gridSettings?.permissions?.AcostaValidateReportUrl;
     const EXCEL_FORMAT = 'XLSX';
-    const ACOSTA_REPORT_COLUMNS = stateData.getAcostaColumns;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const filterFieldDataTypes = {
         Number: 'number',
@@ -666,7 +665,7 @@ const GridBase = memo(({
                         }
                     }
                 })
-                customExportRef.current.setExportParams({ ExportCols: ACOSTA_REPORT_COLUMNS, filters: newParams, title: "Acosta Report", fileName: "Acosta_Report", format: EXCEL_FORMAT });
+                customExportRef.current.setExportParams({ ExportCols: [], filters: newParams, title: "Acosta Report", fileName: "Acosta_Report", format: EXCEL_FORMAT });
             } else {
                 fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
             }
