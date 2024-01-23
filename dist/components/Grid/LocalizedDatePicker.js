@@ -17,6 +17,7 @@ var _utc = _interopRequireDefault(require("dayjs/plugin/utc.js"));
 var _LocalizationProvider = require("@mui/x-date-pickers/LocalizationProvider");
 var _AdapterDayjs = _interopRequireDefault(require("@mui/x-date-pickers/AdapterDayjs"));
 var _StateProvider = require("../useRouter/StateProvider");
+var _utils = _interopRequireDefault(require("../utils"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -25,18 +26,15 @@ function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key i
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : String(i); }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 _dayjs.default.extend(_utc.default);
-const fixedFilterFormat = {
-  date: "YYYY-MM-DD",
-  datetime: "YYYY-MM-DD hh:mm:ss a",
-  dateTimeLocal: "YYYY-MM-DD hh:mm:ss a",
-  OverrideDateFormat: "DD-MMM-YYYY"
-};
 const componentMap = {
   date: _DatePicker.DatePicker,
   datetime: _DateTimePicker.DateTimePicker,
   dateTimeLocal: _DateTimePicker.DateTimePicker
 };
 const LocalizedDatePicker = props => {
+  const {
+    fixedFilterFormat
+  } = _utils.default;
   const {
     item,
     applyValue,

@@ -40,6 +40,7 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
+import utils from '../utils';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -208,11 +209,7 @@ const GridBase = memo(({
     const acostaValidateReportUrl = stateData?.gridSettings?.permissions?.AcostaValidateReportUrl;
     const EXCEL_FORMAT = 'XLSX';
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-    const filterFieldDataTypes = {
-        Number: 'number',
-        String: 'string',
-        Boolean: 'boolean'
-    };
+    const { filterFieldDataTypes } = utils;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const gridColumnTypes = {
         "radio": {

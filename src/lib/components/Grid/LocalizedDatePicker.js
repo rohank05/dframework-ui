@@ -7,19 +7,16 @@ import utcPlugin from 'dayjs/plugin/utc.js';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import AdapterDayjs from '@mui/x-date-pickers/AdapterDayjs';
 import { useStateContext } from '../useRouter/StateProvider';
+import utils from '../utils';
+
 dayjs.extend(utcPlugin);
-const fixedFilterFormat = {
-    date: "YYYY-MM-DD",
-    datetime: "YYYY-MM-DD hh:mm:ss a",
-    dateTimeLocal: "YYYY-MM-DD hh:mm:ss a",
-    OverrideDateFormat: "DD-MMM-YYYY",
-};
 const componentMap = {
     date: DatePicker,
     datetime: DateTimePicker,
     dateTimeLocal: DateTimePicker
 }
 const LocalizedDatePicker = (props) => {
+    const { fixedFilterFormat } = utils;
     const { item, applyValue, convert } = props;
     const { systemDateTimeFormat, stateData } = useStateContext();
     const columnType = props?.type || 'date';
