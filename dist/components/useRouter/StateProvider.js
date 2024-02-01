@@ -56,7 +56,7 @@ const StateProvider = _ref => {
       dispatchData,
       preferenceApi
     } = _ref2;
-    let params = {
+    const params = {
       action: 'list',
       id: preferenceName,
       Username
@@ -86,7 +86,7 @@ const StateProvider = _ref => {
       setIsGridPreferenceFetched,
       preferenceApi
     } = _ref3;
-    let params = {
+    const params = {
       action: 'default',
       id: preferenceName,
       Username

@@ -35,7 +35,7 @@ const StateProvider = ({ children }) => {
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
   async function getAllSavedPreferences({ preferenceName, Username, history, dispatchData, preferenceApi }) {
-    let params = {
+    const params = {
       action: 'list',
       id: preferenceName,
       Username
@@ -45,7 +45,7 @@ const StateProvider = ({ children }) => {
     dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response.totalCount });
   }
   async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi }) {
-    let params = {
+    const params = {
       action: 'default',
       id: preferenceName,
       Username

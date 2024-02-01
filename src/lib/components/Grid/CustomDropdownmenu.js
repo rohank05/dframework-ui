@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import {
     useGridSelector,
-    gridFilterModelSelector,
+    gridFilterModelSelector
 } from '@mui/x-data-grid-premium';
 
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
@@ -27,9 +27,9 @@ const CustomDropdownmenu = (props) => {
         () =>
             filterModel.items?.filter((value) => {
                 if (value.operator === 'isAnyOf') {
-                    setIsMultiSelect(true)
+                    setIsMultiSelect(true);
                 } else {
-                    setIsMultiSelect(false)
+                    setIsMultiSelect(false);
                 }
                 return value.field === column.field;
             }),

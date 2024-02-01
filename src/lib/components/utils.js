@@ -8,7 +8,7 @@ const utils = {
         date: "YYYY-MM-DD",
         datetime: "YYYY-MM-DD hh:mm:ss a",
         dateTimeLocal: "YYYY-MM-DD hh:mm:ss a",
-        OverrideDateFormat: "DD-MMM-YYYY",
+        OverrideDateFormat: "DD-MMM-YYYY"
     }
 }
 
