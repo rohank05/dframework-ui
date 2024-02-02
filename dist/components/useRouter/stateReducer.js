@@ -52,9 +52,21 @@ const stateReducer = (state, action) => {
       return _objectSpread(_objectSpread({}, state), {}, {
         getUserData: action.payload
       });
-    case _actions.default.ACOSTA_REPORT_COLUMNS:
+    case _actions.default.UDPATE_PREFERENCES:
       return _objectSpread(_objectSpread({}, state), {}, {
-        getAcostaColumns: action.payload
+        preferences: action.payload
+      });
+    case _actions.default.SET_CURRENT_PREFERENCE_NAME:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        currentPreference: action.payload
+      });
+    case _actions.default.TOTAL_PREFERENCES:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        totalPreferences: action.payload
+      });
+    case _actions.default.UPDATE_LOADER_STATE:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        loaderOpen: action.payload
       });
     default:
       return state;

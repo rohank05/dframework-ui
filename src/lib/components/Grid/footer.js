@@ -7,13 +7,14 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import React,{ useEffect, useState } from 'react';
-import useLocalization from '../mui/locale/localization';
+import { useStateContext } from '../useRouter/StateProvider';
 const Footer = ({ pagination, apiRef }) => {
     const page = apiRef.current.state.pagination.paginationModel.page;
     const rowsPerPage = apiRef.current.state.pagination.paginationModel.pageSize;
     const totalRows = apiRef.current.state.rows.totalRowCount;
     const totalPages = Math.ceil(totalRows / rowsPerPage);
     const [pageNumber, setPageNumber] = useState(page + 1);
+    const { useLocalization } = useStateContext();
     const { getLocalizedString } = useLocalization();
 
     const handleChange = function (e) {

@@ -10,9 +10,8 @@ import Box from '@mui/material/Box';
 import FormLayout from './field-mapper';
 import { useSnackbar } from '../SnackBar';
 import { DialogComponent } from '../Dialog';
-import { useRouter } from '../useRouter/useRouter';
 import PageTitle from '../PageTitle';
-import { useStateContext } from '../useRouter/StateProvider';
+import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
@@ -106,7 +105,6 @@ const Form = ({
     }
 
     const setActiveRecord = function ({ id, title, record, lookups }) {
-        console.log("setActiveRecord", record, lookups);
         const isCopy = idWithOptions.indexOf("-") > -1;
         const isNew = !id || id === "0";
         const localTitle = isNew ? "Create" : (isCopy ? "Copy" : "Edit");

@@ -13,10 +13,10 @@ require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.object.assign.js");
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.promise.js");
-require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.parse-int.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
@@ -36,7 +36,6 @@ var _index2 = require("../Dialog/index");
 var _crudHelper = require("./crud-helper");
 var _propTypes = _interopRequireDefault(require("prop-types"));
 var _footer = require("./footer");
-var _useRouter = require("../useRouter/useRouter");
 var _template = _interopRequireDefault(require("./template"));
 var _material = require("@mui/material");
 var _Check = _interopRequireDefault(require("@mui/icons-material/Check"));
@@ -46,6 +45,9 @@ var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _StateProvider = require("../useRouter/StateProvider");
 var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
+var _GridPreference = _interopRequireDefault(require("./GridPreference"));
+var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
+var _utils = _interopRequireDefault(require("../utils"));
 const _excluded = ["row", "field", "id"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -183,7 +185,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
-  var _stateData$gridSettin, _stateData$gridSettin2;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
   let {
     useLinkColumn = true,
     model,
@@ -201,6 +203,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     selected,
     assigned,
     available,
+    disableCellRedirect = false,
     onAssignChange,
     customStyle,
     onCellClick,
@@ -208,7 +211,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     chartFilters,
     clearChartFilter,
     showFullScreenLoader,
-    onRowDoubleClick
+    customFilters,
+    onRowDoubleClick,
+    baseFilters,
+    onRowClick = () => {},
+    gridStyle,
+    reRenderKey,
+    additionalFilters
   } = _ref2;
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
     pageSize: defaultPageSize,
@@ -251,11 +260,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const {
     pathname,
     navigate
-  } = (0, _useRouter.useRouter)();
+  } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
   const {
     idProperty = "id",
-    showHeaderFilters = true
+    showHeaderFilters = true,
+    disableRowSelectionOnClick = true,
+    createdOnKeepLocal = true,
+    hideBackButton = false,
+    hideTopFilters = true,
+    updatePageTitle = true,
+    isElasticScreen = false
   } = model;
   const isReadOnly = model.readOnly === true;
   const isDoubleClicked = model.doubleClicked === false;
@@ -263,27 +278,35 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
   const toLink = model.columns.map(item => item.link);
+  const [isGridPreferenceFetched, setIsGridPreferenceFetched] = (0, _react.useState)(false);
   const classes = useStyles();
   const {
     systemDateTimeFormat,
     stateData,
     dispatchData,
-    formatDate
+    formatDate,
+    removeCurrentPreferenceName,
+    getAllSavedPreferences,
+    applyDefaultPreferenceIfExists
   } = (0, _StateProvider.useStateContext)();
   const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
   const {
     ClientId
-  } = stateData.getUserData && stateData.getUserData.tags ? stateData.getUserData.tags : 0;
-  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url;
-  const acostaValidateReportUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.AcostaValidateReportUrl;
+  } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
+  const {
+    Username
+  } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
+  const routesWithNoChildRoute = ((_stateData$gridSettin = stateData.gridSettings.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.routesWithNoChildRoute) || [];
+  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
+  const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
+  const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
+  const acostaValidateReportUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.AcostaValidateReportUrl;
   const EXCEL_FORMAT = 'XLSX';
-  const ACOSTA_REPORT_COLUMNS = stateData.getAcostaColumns;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-  const filterFieldDataTypes = {
-    Number: 'number',
-    String: 'string',
-    Boolean: 'boolean'
-  };
+  const {
+    filterFieldDataTypes
+  } = _utils.default;
+  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
   const gridColumnTypes = {
     "radio": {
       "type": "singleSelect",
@@ -311,6 +334,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         columnType: "datetime"
       })
     },
+    "dateTimeLocal": {
+      "valueFormatter": _ref5 => {
+        let {
+          value
+        } = _ref5;
+        return formatDate(value, false, false, stateData.dateTime);
+      },
+      "filterOperators": (0, _LocalizedDatePicker.default)({
+        type: "dateTimeLocal",
+        convert: true
+      })
+    },
     "boolean": {
       renderCell: booleanIconRenderer
     }
@@ -318,13 +353,51 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   (0, _react.useEffect)(() => {
     dataRef.current = data;
   }, [data]);
-  const lookupOptions = _ref5 => {
+  (0, _react.useEffect)(() => {
+    if (customFilters && Object.keys(customFilters) != 0) {
+      if (customFilters.clear) {
+        let filterObject = {
+          items: [],
+          logicOperator: "and",
+          quickFilterValues: [],
+          quickFilterLogicOperator: "and"
+        };
+        setFilterModel(filterObject);
+        return;
+      } else {
+        const newArray = [];
+        for (const key in customFilters) {
+          if (key === 'startDate' || key === 'endDate') {
+            newArray.push(customFilters[key]);
+          } else {
+            if (customFilters.hasOwnProperty(key)) {
+              const newObj = {
+                field: key,
+                value: customFilters[key],
+                operator: "equals",
+                type: "string"
+              };
+              newArray.push(newObj);
+            }
+          }
+        }
+        let filterObject = {
+          items: newArray,
+          logicOperator: "and",
+          quickFilterValues: [],
+          quickFilterLogicOperator: "and"
+        };
+        setFilterModel(filterObject);
+      }
+    }
+  }, [customFilters]);
+  const lookupOptions = _ref6 => {
     let {
         row,
         field,
         id
-      } = _ref5,
-      others = _objectWithoutProperties(_ref5, _excluded);
+      } = _ref6,
+      others = _objectWithoutProperties(_ref6, _excluded);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -360,6 +433,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
       if (overrides.valueOptions === "lookup") {
         overrides.valueOptions = lookupOptions;
+        let lookupFilters = [...(0, _xDataGridPremium.getGridDateOperators)(), ...(0, _xDataGridPremium.getGridStringOperators)()].filter(operator => ['is', 'not', 'isAnyOf'].includes(operator.value));
+        overrides.filterOperators = lookupFilters.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
+          InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
+            column: _objectSpread(_objectSpread({}, column), {}, {
+              dataRef: dataRef
+            })
+          }, params, {
+            autoHighlight: true
+          })) : undefined
+        }));
       }
       if (column.linkTo) {
         overrides.cellClassName = "mui-grid-linkColumn";
@@ -477,14 +560,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let contentType = arguments.length > 2 ? arguments[2] : undefined;
     let columns = arguments.length > 3 ? arguments[3] : undefined;
     let isPivotExport = arguments.length > 4 ? arguments[4] : undefined;
+    let isElasticExport = arguments.length > 5 ? arguments[5] : undefined;
     const {
       pageSize,
       page
     } = paginationModel;
-    let gridApi = "".concat(url).concat(model.api || api);
+    let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
     if (isPivotExport) {
-      gridApi = model === null || model === void 0 ? void 0 : model.pivotAPI;
+      gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model === null || model === void 0 ? void 0 : model.pivotAPI);
       controllerType = 'cs';
     }
     if (assigned || available) {
@@ -510,6 +594,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         chartFilters.items.length = 0;
       }
     }
+    if (additionalFilters) {
+      finalFilters.items = [...finalFilters.items, ...additionalFilters];
+    }
     (0, _crudHelper.getList)({
       action,
       page: !contentType ? page : 0,
@@ -528,7 +615,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       contentType,
       columns,
       template: isPivotExport ? model === null || model === void 0 ? void 0 : model.template : null,
-      configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null
+      configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null,
+      dispatchData,
+      showFullScreenLoader,
+      history: navigate,
+      baseFilters,
+      isElasticExport
     });
   };
   const openForm = function openForm(id) {
@@ -629,7 +721,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   const handleDelete = async function handleDelete() {
-    let gridApi = "".concat(url).concat(model.api || api);
+    let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     const result = await (0, _crudHelper.deleteRecord)({
       id: record === null || record === void 0 ? void 0 : record.id,
       api: gridApi,
@@ -652,7 +744,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setIsDeleting(false);
   };
   const onCellDoubleClick = event => {
-    if (!isReadOnly && !isDoubleClicked) {
+    if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
       const {
         row: record
       } = event;
@@ -667,20 +759,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setSelectedOrder(null);
     fetchData();
   };
-  // const onCellDoubleClick = (event) => {
-  //     if (model.showModal) {
-  //         setIsOrderDetailModalOpen(true);
-  //         const { row } = event;
-  //         setSelectedOrder(row);
-  //     } else {
-  //         if (!isReadOnly) {
-  //             const { row: record } = event;
-  //             openForm(record[idProperty]);
-  //         }
-  //         return null;
-  //     }
-  // };
-
   const onAdd = () => {
     openForm(0);
   };
@@ -694,11 +772,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref6 => {
+  const updateAssignment = _ref7 => {
     let {
       unassign,
       assign
-    } = _ref6;
+    } = _ref7;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -713,13 +791,42 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       unassign: selection
     });
   };
+  (0, _react.useEffect)(() => {
+    removeCurrentPreferenceName({
+      dispatchData
+    });
+    getAllSavedPreferences({
+      preferenceName: model.preferenceId,
+      history: navigate,
+      dispatchData,
+      Username,
+      preferenceApi
+    });
+    applyDefaultPreferenceIfExists({
+      preferenceName: model.preferenceId,
+      history: navigate,
+      dispatchData,
+      Username,
+      gridRef: apiRef,
+      setIsGridPreferenceFetched,
+      preferenceApi
+    });
+  }, []);
   const CustomToolbar = function CustomToolbar(props) {
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+      className: "preference-name-text",
+      variant: "h6",
+      component: "h6",
+      textAlign: "center",
+      sx: {
+        ml: 1
+      }
+    }, "Applied Preference - ", currentPreference), (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
@@ -752,6 +859,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       handleExport: handleExport,
       showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
       showOnlyExcelExport: model.showOnlyExcelExport
+    }), model.preferenceId && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
+      preferenceName: model.preferenceId,
+      gridRef: apiRef,
+      columns: gridColumns,
+      setIsGridPreferenceFetched: setIsGridPreferenceFetched
     })));
   };
   const getGridRowId = row => {
@@ -821,7 +933,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           }
         });
         customExportRef.current.setExportParams({
-          ExportCols: ACOSTA_REPORT_COLUMNS,
+          ExportCols: [],
           filters: newParams,
           title: "Acosta Report",
           fileName: "Acosta_Report",
@@ -832,9 +944,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  (0, _react.useEffect)(fetchData, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters]);
   (0, _react.useEffect)(() => {
-    if (forAssignment) {
+    if (isGridPreferenceFetched) {
+      fetchData();
+    }
+  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched]);
+  (0, _react.useEffect)(() => {
+    if (forAssignment || !updatePageTitle) {
       return;
     }
     dispatchData({
@@ -851,7 +967,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let backRoute = pathname;
 
     // we do not need to show the back button for these routes
-    if (['/Installations', '/UserLogin'].includes(backRoute)) {
+    if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
       dispatchData({
         type: _actions.default.SET_PAGE_BACK_BUTTON,
         payload: {
@@ -887,6 +1003,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       const column = gridColumns.find(col => col.field === field);
       const isNumber = column.type === filterFieldDataTypes.Number;
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
+        var _gridColumns$filter$;
+        const isKeywordField = isElasticScreen && ((_gridColumns$filter$ = gridColumns.filter(element => element.field === item.field)[0]) === null || _gridColumns$filter$ === void 0 ? void 0 : _gridColumns$filter$.isKeywordField);
+        if (isKeywordField) {
+          item.filterField = "".concat(item.field, ".keyword");
+        }
         return item;
       }
       const updatedValue = isNumber ? null : value;
@@ -919,8 +1040,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
+  const updateSort = e => {
+    const sort = e.map(ele => {
+      var _gridColumns$filter$2;
+      const isKeywordField = isElasticScreen && ((_gridColumns$filter$2 = gridColumns.filter(element => element.field === ele.field)[0]) === null || _gridColumns$filter$2 === void 0 ? void 0 : _gridColumns$filter$2.isKeywordField);
+      return _objectSpread(_objectSpread({}, ele), {}, {
+        filterField: isKeywordField ? "".concat(ele.field, ".keyword") : ele.field
+      });
+    });
+    setSortModel(sort);
+  };
   return /*#__PURE__*/_react.default.createElement("div", {
-    style: customStyle
+    style: gridStyle || customStyle
   }, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
     sx: {
       "& .MuiTablePagination-selectLabel": {
@@ -951,12 +1082,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     sortingMode: isClient,
     filterMode: isClient,
     keepNonExistentRowsSelected: true,
-    onSortModelChange: setSortModel,
+    onSortModelChange: updateSort,
     onFilterModelChange: updateFilters,
     rowSelection: selection,
     onRowSelectionModelChange: setSelection,
     filterModel: filterModel,
     getRowId: getGridRowId,
+    onRowClick: onRowClick,
     slots: {
       headerFilterMenu: false,
       toolbar: CustomToolbar,
@@ -977,7 +1109,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     apiRef: apiRef,
     disableAggregation: true,
     disableRowGrouping: true,
-    disableRowSelectionOnClick: true,
+    disableRowSelectionOnClick: disableRowSelectionOnClick,
     autoHeight: true,
     initialState: {
       columns: {

@@ -1,15 +1,3 @@
-// import data from 'pt-pt';
-
-// Object.assign(data.components.MuiDataGrid.defaultProps.localeText, {
-
-// });
-
-// const addButton = ({ onClick }) => {
-//   return (
-//     <Button onClick={onClick}>getLocalizedString("df", "Add")</Button>
-//   )
-// }
-
 export default {
   components: {
     MuiDataGrid: {

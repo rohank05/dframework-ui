@@ -22,7 +22,6 @@ var _Box = _interopRequireDefault(require("@mui/material/Box"));
 var _fieldMapper = _interopRequireDefault(require("./field-mapper"));
 var _SnackBar = require("../SnackBar");
 var _Dialog = require("../Dialog");
-var _useRouter = require("../useRouter/useRouter");
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
@@ -56,7 +55,7 @@ const Form = _ref => {
     navigate,
     getParams,
     useParams
-  } = (0, _useRouter.useRouter)();
+  } = (0, _StateProvider.useRouter)();
   const {
     id: idWithOptions
   } = useParams() || getParams;
@@ -151,7 +150,6 @@ const Form = _ref => {
       record,
       lookups
     } = _ref3;
-    console.log("setActiveRecord", record, lookups);
     const isCopy = idWithOptions.indexOf("-") > -1;
     const isNew = !id || id === "0";
     const localTitle = isNew ? "Create" : isCopy ? "Copy" : "Edit";

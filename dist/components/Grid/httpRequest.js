@@ -17,7 +17,7 @@ require("core-js/modules/es.promise.js");
 require("core-js/modules/es.array.push.js");
 var _react = _interopRequireDefault(require("react"));
 var _axios = _interopRequireDefault(require("axios"));
-var _index = require("../SnackBar/index");
+var _actions = _interopRequireDefault(require("../useRouter/actions"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -62,11 +62,17 @@ const request = async _ref => {
     jsonPayload = false,
     additionalParams = {},
     additionalHeaders = {},
-    disableLoader = false
+    disableLoader = false,
+    dispatchData
   } = _ref;
-  const snackbar = (0, _index.useSnackbar)();
   if (params.exportData) {
     return exportRequest(url, params);
+  }
+  if (!disableLoader) {
+    dispatchData({
+      type: _actions.default.UPDATE_LOADER_STATE,
+      payload: true
+    });
   }
   pendingRequests++;
   let reqParams = _objectSpread({
@@ -85,11 +91,16 @@ const request = async _ref => {
     pendingRequests--;
     let data = response.data;
     if (response) {
+      if (pendingRequests === 0 && !disableLoader) {
+        dispatchData({
+          type: 'UPDATE_LOADER_STATE',
+          loaderOpen: false
+        });
+      }
       if (response.status === 200) {
         let json = response.data;
         if (json.success === false) {
           if (json.info === 'Session has expired!') {
-            snackbar.showError('error: Your session has expired. Please login again.');
             history.push('/login');
             return;
           } else if (response.status === 200) {
@@ -106,12 +117,8 @@ const request = async _ref => {
     var _ex$response, _ex$response2;
     pendingRequests--;
     if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === 401) {
-      snackbar.showError('error: You are not authorized to access this page');
       history.push('/login');
-    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {
-      var _ex$response3;
-      snackbar.showError("error: ".concat(ex === null || ex === void 0 || (_ex$response3 = ex.response) === null || _ex$response3 === void 0 || (_ex$response3 = _ex$response3.data) === null || _ex$response3 === void 0 ? void 0 : _ex$response3.info));
-    } else {
+    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {} else {
       console.error(ex);
       return {
         error: ex.response

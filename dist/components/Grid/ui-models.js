@@ -80,8 +80,7 @@ class UiModel {
     });
     const {
       title,
-      controllerType,
-      url
+      controllerType
     } = modelConfig;
     let {
       api,
@@ -91,8 +90,7 @@ class UiModel {
       api = "".concat(title.replaceAll(nonAlphaNumeric, '-').toLowerCase());
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
-    //api = controllerType === 'cs' ? `${api}.ashx` : `${api}`;
-    // api = url
+    api = controllerType === 'cs' ? "".concat(api, ".ashx") : "".concat(api);
     const defaultValues = _objectSpread({}, modelConfig.defaultValues);
     Object.assign(this, _objectSpread(_objectSpread({
       standard: true,
@@ -146,18 +144,6 @@ class UiModel {
             config = config.max(Number(max), "".concat(formLabel, " must be at most ").concat(max, " characters long"));
           }
           break;
-        //Validation "oneToMany" type for grid to show snackbar - commenting out for use in future
-        // case 'oneToMany':
-        //     config = yup.string().label(formLabel).test(value => {
-        //         const valueArray = (value && value.length > 0) ? value.split(',').map(item => item.trim()) : [];
-        //         if (valueArray.length < 2) {
-        //             snackbar.showError(`Please assign at least 2 ${formLabel}`, null, "error");
-        //             return false;
-        //         } else {
-        //             return true;
-        //         }
-        //     });
-        //     break;
         case 'boolean':
           config = yup.bool().nullable().transform((value, originalValue) => {
             if (originalValue === '') return null;

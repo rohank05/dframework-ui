@@ -19,8 +19,14 @@ const stateReducer = (state, action) => {
             return { ...state, getLocal: action.payload };
         case actionsStateProvider.USER_DATA:
             return { ...state, getUserData: action.payload };
-            case actionsStateProvider.ACOSTA_REPORT_COLUMNS:
-                return { ...state, getAcostaColumns: action.payload };
+        case actionsStateProvider.UDPATE_PREFERENCES:
+            return { ...state, preferences: action.payload }
+        case actionsStateProvider.SET_CURRENT_PREFERENCE_NAME:
+            return { ...state, currentPreference: action.payload }
+        case actionsStateProvider.TOTAL_PREFERENCES:
+            return { ...state, totalPreferences: action.payload }
+        case actionsStateProvider.UPDATE_LOADER_STATE:
+            return { ...state, loaderOpen: action.payload }
         default:
             return state;
     }

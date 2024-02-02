@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import  {useSnackbar} from '../SnackBar/index';
+import actionsStateProvider from '../useRouter/actions';
 let pendingRequests = 0;
 const transport = axios.create({ withCredentials: true });
 const HTTP_STATUS_CODES = {
@@ -31,11 +31,13 @@ const exportRequest = (url, query) => {
     window.open(newURL, '_blank').focus();
 }
 
-const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false }) => {
-   const snackbar = useSnackbar();
+const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false,dispatchData }) => {
 
     if (params.exportData) {
         return exportRequest(url, params);
+    }
+    if (!disableLoader) {
+        dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
     }
     pendingRequests++;
     let reqParams = {
@@ -54,11 +56,13 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         pendingRequests--;
         let data = response.data;
         if (response) {
+            if (pendingRequests === 0 && !disableLoader) {
+                dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+            }
             if (response.status === 200) {
                 let json = response.data;
                 if (json.success === false) {
                     if (json.info === 'Session has expired!') {
-                        snackbar.showError('error: Your session has expired. Please login again.');
                         history.push('/login');
                         return;
                     }
@@ -76,10 +80,8 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
     } catch (ex) {
         pendingRequests--;
         if (ex?.response?.status === 401) {
-            snackbar.showError('error: You are not authorized to access this page');
             history.push('/login');
         } else if (ex?.response?.status === 500) {
-            snackbar.showError(`error: ${ex?.response?.data?.info}` );
         }
         else {
             console.error(ex);

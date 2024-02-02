@@ -19,15 +19,14 @@ const defaultValueConfigs = {
 class UiModel {
 
   constructor(modelConfig) {
-    const { title, controllerType, url } = modelConfig;
+    const { title, controllerType } = modelConfig;
     let { api, idProperty = api + 'Id' } = modelConfig;
 
     if (!api) {
       api = `${title.replaceAll(nonAlphaNumeric, '-').toLowerCase()}`;
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
-    // api = controllerType === 'cs' ? `${api}.ashx` : `internal-reporting/api/${api}`;
-    // api = url
+    api = controllerType === 'cs' ? `${api}.ashx` : `${api}`;
     const defaultValues = { ...modelConfig.defaultValues };
     Object.assign(this, { standard: true, idProperty, ...modelConfig, api });
     const columnVisibilityModel = {};
@@ -62,18 +61,6 @@ class UiModel {
             config = config.max(Number(max), `${formLabel} must be at most ${max} characters long`);
           }
           break;
-        //Validation "oneToMany" type for grid to show snackbar - commenting out for use in future
-        // case 'oneToMany':
-        //     config = yup.string().label(formLabel).test(value => {
-        //         const valueArray = (value && value.length > 0) ? value.split(',').map(item => item.trim()) : [];
-        //         if (valueArray.length < 2) {
-        //             snackbar.showError(`Please assign at least 2 ${formLabel}`, null, "error");
-        //             return false;
-        //         } else {
-        //             return true;
-        //         }
-        //     });
-        //     break;
         case 'boolean':
           config = yup.bool().nullable().transform((value, originalValue) => {
             if (originalValue === '') return null;

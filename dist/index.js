@@ -38,7 +38,7 @@ Object.defineProperty(exports, "PageTitle", {
 Object.defineProperty(exports, "RouterProvider", {
   enumerable: true,
   get: function get() {
-    return _useRouter.RouterProvider;
+    return _StateProvider.RouterProvider;
   }
 });
 Object.defineProperty(exports, "SnackbarContext", {
@@ -131,6 +131,12 @@ Object.defineProperty(exports, "useMobile", {
     return _useMobile.default;
   }
 });
+Object.defineProperty(exports, "useRouter", {
+  enumerable: true,
+  get: function get() {
+    return _StateProvider.useRouter;
+  }
+});
 Object.defineProperty(exports, "useSnackbar", {
   enumerable: true,
   get: function get() {
@@ -147,7 +153,6 @@ var _SnackBar = require("./components/SnackBar");
 var _Dialog = require("./components/Dialog");
 var _index = _interopRequireDefault(require("./components/Grid/index"));
 var _uiModels = require("./components/Grid/ui-models");
-var _useRouter = require("./components/useRouter/useRouter");
 var _HelpModal = _interopRequireDefault(require("./components/HelpModal"));
 var _PageTitle = _interopRequireDefault(require("./components/PageTitle"));
 var _Typography = _interopRequireDefault(require("./components/Typography"));
