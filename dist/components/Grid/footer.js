@@ -70,7 +70,7 @@ const Footer = _ref => {
     }
   }, pagination && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_Typography.default, {
     variant: "p"
-  }, getLocalizedString('Jumptopage'), ":"), /*#__PURE__*/_react.default.createElement(_TextField.default, {
+  }, t("Jump to page", tOpts), ":"), /*#__PURE__*/_react.default.createElement(_TextField.default, {
     sx: {
       width: 70,
       pl: 1
@@ -80,10 +80,12 @@ const Footer = _ref => {
     min: 1,
     value: pageNumber,
     onChange: handleChange,
-    onKeyPress: handleKeyPress
+    onKeyPress: handleKeyPress,
+    disabled: !totalRows
   }), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    disabled: !totalRows,
     size: "small",
     onClick: onPageChange
-  }, getLocalizedString('Go')))), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridFooter, null));
+  }, t('Go', tOpts)))), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridFooter, null));
 };
 exports.Footer = Footer;

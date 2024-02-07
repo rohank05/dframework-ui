@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import React,{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStateContext } from '../useRouter/StateProvider';
 const Footer = ({ pagination, apiRef }) => {
     const page = apiRef.current.state.pagination.paginationModel.page;
@@ -54,7 +54,7 @@ const Footer = ({ pagination, apiRef }) => {
             <Box sx={{ pl: 5 }}>
                 {pagination &&
                     <>
-                        <Typography variant="p">{getLocalizedString('Jumptopage')}:</Typography>
+                        <Typography variant="p">{t("Jump to page", tOpts)}:</Typography>
                         <TextField
                             sx={{ width: 70, pl: 1 }}
                             variant="standard"
@@ -63,8 +63,9 @@ const Footer = ({ pagination, apiRef }) => {
                             value={pageNumber}
                             onChange={handleChange}
                             onKeyPress={handleKeyPress}
+                            disabled={!totalRows}
                         />
-                        <Button size='small' onClick={onPageChange}>{getLocalizedString('Go')}</Button>
+                        <Button disabled={!totalRows} size='small' onClick={onPageChange}>{t('Go', tOpts)}</Button>
                     </>
                 }
             </Box>

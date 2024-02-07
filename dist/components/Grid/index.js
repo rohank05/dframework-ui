@@ -47,7 +47,6 @@ var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
-var _utils = _interopRequireDefault(require("../utils"));
 const _excluded = ["row", "field", "id"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -185,7 +184,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4;
   let {
     useLinkColumn = true,
     model,
@@ -300,13 +299,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
   const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
-  const acostaValidateReportUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.AcostaValidateReportUrl;
-  const EXCEL_FORMAT = 'XLSX';
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-  const {
-    filterFieldDataTypes
-  } = _utils.default;
-  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
+  const filterFieldDataTypes = {
+    Number: 'number',
+    String: 'string',
+    Boolean: 'boolean'
+  };
+  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.preferenceApi;
   const gridColumnTypes = {
     "radio": {
       "type": "singleSelect",
@@ -715,9 +714,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         row: record
       } = cellParams;
       const columnConfig = lookupMap[cellParams.field] || {};
-      navigate({
+      let historyObject = {
         pathname: _template.default.replaceTags(columnConfig.linkTo, record)
-      });
+      };
+      if (model.addRecordToState) {
+        historyObject.state = record;
+      }
+      history.push(historyObject);
     }
   };
   const handleDelete = async function handleDelete() {
@@ -744,11 +747,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setIsDeleting(false);
   };
   const onCellDoubleClick = event => {
+    const {
+      row: record
+    } = event;
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-      const {
-        row: record
-      } = event;
       openForm(record[idProperty]);
+    }
+    if (isReadOnly && model.rowRedirectLink) {
+      let historyObject = {
+        pathname: _template.default.replaceTags(model.rowRedirectLink, record)
+      };
+      if (model.addRecordToState) {
+        historyObject.state = record;
+      }
+      history.push(historyObject);
     }
     if (onRowDoubleClick) {
       onRowDoubleClick(event);
@@ -896,52 +908,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           keepLocal: lookup[ele].keepLocal === true
         };
       });
-      const fixedFilterFormat = {
-        dateTime: "MM/DD/YYYY hh:mm:ss A",
-        date: "MM/DD/YYYY"
-      };
-      if (model.isAcostaController) {
-        var _apiRef$current;
-        const filters = apiRef === null || apiRef === void 0 || (_apiRef$current = apiRef.current) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.state) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.filter) === null || _apiRef$current === void 0 || (_apiRef$current = _apiRef$current.filterModel) === null || _apiRef$current === void 0 ? void 0 : _apiRef$current.items;
-        const dateFilters = filters === null || filters === void 0 ? void 0 : filters.filter(ele => ele.field === constants.acostaReportStatusDateEnum.StatusDate);
-        let newParams = {
-          clientId: ClientId
-        };
-        (filters === null || filters === void 0 ? void 0 : filters.length) > 0 && filters.forEach(element => {
-          const {
-            field,
-            value
-          } = element;
-          if (constants.acostaReportFieldEnums[field]) {
-            newParams = _objectSpread(_objectSpread({}, newParams), {
-              [constants.acostaReportFieldEnums[field]]: value
-            });
-          } else if (field === constants.acostaReportStatusDateEnum.StatusDate) {
-            var _dateFilters$find, _dateFilters$find2;
-            const fromDate = (_dateFilters$find = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.after)) === null || _dateFilters$find === void 0 ? void 0 : _dateFilters$find.value;
-            const toDate = (_dateFilters$find2 = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.before)) === null || _dateFilters$find2 === void 0 ? void 0 : _dateFilters$find2.value;
-            if (fromDate && (0, _dayjs.default)(fromDate).isValid()) {
-              newParams = _objectSpread(_objectSpread({}, newParams), {
-                startDate: (0, _dayjs.default)(fromDate).format(fixedFilterFormat.date)
-              });
-            }
-            if (toDate && (0, _dayjs.default)(toDate).isValid()) {
-              newParams = _objectSpread(_objectSpread({}, newParams), {
-                endDate: (0, _dayjs.default)(toDate).format(fixedFilterFormat.date)
-              });
-            }
-          }
-        });
-        customExportRef.current.setExportParams({
-          ExportCols: [],
-          filters: newParams,
-          title: "Acosta Report",
-          fileName: "Acosta_Report",
-          format: EXCEL_FORMAT
-        });
-      } else {
-        fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
-      }
+      fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
     }
   };
   (0, _react.useEffect)(() => {
@@ -1138,9 +1105,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")), model.ExportExcelFile && /*#__PURE__*/_react.default.createElement(model.ExportExcelFile, {
-    ref: customExportRef,
-    url: acostaValidateReportUrl
-  }));
+  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")));
 }, areEqual);
 var _default = exports.default = GridBase;

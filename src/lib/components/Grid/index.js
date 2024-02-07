@@ -40,7 +40,6 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
-import utils from '../utils';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -206,10 +205,12 @@ const GridBase = memo(({
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
-    const acostaValidateReportUrl = stateData?.gridSettings?.permissions?.AcostaValidateReportUrl;
-    const EXCEL_FORMAT = 'XLSX';
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-    const { filterFieldDataTypes } = utils;
+    const filterFieldDataTypes = {
+        Number: 'number',
+        String: 'string',
+        Boolean: 'boolean'
+    };
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const gridColumnTypes = {
         "radio": {
@@ -513,9 +514,14 @@ const GridBase = memo(({
             }
             const { row: record } = cellParams;
             const columnConfig = lookupMap[cellParams.field] || {};
-            navigate({
-                pathname: template.replaceTags(columnConfig.linkTo, record)
-            });
+            let historyObject = {
+                pathname: template.replaceTags(columnConfig.linkTo, record),
+            }
+
+            if (model.addRecordToState) {
+                historyObject.state = record
+            }
+            history.push(historyObject);
         }
     };
 
@@ -538,10 +544,22 @@ const GridBase = memo(({
         setIsDeleting(false);
     };
     const onCellDoubleClick = (event) => {
+        const { row: record } = event;
         if ((!isReadOnly && !isDoubleClicked) && !disableCellRedirect) {
-            const { row: record } = event;
             openForm(record[idProperty]);
         }
+
+        if (isReadOnly && model.rowRedirectLink) {
+            let historyObject = {
+                pathname: template.replaceTags(model.rowRedirectLink, record),
+            }
+
+            if (model.addRecordToState) {
+                historyObject.state = record
+            }
+            history.push(historyObject);
+        }
+
         if (onRowDoubleClick) {
             onRowDoubleClick(event);
         }
@@ -639,33 +657,9 @@ const GridBase = memo(({
             visibleColumns.forEach(ele => {
                 columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true };
             })
-            const fixedFilterFormat = {
-                dateTime: "MM/DD/YYYY hh:mm:ss A",
-                date: "MM/DD/YYYY",
-            };
-            if (model.isAcostaController) {
-                const filters = apiRef?.current?.state?.filter?.filterModel?.items;
-                const dateFilters = filters?.filter(ele => ele.field === constants.acostaReportStatusDateEnum.StatusDate);
-                let newParams = { clientId: ClientId };
-                filters?.length > 0 && filters.forEach((element) => {
-                    const { field, value } = element;
-                    if (constants.acostaReportFieldEnums[field]) {
-                        newParams = { ...newParams, ...{ [constants.acostaReportFieldEnums[field]]: value } };
-                    } else if (field === constants.acostaReportStatusDateEnum.StatusDate) {
-                        const fromDate = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.after)?.value;
-                        const toDate = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.before)?.value;
-                        if (fromDate && dayjs(fromDate).isValid()) {
-                            newParams = { ...newParams, ...{ startDate: dayjs(fromDate).format(fixedFilterFormat.date) } }
-                        }
-                        if (toDate && dayjs(toDate).isValid()) {
-                            newParams = { ...newParams, ...{ endDate: dayjs(toDate).format(fixedFilterFormat.date) } }
-                        }
-                    }
-                })
-                customExportRef.current.setExportParams({ ExportCols: [], filters: newParams, title: "Acosta Report", fileName: "Acosta_Report", format: EXCEL_FORMAT });
-            } else {
-                fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
-            }
+
+            fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
+
         }
     };
     useEffect(() => {
@@ -832,8 +826,6 @@ const GridBase = memo(({
             {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
             }
             {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-
-            {model.ExportExcelFile && (<model.ExportExcelFile ref={customExportRef} url={acostaValidateReportUrl} />)}
         </div >
     );
 }, areEqual);
