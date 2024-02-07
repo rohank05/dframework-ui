@@ -54,7 +54,7 @@ const Footer = ({ pagination, apiRef }) => {
             <Box sx={{ pl: 5 }}>
                 {pagination &&
                     <>
-                        <Typography variant="p">{t("Jump to page", tOpts)}:</Typography>
+                        <Typography variant="p">{getLocalizedString('Jumptopage')}:</Typography>
                         <TextField
                             sx={{ width: 70, pl: 1 }}
                             variant="standard"
@@ -65,7 +65,7 @@ const Footer = ({ pagination, apiRef }) => {
                             onKeyPress={handleKeyPress}
                             disabled={!totalRows}
                         />
-                        <Button disabled={!totalRows} size='small' onClick={onPageChange}>{t('Go', tOpts)}</Button>
+                        <Button disabled={!totalRows} size='small' onClick={onPageChange}>{getLocalizedString('Go')}</Button>
                     </>
                 }
             </Box>
