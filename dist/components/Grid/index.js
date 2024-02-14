@@ -567,7 +567,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
     if (isPivotExport) {
-      gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model === null || model === void 0 ? void 0 : model.pivotAPI);
+      gridApi = "".concat(withControllersUrl).concat(model === null || model === void 0 ? void 0 : model.pivotAPI);
       controllerType = 'cs';
     }
     if (assigned || available) {
@@ -601,7 +601,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       page: !contentType ? page : 0,
       pageSize: !contentType ? pageSize : 1000000,
       sortModel,
-      filterModel,
+      filterModel: finalFilters,
       controllerType: controllerType,
       api: gridApi,
       setIsLoading,
@@ -830,7 +830,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+      variant: "h6",
+      component: "h3",
+      textAlign: "center",
+      sx: {
+        ml: 1
+      }
+    }, " ", t(model.gridSubTitle, tOpts)), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       className: "preference-name-text",
       variant: "h6",
       component: "h6",
@@ -900,22 +907,24 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         return;
       }
       visibleColumns.forEach(ele => {
+        var _lookup$ele;
         columns[ele] = {
           field: ele,
           width: lookup[ele].width,
           headerName: lookup[ele].headerName,
           type: lookup[ele].type,
-          keepLocal: lookup[ele].keepLocal === true
+          keepLocal: lookup[ele].keepLocal === true,
+          isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable
         };
       });
-      fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
+      fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     }
   };
   (0, _react.useEffect)(() => {
     if (isGridPreferenceFetched) {
       fetchData();
     }
-  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched]);
+  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey]);
   (0, _react.useEffect)(() => {
     if (forAssignment || !updatePageTitle) {
       return;
@@ -954,7 +963,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         backRoute: backRoute
       }
     });
-  }, []);
+  }, [isLoading]);
   const updateFilters = e => {
     var _e$items, _chartFilters$items2;
     const {

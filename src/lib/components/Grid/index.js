@@ -174,7 +174,7 @@ const GridBase = memo(({
     const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
     const [isDeleting, setIsDeleting] = useState(false);
     const [record, setRecord] = useState(null);
-    const snackbar = useSnackbar()
+    const snackbar = useSnackbar();
     const isClient = model.isClient === true ? 'client' : 'server';
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
@@ -404,7 +404,7 @@ const GridBase = memo(({
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
-            gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model?.pivotAPI}`;
+            gridApi = `${withControllersUrl}${model?.pivotAPI}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
@@ -430,7 +430,7 @@ const GridBase = memo(({
             page: !contentType ? page : 0,
             pageSize: !contentType ? pageSize : 1000000,
             sortModel,
-            filterModel,
+            filterModel: finalFilters,
             controllerType: controllerType,
             api: gridApi,
             setIsLoading,
@@ -614,6 +614,7 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
+                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {t(model.gridSubTitle, tOpts)}</Typography>}
                 {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title}`}</Button>}
@@ -655,18 +656,17 @@ const GridBase = memo(({
                 return;
             }
             visibleColumns.forEach(ele => {
-                columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true };
+                columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable };
             })
 
-            fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
-
+            fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }
     };
     useEffect(() => {
         if (isGridPreferenceFetched) {
             fetchData();
         }
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched])
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
         if (forAssignment || !updatePageTitle) {
@@ -693,7 +693,7 @@ const GridBase = memo(({
             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
             payload: { status: true, backRoute: backRoute },
         });
-    }, []);
+    }, [isLoading]);
 
     const updateFilters = (e) => {
         const { items } = e;
