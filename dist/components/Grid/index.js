@@ -720,7 +720,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (model.addRecordToState) {
         historyObject.state = record;
       }
-      history.push(historyObject);
+      navigate(historyObject);
     }
   };
   const handleDelete = async function handleDelete() {
@@ -760,7 +760,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (model.addRecordToState) {
         historyObject.state = record;
       }
-      history.push(historyObject);
+      navigate(historyObject);
     }
     if (onRowDoubleClick) {
       onRowDoubleClick(event);

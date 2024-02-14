@@ -521,7 +521,7 @@ const GridBase = memo(({
             if (model.addRecordToState) {
                 historyObject.state = record
             }
-            history.push(historyObject);
+            navigate(historyObject);
         }
     };
 
@@ -557,7 +557,7 @@ const GridBase = memo(({
             if (model.addRecordToState) {
                 historyObject.state = record
             }
-            history.push(historyObject);
+            navigate(historyObject);
         }
 
         if (onRowDoubleClick) {
