@@ -9,8 +9,10 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/es.promise.js");
-require("core-js/modules/es.array.push.js");
+require("core-js/modules/es.array.includes.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.trim.js");
+require("core-js/modules/es.array.push.js");
 var _react = _interopRequireWildcard(require("react"));
 var _Close = _interopRequireDefault(require("@mui/icons-material/Close"));
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
@@ -101,7 +103,7 @@ const initialValues = {
   isDefault: false
 };
 const GridPreferences = _ref => {
-  var _stateData$gridSettin;
+  var _stateData$gridSettin, _stateData$gridSettin2;
   let {
     preferenceName,
     gridRef,
@@ -125,6 +127,7 @@ const GridPreferences = _ref => {
   const snackbar = (0, _SnackBar.useSnackbar)();
   const [openDialog, setOpenDialog] = (0, _react.useState)(false);
   const [openForm, setOpenForm] = (0, _react.useState)(false);
+  const [filteredPrefs, setFilteredPrefs] = (0, _react.useState)([]);
   const [formType, setFormType] = (0, _react.useState)();
   const [menuAnchorEl, setMenuAnchorEl] = (0, _react.useState)();
   const [openPreferenceExistsModal, setOpenPreferenceExistsModal] = (0, _react.useState)(false);
@@ -134,6 +137,7 @@ const GridPreferences = _ref => {
   const preferences = stateData === null || stateData === void 0 ? void 0 : stateData.preferences;
   const totalPreferences = stateData === null || stateData === void 0 ? void 0 : stateData.totalPreferences;
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
+  const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.tablePreferenceEnums;
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
@@ -143,6 +147,15 @@ const GridPreferences = _ref => {
     });
     return schema;
   }, []);
+  (0, _react.useEffect)(() => {
+    const filteredPrefs = preferences === null || preferences === void 0 ? void 0 : preferences.filter(pref => {
+      if (pref.prefId === 0) {
+        return false;
+      }
+      return true;
+    });
+    setFilteredPrefs(filteredPrefs);
+  }, [preferences]);
   const formik = (0, _formik.useFormik)({
     initialValues,
     validationSchema: validationSchema,
@@ -187,10 +200,16 @@ const GridPreferences = _ref => {
     }
     await applyPreference(prefId);
   };
+  function isNotCoolRDefault() {
+    let prefName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+    return [defaultCoolRPrefName].includes(prefName.trim().toLowerCase());
+  }
   const savePreference = async values => {
     var _filterModel$items;
-    const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === values.prefName);
-    if (preferenceAlreadyExists > -1) {
+    const presetName = values.prefName.trim();
+    const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
+    const isNotCoolRDefaultName = isNotCoolRDefault(presetName);
+    if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotCoolRDefaultName) {
       setOpenPreferenceExistsModal(true);
       return;
     }
@@ -229,7 +248,7 @@ const GridPreferences = _ref => {
     let params = {
       action: 'save',
       id: preferenceName,
-      prefName: values.prefName,
+      prefName: presetName,
       prefDesc: values.prefDesc,
       prefValue: {
         sortModel,
@@ -261,31 +280,57 @@ const GridPreferences = _ref => {
     });
   };
   const applyPreference = async prefId => {
-    let params = {
-      action: 'load',
-      id: preferenceName,
-      Username,
-      prefId
-    };
-    const response = await (0, _httpRequest.default)({
-      url: preferenceApi,
-      params,
-      history: navigate,
-      dispatchData
-    });
-    if (response !== null && response !== void 0 && response.prefValue) {
-      let userPreferenceCharts = JSON.parse(response.prefValue);
-      userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
-        gridRef.current.setColumnWidth(ele.field, ele.width);
+    let userPreferenceCharts;
+    let coolrDefaultPreference = 'CoolR Default';
+    // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
+    if (prefId === 0) {
+      userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
+    } else {
+      const params = {
+        action: 'load',
+        id: preferenceName,
+        Username,
+        prefId
+      };
+      const response = await (0, _httpRequest.default)({
+        url: apis.Preference,
+        params,
+        history,
+        dispatch
       });
-      gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
-      gridRef.current.state.columns.orderedFields = userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.gridColumn.map(ele => ele.field);
-      gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
-      gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
-      gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
+      userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : null;
+      coolrDefaultPreference = response !== null && response !== void 0 && response.prefValue ? response.prefName : '';
+    }
+
+    // If userPreferenceCharts is available, apply preferences to the grid
+    if (userPreferenceCharts) {
+      const {
+        gridColumn,
+        columnVisibilityModel,
+        pinnedColumns,
+        sortModel,
+        filterModel
+      } = userPreferenceCharts;
+      gridColumn.forEach(_ref2 => {
+        let {
+          field,
+          width
+        } = _ref2;
+        return gridRef.current.setColumnWidth(field, width);
+      });
+      gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
+      gridRef.current.state.columns.orderedFields = gridColumn.map(_ref3 => {
+        let {
+          field
+        } = _ref3;
+        return field;
+      });
+      gridRef.current.setPinnedColumns(pinnedColumns);
+      gridRef.current.setSortModel(sortModel || []);
+      gridRef.current.setFilterModel(filterModel);
       dispatchData({
-        type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
-        payload: response.prefName
+        type: actions.SET_CURRENT_PREFERENCE_NAME,
+        payload: coolrDefaultPreference
       });
       setIsGridPreferenceFetched(true);
     }
@@ -310,6 +355,10 @@ const GridPreferences = _ref => {
   };
   const onCellClick = async (cellParams, event, details) => {
     let action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
+    if (cellParams.id === 0 && (action === actionTypes.Edit || action === actionTypes.Delete)) {
+      snackbar.showMessage('Default Preference Can Not Be' + ' ' + "".concat(action === actionTypes.Edit ? 'Edited' : 'Deleted'));
+      return;
+    }
     if (action === actionTypes.Edit) {
       setFormType('Modify');
       formik.setValues(cellParams === null || cellParams === void 0 ? void 0 : cellParams.row);
@@ -497,8 +546,8 @@ const GridPreferences = _ref => {
     columns: gridColumns,
     pageSizeOptions: [5, 10, 20, 50, 100],
     pagination: true,
-    rowCount: totalPreferences,
-    rows: preferences,
+    rowCount: filteredPrefs.length,
+    rows: filteredPrefs,
     getRowId: getGridRowId,
     slots: {
       headerFilterMenu: false

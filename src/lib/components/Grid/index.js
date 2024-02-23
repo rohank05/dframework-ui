@@ -10,7 +10,6 @@ import {
     GRID_CHECKBOX_SELECTION_COL_DEF,
     getGridStringOperators,
 } from '@mui/x-data-grid-premium';
-import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import EditIcon from '@mui/icons-material/Edit';
@@ -205,12 +204,17 @@ const GridBase = memo(({
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
+    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const filterFieldDataTypes = {
         Number: 'number',
         String: 'string',
         Boolean: 'boolean'
     };
+
+    const OrderSuggestionHistoryFields = {
+        OrderStatus: 'OrderStatusId'
+    }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const gridColumnTypes = {
         "radio": {
@@ -601,8 +605,8 @@ const GridBase = memo(({
 
     useEffect(() => {
         removeCurrentPreferenceName({ dispatchData });
-        getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi });
-        applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi });
+        getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+        applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
     }, [])
 
     const CustomToolbar = function (props) {
@@ -700,7 +704,13 @@ const GridBase = memo(({
         const updatedItems = items.map(item => {
             const { field, operator, type, value } = item;
             const column = gridColumns.find(col => col.field === field);
-            const isNumber = column.type === filterFieldDataTypes.Number;
+            const isNumber = column?.type === filterFieldDataTypes.Number;
+
+            if (field === OrderSuggestionHistoryFields.OrderStatus) {
+                const { filterField, ...newItem } = item;
+                return newItem;
+            }
+
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
                 const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === item.field)[0]?.isKeywordField;
                 if (isKeywordField) {
@@ -732,7 +742,7 @@ const GridBase = memo(({
                 }
             }
         }
-    }
+    };
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {

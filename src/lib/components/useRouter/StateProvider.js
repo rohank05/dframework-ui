@@ -34,17 +34,25 @@ const StateProvider = ({ children }) => {
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
-  async function getAllSavedPreferences({ preferenceName, Username, history, dispatchData, preferenceApi }) {
+  async function getAllSavedPreferences({ preferenceName, Username, history, dispatchData, preferenceApi, tablePreferenceEnums }) {
     const params = {
       action: 'list',
       id: preferenceName,
       Username
     }
+    const defaultCoolrPref = {
+      "prefName": "CoolR Default",
+      "prefId": 0,
+      "GridId": preferenceName,
+      "GridPreferenceId": 0,
+      "prefValue": tablePreferenceEnums[preferenceName],
+    }
     const response = await request({ url: preferenceApi, params, history, dispatchData });
-    dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: response?.preferences });
-    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response.totalCount });
+    let preferences = response?.preferences ? [defaultCoolrPref,...response?.preferences] : defaultCoolrPref
+    dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: preferences });
+    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response?.preferences.length });
   }
-  async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi }) {
+  async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums }) {
     const params = {
       action: 'default',
       id: preferenceName,
@@ -52,8 +60,8 @@ const StateProvider = ({ children }) => {
     }
 
     const response = await request({ url: preferenceApi, params, history, dispatchData });
-    if (response?.prefValue) {
-      let userPreferenceCharts = JSON.parse(response.prefValue);
+    let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
+    if (userPreferenceCharts) {
       userPreferenceCharts?.gridColumn.forEach(ele => {
         gridRef.current.setColumnWidth(ele.field, ele.width);
       })
