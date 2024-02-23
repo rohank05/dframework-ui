@@ -329,7 +329,7 @@ const GridPreferences = _ref => {
       gridRef.current.setSortModel(sortModel || []);
       gridRef.current.setFilterModel(filterModel);
       dispatchData({
-        type: actions.SET_CURRENT_PREFERENCE_NAME,
+        type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
         payload: coolrDefaultPreference
       });
       setIsGridPreferenceFetched(true);

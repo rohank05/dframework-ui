@@ -196,7 +196,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             gridRef.current.setSortModel(sortModel || []);
             gridRef.current.setFilterModel(filterModel);
 
-            dispatchData({ type: actions.SET_CURRENT_PREFERENCE_NAME, payload: coolrDefaultPreference });
+            dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: coolrDefaultPreference });
             setIsGridPreferenceFetched(true);
         }
     }
