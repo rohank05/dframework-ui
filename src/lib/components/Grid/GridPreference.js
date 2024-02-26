@@ -110,7 +110,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             Username,
             prefIdArray: id
         }
-        const response = await request({ url: apis.Preference, params, history: navigate, dispatchData });
+        const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
         if (response === true) {
             removeCurrentPreferenceName({ dispatchData });
             snackbar.showMessage('Preference Deleted Successfully.');
