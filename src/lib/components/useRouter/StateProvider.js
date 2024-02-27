@@ -69,7 +69,7 @@ const StateProvider = ({ children }) => {
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
       gridRef.current.setFilterModel(userPreferenceCharts?.filterModel);
-      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: response.prefName });
+      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: response?.prefValue ? response.prefName : 'CoolR Default' });
     }
     if (setIsGridPreferenceFetched) {
       setIsGridPreferenceFetched(true);

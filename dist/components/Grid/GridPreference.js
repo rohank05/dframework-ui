@@ -293,7 +293,7 @@ const GridPreferences = _ref => {
         prefId
       };
       const response = await (0, _httpRequest.default)({
-        url: apis.Preference,
+        url: preferenceApi,
         params,
         history,
         dispatch
