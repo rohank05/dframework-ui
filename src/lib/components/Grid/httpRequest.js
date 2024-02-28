@@ -63,7 +63,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
                 let json = response.data;
                 if (json.success === false) {
                     if (json.info === 'Session has expired!') {
-                        history.push('/login');
+                        history('/login');
                         return;
                     }
                     else if (response.status === 200) {
@@ -75,13 +75,19 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
                 }
             }
         } else {
+            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
             return data;
         }
     } catch (ex) {
         pendingRequests--;
+        if (pendingRequests === 0) {
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+        }
         if (ex?.response?.status === 401) {
-            history.push('/login');
+            dispatchData({ type: actions.SET_USER_DATA, userData: {} });
+            history('/login');
         } else if (ex?.response?.status === 500) {
+            
         }
         else {
             console.error(ex);

@@ -206,6 +206,7 @@ const GridPreferences = _ref => {
   }
   const savePreference = async values => {
     var _filterModel$items;
+    console.log("values", values);
     const presetName = values.prefName.trim();
     const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
     const isNotCoolRDefaultName = isNotCoolRDefault(presetName);
@@ -268,6 +269,8 @@ const GridPreferences = _ref => {
       history: navigate,
       dispatchData
     });
+    console.log("response", response);
+    console.log("true", response === true);
     if (response === true) {
       snackbar.showMessage('Preference Saved Successfully.');
     }

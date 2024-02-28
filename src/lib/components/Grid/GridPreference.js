@@ -128,6 +128,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         return [defaultCoolRPrefName].includes(prefName.trim().toLowerCase());
     }
     const savePreference = async (values) => {
+        console.log("values", values);
         const presetName = values.prefName.trim();
         const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
         const isNotCoolRDefaultName = isNotCoolRDefault(presetName)
@@ -161,6 +162,8 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             params["prefId"] = values.prefId;
         }
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
+        console.log("response", response);
+        console.log("true", response === true);
         if (response === true) {
             snackbar.showMessage('Preference Saved Successfully.');
         }
