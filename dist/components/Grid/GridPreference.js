@@ -296,7 +296,7 @@ const GridPreferences = _ref => {
         url: preferenceApi,
         params,
         history,
-        dispatch
+        dispatchData
       });
       userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : null;
       coolrDefaultPreference = response !== null && response !== void 0 && response.prefValue ? response.prefName : '';

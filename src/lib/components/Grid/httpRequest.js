@@ -31,7 +31,7 @@ const exportRequest = (url, query) => {
     window.open(newURL, '_blank').focus();
 }
 
-const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false,dispatchData }) => {
+const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false, dispatchData }) => {
 
     if (params.exportData) {
         return exportRequest(url, params);

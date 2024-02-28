@@ -180,7 +180,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 Username,
                 prefId
             };
-            const response = await request({ url: preferenceApi, params, history, dispatch });
+            const response = await request({ url: preferenceApi, params, history, dispatchData });
             userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : null;
             coolrDefaultPreference = response?.prefValue ? response.prefName : '';
         }
