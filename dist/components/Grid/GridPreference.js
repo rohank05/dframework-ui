@@ -10,7 +10,6 @@ exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.array.includes.js");
-require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/es.array.push.js");
 var _react = _interopRequireWildcard(require("react"));
@@ -102,6 +101,7 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
+const defaultCoolRPrefName = "coolr default";
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
   let {
@@ -206,7 +206,6 @@ const GridPreferences = _ref => {
   }
   const savePreference = async values => {
     var _filterModel$items;
-    console.log("values", values);
     const presetName = values.prefName.trim();
     const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
     const isNotCoolRDefaultName = isNotCoolRDefault(presetName);
@@ -269,8 +268,6 @@ const GridPreferences = _ref => {
       history: navigate,
       dispatchData
     });
-    console.log("response", response);
-    console.log("true", response === true);
     if (response === true) {
       snackbar.showMessage('Preference Saved Successfully.');
     }
