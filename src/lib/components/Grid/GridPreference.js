@@ -164,7 +164,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         if (response === true) {
             snackbar.showMessage('Preference Saved Successfully.');
         }
-        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi });
+        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
     }
 
     const applyPreference = async (prefId) => {

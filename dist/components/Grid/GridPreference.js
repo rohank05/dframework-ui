@@ -276,7 +276,8 @@ const GridPreferences = _ref => {
       Username,
       history: navigate,
       dispatchData,
-      preferenceApi
+      preferenceApi,
+      tablePreferenceEnums
     });
   };
   const applyPreference = async prefId => {
