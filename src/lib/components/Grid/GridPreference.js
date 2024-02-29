@@ -234,7 +234,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         }
         if (action === actionTypes.Delete) {
             await deletePreference(cellParams.id);
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
         }
     }
 

@@ -371,7 +371,9 @@ const GridPreferences = _ref => {
         preferenceName,
         history: navigate,
         dispatchData,
-        Username
+        Username,
+        preferenceApi,
+        tablePreferenceEnums
       });
     }
   };
