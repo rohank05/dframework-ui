@@ -54,12 +54,20 @@ const StateProvider = _ref => {
       Username,
       history,
       dispatchData,
-      preferenceApi
+      preferenceApi,
+      tablePreferenceEnums
     } = _ref2;
     const params = {
       action: 'list',
       id: preferenceName,
       Username
+    };
+    const defaultCoolrPref = {
+      "prefName": "CoolR Default",
+      "prefId": 0,
+      "GridId": preferenceName,
+      "GridPreferenceId": 0,
+      "prefValue": tablePreferenceEnums[preferenceName]
     };
     const response = await (0, _httpRequest.default)({
       url: preferenceApi,
@@ -67,13 +75,14 @@ const StateProvider = _ref => {
       history,
       dispatchData
     });
+    let preferences = response !== null && response !== void 0 && response.preferences ? [defaultCoolrPref, ...(response === null || response === void 0 ? void 0 : response.preferences)] : defaultCoolrPref;
     dispatchData({
       type: _actions.default.UDPATE_PREFERENCES,
-      payload: response === null || response === void 0 ? void 0 : response.preferences
+      payload: preferences
     });
     dispatchData({
       type: _actions.default.TOTAL_PREFERENCES,
-      payload: response.totalCount
+      payload: response === null || response === void 0 ? void 0 : response.preferences.length
     });
   }
   async function applyDefaultPreferenceIfExists(_ref3) {
@@ -84,7 +93,8 @@ const StateProvider = _ref => {
       Username,
       preferenceName,
       setIsGridPreferenceFetched,
-      preferenceApi
+      preferenceApi,
+      tablePreferenceEnums
     } = _ref3;
     const params = {
       action: 'default',
@@ -97,8 +107,8 @@ const StateProvider = _ref => {
       history,
       dispatchData
     });
-    if (response !== null && response !== void 0 && response.prefValue) {
-      let userPreferenceCharts = JSON.parse(response.prefValue);
+    let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
+    if (userPreferenceCharts) {
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
         gridRef.current.setColumnWidth(ele.field, ele.width);
       });
@@ -108,7 +118,7 @@ const StateProvider = _ref => {
       gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
-        payload: response.prefName
+        payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'CoolR Default'
       });
     }
     if (setIsGridPreferenceFetched) {

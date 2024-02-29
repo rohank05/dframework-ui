@@ -1,17 +1,19 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
     useGridSelector,
-    gridFilterModelSelector
+    gridFilterModelSelector,
 } from '@mui/x-data-grid-premium';
 
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
+const GridOperators = {
+    IsAnyOf: 'isAnyOf'
+};
+
 const CustomDropdownmenu = (props) => {
-    const { column, item, applyValue } = props;
+    const { column, item, applyValue, apiRef } = props;
     const lookupData = column?.dataRef?.current?.lookups;
-    let options = lookupData[column.lookup] || [];
-    const [isMultiSelect, setIsMultiSelect] = useState(false);
+    let options = column.customLookup || lookupData[column.lookup] || [];
 
     if (typeof column.lookup === 'string') {
         options = options.map(({ label, value, scopeId, ...option }) => ({
@@ -20,45 +22,51 @@ const CustomDropdownmenu = (props) => {
         }));
     }
 
-    const apiRef = props.apiRef;
     const filterModel = useGridSelector(apiRef, gridFilterModelSelector);
-
-    const currentFieldFilters = React.useMemo(
+    const currentFieldFilters = useMemo(
         () =>
             filterModel.items?.filter((value) => {
-                if (value.operator === 'isAnyOf') {
-                    setIsMultiSelect(true);
-                } else {
-                    setIsMultiSelect(false);
-                }
                 return value.field === column.field;
             }),
         [column.field, filterModel.items]
     );
 
-    const handleFilterChange = React.useCallback(
+    const handleFilterChange = useCallback(
         (event) => {
             let inputValue = event.target.value;
-            if (column.applyZeroFilter) {
-                inputValue = inputValue.toString();
+            let isAnyOfFilter = false;
+            if (filterModel.items.length >= 1) {
+                inputValue = inputValue.length === 1 ? inputValue[0] : inputValue;
+
+                for (const element of filterModel.items) {
+                    if (element.field !== item.field) {
+                        continue;
+                    }
+                    if (element.operator === GridOperators.IsAnyOf) {
+                        inputValue = Array.isArray(inputValue) ? inputValue : [inputValue];
+                        isAnyOfFilter = true;
+                    } else {
+                        isAnyOfFilter = false;
+                        inputValue = inputValue === 0 ? '0' : inputValue;
+                    }
+                }
             }
-            if (!inputValue) {
+
+            if (inputValue.length === 0) {
                 if (currentFieldFilters[0]) {
                     apiRef.current.deleteFilterItem(currentFieldFilters[0]);
                 }
                 return;
             }
 
-            // If multi-select, ensure the value is an array
-            const newValue = isMultiSelect ? [...inputValue] : inputValue;
-
-            applyValue({ ...item, value: newValue });
+            const newValue = inputValue;
+            const newitem = currentFieldFilters[0] ? currentFieldFilters[0] : item
+            applyValue({ ...newitem, value: newValue });
         },
-        [apiRef, column.field, currentFieldFilters, isMultiSelect]
+        [apiRef, column.applyZeroFilter, currentFieldFilters, item, applyValue]
     );
 
     const value = currentFieldFilters[0]?.value ?? '';
-    const isMulti = isMultiSelect ? { multiple: true } : {};
 
     return (
         <FormControl variant="standard" className="w-100">
@@ -66,9 +74,17 @@ const CustomDropdownmenu = (props) => {
             <Select
                 label={column.field}
                 variant="standard"
-                value={isMultiSelect ? [...value] : value}
+                value={value}
                 onChange={(e) => handleFilterChange(e)}
-                {...isMulti}
+                multiple={Array.isArray(value)}
+                MenuProps={{
+                    PaperProps: {
+                        style: {
+                            height: 'fit-content',
+                            overflow: 'hidden'
+                        },
+                    },
+                }}
             >
                 {options?.map((option, index) => (
                     <MenuItem key={index} value={option.value}>

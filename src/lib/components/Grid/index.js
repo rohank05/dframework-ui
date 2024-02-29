@@ -10,7 +10,6 @@ import {
     GRID_CHECKBOX_SELECTION_COL_DEF,
     getGridStringOperators,
 } from '@mui/x-data-grid-premium';
-import dayjs from 'dayjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CopyIcon from '@mui/icons-material/FileCopy';
 import EditIcon from '@mui/icons-material/Edit';
@@ -40,7 +39,6 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
-import utils from '../utils';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -175,7 +173,7 @@ const GridBase = memo(({
     const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
     const [isDeleting, setIsDeleting] = useState(false);
     const [record, setRecord] = useState(null);
-    const snackbar = useSnackbar()
+    const snackbar = useSnackbar();
     const isClient = model.isClient === true ? 'client' : 'server';
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
@@ -206,10 +204,17 @@ const GridBase = memo(({
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
-    const acostaValidateReportUrl = stateData?.gridSettings?.permissions?.AcostaValidateReportUrl;
-    const EXCEL_FORMAT = 'XLSX';
+    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-    const { filterFieldDataTypes } = utils;
+    const filterFieldDataTypes = {
+        Number: 'number',
+        String: 'string',
+        Boolean: 'boolean'
+    };
+
+    const OrderSuggestionHistoryFields = {
+        OrderStatus: 'OrderStatusId'
+    }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const gridColumnTypes = {
         "radio": {
@@ -403,7 +408,7 @@ const GridBase = memo(({
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
-            gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model?.pivotAPI}`;
+            gridApi = `${withControllersUrl}${model?.pivotAPI}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
@@ -429,7 +434,7 @@ const GridBase = memo(({
             page: !contentType ? page : 0,
             pageSize: !contentType ? pageSize : 1000000,
             sortModel,
-            filterModel,
+            filterModel: finalFilters,
             controllerType: controllerType,
             api: gridApi,
             setIsLoading,
@@ -513,9 +518,14 @@ const GridBase = memo(({
             }
             const { row: record } = cellParams;
             const columnConfig = lookupMap[cellParams.field] || {};
-            navigate({
-                pathname: template.replaceTags(columnConfig.linkTo, record)
-            });
+            let historyObject = {
+                pathname: template.replaceTags(columnConfig.linkTo, record),
+            }
+
+            if (model.addRecordToState) {
+                historyObject.state = record
+            }
+            navigate(historyObject);
         }
     };
 
@@ -538,10 +548,22 @@ const GridBase = memo(({
         setIsDeleting(false);
     };
     const onCellDoubleClick = (event) => {
+        const { row: record } = event;
         if ((!isReadOnly && !isDoubleClicked) && !disableCellRedirect) {
-            const { row: record } = event;
             openForm(record[idProperty]);
         }
+
+        if (isReadOnly && model.rowRedirectLink) {
+            let historyObject = {
+                pathname: template.replaceTags(model.rowRedirectLink, record),
+            }
+
+            if (model.addRecordToState) {
+                historyObject.state = record
+            }
+            navigate(historyObject);
+        }
+
         if (onRowDoubleClick) {
             onRowDoubleClick(event);
         }
@@ -583,8 +605,8 @@ const GridBase = memo(({
 
     useEffect(() => {
         removeCurrentPreferenceName({ dispatchData });
-        getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi });
-        applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi });
+        getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+        applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
     }, [])
 
     const CustomToolbar = function (props) {
@@ -596,6 +618,7 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
+                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {t(model.gridSubTitle, tOpts)}</Typography>}
                 {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title}`}</Button>}
@@ -637,42 +660,17 @@ const GridBase = memo(({
                 return;
             }
             visibleColumns.forEach(ele => {
-                columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true };
+                columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable };
             })
-            const fixedFilterFormat = {
-                dateTime: "MM/DD/YYYY hh:mm:ss A",
-                date: "MM/DD/YYYY",
-            };
-            if (model.isAcostaController) {
-                const filters = apiRef?.current?.state?.filter?.filterModel?.items;
-                const dateFilters = filters?.filter(ele => ele.field === constants.acostaReportStatusDateEnum.StatusDate);
-                let newParams = { clientId: ClientId };
-                filters?.length > 0 && filters.forEach((element) => {
-                    const { field, value } = element;
-                    if (constants.acostaReportFieldEnums[field]) {
-                        newParams = { ...newParams, ...{ [constants.acostaReportFieldEnums[field]]: value } };
-                    } else if (field === constants.acostaReportStatusDateEnum.StatusDate) {
-                        const fromDate = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.after)?.value;
-                        const toDate = dateFilters.find(ele => ele.operator === constants.acostaReportFilterOperators.before)?.value;
-                        if (fromDate && dayjs(fromDate).isValid()) {
-                            newParams = { ...newParams, ...{ startDate: dayjs(fromDate).format(fixedFilterFormat.date) } }
-                        }
-                        if (toDate && dayjs(toDate).isValid()) {
-                            newParams = { ...newParams, ...{ endDate: dayjs(toDate).format(fixedFilterFormat.date) } }
-                        }
-                    }
-                })
-                customExportRef.current.setExportParams({ ExportCols: [], filters: newParams, title: "Acosta Report", fileName: "Acosta_Report", format: EXCEL_FORMAT });
-            } else {
-                fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport);
-            }
+
+            fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }
     };
     useEffect(() => {
         if (isGridPreferenceFetched) {
             fetchData();
         }
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched])
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
         if (forAssignment || !updatePageTitle) {
@@ -699,14 +697,20 @@ const GridBase = memo(({
             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
             payload: { status: true, backRoute: backRoute },
         });
-    }, []);
+    }, [isLoading]);
 
     const updateFilters = (e) => {
         const { items } = e;
         const updatedItems = items.map(item => {
             const { field, operator, type, value } = item;
             const column = gridColumns.find(col => col.field === field);
-            const isNumber = column.type === filterFieldDataTypes.Number;
+            const isNumber = column?.type === filterFieldDataTypes.Number;
+
+            if (field === OrderSuggestionHistoryFields.OrderStatus) {
+                const { filterField, ...newItem } = item;
+                return newItem;
+            }
+
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
                 const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === item.field)[0]?.isKeywordField;
                 if (isKeywordField) {
@@ -738,7 +742,7 @@ const GridBase = memo(({
                 }
             }
         }
-    }
+    };
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {
@@ -832,8 +836,6 @@ const GridBase = memo(({
             {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
             }
             {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-
-            {model.ExportExcelFile && (<model.ExportExcelFile ref={customExportRef} url={acostaValidateReportUrl} />)}
         </div >
     );
 }, areEqual);

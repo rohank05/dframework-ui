@@ -80,8 +80,10 @@ const Footer = _ref => {
     min: 1,
     value: pageNumber,
     onChange: handleChange,
-    onKeyPress: handleKeyPress
+    onKeyPress: handleKeyPress,
+    disabled: !totalRows
   }), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    disabled: !totalRows,
     size: "small",
     onClick: onPageChange
   }, getLocalizedString('Go')))), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridFooter, null));

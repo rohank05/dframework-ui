@@ -2,6 +2,7 @@
 
 require("core-js/modules/es.symbol.description.js");
 require("core-js/modules/es.error.cause.js");
+require("core-js/modules/es.array.push.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -14,7 +15,6 @@ require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
 require("core-js/modules/es.promise.js");
-require("core-js/modules/es.array.push.js");
 var _react = _interopRequireDefault(require("react"));
 var _axios = _interopRequireDefault(require("axios"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
@@ -101,7 +101,7 @@ const request = async _ref => {
         let json = response.data;
         if (json.success === false) {
           if (json.info === 'Session has expired!') {
-            history.push('/login');
+            history('/login');
             return;
           } else if (response.status === 200) {
             return data;
@@ -111,13 +111,27 @@ const request = async _ref => {
         }
       }
     } else {
+      dispatchData({
+        type: _actions.default.UPDATE_LOADER_STATE,
+        payload: false
+      });
       return data;
     }
   } catch (ex) {
     var _ex$response, _ex$response2;
     pendingRequests--;
+    if (pendingRequests === 0) {
+      dispatchData({
+        type: 'UPDATE_LOADER_STATE',
+        loaderOpen: false
+      });
+    }
     if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === 401) {
-      history.push('/login');
+      dispatchData({
+        type: actions.SET_USER_DATA,
+        userData: {}
+      });
+      history('/login');
     } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {} else {
       console.error(ex);
       return {

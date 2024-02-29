@@ -72,10 +72,16 @@ const getList = async _ref => {
     let {
       lookup,
       type,
-      field
+      field,
+      keepLocal = false,
+      keepLocalDate
     } = _ref2;
     if (dateDataTypes.includes(type)) {
-      dateColumns.push(field);
+      dateColumns.push({
+        field,
+        keepLocal,
+        keepLocalDate
+      });
     }
     if (!lookup) {
       return;
@@ -152,18 +158,20 @@ const getList = async _ref => {
     form.setAttribute("method", "POST");
     form.setAttribute("id", "exportForm");
     form.setAttribute("target", "_blank");
-    for (const key in requestData) {
-      let v = requestData[key];
-      if (v === undefined || v === null) {
-        continue;
-      } else if (typeof v !== 'string') {
-        v = JSON.stringify(v);
+    if (template === null) {
+      for (const key in requestData) {
+        let v = requestData[key];
+        if (v === undefined || v === null) {
+          continue;
+        } else if (typeof v !== 'string') {
+          v = JSON.stringify(v);
+        }
+        let hiddenTag = document.createElement('input');
+        hiddenTag.type = "hidden";
+        hiddenTag.name = key;
+        hiddenTag.value = v;
+        form.append(hiddenTag);
       }
-      let hiddenTag = document.createElement('input');
-      hiddenTag.type = "hidden";
-      hiddenTag.name = key;
-      hiddenTag.value = v;
-      form.append(hiddenTag);
     }
     form.setAttribute('action', url);
     document.body.appendChild(form);
