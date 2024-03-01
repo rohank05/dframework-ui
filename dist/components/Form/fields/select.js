@@ -25,11 +25,10 @@ const field = _ref => {
     activeRecord,
     otherProps,
     classes,
-    onChange,
-    lookups
+    onChange
   } = _ref;
-  const options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
-  let inputValue = Number(formik.values[field]);
+  const options = typeof column.lookup === 'string' ? activeRecord === null || activeRecord === void 0 ? void 0 : activeRecord.lookups[column.lookup] : column.lookup;
+  let inputValue = formik.values[field];
   if (column.multiSelect) {
     if (!inputValue || inputValue.length === 0) {
       inputValue = [];
@@ -49,16 +48,21 @@ const field = _ref => {
     name: field,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
-    value: inputValue,
-    onChange: formik.handleChange,
+    value: inputValue
+    // label={fieldLabel}
+    ,
+    onChange: formik.handleChange
+    // onChange={onChange}
+    ,
     onBlur: formik.handleBlur,
     MenuProps: {
-      classes: {}
+      classes: {
+        // list: classes.select
+      }
     }
   }), Array.isArray(options) && options.map(option => /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     key: option.value,
     value: option.value
   }, option.label))), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
-var _default = field;
-exports.default = _default;
+var _default = exports.default = field;

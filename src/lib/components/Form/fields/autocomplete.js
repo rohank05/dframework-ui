@@ -4,13 +4,16 @@ import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-const Field = ({ column, field, fieldLabel, formik, combos, data, otherProps, model, fieldConfigs }) => {
-    const SurveyType = combos?.[model?.comboType];
+const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
     let inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
-    let filteredCombos = SurveyType?.filter(combo => inputValue.includes(combo.LookupId)) || [];
-    const isDisabled = fieldConfigs?.disabled;
+    const options = lookups ? lookups[column?.lookup] : [];
+    let filteredCombos = options?.filter(option => inputValue.includes(option.value)) || [];
+    let isDisabled;
+    if (mode !== 'copy') {
+        isDisabled = fieldConfigs?.disabled;
+    }
     const handleAutoCompleteChange = (event, newValue) => {
-        formik?.setFieldValue(field, newValue ? newValue.map(val => val.LookupId).join(', ') : '');
+        formik?.setFieldValue(field, newValue ? newValue.map(val => val.value).join(', ') : '');
     }
 
     return (
@@ -24,8 +27,8 @@ const Field = ({ column, field, fieldLabel, formik, combos, data, otherProps, mo
                 {...otherProps}
                 multiple
                 id={field}
-                options={SurveyType || []}
-                getOptionLabel={(option) => option.DisplayValue || ''}
+                options={options || []}
+                getOptionLabel={(option) => option.label || ''}
                 defaultValue={filteredCombos}
                 renderInput={(params) => <TextField {...params} variant="standard" />}
                 onChange={handleAutoCompleteChange}

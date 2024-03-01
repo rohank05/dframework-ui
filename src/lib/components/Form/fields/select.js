@@ -7,9 +7,9 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 
-const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, classes, onChange, lookups }) => {
-    const options = lookups ? lookups[column?.lookup] : [];
-    let inputValue = Number(formik.values[field]);
+const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, classes, onChange }) => {
+    const options = typeof column.lookup === 'string' ? activeRecord?.lookups[column.lookup] : column.lookup;
+    let inputValue = formik.values[field];
     if (column.multiSelect) {
         if (!inputValue || inputValue.length === 0) {
             inputValue = [];
@@ -33,10 +33,13 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, cl
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
                 value={inputValue}
+                // label={fieldLabel}
                 onChange={formik.handleChange}
+                // onChange={onChange}
                 onBlur={formik.handleBlur}
                 MenuProps={{
                     classes: {
+                        // list: classes.select
                     }
                 }}
             >

@@ -7,7 +7,7 @@ exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireDefault(require("react"));
 var _material = require("@mui/material");
-const _excluded = ["field", "formik", "orientation", "label", "lookups", "fieldConfigs", "mode", "column"];
+const _excluded = ["field", "formik", "orientation", "label", "lookups", "fieldConfigs", "mode"];
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
@@ -19,15 +19,13 @@ const Field = _ref => {
       label,
       lookups,
       fieldConfigs,
-      mode,
-      column
+      mode
     } = _ref,
     otherProps = _objectWithoutProperties(_ref, _excluded);
   const handleChange = event => {
     formik.setFieldValue(field, event.target.value);
   };
-  const options = lookups ? lookups[column.lookup] : [];
-  let inputValue = String(formik.values[field]) || Number(formik.values[field]);
+  const options = lookups ? lookups[otherProps === null || otherProps === void 0 ? void 0 : otherProps.column.lookup] : [];
   const theme = (0, _material.useTheme)();
   const isError = formik.touched[field] && Boolean(formik.errors[field]);
   let isDisabled;
@@ -43,7 +41,7 @@ const Field = _ref => {
     row: orientation === "row",
     "aria-label": label,
     name: field,
-    value: inputValue,
+    value: formik.values[field],
     onChange: handleChange
   }, options === null || options === void 0 ? void 0 : options.map((option, index) => /*#__PURE__*/_react.default.createElement(_material.FormControlLabel, {
     key: index,
@@ -57,5 +55,4 @@ const Field = _ref => {
     }
   }, formik.errors[field]));
 };
-var _default = Field;
-exports.default = _default;
+var _default = exports.default = Field;

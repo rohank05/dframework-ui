@@ -3,11 +3,12 @@ import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from '@mui/material/Alert';
 
 const SnackbarContext = createContext(null);
+const vertical = 'bottom';
+const horizontal = 'center';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
 const SnackbarProvider = ({ children }) => {
     const [message, setMessage] = useState(null);
     const [open, setOpen] = useState(false);
@@ -38,7 +39,6 @@ const SnackbarProvider = ({ children }) => {
             handleAction()
         }
     }
-
     return (
         <>
             <SnackbarContext.Provider
@@ -46,13 +46,12 @@ const SnackbarProvider = ({ children }) => {
             >
                 {children}
             </SnackbarContext.Provider>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical, horizontal }}>
                 <Alert severity={severity}>{message}</Alert>
             </Snackbar>
         </>
     )
 }
-
 const useSnackbar = function () {
     return useContext(SnackbarContext)
 }

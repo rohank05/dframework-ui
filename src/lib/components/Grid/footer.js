@@ -1,4 +1,3 @@
-
 import {
     GridFooterContainer,
     GridFooter
@@ -7,12 +6,16 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import React,{ useEffect, useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { useStateContext } from '../useRouter/StateProvider';
 const Footer = ({ pagination, apiRef }) => {
     const page = apiRef.current.state.pagination.paginationModel.page;
     const rowsPerPage = apiRef.current.state.pagination.paginationModel.pageSize;
+    const totalRows = apiRef.current.state.rows.totalRowCount;
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
     const [pageNumber, setPageNumber] = useState(page + 1);
+    const { useLocalization } = useStateContext();
+    const { getLocalizedString } = useLocalization();
 
     const handleChange = function (e) {
         let value = e.target?.value;
@@ -33,7 +36,9 @@ const Footer = ({ pagination, apiRef }) => {
     const onPageChange = function () {
         let targetPage = pageNumber === '' ? 1 : pageNumber;
         targetPage = Math.max(targetPage, 1);
+        targetPage = Math.min(targetPage, totalPages);
         apiRef.current.setPage(targetPage - 1);
+        setPageNumber(targetPage);
         if (pageNumber === '') {
             setPageNumber(1);
         }
@@ -49,7 +54,7 @@ const Footer = ({ pagination, apiRef }) => {
             <Box sx={{ pl: 5 }}>
                 {pagination &&
                     <>
-                        <Typography variant="p">Jump to page:</Typography>
+                        <Typography variant="p">{getLocalizedString('Jumptopage')}:</Typography>
                         <TextField
                             sx={{ width: 70, pl: 1 }}
                             variant="standard"
@@ -58,8 +63,9 @@ const Footer = ({ pagination, apiRef }) => {
                             value={pageNumber}
                             onChange={handleChange}
                             onKeyPress={handleKeyPress}
+                            disabled={!totalRows}
                         />
-                        <Button size='small' onClick={onPageChange}>Go</Button>
+                        <Button disabled={!totalRows} size='small' onClick={onPageChange}>{getLocalizedString('Go')}</Button>
                     </>
                 }
             </Box>

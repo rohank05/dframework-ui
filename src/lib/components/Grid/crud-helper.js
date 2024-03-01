@@ -1,14 +1,24 @@
+import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
+import request from "./httpRequest";
+
 const dateDataTypes = ['date', 'dateTime'];
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', type }) => {
+
+const exportRecordSize = 10000;
+
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
         setIsLoading(true);
+        if (showFullScreenLoader) {
+            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
+        }
     }
+
     const lookups = [];
     const dateColumns = [];
-    gridColumns.forEach(({ lookup, type, field }) => {
+    gridColumns.forEach(({ lookup, type, field, keepLocal = false, keepLocalDate }) => {
         if (dateDataTypes.includes(type)) {
-            dateColumns.push(field);
+            dateColumns.push({ field, keepLocal, keepLocalDate });
         }
         if (!lookup) {
             return;
@@ -21,14 +31,22 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     const where = [];
     if (filterModel?.items?.length) {
         filterModel.items.forEach(filter => {
-            if (["isEmpty", "isNotEmpty"].includes(filter.operator) || (filter.value !== null && filter.value !== undefined)) {
+            if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value) {
+                const { field, operator, filterField } = filter;
+                let { value } = filter;
                 const column = gridColumns.filter((item) => item.field === filter.field);
-                let value = filter.value === 'true' ? 1 : filter.value === 'false' ? 0 : filter.value;
+                const type = column[0]?.type;
+                if (type === 'boolean') {
+                    value = value === 'true' ? 1 : 0;
+                } else if (type === 'number') {
+                    value = Array.isArray(value) ? value.filter(e => e) : value;
+                }
+                value = filter.filterValues || value;
                 where.push({
-                    field: filter.field,
-                    operator: filter.operator,
+                    field: filterField || field,
+                    operator: operator,
                     value: value,
-                    type: column[0]?.type
+                    type: type
                 });
             }
         });
@@ -37,20 +55,38 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         where.push(...parentFilters);
     }
 
+    if (baseFilters) {
+        where.push(...baseFilters);
+    }
     const requestData = {
         start: page * pageSize,
-        limit: pageSize,
+        limit: isElasticExport ? modelConfig.exportSize : pageSize,
         ...extraParams,
-        sort: sortModel.map(sort => sort.field + ' ' + sort.sort).join(','),
-        where
+        logicalOperator: filterModel.logicOperator,
+        sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
+        where,
+        oderStatusId: oderStatusId,
+        isElasticExport,
+        fileName: modelConfig?.overrideFileName
     };
 
     if (lookups) {
         requestData.lookups = lookups.join(',');
     }
 
+    if (modelConfig?.limitToSurveyed) {
+        requestData.limitToSurveyed = modelConfig?.limitToSurveyed
+    }
+
     const headers = {};
-    const url = `${api}/${action}`;
+    let url = controllerType === 'cs' ? `${api}?action=${action}&asArray=0` : `${api}/${action}`;
+
+    if (template !== null) {
+        url += `&template=${template}`;
+    }
+    if (configFileName !== null) {
+        url += `&configFileName=${configFileName}`;
+    }
     if (contentType) {
         const form = document.createElement("form");
         requestData.responseType = contentType;
@@ -58,18 +94,20 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         form.setAttribute("method", "POST");
         form.setAttribute("id", "exportForm");
         form.setAttribute("target", "_blank")
-        for (const key in requestData) {
-            let v = requestData[key];
-            if (v === undefined || v === null) {
-                continue;
-            } else if (typeof v !== 'string') {
-                v = JSON.stringify(v);
+        if (template === null) {
+            for (const key in requestData) {
+                let v = requestData[key];
+                if (v === undefined || v === null) {
+                    continue;
+                } else if (typeof v !== 'string') {
+                    v = JSON.stringify(v);
+                }
+                let hiddenTag = document.createElement('input');
+                hiddenTag.type = "hidden";
+                hiddenTag.name = key;
+                hiddenTag.value = v;
+                form.append(hiddenTag);
             }
-            let hiddenTag = document.createElement('input');
-            hiddenTag.type = "hidden";
-            hiddenTag.name = key;
-            hiddenTag.value = v;
-            form.append(hiddenTag);
         }
         form.setAttribute('action', url);
         document.body.appendChild(form);
@@ -80,7 +118,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         return;
     }
     try {
-        const response = await transport({
+        let params = {
             url,
             method: 'POST',
             data: requestData,
@@ -88,27 +126,51 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 "Content-Type": "application/json",
                 ...headers
             },
-        });
+            credentials: 'include'
+        };
+
+        const response = await transport(params);
+        function isLocalTime(dateValue) {
+            const date = new Date(dateValue);
+            const localOffset = new Date().getTimezoneOffset();
+            const dateOffset = date.getTimezoneOffset();
+            return localOffset === dateOffset;
+        }
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const { records } = response.data;
+            const { records, userCurrencySymbol } = response.data;
             if (records) {
                 records.forEach(record => {
+                    if (record.hasOwnProperty("TotalOrder")) {
+                        record["TotalOrder"] = `${userCurrencySymbol}${record["TotalOrder"]}`;
+                    }
                     dateColumns.forEach(column => {
-                        if (record[column]) {
-                            record[column] = new Date(record[column]);
+                        const { field, keepLocal, keepLocalDate } = column;
+                        if (record[field]) {
+                            record[field] = new Date(record[field]);
+                            if (keepLocalDate) {
+                                const userTimezoneOffset = record[field].getTimezoneOffset() * 60000;
+                                record[field] = new Date(record[field].getTime() + userTimezoneOffset);
+                            }
+                            if (keepLocal && !isLocalTime(record[field])) {
+                                const userTimezoneOffset = record[field].getTimezoneOffset() * 60000;
+                                record[field] = new Date(record[field].getTime() + userTimezoneOffset);
+                            }
                         }
                     });
                 });
             }
             setData(response.data);
         } else {
-            console.log("error");
+            setError(response.statusText);
         }
     } catch (err) {
-        console.log(err);
+        setError(err);
     } finally {
         if (!contentType) {
             setIsLoading(false);
+            if (showFullScreenLoader) {
+                dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
+            }
         }
     }
 };
@@ -126,7 +188,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         }
     });
     searchParams.set("lookups", lookupsToFetch);
-    if (where && Object.keys(where).length) {
+    if (where && Object.keys(where)?.length) {
         searchParams.set("where", JSON.stringify(where));
     };
     try {
@@ -140,7 +202,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             let title = record[modelConfig.linkColumn];
             const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
             if (columnConfig && columnConfig.lookup) {
-                if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup].length) {
+                if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup]?.length) {
                     const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
                     if (lookupValue) {
                         title = lookupValue.label;
@@ -151,6 +213,11 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             const defaultValues = { ...modelConfig.defaultValues };
 
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
+        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            setError('Session Expired!');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
         } else {
             setError('Could not load record', response.body.toString());
         }
@@ -161,7 +228,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     }
 };
 
-const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
+const deleteRecord = async function ({ id, api, setIsLoading, setError, setErrorMessage }) {
+    let result = { success: false, error: '' };
     if (!id) {
         setError('Deleted failed. No active record.');
         return;
@@ -171,19 +239,33 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
         const response = await transport({
             url: `${api}/${id}`,
             method: 'DELETE',
+            credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
+            result.success = true;
             return true;
         }
+        if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            setError('Session Expired!');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        } else {
+            setError('Delete failed', response.body);
+        }
     } catch (error) {
-        setError('Deleted failed', error);
+        const errorMessage = error?.response?.data?.error;
+        result.error = errorMessage;
+        setErrorMessage(errorMessage);
     } finally {
         setIsLoading(false);
     }
+    return result;
 };
 
 const saveRecord = async function ({ id, api, values, setIsLoading, setError }) {
     let url, method;
+
     if (id !== 0) {
         url = `${api}/${id}`;
         method = 'PUT';
@@ -191,6 +273,8 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
         url = api;
         method = 'POST';
     }
+
+
     try {
         setIsLoading(true);
         const response = await transport({
@@ -208,7 +292,6 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
                 return data;
             }
             setError('Save failed', data.err || data.message);
-            console.log(data.err);
             return;
         }
         if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
@@ -220,11 +303,11 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             setError('Save failed', response.body);
         }
     } catch (error) {
-        console.log(error);
-        setError('Save failed', error.response.data);
+        setError('Save failed', error);
     } finally {
         setIsLoading(false);
     }
+
     return false;
 };
 

@@ -2,6 +2,7 @@
 
 require("core-js/modules/es.symbol.description.js");
 require("core-js/modules/es.error.cause.js");
+require("core-js/modules/es.array.push.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -14,29 +15,26 @@ require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
 require("core-js/modules/es.promise.js");
-require("core-js/modules/es.array.push.js");
 var _react = _interopRequireDefault(require("react"));
 var _axios = _interopRequireDefault(require("axios"));
-var _index = require("../SnackBar/index");
+var _actions = _interopRequireDefault(require("../useRouter/actions"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 let pendingRequests = 0;
-const transport = _axios.default.create({
+const transport = exports.transport = _axios.default.create({
   withCredentials: true
 });
-exports.transport = transport;
-const HTTP_STATUS_CODES = {
+const HTTP_STATUS_CODES = exports.HTTP_STATUS_CODES = {
   OK: 200,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500
 };
-exports.HTTP_STATUS_CODES = HTTP_STATUS_CODES;
 const getFormData = props => {
   let formData = new FormData();
   for (let key in props) {
@@ -64,11 +62,17 @@ const request = async _ref => {
     jsonPayload = false,
     additionalParams = {},
     additionalHeaders = {},
-    disableLoader = false
+    disableLoader = false,
+    dispatchData
   } = _ref;
-  const snackbar = (0, _index.useSnackbar)();
   if (params.exportData) {
     return exportRequest(url, params);
+  }
+  if (!disableLoader) {
+    dispatchData({
+      type: _actions.default.UPDATE_LOADER_STATE,
+      payload: true
+    });
   }
   pendingRequests++;
   let reqParams = _objectSpread({
@@ -87,12 +91,17 @@ const request = async _ref => {
     pendingRequests--;
     let data = response.data;
     if (response) {
+      if (pendingRequests === 0 && !disableLoader) {
+        dispatchData({
+          type: 'UPDATE_LOADER_STATE',
+          loaderOpen: false
+        });
+      }
       if (response.status === 200) {
         let json = response.data;
         if (json.success === false) {
           if (json.info === 'Session has expired!') {
-            snackbar.showError('error: Your session has expired. Please login again.');
-            history.push('/login');
+            history('/login');
             return;
           } else if (response.status === 200) {
             return data;
@@ -102,18 +111,28 @@ const request = async _ref => {
         }
       }
     } else {
+      dispatchData({
+        type: _actions.default.UPDATE_LOADER_STATE,
+        payload: false
+      });
       return data;
     }
   } catch (ex) {
     var _ex$response, _ex$response2;
     pendingRequests--;
+    if (pendingRequests === 0) {
+      dispatchData({
+        type: 'UPDATE_LOADER_STATE',
+        loaderOpen: false
+      });
+    }
     if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === 401) {
-      snackbar.showError('error: You are not authorized to access this page');
-      history.push('/login');
-    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {
-      var _ex$response3;
-      snackbar.showError("error: ".concat(ex === null || ex === void 0 || (_ex$response3 = ex.response) === null || _ex$response3 === void 0 || (_ex$response3 = _ex$response3.data) === null || _ex$response3 === void 0 ? void 0 : _ex$response3.info));
-    } else {
+      dispatchData({
+        type: actions.SET_USER_DATA,
+        userData: {}
+      });
+      history('/login');
+    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {} else {
       console.error(ex);
       return {
         error: ex.response
@@ -122,5 +141,4 @@ const request = async _ref => {
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null);
 };
-var _default = request;
-exports.default = _default;
+var _default = exports.default = request;
