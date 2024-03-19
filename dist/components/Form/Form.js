@@ -171,10 +171,10 @@ const Form = _ref => {
     }
     dispatchData({
       type: _actions.default.PAGE_TITLE_DETAILS,
-      payload: /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+      payload: {
         showBreadcrumbs: true,
         breadcrumbs: breadcrumbs
-      })
+      }
     });
   };
   const handleFormCancel = function handleFormCancel(event) {

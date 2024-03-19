@@ -937,12 +937,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     dispatchData({
       type: _actions.default.PAGE_TITLE_DETAILS,
-      payload: /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+      payload: {
         icon: "",
         titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
         titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
         title: model === null || model === void 0 ? void 0 : model.title
-      })
+      }
     });
   }, []);
   (0, _react.useEffect)(() => {
