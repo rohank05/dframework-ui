@@ -123,7 +123,7 @@ const Form = ({
         dispatchData({
             type: actionsStateProvider.PAGE_TITLE_DETAILS,
             payload: {
-                showBreadcrumbs:true, breadcrumbs:breadcrumbs
+                showBreadcrumbs: true, breadcrumbs: breadcrumbs
             },
         });
     }
