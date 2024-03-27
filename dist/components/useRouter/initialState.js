@@ -10,10 +10,7 @@ const initialState = {
   dataForm: '',
   pageTitleDetails: null,
   modal: null,
-  pageBackButton: {
-    status: false,
-    backRoute: ""
-  },
+  pageBackButton: null,
   gridSettings: {},
   getLocal: {},
   getUserData: null,

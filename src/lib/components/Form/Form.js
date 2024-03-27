@@ -122,9 +122,9 @@ const Form = ({
         }
         dispatchData({
             type: actionsStateProvider.PAGE_TITLE_DETAILS,
-            payload: (
-                <PageTitle showBreadcrumbs={true} breadcrumbs={breadcrumbs} />
-            ),
+            payload: {
+                showBreadcrumbs: true, breadcrumbs: breadcrumbs
+            },
         });
     }
     const handleFormCancel = function (event) {
