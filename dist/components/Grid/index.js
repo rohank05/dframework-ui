@@ -404,6 +404,23 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
+  (0, _react.useEffect)(() => {
+    if (hideTopFilters) {
+      dispatchData({
+        type: _actions.default.PASS_FILTERS_TOHEADER,
+        payload: {
+          filterButton: null,
+          hidden: {
+            search: true,
+            operation: true,
+            export: true,
+            print: true,
+            filter: true
+          }
+        }
+      });
+    }
+  }, []);
   const {
     gridColumns,
     pinnedColumns,
@@ -880,7 +897,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"
-    }, "CLEAR THIS FILTER"), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
+    }, "CLEAR FILTER"), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
       handleExport: handleExport,
       showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
       showOnlyExcelExport: model.showOnlyExcelExport

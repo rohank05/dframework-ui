@@ -55,7 +55,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const [openPreferenceExistsModal, setOpenPreferenceExistsModal] = useState(false);
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const preferences = stateData?.preferences;
-    const totalPreferences = stateData?.totalPreferences;
+    const currentPreference = stateData?.currentPreference;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
@@ -103,7 +103,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         setOpenDialog(false);
     };
 
-    const deletePreference = async (id) => {
+    const deletePreference = async (id, prefName) => {
         let params = {
             action: 'delete',
             id: preferenceName,
@@ -112,7 +112,9 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         }
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
         if (response === true) {
-            removeCurrentPreferenceName({ dispatchData });
+            if (prefName === currentPreference) {
+                removeCurrentPreferenceName({ dispatchData });
+            }
             snackbar.showMessage('Preference Deleted Successfully.');
         }
     }
@@ -233,7 +235,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             setOpenForm(true);
         }
         if (action === actionTypes.Delete) {
-            await deletePreference(cellParams.id);
+            await deletePreference(cellParams.id, cellParams?.row?.prefName);
             getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
         }
     }

@@ -17,6 +17,7 @@ const initialState = {
   preferences: [],
   currentPreference: null,
   totalPreferences: null,
-  loaderOpen: false
+  loaderOpen: false,
+  filtersInHeader: {}
 };
 var _default = exports.default = initialState;
