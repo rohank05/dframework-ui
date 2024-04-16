@@ -27,6 +27,8 @@ const stateReducer = (state, action) => {
             return { ...state, totalPreferences: action.payload }
         case actionsStateProvider.UPDATE_LOADER_STATE:
             return { ...state, loaderOpen: action.payload }
+        case actionsStateProvider.PASS_FILTERS_TOHEADER:
+                return { ...state, filtersInHeader: action.payload }
         default:
             return state;
     }

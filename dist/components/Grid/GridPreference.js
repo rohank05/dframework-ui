@@ -135,7 +135,7 @@ const GridPreferences = _ref => {
     Username
   } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
   const preferences = stateData === null || stateData === void 0 ? void 0 : stateData.preferences;
-  const totalPreferences = stateData === null || stateData === void 0 ? void 0 : stateData.totalPreferences;
+  const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.tablePreferenceEnums;
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
@@ -174,7 +174,7 @@ const GridPreferences = _ref => {
     handleClose();
     setOpenDialog(false);
   };
-  const deletePreference = async id => {
+  const deletePreference = async (id, prefName) => {
     let params = {
       action: 'delete',
       id: preferenceName,
@@ -188,9 +188,11 @@ const GridPreferences = _ref => {
       dispatchData
     });
     if (response === true) {
-      removeCurrentPreferenceName({
-        dispatchData
-      });
+      if (prefName === currentPreference) {
+        removeCurrentPreferenceName({
+          dispatchData
+        });
+      }
       snackbar.showMessage('Preference Deleted Successfully.');
     }
   };
@@ -366,7 +368,8 @@ const GridPreferences = _ref => {
       setOpenForm(true);
     }
     if (action === actionTypes.Delete) {
-      await deletePreference(cellParams.id);
+      var _cellParams$row;
+      await deletePreference(cellParams.id, cellParams === null || cellParams === void 0 || (_cellParams$row = cellParams.row) === null || _cellParams$row === void 0 ? void 0 : _cellParams$row.prefName);
       getAllSavedPreferences({
         preferenceName,
         history: navigate,

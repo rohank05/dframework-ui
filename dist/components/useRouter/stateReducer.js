@@ -68,6 +68,10 @@ const stateReducer = (state, action) => {
       return _objectSpread(_objectSpread({}, state), {}, {
         loaderOpen: action.payload
       });
+    case _actions.default.PASS_FILTERS_TOHEADER:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        filtersInHeader: action.payload
+      });
     default:
       return state;
   }
