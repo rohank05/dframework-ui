@@ -110,7 +110,9 @@ const StateProvider = _ref => {
     let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
     if (userPreferenceCharts) {
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
-        gridRef.current.setColumnWidth(ele.field, ele.width);
+        if (gridRef.current.getColumnIndex(ele.field) !== -1) {
+          gridRef.current.setColumnWidth(ele.field, ele.width);
+        }
       });
       gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);

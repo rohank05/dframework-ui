@@ -298,7 +298,7 @@ const GridPreferences = _ref => {
       const response = await (0, _httpRequest.default)({
         url: preferenceApi,
         params,
-        history,
+        history: navigate,
         dispatchData
       });
       userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : null;
@@ -319,7 +319,9 @@ const GridPreferences = _ref => {
           field,
           width
         } = _ref2;
-        return gridRef.current.setColumnWidth(field, width);
+        if (gridRef.current.getColumnIndex(field) !== -1) {
+          gridRef.current.setColumnWidth(field, width);
+        }
       });
       gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
       gridRef.current.state.columns.orderedFields = gridColumn.map(_ref3 => {

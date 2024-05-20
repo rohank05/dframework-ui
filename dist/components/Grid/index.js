@@ -860,7 +860,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", t(model.gridSubTitle, tOpts)), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, " ", model.gridSubTitle), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       className: "preference-name-text",
       variant: "h6",
       component: "h6",
