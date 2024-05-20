@@ -4,10 +4,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/es.regexp.exec.js");
-require("core-js/modules/es.string.match.js");
 require("core-js/modules/es.regexp.test.js");
+require("core-js/modules/es.string.match.js");
+require("core-js/modules/web.dom-collections.iterator.js");
 var _react = require("react");
 function useMobile() {
   let onlyMobile = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
