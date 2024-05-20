@@ -182,7 +182,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 Username,
                 prefId
             };
-            const response = await request({ url: preferenceApi, params, history, dispatchData });
+            const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
             userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : null;
             coolrDefaultPreference = response?.prefValue ? response.prefName : '';
         }
@@ -190,8 +190,11 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         // If userPreferenceCharts is available, apply preferences to the grid
         if (userPreferenceCharts) {
             const { gridColumn, columnVisibilityModel, pinnedColumns, sortModel, filterModel } = userPreferenceCharts;
-            gridColumn.forEach(({ field, width }) => gridRef.current.setColumnWidth(field, width));
-
+            gridColumn.forEach(({ field, width }) => {
+                if (gridRef.current.getColumnIndex(field) !== -1) {
+                    gridRef.current.setColumnWidth(field, width);
+                }
+            });
             gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
             gridRef.current.state.columns.orderedFields = gridColumn.map(({ field }) => field);
             gridRef.current.setPinnedColumns(pinnedColumns);
