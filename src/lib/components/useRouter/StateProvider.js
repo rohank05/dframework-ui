@@ -62,9 +62,11 @@ const StateProvider = ({ children }) => {
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
     if (userPreferenceCharts) {
-      userPreferenceCharts?.gridColumn.forEach(ele => {
-        gridRef.current.setColumnWidth(ele.field, ele.width);
-      })
+			userPreferenceCharts?.gridColumn.forEach(ele => {
+				if (gridRef.current.getColumnIndex(ele.field) !== -1) {
+					gridRef.current.setColumnWidth(ele.field, ele.width);
+				}
+			})
       gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
