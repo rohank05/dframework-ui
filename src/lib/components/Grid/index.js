@@ -688,8 +688,11 @@ const GridBase = memo(({
         if (forAssignment || !updatePageTitle) {
             return;
         }
-        if (model?.pageTitle || model?.title) {
-            dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+        return () => {
+            dispatchData({
+                type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
+            })
         }
     }, [])
 

@@ -951,17 +951,21 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     if (forAssignment || !updatePageTitle) {
       return;
     }
-    if (model !== null && model !== void 0 && model.pageTitle || model !== null && model !== void 0 && model.title) {
+    dispatchData({
+      type: _actions.default.PAGE_TITLE_DETAILS,
+      payload: {
+        icon: "",
+        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
+        titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
+        title: model === null || model === void 0 ? void 0 : model.title
+      }
+    });
+    return () => {
       dispatchData({
         type: _actions.default.PAGE_TITLE_DETAILS,
-        payload: {
-          icon: "",
-          titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
-          titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
-          title: model === null || model === void 0 ? void 0 : model.title
-        }
+        payload: null
       });
-    }
+    };
   }, []);
   (0, _react.useEffect)(() => {
     let backRoute = pathname;
