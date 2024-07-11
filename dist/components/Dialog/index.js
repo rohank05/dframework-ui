@@ -11,7 +11,7 @@ var _DialogActions = _interopRequireDefault(require("@mui/material/DialogActions
 var _DialogContent = _interopRequireDefault(require("@mui/material/DialogContent"));
 var _DialogContentText = _interopRequireDefault(require("@mui/material/DialogContentText"));
 var _DialogTitle = _interopRequireDefault(require("@mui/material/DialogTitle"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const DialogComponent = _ref => {
   let {
     open,
