@@ -615,13 +615,13 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
-    useEffect(() => {
-        if(model.preferenceId) {
-            removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
-        }
-    }, [])
+    // useEffect(() => {
+    //     if(model.preferenceId) {
+    //         removeCurrentPreferenceName({ dispatchData });
+    //         getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+    //         applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+    //     }
+    // }, [])
 
     const CustomToolbar = function (props) {
 
@@ -680,41 +680,41 @@ const GridBase = memo(({
             fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }
     };
-    // useEffect(() => { 
-    //     fetchData();
-    // }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
+    useEffect(() => { 
+        fetchData();
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
-    // useEffect(() => {
-    //     if (forAssignment || !updatePageTitle) {
-    //         return;
-    //     }
-    //     dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
-    //     return () => {
-    //         dispatchData({
-    //             type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
-    //         })
-    //     }
-    // }, [])
+    useEffect(() => {
+        if (forAssignment || !updatePageTitle) {
+            return;
+        }
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+        return () => {
+            dispatchData({
+                type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
+            })
+        }
+    }, [])
 
-    // useEffect(() => {
-    //     let backRoute = pathname;
+    useEffect(() => {
+        let backRoute = pathname;
 
-    //     // we do not need to show the back button for these routes
-    //     if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
-    //         dispatchData({
-    //             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-    //             payload: { status: false, backRoute: '' },
-    //         });
-    //         return;
-    //     }
-    //     backRoute = backRoute.split("/");
-    //     backRoute.pop();
-    //     backRoute = backRoute.join("/");
-    //     dispatchData({
-    //         type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-    //         payload: { status: true, backRoute: backRoute },
-    //     });
-    // }, []);
+        // we do not need to show the back button for these routes
+        if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
+            dispatchData({
+                type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+                payload: { status: false, backRoute: '' },
+            });
+            return;
+        }
+        backRoute = backRoute.split("/");
+        backRoute.pop();
+        backRoute = backRoute.join("/");
+        dispatchData({
+            type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+            payload: { status: true, backRoute: backRoute },
+        });
+    }, []);
 
     const updateFilters = (e) => {
         const { items } = e;
