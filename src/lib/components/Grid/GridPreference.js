@@ -71,15 +71,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         return schema;
     }, []);
 
-    // useEffect(()=>{
-    //     const filteredPrefs = preferences?.filter(pref => {
-    //         if (pref.prefId === 0) {
-    //             return false
-    //         }
-    //         return true;
-    //     });
-    //     setFilteredPrefs(filteredPrefs)
-    // },[preferences])
+    useEffect(()=>{
+        const filteredPrefs = preferences?.filter(pref => {
+            if (pref.prefId === 0) {
+                return false
+            }
+            return true;
+        });
+        setFilteredPrefs(filteredPrefs)
+    },[preferences])
 
     const formik = useFormik({
         initialValues,
