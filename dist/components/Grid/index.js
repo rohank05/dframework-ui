@@ -403,23 +403,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
-  (0, _react.useEffect)(() => {
-    if (hideTopFilters) {
-      dispatchData({
-        type: _actions.default.PASS_FILTERS_TOHEADER,
-        payload: {
-          filterButton: null,
-          hidden: {
-            search: true,
-            operation: true,
-            export: true,
-            print: true,
-            filter: true
-          }
-        }
-      });
-    }
-  }, []);
+
+  // useEffect(() => {
+  //     if (hideTopFilters) {
+  //         dispatchData({
+  //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+  //                 filterButton: null,
+  //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
+  //             }
+  //         });
+  //     }
+  // }, []);
+
   const {
     gridColumns,
     pinnedColumns,
