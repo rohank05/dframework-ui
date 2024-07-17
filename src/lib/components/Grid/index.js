@@ -680,9 +680,9 @@ const GridBase = memo(({
             fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }
     };
-    // useEffect(() => { 
-    //     fetchData();
-    // }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
+    useEffect(() => { 
+        fetchData();
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, reRenderKey])
 
     // useEffect(() => {
     //     if (forAssignment || !updatePageTitle) {
