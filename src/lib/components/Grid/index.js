@@ -293,16 +293,16 @@ const GridBase = memo(({
         return lookupData[lookupMap[field].lookup] || [];
     };
 
-    // useEffect(() => {
-    //     if (hideTopFilters) {
-    //         dispatchData({
-    //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-    //                 filterButton: null,
-    //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
-    //             }
-    //         });
-    //     }
-    // }, []);
+    useEffect(() => {
+        if (hideTopFilters) {
+            dispatchData({
+                type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+                    filterButton: null,
+                    hidden: { search: true, operation: true, export: true, print: true, filter: true }
+                }
+            });
+        }
+    }, []);
 
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         const baseColumnList = columns || model?.gridColumns || model?.columns;
@@ -615,13 +615,13 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
-    // useEffect(() => {
-    //     if(model.preferenceId) {
-    //         removeCurrentPreferenceName({ dispatchData });
-    //         getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-    //         applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
-    //     }
-    // }, [])
+    useEffect(() => {
+        if(model.preferenceId) {
+            removeCurrentPreferenceName({ dispatchData });
+            getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+        }
+    }, [])
 
     const CustomToolbar = function (props) {
 

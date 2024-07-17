@@ -403,18 +403,23 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
-
-  // useEffect(() => {
-  //     if (hideTopFilters) {
-  //         dispatchData({
-  //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-  //                 filterButton: null,
-  //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
-  //             }
-  //         });
-  //     }
-  // }, []);
-
+  (0, _react.useEffect)(() => {
+    if (hideTopFilters) {
+      dispatchData({
+        type: _actions.default.PASS_FILTERS_TOHEADER,
+        payload: {
+          filterButton: null,
+          hidden: {
+            search: true,
+            operation: true,
+            export: true,
+            print: true,
+            filter: true
+          }
+        }
+      });
+    }
+  }, []);
   const {
     gridColumns,
     pinnedColumns,
@@ -818,15 +823,31 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       unassign: selection
     });
   };
-
-  // useEffect(() => {
-  //     if(model.preferenceId) {
-  //         removeCurrentPreferenceName({ dispatchData });
-  //         getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-  //         applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
-  //     }
-  // }, [])
-
+  (0, _react.useEffect)(() => {
+    if (model.preferenceId) {
+      removeCurrentPreferenceName({
+        dispatchData
+      });
+      getAllSavedPreferences({
+        preferenceName: model.preferenceId,
+        history: navigate,
+        dispatchData,
+        Username,
+        preferenceApi,
+        tablePreferenceEnums
+      });
+      applyDefaultPreferenceIfExists({
+        preferenceName: model.preferenceId,
+        history: navigate,
+        dispatchData,
+        Username,
+        gridRef: apiRef,
+        setIsGridPreferenceFetched,
+        preferenceApi,
+        tablePreferenceEnums
+      });
+    }
+  }, []);
   const CustomToolbar = function CustomToolbar(props) {
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
