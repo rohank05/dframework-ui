@@ -991,7 +991,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         backRoute: backRoute
       }
     });
-  }, [isLoading]);
+  }, []);
   const updateFilters = e => {
     var _e$items, _chartFilters$items2;
     const {
@@ -1076,8 +1076,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     },
     unstable_headerFilters: showHeaderFilters,
-    checkboxSelection: forAssignment,
-    loading: isLoading,
+    checkboxSelection: forAssignment
+    // loading={isLoading}
+    ,
     className: "pagination-fix",
     onCellClick: onCellClickHandler,
     onCellDoubleClick: onCellDoubleClick,

@@ -714,7 +714,7 @@ const GridBase = memo(({
             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
             payload: { status: true, backRoute: backRoute },
         });
-    }, [isLoading]);
+    }, []);
 
     const updateFilters = (e) => {
         const { items } = e;
@@ -785,7 +785,7 @@ const GridBase = memo(({
                 }}
                 unstable_headerFilters={showHeaderFilters}
                 checkboxSelection={forAssignment}
-                loading={isLoading}
+                // loading={isLoading}
                 className="pagination-fix"
                 onCellClick={onCellClickHandler}
                 onCellDoubleClick={onCellDoubleClick}
