@@ -352,47 +352,51 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       renderCell: booleanIconRenderer
     }
   };
-  (0, _react.useEffect)(() => {
-    dataRef.current = data;
-  }, [data]);
-  (0, _react.useEffect)(() => {
-    if (customFilters && Object.keys(customFilters) != 0) {
-      if (customFilters.clear) {
-        let filterObject = {
-          items: [],
-          logicOperator: "and",
-          quickFilterValues: [],
-          quickFilterLogicOperator: "and"
-        };
-        setFilterModel(filterObject);
-        return;
-      } else {
-        const newArray = [];
-        for (const key in customFilters) {
-          if (key === 'startDate' || key === 'endDate') {
-            newArray.push(customFilters[key]);
-          } else {
-            if (customFilters.hasOwnProperty(key)) {
-              const newObj = {
-                field: key,
-                value: customFilters[key],
-                operator: "equals",
-                type: "string"
-              };
-              newArray.push(newObj);
-            }
-          }
-        }
-        let filterObject = {
-          items: newArray,
-          logicOperator: "and",
-          quickFilterValues: [],
-          quickFilterLogicOperator: "and"
-        };
-        setFilterModel(filterObject);
-      }
-    }
-  }, [customFilters]);
+
+  // useEffect(() => {
+  //     dataRef.current = data;
+  // }, [data]);
+
+  // useEffect(() => {
+
+  //     if (customFilters && Object.keys(customFilters) != 0) {
+  //         if (customFilters.clear) {
+  //             let filterObject = {
+  //                 items: [],
+  //                 logicOperator: "and",
+  //                 quickFilterValues: [],
+  //                 quickFilterLogicOperator: "and"
+  //             }
+  //             setFilterModel(filterObject)
+  //             return
+  //         } else {
+  //             const newArray = [];
+  //             for (const key in customFilters) {
+  //                 if (key === 'startDate' || key === 'endDate') {
+  //                     newArray.push(customFilters[key])
+  //                 } else {
+  //                     if (customFilters.hasOwnProperty(key)) {
+  //                         const newObj = {
+  //                             field: key,
+  //                             value: customFilters[key],
+  //                             operator: "equals",
+  //                             type: "string"
+  //                         };
+  //                         newArray.push(newObj);
+  //                     }
+  //                 }
+  //             }
+  //             let filterObject = {
+  //                 items: newArray,
+  //                 logicOperator: "and",
+  //                 quickFilterValues: [],
+  //                 quickFilterLogicOperator: "and"
+  //             }
+  //             setFilterModel(filterObject)
+  //         }
+  //     }
+  // }, [customFilters]);
+
   const lookupOptions = _ref6 => {
     let {
         row,
@@ -403,23 +407,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
-  (0, _react.useEffect)(() => {
-    if (hideTopFilters) {
-      dispatchData({
-        type: _actions.default.PASS_FILTERS_TOHEADER,
-        payload: {
-          filterButton: null,
-          hidden: {
-            search: true,
-            operation: true,
-            export: true,
-            print: true,
-            filter: true
-          }
-        }
-      });
-    }
-  }, []);
+
+  // useEffect(() => {
+  //     if (hideTopFilters) {
+  //         dispatchData({
+  //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+  //                 filterButton: null,
+  //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
+  //             }
+  //         });
+  //     }
+  // }, []);
+
   const {
     gridColumns,
     pinnedColumns,
@@ -823,31 +822,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       unassign: selection
     });
   };
-  (0, _react.useEffect)(() => {
-    if (model.preferenceId) {
-      removeCurrentPreferenceName({
-        dispatchData
-      });
-      getAllSavedPreferences({
-        preferenceName: model.preferenceId,
-        history: navigate,
-        dispatchData,
-        Username,
-        preferenceApi,
-        tablePreferenceEnums
-      });
-      applyDefaultPreferenceIfExists({
-        preferenceName: model.preferenceId,
-        history: navigate,
-        dispatchData,
-        Username,
-        gridRef: apiRef,
-        setIsGridPreferenceFetched,
-        preferenceApi,
-        tablePreferenceEnums
-      });
-    }
-  }, []);
+
+  // useEffect(() => {
+  //     if(model.preferenceId) {
+  //         removeCurrentPreferenceName({ dispatchData });
+  //         getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+  //         applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+  //     }
+  // }, [])
+
   const CustomToolbar = function CustomToolbar(props) {
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
@@ -944,54 +927,42 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     }
   };
-  (0, _react.useEffect)(() => {
-    fetchData();
-  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey]);
-  (0, _react.useEffect)(() => {
-    if (forAssignment || !updatePageTitle) {
-      return;
-    }
-    dispatchData({
-      type: _actions.default.PAGE_TITLE_DETAILS,
-      payload: {
-        icon: "",
-        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
-        titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
-        title: model === null || model === void 0 ? void 0 : model.title
-      }
-    });
-    return () => {
-      dispatchData({
-        type: _actions.default.PAGE_TITLE_DETAILS,
-        payload: null
-      });
-    };
-  }, []);
-  (0, _react.useEffect)(() => {
-    let backRoute = pathname;
+  // useEffect(() => { 
+  //     fetchData();
+  // }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
-    // we do not need to show the back button for these routes
-    if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
-      dispatchData({
-        type: _actions.default.SET_PAGE_BACK_BUTTON,
-        payload: {
-          status: false,
-          backRoute: ''
-        }
-      });
-      return;
-    }
-    backRoute = backRoute.split("/");
-    backRoute.pop();
-    backRoute = backRoute.join("/");
-    dispatchData({
-      type: _actions.default.SET_PAGE_BACK_BUTTON,
-      payload: {
-        status: true,
-        backRoute: backRoute
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //     if (forAssignment || !updatePageTitle) {
+  //         return;
+  //     }
+  //     dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+  //     return () => {
+  //         dispatchData({
+  //             type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
+  //         })
+  //     }
+  // }, [])
+
+  // useEffect(() => {
+  //     let backRoute = pathname;
+
+  //     // we do not need to show the back button for these routes
+  //     if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
+  //         dispatchData({
+  //             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+  //             payload: { status: false, backRoute: '' },
+  //         });
+  //         return;
+  //     }
+  //     backRoute = backRoute.split("/");
+  //     backRoute.pop();
+  //     backRoute = backRoute.join("/");
+  //     dispatchData({
+  //         type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+  //         payload: { status: true, backRoute: backRoute },
+  //     });
+  // }, []);
+
   const updateFilters = e => {
     var _e$items, _chartFilters$items2;
     const {
