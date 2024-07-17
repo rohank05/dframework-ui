@@ -680,10 +680,8 @@ const GridBase = memo(({
             fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }
     };
-    useEffect(() => {
-        if (isGridPreferenceFetched) {
-            fetchData();
-        }
+    useEffect(() => { 
+        fetchData();
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
