@@ -352,51 +352,47 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       renderCell: booleanIconRenderer
     }
   };
-
-  // useEffect(() => {
-  //     dataRef.current = data;
-  // }, [data]);
-
-  // useEffect(() => {
-
-  //     if (customFilters && Object.keys(customFilters) != 0) {
-  //         if (customFilters.clear) {
-  //             let filterObject = {
-  //                 items: [],
-  //                 logicOperator: "and",
-  //                 quickFilterValues: [],
-  //                 quickFilterLogicOperator: "and"
-  //             }
-  //             setFilterModel(filterObject)
-  //             return
-  //         } else {
-  //             const newArray = [];
-  //             for (const key in customFilters) {
-  //                 if (key === 'startDate' || key === 'endDate') {
-  //                     newArray.push(customFilters[key])
-  //                 } else {
-  //                     if (customFilters.hasOwnProperty(key)) {
-  //                         const newObj = {
-  //                             field: key,
-  //                             value: customFilters[key],
-  //                             operator: "equals",
-  //                             type: "string"
-  //                         };
-  //                         newArray.push(newObj);
-  //                     }
-  //                 }
-  //             }
-  //             let filterObject = {
-  //                 items: newArray,
-  //                 logicOperator: "and",
-  //                 quickFilterValues: [],
-  //                 quickFilterLogicOperator: "and"
-  //             }
-  //             setFilterModel(filterObject)
-  //         }
-  //     }
-  // }, [customFilters]);
-
+  (0, _react.useEffect)(() => {
+    dataRef.current = data;
+  }, [data]);
+  (0, _react.useEffect)(() => {
+    if (customFilters && Object.keys(customFilters) != 0) {
+      if (customFilters.clear) {
+        let filterObject = {
+          items: [],
+          logicOperator: "and",
+          quickFilterValues: [],
+          quickFilterLogicOperator: "and"
+        };
+        setFilterModel(filterObject);
+        return;
+      } else {
+        const newArray = [];
+        for (const key in customFilters) {
+          if (key === 'startDate' || key === 'endDate') {
+            newArray.push(customFilters[key]);
+          } else {
+            if (customFilters.hasOwnProperty(key)) {
+              const newObj = {
+                field: key,
+                value: customFilters[key],
+                operator: "equals",
+                type: "string"
+              };
+              newArray.push(newObj);
+            }
+          }
+        }
+        let filterObject = {
+          items: newArray,
+          logicOperator: "and",
+          quickFilterValues: [],
+          quickFilterLogicOperator: "and"
+        };
+        setFilterModel(filterObject);
+      }
+    }
+  }, [customFilters]);
   const lookupOptions = _ref6 => {
     let {
         row,

@@ -244,49 +244,49 @@ const GridBase = memo(({
         }
     }
 
-    // useEffect(() => {
-    //     dataRef.current = data;
-    // }, [data]);
+    useEffect(() => {
+        dataRef.current = data;
+    }, [data]);
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     if (customFilters && Object.keys(customFilters) != 0) {
-    //         if (customFilters.clear) {
-    //             let filterObject = {
-    //                 items: [],
-    //                 logicOperator: "and",
-    //                 quickFilterValues: [],
-    //                 quickFilterLogicOperator: "and"
-    //             }
-    //             setFilterModel(filterObject)
-    //             return
-    //         } else {
-    //             const newArray = [];
-    //             for (const key in customFilters) {
-    //                 if (key === 'startDate' || key === 'endDate') {
-    //                     newArray.push(customFilters[key])
-    //                 } else {
-    //                     if (customFilters.hasOwnProperty(key)) {
-    //                         const newObj = {
-    //                             field: key,
-    //                             value: customFilters[key],
-    //                             operator: "equals",
-    //                             type: "string"
-    //                         };
-    //                         newArray.push(newObj);
-    //                     }
-    //                 }
-    //             }
-    //             let filterObject = {
-    //                 items: newArray,
-    //                 logicOperator: "and",
-    //                 quickFilterValues: [],
-    //                 quickFilterLogicOperator: "and"
-    //             }
-    //             setFilterModel(filterObject)
-    //         }
-    //     }
-    // }, [customFilters]);
+        if (customFilters && Object.keys(customFilters) != 0) {
+            if (customFilters.clear) {
+                let filterObject = {
+                    items: [],
+                    logicOperator: "and",
+                    quickFilterValues: [],
+                    quickFilterLogicOperator: "and"
+                }
+                setFilterModel(filterObject)
+                return
+            } else {
+                const newArray = [];
+                for (const key in customFilters) {
+                    if (key === 'startDate' || key === 'endDate') {
+                        newArray.push(customFilters[key])
+                    } else {
+                        if (customFilters.hasOwnProperty(key)) {
+                            const newObj = {
+                                field: key,
+                                value: customFilters[key],
+                                operator: "equals",
+                                type: "string"
+                            };
+                            newArray.push(newObj);
+                        }
+                    }
+                }
+                let filterObject = {
+                    items: newArray,
+                    logicOperator: "and",
+                    quickFilterValues: [],
+                    quickFilterLogicOperator: "and"
+                }
+                setFilterModel(filterObject)
+            }
+        }
+    }, [customFilters]);
 
     const lookupOptions = ({ row, field, id, ...others }) => {
         const lookupData = dataRef.current.lookups || {};
