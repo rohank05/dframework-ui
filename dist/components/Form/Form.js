@@ -80,10 +80,7 @@ const Form = _ref => {
     mode
   } = stateData.dataForm;
   (0, _react.useEffect)(() => {
-    setValidationSchema(model.getValidationSchema({
-      id,
-      snackbar
-    }));
+    // setValidationSchema(model.getValidationSchema({ id, snackbar }));
     const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
     try {
       (0, _crudHelper.getRecord)({
@@ -102,7 +99,7 @@ const Form = _ref => {
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
-    validationSchema: validationSchema,
+    // validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, _ref2) => {
       let {

@@ -42,7 +42,7 @@ const Form = ({
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
     useEffect(() => {
-        setValidationSchema(model.getValidationSchema({ id, snackbar }));
+        // setValidationSchema(model.getValidationSchema({ id, snackbar }));
         const options = idWithOptions?.split('-');
         try {
             getRecord({
@@ -61,7 +61,7 @@ const Form = ({
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: { ...model.initialValues, ...data },
-        validationSchema: validationSchema,
+        // validationSchema: validationSchema,
         validateOnBlur: false,
         onSubmit: async (values, { resetForm }) => {
             setIsLoading(true);
