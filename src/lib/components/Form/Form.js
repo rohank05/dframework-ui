@@ -45,14 +45,14 @@ const Form = ({
         // setValidationSchema(model.getValidationSchema({ id, snackbar }));
         const options = idWithOptions?.split('-');
         try {
-            getRecord({
-                id: options.length > 1 ? options[1] : options[0],
-                api: gridApi,
-                modelConfig: model,
-                setIsLoading,
-                setError: errorOnLoad,
-                setActiveRecord
-            })
+            // getRecord({
+            //     id: options.length > 1 ? options[1] : options[0],
+            //     api: gridApi,
+            //     modelConfig: model,
+            //     setIsLoading,
+            //     setError: errorOnLoad,
+            //     setActiveRecord
+            // })
         } catch (error) {
             snackbar.showError('An error occured, please try after some time.', error);
             navigate('./');
