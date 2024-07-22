@@ -118,7 +118,7 @@ const Form = _ref => {
       }).then(success => {
         if (success) {
           snackbar.showMessage('Record Updated Successfully.');
-          navigate('.');
+          navigate('./Contacts');
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);
