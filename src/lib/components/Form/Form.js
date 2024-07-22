@@ -75,7 +75,7 @@ const Form = ({
                 .then(success => {
                     if (success) {
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate('./');
+                        navigate('.');
                     }
                 })
                 .catch((err) => {
