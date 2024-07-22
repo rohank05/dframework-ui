@@ -118,7 +118,7 @@ const Form = _ref => {
       }).then(success => {
         if (success) {
           snackbar.showMessage('Record Updated Successfully.');
-          navigate('-1');
+          navigate((model === null || model === void 0 ? void 0 : model.navigateBack) || './');
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);
@@ -181,7 +181,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate('-1');
+      navigate((model === null || model === void 0 ? void 0 : model.navigateBack) || '.');
     }
   };
   const handleDelete = async function handleDelete() {
@@ -196,7 +196,7 @@ const Form = _ref => {
       });
       if (response === true) {
         snackbar.showMessage('Record Deleted Successfully.');
-        navigate('./');
+        navigate((model === null || model === void 0 ? void 0 : model.navigateBack) || './');
       }
     } catch (error) {
       snackbar === null || snackbar === void 0 || snackbar.showError('An error occured, please try after some time.');

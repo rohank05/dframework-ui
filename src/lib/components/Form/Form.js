@@ -75,7 +75,7 @@ const Form = ({
                 .then(success => {
                     if (success) {
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate('-1');
+                        navigate(model?.navigateBack || './');
                     }
                 })
                 .catch((err) => {
@@ -132,7 +132,7 @@ const Form = ({
             warnUnsavedChanges();
             event.preventDefault();
         } else {
-            navigate('-1');
+            navigate(model?.navigateBack || '.');
         }
     }
     const handleDelete = async function () {
@@ -147,7 +147,7 @@ const Form = ({
             })
             if (response === true) {
                 snackbar.showMessage('Record Deleted Successfully.');
-                navigate('./');
+                navigate(model?.navigateBack || './');
             }
         } catch (error) {
             snackbar?.showError('An error occured, please try after some time.');
