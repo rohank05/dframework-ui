@@ -75,7 +75,7 @@ const Form = ({
                 .then(success => {
                     if (success) {
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate('.');
+                        navigate('-1');
                     }
                 })
                 .catch((err) => {
@@ -132,7 +132,7 @@ const Form = ({
             warnUnsavedChanges();
             event.preventDefault();
         } else {
-            navigate('.');
+            navigate('-1');
         }
     }
     const handleDelete = async function () {

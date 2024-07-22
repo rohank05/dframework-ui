@@ -118,7 +118,7 @@ const Form = _ref => {
       }).then(success => {
         if (success) {
           snackbar.showMessage('Record Updated Successfully.');
-          navigate('.');
+          navigate('-1');
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);
@@ -181,7 +181,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate('.');
+      navigate('-1');
     }
   };
   const handleDelete = async function handleDelete() {
