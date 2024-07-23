@@ -140,6 +140,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     if (!formElements?.length) {
         return null;
     }
+    console.log(formElements)
     return (
         <>
             {
