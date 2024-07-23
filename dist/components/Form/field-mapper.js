@@ -246,7 +246,6 @@ const RenderColumns = _ref3 => {
   if (!(formElements !== null && formElements !== void 0 && formElements.length)) {
     return null;
   }
-  console.log(formElements);
   return /*#__PURE__*/React.createElement(React.Fragment, null, formElements.map((_ref4, key) => {
     let {
       Component,
