@@ -271,7 +271,14 @@ const Form = _ref => {
     variant: "contained",
     color: "error",
     onClick: () => setIsDeleting(true)
-  }, "Delete")), /*#__PURE__*/_react.default.createElement(Layout, {
+  }, "Delete")), console.log({
+    model,
+    data,
+    fieldConfigs,
+    combos,
+    lookups,
+    mode
+  }), /*#__PURE__*/_react.default.createElement(Layout, {
     model: model,
     formik: formik,
     data: data,

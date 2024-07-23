@@ -195,6 +195,7 @@ const Form = ({
                         <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
                         {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
                     </Stack>
+                    {console.log({model, data, fieldConfigs, combos, lookups, mode})}
                     <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} />
                 </form>
                 {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)}
