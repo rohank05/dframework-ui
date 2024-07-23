@@ -28,10 +28,8 @@ const field = _ref => {
     classes,
     onChange
   } = _ref;
-  console.log('lookups', lookups);
-  const options = typeof column.lookup === 'string' ? activeRecord === null || activeRecord === void 0 ? void 0 : activeRecord.lookups[column.lookup] : column.lookup;
+  const options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
   let inputValue = formik.values[field];
-  console.log('input values', inputValue);
   if (column.multiSelect) {
     if (!inputValue || inputValue.length === 0) {
       inputValue = [];
