@@ -43,7 +43,10 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
                     }
                 }}
             >
-                {Array.isArray(options) && options.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+                {Array.isArray(options) && options.map(option => {
+                    console.log({inputValue, option})
+                    return <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
+                })}
             </Select>
             <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
         </FormControl>

@@ -61,9 +61,15 @@ const field = _ref => {
         // list: classes.select
       }
     }
-  }), Array.isArray(options) && options.map(option => /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
-    key: option.value,
-    value: option.value
-  }, option.label))), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
+  }), Array.isArray(options) && options.map(option => {
+    console.log({
+      inputValue,
+      option
+    });
+    return /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+      key: option.value,
+      value: option.value
+    }, option.label);
+  })), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = field;
