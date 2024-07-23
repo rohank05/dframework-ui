@@ -8,7 +8,9 @@ import MenuItem from '@mui/material/MenuItem';
 
 
 const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, classes, onChange }) => {
+    console.log("activeRecord",activeRecord)
     const options = typeof column.lookup === 'string' ? activeRecord?.lookups[column.lookup] : column.lookup;
+    console.log('options', options)
     let inputValue = formik.values[field];
     if (column.multiSelect) {
         if (!inputValue || inputValue.length === 0) {
