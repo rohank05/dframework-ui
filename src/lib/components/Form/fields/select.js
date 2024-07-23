@@ -22,6 +22,7 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
     }
     console.log({Country: formik.values.CountryId, State: formik.values.StateId})
     console.log(inputValue)
+    console.log(Array.isArray(options))
     return (
         <FormControl
             fullWidth
@@ -34,7 +35,7 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
                 name={field}
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
-                value={inputValue}
+                value='23'
                 // label={fieldLabel}
                 onChange={formik.handleChange}
                 // onChange={onChange}

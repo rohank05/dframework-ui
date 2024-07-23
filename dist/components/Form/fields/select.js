@@ -44,6 +44,7 @@ const field = _ref => {
     State: formik.values.StateId
   });
   console.log(inputValue);
+  console.log(Array.isArray(options));
   return /*#__PURE__*/_react.default.createElement(_FormControl.default, {
     fullWidth: true,
     key: field,
@@ -54,7 +55,7 @@ const field = _ref => {
     name: field,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
-    value: inputValue
+    value: "23"
     // label={fieldLabel}
     ,
     onChange: formik.handleChange
