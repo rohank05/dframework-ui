@@ -99,6 +99,7 @@ class UiModel {
   }
 
   Form = ({ match, ...props }) => {
+    console.log({mode: this, layout: this.Layout, ...props})
     return <Form model={this} Layout={this.Layout} {...props} />
   }
 
