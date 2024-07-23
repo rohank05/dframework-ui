@@ -227,6 +227,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     lookups: {}
   });
   const [isLoading, setIsLoading] = (0, _react.useState)(false);
+  const frameworkUrl = localStorage.getItem('frameworkUrl');
   const forAssignment = !!onAssignChange;
   const rowsSelected = showRowsSelected;
   const [selection, setSelection] = (0, _react.useState)([]);
@@ -287,7 +288,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     getAllSavedPreferences,
     applyDefaultPreferenceIfExists
   } = (0, _StateProvider.useStateContext)();
-  console.log(stateData);
   const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
   const {
     ClientId
@@ -296,6 +296,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     Username
   } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
   const routesWithNoChildRoute = ((_stateData$gridSettin = stateData.gridSettings.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.routesWithNoChildRoute) || [];
+  console.log(frameworkUrl);
   const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
   const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
