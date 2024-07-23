@@ -49,7 +49,7 @@ const field = _ref => {
     name: field,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
-    value: "".concat(formik.values[field])
+    value: "".concat(inputValue)
     // label={fieldLabel}
     ,
     onChange: formik.handleChange
