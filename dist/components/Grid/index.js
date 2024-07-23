@@ -287,6 +287,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     getAllSavedPreferences,
     applyDefaultPreferenceIfExists
   } = (0, _StateProvider.useStateContext)();
+  console.log(stateData);
   const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
   const {
     ClientId
@@ -579,6 +580,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       pageSize,
       page
     } = paginationModel;
+    console.log({
+      controllerType: model.controllerType,
+      withControllersUrl,
+      url,
+      apiModel: model.api,
+      api
+    });
     let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
     if (isPivotExport) {

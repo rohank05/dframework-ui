@@ -197,6 +197,7 @@ const GridBase = memo(({
     const [isGridPreferenceFetched, setIsGridPreferenceFetched] = useState(false);
     const classes = useStyles();
     const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
+    console.log(stateData)
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
@@ -416,6 +417,7 @@ const GridBase = memo(({
     }, [columns, model, parent, permissions, forAssignment]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
+        console.log({controllerType: model.controllerType, withControllersUrl, url, apiModel: model.api, api})
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
 
         let controllerType = model?.controllerType;
