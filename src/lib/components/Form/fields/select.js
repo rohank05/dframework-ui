@@ -33,7 +33,7 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
                 name={field}
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
-                value={formik.values[field]}
+                value={`${formik.values[field]}`}
                 // label={fieldLabel}
                 onChange={formik.handleChange}
                 // onChange={onChange}
