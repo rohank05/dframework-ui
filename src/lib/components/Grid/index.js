@@ -202,8 +202,7 @@ const GridBase = memo(({
     const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    console.log(frameworkUrl)
-    const url = stateData?.gridSettings?.permissions?.Url;
+    const url = frameworkUrl || stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
