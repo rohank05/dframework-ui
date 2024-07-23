@@ -56,6 +56,7 @@ const getList = async _ref => {
     baseFilters = null,
     isElasticExport
   } = _ref;
+  console.log(api);
   if (!contentType) {
     setIsLoading(true);
     if (showFullScreenLoader) {
