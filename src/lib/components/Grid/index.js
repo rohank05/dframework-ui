@@ -294,16 +294,16 @@ const GridBase = memo(({
         return lookupData[lookupMap[field].lookup] || [];
     };
 
-    // useEffect(() => {
-    //     if (hideTopFilters) {
-    //         dispatchData({
-    //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-    //                 filterButton: null,
-    //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
-    //             }
-    //         });
-    //     }
-    // }, []);
+    useEffect(() => {
+        if (hideTopFilters) {
+            dispatchData({
+                type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+                    filterButton: null,
+                    hidden: { search: true, operation: true, export: true, print: true, filter: true }
+                }
+            });
+        }
+    }, []);
 
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         const baseColumnList = columns || model?.gridColumns || model?.columns;
@@ -417,7 +417,6 @@ const GridBase = memo(({
     }, [columns, model, parent, permissions, forAssignment]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
-        console.log({controllerType: model.controllerType, withControllersUrl, url, apiModel: model.api, api})
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
 
         let controllerType = model?.controllerType;
@@ -686,37 +685,37 @@ const GridBase = memo(({
         fetchData();
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, reRenderKey])
 
-    // useEffect(() => {
-    //     if (forAssignment || !updatePageTitle) {
-    //         return;
-    //     }
-    //     dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
-    //     return () => {
-    //         dispatchData({
-    //             type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
-    //         })
-    //     }
-    // }, [])
+    useEffect(() => {
+        if (forAssignment || !updatePageTitle) {
+            return;
+        }
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+        return () => {
+            dispatchData({
+                type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
+            })
+        }
+    }, [])
 
-    // useEffect(() => {
-    //     let backRoute = pathname;
+    useEffect(() => {
+        let backRoute = pathname;
 
-    //     // we do not need to show the back button for these routes
-    //     if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
-    //         dispatchData({
-    //             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-    //             payload: { status: false, backRoute: '' },
-    //         });
-    //         return;
-    //     }
-    //     backRoute = backRoute.split("/");
-    //     backRoute.pop();
-    //     backRoute = backRoute.join("/");
-    //     dispatchData({
-    //         type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-    //         payload: { status: true, backRoute: backRoute },
-    //     });
-    // }, []);
+        // we do not need to show the back button for these routes
+        if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
+            dispatchData({
+                type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+                payload: { status: false, backRoute: '' },
+            });
+            return;
+        }
+        backRoute = backRoute.split("/");
+        backRoute.pop();
+        backRoute = backRoute.join("/");
+        dispatchData({
+            type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
+            payload: { status: true, backRoute: backRoute },
+        });
+    }, []);
 
     const updateFilters = (e) => {
         const { items } = e;

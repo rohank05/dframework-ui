@@ -404,18 +404,23 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
-
-  // useEffect(() => {
-  //     if (hideTopFilters) {
-  //         dispatchData({
-  //             type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-  //                 filterButton: null,
-  //                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
-  //             }
-  //         });
-  //     }
-  // }, []);
-
+  (0, _react.useEffect)(() => {
+    if (hideTopFilters) {
+      dispatchData({
+        type: _actions.default.PASS_FILTERS_TOHEADER,
+        payload: {
+          filterButton: null,
+          hidden: {
+            search: true,
+            operation: true,
+            export: true,
+            print: true,
+            filter: true
+          }
+        }
+      });
+    }
+  }, []);
   const {
     gridColumns,
     pinnedColumns,
@@ -580,13 +585,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       pageSize,
       page
     } = paginationModel;
-    console.log({
-      controllerType: model.controllerType,
-      withControllersUrl,
-      url,
-      apiModel: model.api,
-      api
-    });
     let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
     if (isPivotExport) {
@@ -934,39 +932,51 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   (0, _react.useEffect)(() => {
     fetchData();
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, reRenderKey]);
+  (0, _react.useEffect)(() => {
+    if (forAssignment || !updatePageTitle) {
+      return;
+    }
+    dispatchData({
+      type: _actions.default.PAGE_TITLE_DETAILS,
+      payload: {
+        icon: "",
+        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
+        titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
+        title: model === null || model === void 0 ? void 0 : model.title
+      }
+    });
+    return () => {
+      dispatchData({
+        type: _actions.default.PAGE_TITLE_DETAILS,
+        payload: null
+      });
+    };
+  }, []);
+  (0, _react.useEffect)(() => {
+    let backRoute = pathname;
 
-  // useEffect(() => {
-  //     if (forAssignment || !updatePageTitle) {
-  //         return;
-  //     }
-  //     dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
-  //     return () => {
-  //         dispatchData({
-  //             type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
-  //         })
-  //     }
-  // }, [])
-
-  // useEffect(() => {
-  //     let backRoute = pathname;
-
-  //     // we do not need to show the back button for these routes
-  //     if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
-  //         dispatchData({
-  //             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-  //             payload: { status: false, backRoute: '' },
-  //         });
-  //         return;
-  //     }
-  //     backRoute = backRoute.split("/");
-  //     backRoute.pop();
-  //     backRoute = backRoute.join("/");
-  //     dispatchData({
-  //         type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-  //         payload: { status: true, backRoute: backRoute },
-  //     });
-  // }, []);
-
+    // we do not need to show the back button for these routes
+    if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
+      dispatchData({
+        type: _actions.default.SET_PAGE_BACK_BUTTON,
+        payload: {
+          status: false,
+          backRoute: ''
+        }
+      });
+      return;
+    }
+    backRoute = backRoute.split("/");
+    backRoute.pop();
+    backRoute = backRoute.join("/");
+    dispatchData({
+      type: _actions.default.SET_PAGE_BACK_BUTTON,
+      payload: {
+        status: true,
+        backRoute: backRoute
+      }
+    });
+  }, []);
   const updateFilters = e => {
     var _e$items, _chartFilters$items2;
     const {
