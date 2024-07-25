@@ -694,7 +694,7 @@ const GridBase = memo(({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
             })
         }
-    }, [isLoading])
+    }, [])
 
     useEffect(() => {
         let backRoute = pathname;
@@ -714,7 +714,7 @@ const GridBase = memo(({
             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
             payload: { status: true, backRoute: backRoute },
         });
-    }, []);
+    }, [isLoading]);
 
     const updateFilters = (e) => {
         const { items } = e;

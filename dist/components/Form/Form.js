@@ -181,7 +181,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate((model === null || model === void 0 ? void 0 : model.navigateBack) || '.');
+      navigate('.');
     }
   };
   const handleDelete = async function handleDelete() {

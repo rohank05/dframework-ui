@@ -132,7 +132,7 @@ const Form = ({
             warnUnsavedChanges();
             event.preventDefault();
         } else {
-            navigate(model?.navigateBack || '.');
+            navigate('.');
         }
     }
     const handleDelete = async function () {

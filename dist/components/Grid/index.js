@@ -950,7 +950,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         payload: null
       });
     };
-  }, [isLoading]);
+  }, []);
   (0, _react.useEffect)(() => {
     let backRoute = pathname;
 
@@ -975,7 +975,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         backRoute: backRoute
       }
     });
-  }, []);
+  }, [isLoading]);
   const updateFilters = e => {
     var _e$items, _chartFilters$items2;
     const {
