@@ -165,7 +165,6 @@ const GridBase = memo(({
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
     const [data, setData] = useState({ recordCount: 0, records: [], lookups: {} });
     const [isLoading, setIsLoading] = useState(false);
-    const frameworkUrl = localStorage.getItem('frameworkUrl');
     const forAssignment = !!onAssignChange;
     const rowsSelected = showRowsSelected;
     const [selection, setSelection] = useState([]);
@@ -202,7 +201,7 @@ const GridBase = memo(({
     const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    const url = frameworkUrl || stateData?.gridSettings?.permissions?.Url;
+    const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
@@ -695,7 +694,7 @@ const GridBase = memo(({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
             })
         }
-    }, [])
+    }, [isLoading])
 
     useEffect(() => {
         let backRoute = pathname;
@@ -786,7 +785,7 @@ const GridBase = memo(({
                 }}
                 unstable_headerFilters={showHeaderFilters}
                 checkboxSelection={forAssignment}
-                // loading={isLoading}
+                loading={isLoading}
                 className="pagination-fix"
                 onCellClick={onCellClickHandler}
                 onCellDoubleClick={onCellDoubleClick}

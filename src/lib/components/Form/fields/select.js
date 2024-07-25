@@ -20,7 +20,6 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
             }
         }
     }
-
     return (
         <FormControl
             fullWidth

@@ -227,7 +227,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     lookups: {}
   });
   const [isLoading, setIsLoading] = (0, _react.useState)(false);
-  const frameworkUrl = localStorage.getItem('frameworkUrl');
   const forAssignment = !!onAssignChange;
   const rowsSelected = showRowsSelected;
   const [selection, setSelection] = (0, _react.useState)([]);
@@ -296,7 +295,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     Username
   } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
   const routesWithNoChildRoute = ((_stateData$gridSettin = stateData.gridSettings.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.routesWithNoChildRoute) || [];
-  const url = frameworkUrl || (stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url);
+  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
   const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
@@ -951,7 +950,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         payload: null
       });
     };
-  }, []);
+  }, [isLoading]);
   (0, _react.useEffect)(() => {
     let backRoute = pathname;
 
@@ -1061,9 +1060,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     },
     unstable_headerFilters: showHeaderFilters,
-    checkboxSelection: forAssignment
-    // loading={isLoading}
-    ,
+    checkboxSelection: forAssignment,
+    loading: isLoading,
     className: "pagination-fix",
     onCellClick: onCellClickHandler,
     onCellDoubleClick: onCellDoubleClick,

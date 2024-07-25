@@ -75,7 +75,7 @@ const Form = ({
                 .then(success => {
                     if (success) {
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate(model?.navigateBack || './');
+                        navigate('./');
                     }
                 })
                 .catch((err) => {
@@ -147,7 +147,7 @@ const Form = ({
             })
             if (response === true) {
                 snackbar.showMessage('Record Deleted Successfully.');
-                navigate(model?.navigateBack || './');
+                navigate('./');
             }
         } catch (error) {
             snackbar?.showError('An error occured, please try after some time.');
