@@ -665,7 +665,6 @@ const GridBase = memo(({
             return;
         }
         else {
-            console.log(apiRef.current.state.columns)
             const { orderedFields, columnVisibilityModel, lookup } = apiRef.current.state.columns;
             const columns = {};
             const isPivotExport = e.target.dataset.isPivotExport === 'true';
@@ -675,12 +674,10 @@ const GridBase = memo(({
                 snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
                 return;
             }
-            console.log("visibleColumns",visibleColumns)
+
             visibleColumns.forEach(ele => {
                 columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable };
             })
-
-            console.log('export columns', columns)
 
             fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
         }

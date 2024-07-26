@@ -889,7 +889,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       snackbar.showMessage('Cannot export more than 60k records, please apply filters or reduce your results using filters');
       return;
     } else {
-      console.log(apiRef.current.state.columns);
       const {
         orderedFields,
         columnVisibilityModel,
@@ -903,7 +902,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
         return;
       }
-      console.log("visibleColumns", visibleColumns);
       visibleColumns.forEach(ele => {
         var _lookup$ele;
         columns[ele] = {
@@ -915,7 +913,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable
         };
       });
-      console.log('export columns', columns);
       fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     }
   };
