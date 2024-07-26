@@ -43,7 +43,7 @@ const field = _ref => {
     fullWidth: true,
     key: field,
     variant: "standard"
-  }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
+  }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel || field), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
   }, otherProps, {
     name: field,
