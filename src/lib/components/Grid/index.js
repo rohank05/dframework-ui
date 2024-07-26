@@ -665,6 +665,7 @@ const GridBase = memo(({
             return;
         }
         else {
+            console.log(apiRef.current.state.columns)
             const { orderedFields, columnVisibilityModel, lookup } = apiRef.current.state.columns;
             const columns = {};
             const isPivotExport = e.target.dataset.isPivotExport === 'true';

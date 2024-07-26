@@ -889,6 +889,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       snackbar.showMessage('Cannot export more than 60k records, please apply filters or reduce your results using filters');
       return;
     } else {
+      console.log(apiRef.current.state.columns);
       const {
         orderedFields,
         columnVisibilityModel,
