@@ -848,13 +848,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", isReadOnly ? "" : model.title || 'Add'), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, " Bode"), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, model !== null && model !== void 0 && model.customAddTextTitle ? model.customAddTextTitle : " ".concat(!showAddIcon ? "" : "Add", " ").concat(model.title)), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, "Dangote"), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
