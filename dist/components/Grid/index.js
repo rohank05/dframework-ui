@@ -317,7 +317,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     },
     "date": {
       "valueFormatter": value => {
-        console.log(value);
         return formatDate(value, true, false, stateData.dateTime);
       },
       "filterOperators": (0, _LocalizedDatePicker.default)({
@@ -325,23 +324,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       })
     },
     "dateTime": {
-      "valueFormatter": _ref3 => {
-        let {
-          value
-        } = _ref3;
-        return formatDate(value, false, false, stateData.dateTime);
-      },
+      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "datetime"
       })
     },
     "dateTimeLocal": {
-      "valueFormatter": _ref4 => {
-        let {
-          value
-        } = _ref4;
-        return formatDate(value, false, false, stateData.dateTime);
-      },
+      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         type: "dateTimeLocal",
         convert: true
@@ -392,13 +381,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   }, [customFilters]);
-  const lookupOptions = _ref5 => {
+  const lookupOptions = _ref3 => {
     let {
         row,
         field,
         id
-      } = _ref5,
-      others = _objectWithoutProperties(_ref5, _excluded);
+      } = _ref3,
+      others = _objectWithoutProperties(_ref3, _excluded);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -803,11 +792,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref6 => {
+  const updateAssignment = _ref4 => {
     let {
       unassign,
       assign
-    } = _ref6;
+    } = _ref4;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -859,7 +848,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", isReadOnly ? "" : model.title), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, " ", isReadOnly ? "" : model.title || 'Add'), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
       size: "medium",
