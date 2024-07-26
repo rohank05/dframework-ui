@@ -909,7 +909,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         columns[ele] = {
           field: ele,
           width: lookup[ele].width,
-          headerName: lookup[ele].headerName,
+          headerName: lookup[ele].headerName || lookup[ele].field,
           type: lookup[ele].type,
           keepLocal: lookup[ele].keepLocal === true,
           isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable
