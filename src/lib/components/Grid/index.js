@@ -223,9 +223,10 @@ const GridBase = memo(({
             "valueOptions": "lookup"
         },
         "date": {
-            "valueFormatter": ({ value }) => (
-                formatDate(value, true, false, stateData.dateTime)
-            ),
+            "valueFormatter": ( value) => {
+                console.log(value)
+                return formatDate(value, true, false, stateData.dateTime)
+            },
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
         "dateTime": {

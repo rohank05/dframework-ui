@@ -316,10 +316,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       "valueOptions": "lookup"
     },
     "date": {
-      "valueFormatter": _ref3 => {
-        let {
-          value
-        } = _ref3;
+      "valueFormatter": value => {
+        console.log(value);
         return formatDate(value, true, false, stateData.dateTime);
       },
       "filterOperators": (0, _LocalizedDatePicker.default)({
@@ -327,10 +325,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       })
     },
     "dateTime": {
-      "valueFormatter": _ref4 => {
+      "valueFormatter": _ref3 => {
         let {
           value
-        } = _ref4;
+        } = _ref3;
         return formatDate(value, false, false, stateData.dateTime);
       },
       "filterOperators": (0, _LocalizedDatePicker.default)({
@@ -338,10 +336,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       })
     },
     "dateTimeLocal": {
-      "valueFormatter": _ref5 => {
+      "valueFormatter": _ref4 => {
         let {
           value
-        } = _ref5;
+        } = _ref4;
         return formatDate(value, false, false, stateData.dateTime);
       },
       "filterOperators": (0, _LocalizedDatePicker.default)({
@@ -394,13 +392,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   }, [customFilters]);
-  const lookupOptions = _ref6 => {
+  const lookupOptions = _ref5 => {
     let {
         row,
         field,
         id
-      } = _ref6,
-      others = _objectWithoutProperties(_ref6, _excluded);
+      } = _ref5,
+      others = _objectWithoutProperties(_ref5, _excluded);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -805,11 +803,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref7 => {
+  const updateAssignment = _ref6 => {
     let {
       unassign,
       assign
-    } = _ref7;
+    } = _ref6;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
