@@ -25,7 +25,7 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
             fullWidth
             key={field}
             variant="standard">
-            <InputLabel>{fieldLabel || field}</InputLabel>
+            <InputLabel>{fieldLabel}</InputLabel>
             <Select
                 IconComponent={KeyboardArrowDownIcon}
                 {...otherProps}

@@ -270,7 +270,7 @@ const RenderColumns = _ref3 => {
         fontSize: '16px',
         fontWeight: isGridComponent ? 'bold' : 'normal'
       }
-    }, column.label, ":")) : null, /*#__PURE__*/React.createElement(_Grid.default, {
+    }, column.label || field, ":")) : null, /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
       xs: isGridComponent ? 12 : 10.5,
       className: classes.childStyles
