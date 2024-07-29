@@ -20,6 +20,7 @@ const field = _ref => {
     classes,
     onChange
   } = _ref;
+  console.log(column);
   return /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({
     type: "text",
     variant: "standard",
