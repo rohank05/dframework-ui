@@ -2,7 +2,6 @@ import TextField from '@mui/material/TextField';
 import React from 'react';
 
 const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChange }) => {
-    console.log(column)
     return <TextField
         type="text"
         variant="standard"

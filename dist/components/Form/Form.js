@@ -79,6 +79,7 @@ const Form = _ref => {
     data,
     lookups
   }) : defaultFieldConfigs;
+  console.log(fieldConfigs);
   let gridApi = "".concat(url).concat(model.api || api);
   const {
     mode

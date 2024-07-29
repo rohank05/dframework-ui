@@ -43,6 +43,7 @@ const Form = ({
     const [errorMessage, setErrorMessage] = useState('');
     const url = stateData?.gridSettings?.permissions?.Url;
     const fieldConfigs = model?.applyFieldConfig ? model?.applyFieldConfig({ data, lookups }) : defaultFieldConfigs;
+    console.log(fieldConfigs)
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
     useEffect(() => {
