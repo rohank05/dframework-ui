@@ -22,6 +22,7 @@ var _fieldMapper = _interopRequireDefault(require("./field-mapper"));
 var _SnackBar = require("../SnackBar");
 var _Dialog = require("../Dialog");
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
+var _reactRouterDom = require("react-router-dom");
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -46,6 +47,9 @@ const Form = _ref => {
     },
     Layout = _fieldMapper.default
   } = _ref;
+  const location = (0, _reactRouterDom.useLocation)();
+  const currentPath = location.pathname; // e.g., /api/contact/0
+  const navigateBack = currentPath.substring(0, currentPath.lastIndexOf('/')); // removes the last segment
   const {
     dispatchData,
     stateData
@@ -118,7 +122,7 @@ const Form = _ref => {
       }).then(success => {
         if (success) {
           snackbar.showMessage('Record Updated Successfully.');
-          navigate((model === null || model === void 0 ? void 0 : model.redirect) || './');
+          navigate(navigateBack);
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);
@@ -181,7 +185,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate((model === null || model === void 0 ? void 0 : model.redirect) || '.');
+      navigate(navigateBack);
     }
   };
   const handleDelete = async function handleDelete() {
@@ -196,7 +200,7 @@ const Form = _ref => {
       });
       if (response === true) {
         snackbar.showMessage('Record Deleted Successfully.');
-        navigate((model === null || model === void 0 ? void 0 : model.redirect) || './');
+        navigate(navigateBack);
       }
     } catch (error) {
       snackbar === null || snackbar === void 0 || snackbar.showError('An error occured, please try after some time.');
