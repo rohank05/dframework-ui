@@ -79,6 +79,7 @@ const Form = _ref => {
     data,
     lookups
   }) : defaultFieldConfigs;
+  console.log('identifier', id);
   console.log(model.getValidationSchema({
     id,
     snackbar
