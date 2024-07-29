@@ -100,7 +100,7 @@ const Form = _ref => {
       });
     } catch (error) {
       snackbar.showError('An error occured, please try after some time.', error);
-      navigate('./');
+      navigate(navigateBack);
     }
   }, [id, idWithOptions, model]);
   const formik = (0, _formik.useFormik)({
@@ -135,7 +135,7 @@ const Form = _ref => {
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate('.');
+    navigate(navigateBack);
   };
   const warnUnsavedChanges = () => {
     if (dirty) {
@@ -144,7 +144,7 @@ const Form = _ref => {
   };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
-    navigate('./');
+    navigate(navigateBack);
   };
   const setActiveRecord = function setActiveRecord(_ref3) {
     let {

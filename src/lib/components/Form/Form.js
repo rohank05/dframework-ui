@@ -59,7 +59,7 @@ const Form = ({
             })
         } catch (error) {
             snackbar.showError('An error occured, please try after some time.', error);
-            navigate('./');
+            navigate(navigateBack);
         }
     }, [id, idWithOptions, model]);
     const formik = useFormik({
@@ -94,7 +94,7 @@ const Form = ({
     const handleDiscardChanges = () => {
         formik.resetForm();
         setIsDiscardDialogOpen(false);
-        navigate('.');
+        navigate(navigateBack);
     };
 
     const warnUnsavedChanges = () => {
@@ -105,7 +105,7 @@ const Form = ({
 
     const errorOnLoad = function (title, error) {
         snackbar.showError(title, error);
-        navigate('./');
+        navigate(navigateBack);
     }
 
     const setActiveRecord = function ({ id, title, record, lookups }) {
