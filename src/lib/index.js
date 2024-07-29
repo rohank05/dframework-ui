@@ -17,4 +17,5 @@ import ptPT from './components/mui/locale/data-grid/ptPT';
 import { trTRGrid } from './components/mui/locale/data-grid/trTR';
 import {StateProvider, useStateContext, useRouter, RouterProvider} from './components/useRouter/StateProvider';
 import useMobile from './components/useMobile';
-export { SnackbarProvider, SnackbarContext, useSnackbar, DialogComponent, UiModel, GridBase, RouterProvider, MuiTypography, PageTitle, locales, useLocalization, daDKGrid, deDEGrid, elGRGrid, esESGrid, frFRGrid, itITGrid, ptPT, trTRGrid,   StateProvider, useStateContext,HelpModal,useMobile, useRouter};
+import CustomLoader from './components/CustomLoader';
+export { SnackbarProvider, SnackbarContext, useSnackbar, DialogComponent, UiModel, GridBase, RouterProvider, MuiTypography, PageTitle, locales, useLocalization, daDKGrid, deDEGrid, elGRGrid, esESGrid, frFRGrid, itITGrid, ptPT, trTRGrid,   StateProvider, useStateContext,HelpModal,useMobile, useRouter, CustomLoader};
