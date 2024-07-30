@@ -76,7 +76,7 @@ class UiModel {
           config = yup.date().nullable().transform((value, originalValue) => {
             if (originalValue === '' || originalValue === null) return null;
             return value;
-          }).label(formLabel);
+          }).label(formLabel).required(`${formLabel} is required`);
           break;
         case 'autocomplete':
           config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
