@@ -1,12 +1,12 @@
 "use strict";
 
+require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.object.assign.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/es.error.cause.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireDefault(require("react"));
 var _DatePicker = require("@mui/x-date-pickers/DatePicker");
@@ -39,7 +39,6 @@ const field = _ref => {
   if (mode !== 'copy') {
     isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
   }
-  console.log('date other props', _objectSpread({}, otherProps));
   const _shouldDisableDate = column.shouldDisableDate ? column.shouldDisableDate : null;
   let helperText;
   if (isDisabled && column.showErrorText) {

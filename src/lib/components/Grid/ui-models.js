@@ -46,7 +46,6 @@ class UiModel {
     let validationConfig = {};
     for (const column of columns) {
       const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validationLength = 0 } = column;
-      console.log(required)
       const formLabel = label || header || field;
       if (!formLabel) {
         continue;
@@ -86,9 +85,9 @@ class UiModel {
           config = yup.mixed().label(formLabel);
           break;
       }
-      if (required) {
-        config = config.trim().required(`${formLabel} is required`);
-      }
+      // if (required) {
+      //   config = config.trim().required(`${formLabel} is required`);
+      // }
       if (requiredIfNew && (!id || id === '')) {
         config = config.trim().required(`${formLabel} is required`);
       }

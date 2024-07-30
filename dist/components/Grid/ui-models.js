@@ -130,7 +130,6 @@ class UiModel {
         max = '',
         validationLength = 0
       } = column;
-      console.log(required);
       const formLabel = label || header || field;
       if (!formLabel) {
         continue;
@@ -169,9 +168,9 @@ class UiModel {
           config = yup.mixed().label(formLabel);
           break;
       }
-      if (required) {
-        config = config.trim().required("".concat(formLabel, " is required"));
-      }
+      // if (required) {
+      //   config = config.trim().required(`${formLabel} is required`);
+      // }
       if (requiredIfNew && (!id || id === '')) {
         config = config.trim().required("".concat(formLabel, " is required"));
       }

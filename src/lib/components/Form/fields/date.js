@@ -8,7 +8,6 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, fieldCo
     if (mode !== 'copy') {
         isDisabled = fieldConfigs?.disabled;
     }
-    console.log('date other props',{...otherProps})
     const shouldDisableDate = column.shouldDisableDate ? column.shouldDisableDate : null;
     let helperText;
     if (isDisabled && column.showErrorText) {
