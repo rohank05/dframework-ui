@@ -88,9 +88,9 @@ class UiModel {
       // if (required) {
       //   config = config.trim().required(`${formLabel} is required`);
       // }
-      if (requiredIfNew && (!id || id === '')) {
-        config = config.trim().required(`${formLabel} is required`);
-      }
+      // if (requiredIfNew && (!id || id === '')) {
+      //   config = config.trim().required(`${formLabel} is required`);
+      // }
       validationConfig[field] = config;
     }
 

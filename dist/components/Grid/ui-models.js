@@ -171,9 +171,9 @@ class UiModel {
       // if (required) {
       //   config = config.trim().required(`${formLabel} is required`);
       // }
-      if (requiredIfNew && (!id || id === '')) {
-        config = config.trim().required("".concat(formLabel, " is required"));
-      }
+      // if (requiredIfNew && (!id || id === '')) {
+      //   config = config.trim().required(`${formLabel} is required`);
+      // }
       validationConfig[field] = config;
     }
     let validationSchema = yup.object(_objectSpread(_objectSpread({}, validationConfig), this.validationSchema));
