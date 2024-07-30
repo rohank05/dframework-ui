@@ -130,7 +130,7 @@ class UiModel {
         max = '',
         validationLength = 0
       } = column;
-      const formLabel = label || header;
+      const formLabel = label || header || field;
       if (!formLabel) {
         continue;
       }
