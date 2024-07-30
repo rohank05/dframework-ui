@@ -159,7 +159,7 @@ class UiModel {
           config = yup.date().nullable().transform((value, originalValue) => {
             if (originalValue === '' || originalValue === null) return null;
             return value;
-          }).label(formLabel).required("".concat(formLabel, " is required"));
+          }).label(formLabel);
           break;
         case 'autocomplete':
           config = yup.string().trim().label(formLabel).required("Select at least one ".concat(formLabel));
@@ -168,12 +168,12 @@ class UiModel {
           config = yup.mixed().label(formLabel);
           break;
       }
-      // if (required) {
-      //   config = config.trim().required(`${formLabel} is required`);
-      // }
-      // if (requiredIfNew && (!id || id === '')) {
-      //   config = config.trim().required(`${formLabel} is required`);
-      // }
+      if (required) {
+        config = config.trim().required("".concat(formLabel, " is required"));
+      }
+      if (requiredIfNew && (!id || id === '')) {
+        config = config.trim().required("".concat(formLabel, " is required"));
+      }
       validationConfig[field] = config;
     }
     let validationSchema = yup.object(_objectSpread(_objectSpread({}, validationConfig), this.validationSchema));
