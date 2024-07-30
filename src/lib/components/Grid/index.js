@@ -417,7 +417,7 @@ const GridBase = memo(({
     }, [columns, model, parent, permissions, forAssignment]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
-        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
+        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
