@@ -167,7 +167,6 @@ const GridBase = memo(({
     const [isLoading, setIsLoading] = useState(false);
     const forAssignment = !!onAssignChange;
     const rowsSelected = showRowsSelected;
-    const frameworkUrl = localStorage.getItem('frameworkUrl');
     const [selection, setSelection] = useState([]);
     const [isOrderDetailModalOpen, setIsOrderDetailModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -202,7 +201,7 @@ const GridBase = memo(({
     const { ClientId } = stateData?.getUserData ? stateData.getUserData : {};
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    const url = stateData?.gridSettings?.permissions?.Url || frameworkUrl ;
+    const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
@@ -223,9 +222,9 @@ const GridBase = memo(({
             "valueOptions": "lookup"
         },
         "date": {
-            "valueFormatter": ( value ) => {
-                return formatDate(value, true, false, stateData.dateTime)
-            },
+            "valueFormatter": ( value ) => (
+                formatDate(value, true, false, stateData.dateTime)
+            ),
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
         "dateTime": {
