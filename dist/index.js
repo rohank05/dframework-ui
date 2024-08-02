@@ -23,6 +23,12 @@ Object.defineProperty(exports, "GridBase", {
     return _index.default;
   }
 });
+Object.defineProperty(exports, "HTTP_STATUS_CODES", {
+  enumerable: true,
+  get: function get() {
+    return _httpRequest.HTTP_STATUS_CODES;
+  }
+});
 Object.defineProperty(exports, "HelpModal", {
   enumerable: true,
   get: function get() {
@@ -125,6 +131,12 @@ Object.defineProperty(exports, "trTRGrid", {
     return _trTR.trTRGrid;
   }
 });
+Object.defineProperty(exports, "transport", {
+  enumerable: true,
+  get: function get() {
+    return _httpRequest.transport;
+  }
+});
 Object.defineProperty(exports, "useLocalization", {
   enumerable: true,
   get: function get() {
@@ -162,6 +174,7 @@ var _uiModels = require("./components/Grid/ui-models");
 var _HelpModal = _interopRequireDefault(require("./components/HelpModal"));
 var _PageTitle = _interopRequireDefault(require("./components/PageTitle"));
 var _Typography = _interopRequireDefault(require("./components/Typography"));
+var _httpRequest = require("./components/Grid/httpRequest");
 var _localization = _interopRequireWildcard(require("./components/mui/locale/localization"));
 var _daDK = require("./components/mui/locale/data-grid/daDK");
 var _deDE = require("./components/mui/locale/data-grid/deDE");
