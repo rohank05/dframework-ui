@@ -16,6 +16,7 @@ const StateProvider = ({ children }) => {
     if (state !== undefined && state !== null) {
       const userData = state; // Access 'state' 
       let userDateFormat = isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
+      console.log('before if', userDateFormat)
       if (userData) {
         userDateFormat = userData.split(' ');
         userDateFormat[0] = userDateFormat[0].toUpperCase();
@@ -23,14 +24,15 @@ const StateProvider = ({ children }) => {
           if (showOnlyDate) {
             userDateFormat = userDateFormat[0].toUpperCase();
           } else {
+            console.log('else block', userDateFormat)
             userDateFormat[1] += ':ss';
             userDateFormat = userDateFormat.join(" ");
           }
         } else {
+          console.log('else block for if not isDateFormatOnly ', userDateFormat)
           userDateFormat = userDateFormat[0];
         }
       };
-      console.log(userDateFormat)
       return userDateFormat;
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
