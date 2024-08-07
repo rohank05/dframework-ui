@@ -15,6 +15,7 @@ const StateProvider = ({ children }) => {
   function systemDateTimeFormat(isDateFormatOnly, showOnlyDate, state) {
     if (state !== undefined && state !== null) {
       const userData = state; // Access 'state' 
+      console.log('userData', userData)
       let userDateFormat = isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
       console.log('before if', userDateFormat)
       if (userData) {
