@@ -44,6 +44,7 @@ const StateProvider = _ref => {
         }
       }
       ;
+      console.log(userDateFormat);
       return userDateFormat;
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';

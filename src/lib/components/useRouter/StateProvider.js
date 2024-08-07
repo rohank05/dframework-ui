@@ -30,6 +30,7 @@ const StateProvider = ({ children }) => {
           userDateFormat = userDateFormat[0];
         }
       };
+      console.log(userDateFormat)
       return userDateFormat;
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
