@@ -23,12 +23,6 @@ Object.defineProperty(exports, "GridBase", {
     return _index.default;
   }
 });
-Object.defineProperty(exports, "HTTP_STATUS_CODES", {
-  enumerable: true,
-  get: function get() {
-    return _httpRequest.HTTP_STATUS_CODES;
-  }
-});
 Object.defineProperty(exports, "HelpModal", {
   enumerable: true,
   get: function get() {
@@ -107,6 +101,12 @@ Object.defineProperty(exports, "frFRGrid", {
     return _frFR.frFRGrid;
   }
 });
+Object.defineProperty(exports, "httpRequest", {
+  enumerable: true,
+  get: function get() {
+    return _httpRequest.default;
+  }
+});
 Object.defineProperty(exports, "itITGrid", {
   enumerable: true,
   get: function get() {
@@ -129,12 +129,6 @@ Object.defineProperty(exports, "trTRGrid", {
   enumerable: true,
   get: function get() {
     return _trTR.trTRGrid;
-  }
-});
-Object.defineProperty(exports, "transport", {
-  enumerable: true,
-  get: function get() {
-    return _httpRequest.transport;
   }
 });
 Object.defineProperty(exports, "useLocalization", {
@@ -174,7 +168,6 @@ var _uiModels = require("./components/Grid/ui-models");
 var _HelpModal = _interopRequireDefault(require("./components/HelpModal"));
 var _PageTitle = _interopRequireDefault(require("./components/PageTitle"));
 var _Typography = _interopRequireDefault(require("./components/Typography"));
-var _httpRequest = require("./components/Grid/httpRequest");
 var _localization = _interopRequireWildcard(require("./components/mui/locale/localization"));
 var _daDK = require("./components/mui/locale/data-grid/daDK");
 var _deDE = require("./components/mui/locale/data-grid/deDE");
@@ -187,6 +180,7 @@ var _trTR = require("./components/mui/locale/data-grid/trTR");
 var _StateProvider = require("./components/useRouter/StateProvider");
 var _useMobile = _interopRequireDefault(require("./components/useMobile"));
 var _CustomLoader = _interopRequireDefault(require("./components/CustomLoader"));
+var _httpRequest = _interopRequireDefault(require("./httpRequest"));
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
