@@ -147,12 +147,12 @@ const GridPreferences = _ref => {
     return schema;
   }, []);
   (0, _react.useEffect)(() => {
-    const filteredPrefs = preferences === null || preferences === void 0 ? void 0 : preferences.filter(pref => {
+    const filteredPrefs = preferences.length > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.filter(pref => {
       if (pref.prefId === 0) {
         return false;
       }
       return true;
-    });
+    }));
     setFilteredPrefs(filteredPrefs);
   }, [preferences]);
   const formik = (0, _formik.useFormik)({
@@ -208,7 +208,7 @@ const GridPreferences = _ref => {
   const savePreference = async values => {
     var _filterModel$items;
     const presetName = values.prefName.trim();
-    const preferenceAlreadyExists = preferences === null || preferences === void 0 ? void 0 : preferences.findIndex(ele => ele.prefName === presetName);
+    const preferenceAlreadyExists = preferences.length > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.findIndex(ele => ele.prefName === presetName));
     const isNotCoolRDefaultName = isNotCoolRDefault(presetName);
     if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotCoolRDefaultName) {
       setOpenPreferenceExistsModal(true);

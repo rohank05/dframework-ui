@@ -72,7 +72,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     }, []);
 
     useEffect(()=>{
-        const filteredPrefs = preferences?.filter(pref => {
+        const filteredPrefs = preferences.length > 0 && preferences?.filter(pref => {
             if (pref.prefId === 0) {
                 return false
             }
@@ -131,7 +131,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     }
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
-        const preferenceAlreadyExists = preferences?.findIndex(ele => ele.prefName === presetName);
+        const preferenceAlreadyExists = preferences.length > 0 && preferences?.findIndex(ele => ele.prefName === presetName);
         const isNotCoolRDefaultName = isNotCoolRDefault(presetName)
         if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotCoolRDefaultName) {
             setOpenPreferenceExistsModal(true);
