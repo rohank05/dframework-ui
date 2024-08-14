@@ -15,7 +15,7 @@ var _httpRequest = _interopRequireDefault(require("../Grid/httpRequest"));
 var _localization = require("../mui/locale/localization");
 var _dayjs = _interopRequireDefault(require("dayjs"));
 var _actions = _interopRequireDefault(require("./actions"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const StateContext = /*#__PURE__*/(0, _react.createContext)();
@@ -108,16 +108,20 @@ const StateProvider = _ref => {
       dispatchData
     });
     let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
-    if (userPreferenceCharts) {
+    if (userPreferenceCharts && gridRef !== null && gridRef !== void 0 && gridRef.current) {
+      var _gridRef$current$setC2, _gridRef$current3, _gridRef$current$setP, _gridRef$current4, _gridRef$current$setS, _gridRef$current5, _gridRef$current$setF, _gridRef$current6;
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
-        if (gridRef.current.getColumnIndex(ele.field) !== -1) {
-          gridRef.current.setColumnWidth(ele.field, ele.width);
+        var _gridRef$current$getC, _gridRef$current;
+        const columnIndex = (_gridRef$current$getC = (_gridRef$current = gridRef.current).getColumnIndex) === null || _gridRef$current$getC === void 0 ? void 0 : _gridRef$current$getC.call(_gridRef$current, ele.field);
+        if (columnIndex !== undefined && columnIndex !== -1) {
+          var _gridRef$current$setC, _gridRef$current2;
+          (_gridRef$current$setC = (_gridRef$current2 = gridRef.current).setColumnWidth) === null || _gridRef$current$setC === void 0 || _gridRef$current$setC.call(_gridRef$current2, ele.field, ele.width);
         }
       });
-      gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
-      gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
-      gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
-      gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
+      (_gridRef$current$setC2 = (_gridRef$current3 = gridRef.current).setColumnVisibilityModel) === null || _gridRef$current$setC2 === void 0 || _gridRef$current$setC2.call(_gridRef$current3, userPreferenceCharts.columnVisibilityModel);
+      (_gridRef$current$setP = (_gridRef$current4 = gridRef.current).setPinnedColumns) === null || _gridRef$current$setP === void 0 || _gridRef$current$setP.call(_gridRef$current4, userPreferenceCharts.pinnedColumns);
+      (_gridRef$current$setS = (_gridRef$current5 = gridRef.current).setSortModel) === null || _gridRef$current$setS === void 0 || _gridRef$current$setS.call(_gridRef$current5, userPreferenceCharts.sortModel || []);
+      (_gridRef$current$setF = (_gridRef$current6 = gridRef.current).setFilterModel) === null || _gridRef$current$setF === void 0 || _gridRef$current$setF.call(_gridRef$current6, userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
         payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'CoolR Default'

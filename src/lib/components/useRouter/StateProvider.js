@@ -61,16 +61,17 @@ const StateProvider = ({ children }) => {
 
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
-    if (userPreferenceCharts) {
-			userPreferenceCharts?.gridColumn.forEach(ele => {
-				if (gridRef.current.getColumnIndex(ele.field) !== -1) {
-					gridRef.current.setColumnWidth(ele.field, ele.width);
-				}
-			})
-      gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
-      gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
-      gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
-      gridRef.current.setFilterModel(userPreferenceCharts?.filterModel);
+    if (userPreferenceCharts && gridRef?.current) {
+      userPreferenceCharts?.gridColumn.forEach(ele => {
+        const columnIndex = gridRef.current.getColumnIndex?.(ele.field);
+        if (columnIndex !== undefined && columnIndex !== -1) {
+          gridRef.current.setColumnWidth?.(ele.field, ele.width);
+        }
+      });
+      gridRef.current.setColumnVisibilityModel?.(userPreferenceCharts.columnVisibilityModel);
+      gridRef.current.setPinnedColumns?.(userPreferenceCharts.pinnedColumns);
+      gridRef.current.setSortModel?.(userPreferenceCharts.sortModel || []);
+      gridRef.current.setFilterModel?.(userPreferenceCharts?.filterModel);
       dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: response?.prefValue ? response.prefName : 'CoolR Default' });
     }
     if (setIsGridPreferenceFetched) {

@@ -131,7 +131,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     }
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
-        const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
+        const preferenceAlreadyExists = preferences?.findIndex(ele => ele.prefName === presetName);
         const isNotCoolRDefaultName = isNotCoolRDefault(presetName)
         if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotCoolRDefaultName) {
             setOpenPreferenceExistsModal(true);
@@ -288,7 +288,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                     Manage Preferences
                 </MenuItem>
 
-                {preferences?.map((ele, key) => {
+                {preferences?.length > 0 && preferences?.map((ele, key) => {
                     const { prefName, prefDesc, prefId } = ele;
                     return (
                         <MenuItem
