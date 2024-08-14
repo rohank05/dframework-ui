@@ -49,6 +49,7 @@ const StateProvider = _ref => {
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
   async function getAllSavedPreferences(_ref2) {
+    var _response$preferences;
     let {
       preferenceName,
       Username,
@@ -82,7 +83,7 @@ const StateProvider = _ref => {
     });
     dispatchData({
       type: _actions.default.TOTAL_PREFERENCES,
-      payload: response === null || response === void 0 ? void 0 : response.preferences.length
+      payload: response === null || response === void 0 || (_response$preferences = response.preferences) === null || _response$preferences === void 0 ? void 0 : _response$preferences.length
     });
   }
   async function applyDefaultPreferenceIfExists(_ref3) {

@@ -50,7 +50,7 @@ const StateProvider = ({ children }) => {
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let preferences = response?.preferences ? [defaultCoolrPref,...response?.preferences] : defaultCoolrPref
     dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: preferences });
-    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response?.preferences.length });
+    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response?.preferences?.length });
   }
   async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums }) {
     const params = {
