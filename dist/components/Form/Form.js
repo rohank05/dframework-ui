@@ -103,6 +103,7 @@ const Form = _ref => {
       navigate(navigateBack);
     }
   }, [id, idWithOptions, model]);
+  console.log('model log', model);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),

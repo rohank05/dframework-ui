@@ -62,6 +62,7 @@ const Form = ({
             navigate(navigateBack);
         }
     }, [id, idWithOptions, model]);
+    console.log('model log', model)
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: { ...model.initialValues, ...data },
