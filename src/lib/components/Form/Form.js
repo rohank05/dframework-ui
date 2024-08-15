@@ -45,23 +45,7 @@ const Form = ({
     const fieldConfigs = model?.applyFieldConfig ? model?.applyFieldConfig({ data, lookups }) : defaultFieldConfigs;
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
-    useEffect(() => {
-        setValidationSchema(model.getValidationSchema({ id, snackbar }));
-        const options = idWithOptions?.split('-');
-        try {
-            getRecord({
-                id: options.length > 1 ? options[1] : options[0],
-                api: gridApi,
-                modelConfig: model,
-                setIsLoading,
-                setError: errorOnLoad,
-                setActiveRecord
-            })
-        } catch (error) {
-            snackbar.showError('An error occured, please try after some time.', error);
-            navigate(navigateBack);
-        }
-    }, [id, idWithOptions, model]);
+
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: { ...model.initialValues, ...data },
@@ -88,9 +72,26 @@ const Form = ({
                 .finally(() => setIsLoading(false));
         }
     });
-
     const getLookupValues = model.columns?.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
-    console.log('model log', ...getLookupValues)
+
+    useEffect(() => {
+        setValidationSchema(model.getValidationSchema({ id, snackbar }));
+        const options = idWithOptions?.split('-');
+        try {
+            getRecord({
+                id: options.length > 1 ? options[1] : options[0],
+                api: gridApi,
+                modelConfig: model,
+                setIsLoading,
+                setError: errorOnLoad,
+                setActiveRecord
+            })
+        } catch (error) {
+            snackbar.showError('An error occured, please try after some time.', error);
+            navigate(navigateBack);
+        }
+    }, [id, idWithOptions, model, ...getLookupValues]);
+    
     const { dirty } = formik;
 
     const handleDiscardChanges = () => {
