@@ -49,7 +49,6 @@ const Form = ({
         setValidationSchema(model.getValidationSchema({ id, snackbar }));
         const options = idWithOptions?.split('-');
         try {
-            console.log('gridApi', gridApi)
             getRecord({
                 id: options.length > 1 ? options[1] : options[0],
                 api: gridApi,
@@ -171,6 +170,8 @@ const Form = ({
     }
     const handleChange = function (e) {
         const { name, value } = e.target;
+        console.log("event data",e)
+        console.log("handle Select",{name, value})
         const gridData = { ...data };
         gridData[name] = value;
         setData(gridData);

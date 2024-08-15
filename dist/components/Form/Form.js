@@ -90,7 +90,6 @@ const Form = _ref => {
     }));
     const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
     try {
-      console.log('gridApi', gridApi);
       (0, _crudHelper.getRecord)({
         id: options.length > 1 ? options[1] : options[0],
         api: gridApi,
@@ -227,6 +226,11 @@ const Form = _ref => {
       name,
       value
     } = e.target;
+    console.log("event data", e);
+    console.log("handle Select", {
+      name,
+      value
+    });
     const gridData = _objectSpread({}, data);
     gridData[name] = value;
     setData(gridData);
