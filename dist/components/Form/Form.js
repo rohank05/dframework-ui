@@ -79,7 +79,6 @@ const Form = _ref => {
     data,
     lookups
   }) : defaultFieldConfigs;
-  const getLookupValues = (_model$columns = model.columns) === null || _model$columns === void 0 ? void 0 : _model$columns.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
   let gridApi = "".concat(url).concat(model.api || api);
   const {
     mode
@@ -104,7 +103,6 @@ const Form = _ref => {
       navigate(navigateBack);
     }
   }, [id, idWithOptions, model]);
-  console.log('model log', ...getLookupValues);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
@@ -131,6 +129,8 @@ const Form = _ref => {
       }).finally(() => setIsLoading(false));
     }
   });
+  const getLookupValues = (_model$columns = model.columns) === null || _model$columns === void 0 ? void 0 : _model$columns.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
+  console.log('model log', ...getLookupValues);
   const {
     dirty
   } = formik;

@@ -43,7 +43,6 @@ const Form = ({
     const [errorMessage, setErrorMessage] = useState('');
     const url = stateData?.gridSettings?.permissions?.Url;
     const fieldConfigs = model?.applyFieldConfig ? model?.applyFieldConfig({ data, lookups }) : defaultFieldConfigs;
-    const getLookupValues = model.columns?.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
     useEffect(() => {
@@ -63,7 +62,6 @@ const Form = ({
             navigate(navigateBack);
         }
     }, [id, idWithOptions, model]);
-    console.log('model log', ...getLookupValues)
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: { ...model.initialValues, ...data },
@@ -91,6 +89,8 @@ const Form = ({
         }
     });
 
+    const getLookupValues = model.columns?.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
+    console.log('model log', ...getLookupValues)
     const { dirty } = formik;
 
     const handleDiscardChanges = () => {
