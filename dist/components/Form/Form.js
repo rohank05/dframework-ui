@@ -36,7 +36,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
 const Form = _ref => {
-  var _stateData$gridSettin;
+  var _stateData$gridSettin, _model$columns;
   let {
     model,
     api,
@@ -79,6 +79,7 @@ const Form = _ref => {
     data,
     lookups
   }) : defaultFieldConfigs;
+  const getLookupValues = (_model$columns = model.columns) === null || _model$columns === void 0 ? void 0 : _model$columns.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
   let gridApi = "".concat(url).concat(model.api || api);
   const {
     mode
@@ -103,7 +104,7 @@ const Form = _ref => {
       navigate(navigateBack);
     }
   }, [id, idWithOptions, model]);
-  console.log('model log', model);
+  console.log('model log', ...getLookupValues);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
