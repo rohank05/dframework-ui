@@ -90,6 +90,10 @@ const Form = ({
         handleChange: (event) => {
             console.log('Field change:', event, event.target);
             formik.handleChange(event); // Call the original handleChange
+        },
+        setFieldValue: (field, value, shouldValidate = true) => {
+            console.log('Field changeser:', field, value);
+            formik.setFieldValue(field, value, shouldValidate); // Call the original setFieldValue
         }
     });
 

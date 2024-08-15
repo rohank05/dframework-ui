@@ -131,6 +131,11 @@ const Form = _ref => {
     handleChange: event => {
       console.log('Field change:', event, event.target);
       formik.handleChange(event); // Call the original handleChange
+    },
+    setFieldValue: function setFieldValue(field, value) {
+      let shouldValidate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+      console.log('Field changeser:', field, value);
+      formik.setFieldValue(field, value, shouldValidate); // Call the original setFieldValue
     }
   });
   const {
