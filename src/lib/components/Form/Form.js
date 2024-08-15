@@ -86,6 +86,10 @@ const Form = ({
                     snackbar.showError('An error occured, please try after some time.second', err);
                 })
                 .finally(() => setIsLoading(false));
+        },
+        handleChange: (event) => {
+            console.log('Field change:', event, event.target);
+            formik.handleChange(event); // Call the original handleChange
         }
     });
 
@@ -175,7 +179,6 @@ const Form = ({
         setData(gridData);
     }
     
-    console.log("handle Select",formik.handleChange)
     const handleSubmit = function (e) {
         if (e) e.preventDefault();
         const { errors } = formik;
