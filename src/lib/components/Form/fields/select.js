@@ -34,7 +34,10 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, lookups, other
                 readOnly={column.readOnly === true}
                 value={`${inputValue}`}
                 // label={fieldLabel}
-                onChange={formik.handleChange}
+                onChange={(event) =>{
+                    console.log('eventi', event)
+                    formik.handleChange(event)
+                }}
                 // onChange={onChange}
                 onBlur={formik.handleBlur}
                 MenuProps={{

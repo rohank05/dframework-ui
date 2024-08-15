@@ -52,7 +52,10 @@ const field = _ref => {
     value: "".concat(inputValue)
     // label={fieldLabel}
     ,
-    onChange: formik.handleChange
+    onChange: event => {
+      console.log('eventi', event);
+      formik.handleChange(event);
+    }
     // onChange={onChange}
     ,
     onBlur: formik.handleBlur,

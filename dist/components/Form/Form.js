@@ -127,15 +127,6 @@ const Form = _ref => {
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);
       }).finally(() => setIsLoading(false));
-    },
-    handleChange: event => {
-      console.log('Field change:', event, event.target);
-      formik.handleChange(event); // Call the original handleChange
-    },
-    setFieldValue: function setFieldValue(field, value) {
-      let shouldValidate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-      console.log('Field changeser:', field, value);
-      formik.setFieldValue(field, value, shouldValidate); // Call the original setFieldValue
     }
   });
   const {
