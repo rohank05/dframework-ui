@@ -90,6 +90,7 @@ const Form = _ref => {
     }));
     const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
     try {
+      console.log('gridApi', gridApi);
       (0, _crudHelper.getRecord)({
         id: options.length > 1 ? options[1] : options[0],
         api: gridApi,

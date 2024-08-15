@@ -49,6 +49,7 @@ const Form = ({
         setValidationSchema(model.getValidationSchema({ id, snackbar }));
         const options = idWithOptions?.split('-');
         try {
+            console.log('gridApi', gridApi)
             getRecord({
                 id: options.length > 1 ? options[1] : options[0],
                 api: gridApi,
