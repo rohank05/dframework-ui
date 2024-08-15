@@ -170,13 +170,12 @@ const Form = ({
     }
     const handleChange = function (e) {
         const { name, value } = e.target;
-        console.log("event data",e)
-        console.log("handle Select",{name, value})
         const gridData = { ...data };
         gridData[name] = value;
         setData(gridData);
     }
-
+    
+    console.log("handle Select",formik.handleChange)
     const handleSubmit = function (e) {
         if (e) e.preventDefault();
         const { errors } = formik;

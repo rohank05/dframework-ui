@@ -226,15 +226,11 @@ const Form = _ref => {
       name,
       value
     } = e.target;
-    console.log("event data", e);
-    console.log("handle Select", {
-      name,
-      value
-    });
     const gridData = _objectSpread({}, data);
     gridData[name] = value;
     setData(gridData);
   };
+  console.log("handle Select", formik.handleChange);
   const handleSubmit = function handleSubmit(e) {
     if (e) e.preventDefault();
     const {
