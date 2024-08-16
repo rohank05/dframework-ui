@@ -67,6 +67,7 @@ const field = _ref => {
     onBlur: formik.handleBlur,
     helperText: formik.touched[field] && formik.errors[field],
     disablePast: column === null || column === void 0 ? void 0 : column.disablePast,
+    disableFuture: column === null || column === void 0 ? void 0 : column.disableFuture,
     disabled: isDisabled,
     shouldDisableDate: date => _shouldDisableDate ? _shouldDisableDate(date, formik) : false,
     slotProps: {

@@ -34,6 +34,7 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, fieldCo
         onBlur={formik.handleBlur}
         helperText={formik.touched[field] && formik.errors[field]}
         disablePast={column?.disablePast}
+        disableFuture={column?.disableFuture}
         disabled={isDisabled}
         shouldDisableDate={date => shouldDisableDate ? shouldDisableDate(date, formik) : false}
         slotProps={{ textField: { fullWidth: true, helperText, ...props } }}
