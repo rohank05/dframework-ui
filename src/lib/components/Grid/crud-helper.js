@@ -130,6 +130,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         };
 
         const response = await transport(params);
+        console.log(response)
         function isLocalTime(dateValue) {
             const date = new Date(dateValue);
             const localOffset = new Date().getTimezoneOffset();
@@ -160,6 +161,11 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 });
             }
             setData(response.data);
+        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            setError('Session Expired!');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
         } else {
             setError(response.statusText);
         }
