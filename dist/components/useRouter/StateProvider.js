@@ -15,7 +15,7 @@ var _httpRequest = _interopRequireDefault(require("../Grid/httpRequest"));
 var _localization = require("../mui/locale/localization");
 var _dayjs = _interopRequireDefault(require("dayjs"));
 var _actions = _interopRequireDefault(require("./actions"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 const StateContext = /*#__PURE__*/(0, _react.createContext)();
@@ -49,6 +49,7 @@ const StateProvider = _ref => {
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
   async function getAllSavedPreferences(_ref2) {
+    var _response$preferences;
     let {
       preferenceName,
       Username,
@@ -82,7 +83,7 @@ const StateProvider = _ref => {
     });
     dispatchData({
       type: _actions.default.TOTAL_PREFERENCES,
-      payload: response === null || response === void 0 ? void 0 : response.preferences.length
+      payload: response === null || response === void 0 || (_response$preferences = response.preferences) === null || _response$preferences === void 0 ? void 0 : _response$preferences.length
     });
   }
   async function applyDefaultPreferenceIfExists(_ref3) {
@@ -108,7 +109,7 @@ const StateProvider = _ref => {
       dispatchData
     });
     let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
-    if (userPreferenceCharts) {
+    if (userPreferenceCharts && gridRef !== null && gridRef !== void 0 && gridRef.current) {
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
         if (gridRef.current.getColumnIndex(ele.field) !== -1) {
           gridRef.current.setColumnWidth(ele.field, ele.width);

@@ -50,7 +50,7 @@ const StateProvider = ({ children }) => {
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let preferences = response?.preferences ? [defaultCoolrPref,...response?.preferences] : defaultCoolrPref
     dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: preferences });
-    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response?.preferences.length });
+    dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: response?.preferences?.length });
   }
   async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums }) {
     const params = {
@@ -61,12 +61,12 @@ const StateProvider = ({ children }) => {
 
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
-    if (userPreferenceCharts) {
-			userPreferenceCharts?.gridColumn.forEach(ele => {
+    if (userPreferenceCharts && gridRef?.current) {
+      userPreferenceCharts?.gridColumn.forEach(ele => {
 				if (gridRef.current.getColumnIndex(ele.field) !== -1) {
 					gridRef.current.setColumnWidth(ele.field, ele.width);
 				}
-			})
+      });
       gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
