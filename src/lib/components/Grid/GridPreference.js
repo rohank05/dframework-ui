@@ -72,12 +72,12 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     }, []);
 
     useEffect(()=>{
-        const filteredPrefs = preferences.length > 0 && preferences?.filter(pref => {
+        const filteredPrefs = preferences?.filter(pref => {
             if (pref.prefId === 0) {
                 return false
             }
             return true;
-        });
+        }) || [];
         setFilteredPrefs(filteredPrefs)
     },[preferences])
 

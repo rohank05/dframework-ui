@@ -64,7 +64,7 @@ const StateProvider = ({ children }) => {
     if (userPreferenceCharts && gridRef?.current) {
       userPreferenceCharts?.gridColumn.forEach(ele => {
         const columnIndex = gridRef.current.getColumnIndex?.(ele.field);
-        if (columnIndex !== undefined && columnIndex !== -1) {
+        if (typeof columnIndex === 'number' && columnIndex >= 0) {
           gridRef.current.setColumnWidth?.(ele.field, ele.width);
         }
       });
