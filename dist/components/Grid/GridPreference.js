@@ -147,12 +147,7 @@ const GridPreferences = _ref => {
     return schema;
   }, []);
   (0, _react.useEffect)(() => {
-    const filteredPrefs = (preferences === null || preferences === void 0 ? void 0 : preferences.filter(pref => {
-      if (pref.prefId === 0) {
-        return false;
-      }
-      return true;
-    })) || [];
+    const filteredPrefs = Array.isArray(preferences) ? preferences.filter(pref => pref.prefId !== 0) : [];
     setFilteredPrefs(filteredPrefs);
   }, [preferences]);
   const formik = (0, _formik.useFormik)({
