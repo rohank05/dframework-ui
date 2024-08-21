@@ -110,19 +110,15 @@ const StateProvider = _ref => {
     });
     let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
     if (userPreferenceCharts && gridRef !== null && gridRef !== void 0 && gridRef.current) {
-      var _gridRef$current$setC2, _gridRef$current3, _gridRef$current$setP, _gridRef$current4, _gridRef$current$setS, _gridRef$current5, _gridRef$current$setF, _gridRef$current6;
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
-        var _gridRef$current$getC, _gridRef$current;
-        const columnIndex = (_gridRef$current$getC = (_gridRef$current = gridRef.current).getColumnIndex) === null || _gridRef$current$getC === void 0 ? void 0 : _gridRef$current$getC.call(_gridRef$current, ele.field);
-        if (typeof columnIndex === 'number' && columnIndex >= 0) {
-          var _gridRef$current$setC, _gridRef$current2;
-          (_gridRef$current$setC = (_gridRef$current2 = gridRef.current).setColumnWidth) === null || _gridRef$current$setC === void 0 || _gridRef$current$setC.call(_gridRef$current2, ele.field, ele.width);
+        if (gridRef.current.getColumnIndex(ele.field) !== -1) {
+          gridRef.current.setColumnWidth(ele.field, ele.width);
         }
       });
-      (_gridRef$current$setC2 = (_gridRef$current3 = gridRef.current).setColumnVisibilityModel) === null || _gridRef$current$setC2 === void 0 || _gridRef$current$setC2.call(_gridRef$current3, userPreferenceCharts.columnVisibilityModel);
-      (_gridRef$current$setP = (_gridRef$current4 = gridRef.current).setPinnedColumns) === null || _gridRef$current$setP === void 0 || _gridRef$current$setP.call(_gridRef$current4, userPreferenceCharts.pinnedColumns);
-      (_gridRef$current$setS = (_gridRef$current5 = gridRef.current).setSortModel) === null || _gridRef$current$setS === void 0 || _gridRef$current$setS.call(_gridRef$current5, userPreferenceCharts.sortModel || []);
-      (_gridRef$current$setF = (_gridRef$current6 = gridRef.current).setFilterModel) === null || _gridRef$current$setF === void 0 || _gridRef$current$setF.call(_gridRef$current6, userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
+      gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
+      gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
+      gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
+      gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
         payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'CoolR Default'
