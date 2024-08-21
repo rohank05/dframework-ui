@@ -114,7 +114,7 @@ const StateProvider = _ref => {
       userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
         var _gridRef$current$getC, _gridRef$current;
         const columnIndex = (_gridRef$current$getC = (_gridRef$current = gridRef.current).getColumnIndex) === null || _gridRef$current$getC === void 0 ? void 0 : _gridRef$current$getC.call(_gridRef$current, ele.field);
-        if (columnIndex !== undefined && columnIndex !== -1) {
+        if (typeof columnIndex === 'number' && columnIndex >= 0) {
           var _gridRef$current$setC, _gridRef$current2;
           (_gridRef$current$setC = (_gridRef$current2 = gridRef.current).setColumnWidth) === null || _gridRef$current$setC === void 0 || _gridRef$current$setC.call(_gridRef$current2, ele.field, ele.width);
         }
