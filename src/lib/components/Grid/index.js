@@ -615,13 +615,13 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
-    // useEffect(() => {
-    //     if(model.preferenceId) {
-    //         removeCurrentPreferenceName({ dispatchData });
-    //         getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-    //         applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
-    //     }
-    // }, [])
+    useEffect(() => {
+        if(model.preferenceId) {
+            removeCurrentPreferenceName({ dispatchData });
+            getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+        }
+    }, [])
 
     const CustomToolbar = function (props) {
 
@@ -682,8 +682,10 @@ const GridBase = memo(({
         }
     };
     useEffect(() => { 
-        fetchData();
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, reRenderKey])
+        if (isGridPreferenceFetched) {
+            fetchData();
+        }
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
         if (forAssignment || !updatePageTitle) {

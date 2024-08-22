@@ -36,7 +36,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
 const Form = _ref => {
-  var _stateData$gridSettin, _model$columns;
+  var _stateData$gridSettin;
   let {
     model,
     api,
@@ -83,6 +83,26 @@ const Form = _ref => {
   const {
     mode
   } = stateData.dataForm;
+  (0, _react.useEffect)(() => {
+    setValidationSchema(model.getValidationSchema({
+      id,
+      snackbar
+    }));
+    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
+    try {
+      (0, _crudHelper.getRecord)({
+        id: options.length > 1 ? options[1] : options[0],
+        api: gridApi,
+        modelConfig: model,
+        setIsLoading,
+        setError: errorOnLoad,
+        setActiveRecord
+      });
+    } catch (error) {
+      snackbar.showError('An error occured, please try after some time.', error);
+      navigate(navigateBack);
+    }
+  }, [id, idWithOptions, model]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
@@ -109,27 +129,6 @@ const Form = _ref => {
       }).finally(() => setIsLoading(false));
     }
   });
-  const getLookupValues = (_model$columns = model.columns) === null || _model$columns === void 0 ? void 0 : _model$columns.filter(column => column.hasOwnProperty('getLookup')).map(column => formik.values[column.getLookup]);
-  (0, _react.useEffect)(() => {
-    setValidationSchema(model.getValidationSchema({
-      id,
-      snackbar
-    }));
-    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
-    try {
-      (0, _crudHelper.getRecord)({
-        id: options.length > 1 ? options[1] : options[0],
-        api: gridApi,
-        modelConfig: model,
-        setIsLoading,
-        setError: errorOnLoad,
-        setActiveRecord
-      });
-    } catch (error) {
-      snackbar.showError('An error occured, please try after some time.', error);
-      navigate(navigateBack);
-    }
-  }, [id, idWithOptions, model, ...getLookupValues]);
   const {
     dirty
   } = formik;

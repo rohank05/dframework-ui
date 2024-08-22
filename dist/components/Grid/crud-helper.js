@@ -191,7 +191,6 @@ const getList = async _ref => {
       credentials: 'include'
     };
     const response = await (0, _httpRequest.transport)(params);
-    console.log(response);
     function isLocalTime(dateValue) {
       const date = new Date(dateValue);
       const localOffset = new Date().getTimezoneOffset();

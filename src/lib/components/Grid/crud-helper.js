@@ -130,7 +130,6 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         };
 
         const response = await transport(params);
-        console.log(response)
         function isLocalTime(dateValue) {
             const date = new Date(dateValue);
             const localOffset = new Date().getTimezoneOffset();
