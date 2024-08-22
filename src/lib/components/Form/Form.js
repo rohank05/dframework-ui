@@ -90,7 +90,7 @@ const Form = ({
                 .finally(() => setIsLoading(false));
         }
     });
-    
+
     const { dirty } = formik;
 
     const handleDiscardChanges = () => {
@@ -176,6 +176,7 @@ const Form = ({
         gridData[name] = value;
         setData(gridData);
     }
+
     const handleSubmit = function (e) {
         if (e) e.preventDefault();
         const { errors } = formik;
