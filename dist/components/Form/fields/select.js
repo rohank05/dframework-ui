@@ -39,11 +39,9 @@ const SelectField = _ref => {
       State
     } = lookups;
     if (!State) return;
-    console.log("setactive ", State);
     setOptions(State);
   };
   const onOpen = () => {
-    console.log("open", column, formik.values);
     if (!column.parentComboType) return;
     const valueField = column.parentComboValueField || column.parentComboType + 'Id';
     if (!formik.values[valueField]) return;
@@ -74,8 +72,9 @@ const SelectField = _ref => {
   }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
   }, otherProps, {
-    name: field,
-    disabled: loading,
+    name: field
+    // disabled={loading}
+    ,
     onOpen: onOpen,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,

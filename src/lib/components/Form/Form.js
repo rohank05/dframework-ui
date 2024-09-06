@@ -10,8 +10,6 @@ import Box from '@mui/material/Box';
 import FormLayout from './field-mapper';
 import { useSnackbar } from '../SnackBar';
 import { DialogComponent } from '../Dialog';
-import PageTitle from '../PageTitle';
-// import { useNavigate, useLocation } from 'react-router-dom';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 export const ActiveStepContext = createContext(1);
@@ -196,7 +194,6 @@ const Form = ({
     const handleSubmit = function (e) {
         if (e) e.preventDefault();
         const { errors } = formik;
-        console.log(errors)
         formik.handleSubmit();
         const fieldName = Object.keys(errors)[0];
         const errorMessage = errors[fieldName];

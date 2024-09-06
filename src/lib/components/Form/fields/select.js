@@ -10,30 +10,28 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
     const [loading, setIsloading] = React.useState(false);
     const [options, setOptions] = React.useState(typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup);
     const setActiveRecord = (lookups) => {
-        const {State} = lookups;
-        if(!State) return;
-        console.log("setactive ", State)
+        const { State } = lookups;
+        if (!State) return;
         setOptions(State);
     }
     const onOpen = () => {
-        console.log("open",column, formik.values);
-        if(!column.parentComboType) return ;
+        if (!column.parentComboType) return;
         const valueField = column.parentComboValueField || column.parentComboType + 'Id';
-        if(!formik.values[valueField] ) return ;
+        if (!formik.values[valueField]) return;
         getRecordAndLookups({
-            scopeId: formik.values[valueField], 
+            scopeId: formik.values[valueField],
             lookups: column.lookup,
-            customSetIsLoading: setIsloading, 
+            customSetIsLoading: setIsloading,
             customSetActiveRecord: setActiveRecord
         });
     };
 
     useEffect(() => {
         onOpen();
-    },[formik.values[column.parentComboValueField || column.parentComboType + 'Id']])
+    }, [formik.values[column.parentComboValueField || column.parentComboType + 'Id']])
 
-     let inputValue = formik.values[field];
-     if (column.multiSelect) {
+    let inputValue = formik.values[field];
+    if (column.multiSelect) {
         if (!inputValue || inputValue.length === 0) {
             inputValue = [];
         }
