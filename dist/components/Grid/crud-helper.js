@@ -270,7 +270,7 @@ const getRecord = async _ref3 => {
   const lookupsToFetch = [];
   const fields = modelConfig.formDef || modelConfig.columns;
   fields === null || fields === void 0 || fields.forEach(field => {
-    if (field.lookup && !lookupsToFetch.includes(field.lookup)) {
+    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboType)) {
       lookupsToFetch.push(field.lookup);
     }
   });
