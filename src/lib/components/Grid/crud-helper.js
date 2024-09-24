@@ -188,7 +188,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     const lookupsToFetch = [];
     const fields = modelConfig.formDef || modelConfig.columns;
     fields?.forEach(field => {
-        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboType)) {
+        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
         }
     });

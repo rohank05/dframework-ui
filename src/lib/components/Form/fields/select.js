@@ -15,8 +15,8 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         setOptions(State);
     }
     const onOpen = () => {
-        if (!column.parentComboType) return;
-        const valueField = column.parentComboValueField || column.parentComboType + 'Id';
+        if (!column.parentComboField) return;
+        const valueField = column.parentComboField;
         if (!formik.values[valueField]) return;
         getRecordAndLookups({
             scopeId: formik.values[valueField],
@@ -28,7 +28,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
 
     useEffect(() => {
         onOpen();
-    }, [formik.values[column.parentComboValueField || column.parentComboType + 'Id']])
+    }, [formik.values[column.parentComboField]])
 
     let inputValue = formik.values[field];
     if (column.multiSelect) {
