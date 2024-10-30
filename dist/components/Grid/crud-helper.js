@@ -57,7 +57,6 @@ const getList = async _ref => {
     isElasticExport
   } = _ref;
   if (!contentType) {
-    setIsLoading(true);
     if (showFullScreenLoader) {
       dispatchData({
         type: _actions.default.UPDATE_LOADER_STATE,

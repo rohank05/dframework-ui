@@ -164,7 +164,7 @@ const GridBase = memo(({
 }) => {
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
     const [data, setData] = useState({ recordCount: 0, records: [], lookups: {} });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const forAssignment = !!onAssignChange;
     const rowsSelected = showRowsSelected;
     const [selection, setSelection] = useState([]);
@@ -398,7 +398,7 @@ const GridBase = memo(({
             if (effectivePermissions?.edit) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Edit">   <EditIcon /></Tooltip>} data-action={actionTypes.Edit} label="Edit" color="primary" />);
             }
-            if (effectivePermissions.add) {
+            if (effectivePermissions.copy) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Copy"><CopyIcon /> </Tooltip>} data-action={actionTypes.Copy} label="Copy" color="primary" />);
             }
             if (effectivePermissions.delete) {
@@ -828,6 +828,10 @@ const GridBase = memo(({
                     panel: {
                         placement: "bottom-end"
                     },
+                    loadingOverlay: {
+                        variant: 'skeleton',
+                        noRowsVariant: 'skeleton',
+                    }
                 }}
                 hideFooterSelectedRowCount={rowsSelected}
                 density="compact"

@@ -33,9 +33,9 @@ function PageTitle(props) {
   } = props;
   const [showTooltip, setShowTooltip] = useState(false);
   const isMobile = useMobile(true);
-  const { dispatchData, stateData } = useStateContext();
-
-  gridUrl = stateData.gridSettings.permissions.Url;
+  const { dispatchData, stateData = {} } = useStateContext();
+  const { permissions = {} } = stateData.gridSettings || {}
+  gridUrl = permissions.Url;
   const showImage = false;
   const card = [
     { title: "New Features", subTitle: "", url: 'https://coolrgroup.tourial.com/5df412f2-7667-48d6-8599-ccec9a3a4192', },

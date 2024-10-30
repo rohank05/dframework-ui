@@ -226,7 +226,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     records: [],
     lookups: {}
   });
-  const [isLoading, setIsLoading] = (0, _react.useState)(false);
+  const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const forAssignment = !!onAssignChange;
   const rowsSelected = showRowsSelected;
   const [selection, setSelection] = (0, _react.useState)([]);
@@ -524,7 +524,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
-      if (effectivePermissions.add) {
+      if (effectivePermissions.copy) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Copy"
@@ -1103,6 +1103,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       },
       panel: {
         placement: "bottom-end"
+      },
+      loadingOverlay: {
+        variant: 'skeleton',
+        noRowsVariant: 'skeleton'
       }
     },
     hideFooterSelectedRowCount: rowsSelected,

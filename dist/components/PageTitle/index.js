@@ -45,9 +45,12 @@ function PageTitle(props) {
   const isMobile = (0, _useMobile.default)(true);
   const {
     dispatchData,
-    stateData
+    stateData = {}
   } = (0, _StateProvider.useStateContext)();
-  gridUrl = stateData.gridSettings.permissions.Url;
+  const {
+    permissions = {}
+  } = stateData.gridSettings || {};
+  gridUrl = permissions.Url;
   const showImage = false;
   const card = [{
     title: "New Features",

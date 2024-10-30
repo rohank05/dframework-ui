@@ -8,7 +8,6 @@ const exportRecordSize = 10000;
 
 const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
-        setIsLoading(true);
         if (showFullScreenLoader) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
         }

@@ -20,6 +20,7 @@ import DaySelection from './fields/dayRadio';
 import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
+import styled from '@emotion/styled';
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -140,6 +141,8 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     if (!formElements?.length) {
         return null;
     }
+    const ImportantSpan = styled.span` color: red !important; `; // * Style Css
+
     return (
         <>
             {
@@ -149,7 +152,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
                             {column?.showLabel !== false ?
                                 <Grid item xs={1.5} className={classes.childStyles}>
-                                    <Typography sx={{ fontSize: '16px', fontWeight: isGridComponent ? 'bold' : 'normal' }}>{column.label || field}:</Typography>
+                                    <Typography sx={{ fontSize: '16px', fontWeight: isGridComponent ? 'bold' : 'normal' }}>{column.label || field} {column.required && <ImportantSpan>*</ImportantSpan>}:</Typography>
                                 </Grid>
                                 : null
                             }
