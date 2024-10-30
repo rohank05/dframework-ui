@@ -73,6 +73,7 @@ var _date = _interopRequireDefault(require("./fields/date"));
 var _dateTime = _interopRequireDefault(require("./fields/dateTime"));
 var _time = _interopRequireDefault(require("./fields/time"));
 var _select = _interopRequireDefault(require("./fields/select"));
+var _formGrid = _interopRequireDefault(require("./fields/form-grid"));
 var _gridTransfer = _interopRequireDefault(require("./fields/grid-transfer"));
 var _Grid = _interopRequireDefault(require("@mui/material/Grid"));
 var _radio = _interopRequireDefault(require("./fields/radio"));
@@ -105,7 +106,8 @@ const fieldMappers = exports.fieldMappers = {
   "oneToMany": _gridTransfer.default,
   "radio": _radio.default,
   "autocomplete": _autocomplete.default,
-  "dayRadio": _dayRadio.default
+  "dayRadio": _dayRadio.default,
+  "gridInForm": _formGrid.default
 };
 const useStyles = (0, _core.makeStyles)({
   root: {
@@ -384,6 +386,7 @@ const FormLayout = _ref6 => {
       showTabs: showTabs && tabColumns.length > 0
     };
   }, [model]);
+  console.log("form layouts", formElements, fieldConfigs);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
     getRecordAndLookups: getRecordAndLookups,
     formElements: formElements,

@@ -8,6 +8,7 @@ import DateField from './fields/date';
 import DateTimeField from './fields/dateTime';
 import TimeField from './fields/time';
 import SelectField from './fields/select';
+import GridForm from './fields/form-grid'
 import GridTransfer from './fields/grid-transfer';
 import Grid from '@mui/material/Grid';
 import RadioField from './fields/radio';
@@ -34,7 +35,8 @@ const fieldMappers = {
     "oneToMany": GridTransfer,
     "radio": RadioField,
     "autocomplete": AutocompleteField,
-    "dayRadio": DaySelection
+    "dayRadio": DaySelection,
+    "gridInForm": GridForm
 };
 
 const useStyles = makeStyles({
@@ -203,6 +205,7 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
         const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
+    console.log("form layouts", formElements, fieldConfigs);
     return (
         <div>
             <RenderColumns getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />

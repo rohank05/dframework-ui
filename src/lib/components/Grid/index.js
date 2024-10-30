@@ -50,7 +50,7 @@ const actionTypes = {
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
-    permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER" },
+    permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER", showColumnsOrder: true, filter: true },
 }
 
 const booleanIconRenderer = (params) => {
@@ -222,19 +222,19 @@ const GridBase = memo(({
             "valueOptions": "lookup"
         },
         "date": {
-            "valueFormatter": ( value ) => (
+            "valueFormatter": (value) => (
                 formatDate(value, true, false, stateData.dateTime)
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
         "dateTime": {
-            "valueFormatter": ( value ) => (
+            "valueFormatter": (value) => (
                 formatDate(value, false, false, stateData.dateTime)
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "datetime" }),
         },
         "dateTimeLocal": {
-            "valueFormatter": ( value ) => (
+            "valueFormatter": (value) => (
                 formatDate(value, false, false, stateData.dateTime)
             ),
             "filterOperators": LocalizedDatePicker({ type: "dateTimeLocal", convert: true }),
@@ -620,7 +620,7 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if(model.preferenceId) {
+        if (model.preferenceId) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
@@ -644,9 +644,14 @@ const GridBase = memo(({
                 {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
 
                 <GridToolbarContainer {...props}>
-                    <GridToolbarColumnsButton />
-                    <GridToolbarFilterButton />
-                    <Button startIcon={<FilterListOffIcon />} onClick={clearFilters} size="small">{"CLEAR FILTER"}</Button>
+                    {effectivePermissions.showColumnsOrder && (
+                        <GridToolbarColumnsButton />
+                    )}
+                    {effectivePermissions.filter && (<>
+                        <GridToolbarFilterButton />
+                        <Button startIcon={<FilterListOffIcon />} onClick={clearFilters} size="small">{"CLEAR FILTER"}</Button>
+                    </>)}
+
                     {effectivePermissions.export && (
                         <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
@@ -687,7 +692,7 @@ const GridBase = memo(({
     };
     useEffect(() => {
         // if (isGridPreferenceFetched) {
-            fetchData();
+        fetchData();
         // }
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
