@@ -36,7 +36,8 @@ const fieldMappers = {
     "radio": RadioField,
     "autocomplete": AutocompleteField,
     "dayRadio": DaySelection,
-    "gridInForm": GridForm
+    "gridInForm": GridForm,
+	"email": StringField
 };
 
 const useStyles = makeStyles({

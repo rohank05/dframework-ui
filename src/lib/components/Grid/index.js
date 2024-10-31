@@ -359,7 +359,7 @@ const GridBase = memo(({
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
-            lookupMap[column.field] = column;
+			lookupMap[column.field] = column;
             column.label = column?.label
         }
 

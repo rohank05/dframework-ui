@@ -143,7 +143,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                         record["TotalOrder"] = `${userCurrencySymbol}${record["TotalOrder"]}`;
                     }
                     dateColumns.forEach(column => {
-                        const { field, keepLocal, keepLocalDate } = column;
+						const { field, keepLocal, keepLocalDate } = column;
                         if (record[field]) {
                             record[field] = new Date(record[field]);
                             if (keepLocalDate) {
@@ -154,6 +154,15 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                                 const userTimezoneOffset = record[field].getTimezoneOffset() * 60000;
                                 record[field] = new Date(record[field].getTime() + userTimezoneOffset);
                             }
+                        }
+                    });
+                    (modelConfig.columns || []).forEach(column => {
+                        const {
+                            field,
+                            displayIndex
+                        } = column;
+                        if (displayIndex) {
+                            record[field] = record[displayIndex];
                         }
                     });
                 });
@@ -189,7 +198,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     fields?.forEach(field => {
         if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
-        }
+        }  
     });
     searchParams.set("lookups", lookupsToFetch);
     if (where && Object.keys(where)?.length) {

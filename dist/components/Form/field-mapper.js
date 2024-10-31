@@ -107,7 +107,8 @@ const fieldMappers = exports.fieldMappers = {
   "radio": _radio.default,
   "autocomplete": _autocomplete.default,
   "dayRadio": _dayRadio.default,
-  "gridInForm": _formGrid.default
+  "gridInForm": _formGrid.default,
+  "email": _string.default
 };
 const useStyles = (0, _core.makeStyles)({
   root: {

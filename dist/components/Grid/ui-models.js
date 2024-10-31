@@ -128,11 +128,10 @@ class UiModel {
         required = false,
         min = '',
         max = '',
-        validationLength = 0,
-        fieldLabel
+        validationLength = 0
       } = column;
       const formLabel = label || header || field;
-      if (!formLabel || !fieldLabel) {
+      if (!formLabel) {
         continue;
       }
       let config;
@@ -162,8 +161,15 @@ class UiModel {
             return value;
           }).label(formLabel).required("".concat(formLabel, " is required"));
           break;
+        case 'select':
         case 'autocomplete':
           config = yup.string().trim().label(formLabel).required("Select at least one ".concat(formLabel));
+          break;
+        case 'password':
+          config = yup.string().min(8, "".concat(formLabel, " must be at least 8 characters")).max(50, "".concat(formLabel, " must be at most 50 characters")).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"));
+          break;
+        case 'email':
+          config = yup.string().email("".concat(formLabel, " must be a valid email"));
           break;
         default:
           config = yup.mixed().label(formLabel);

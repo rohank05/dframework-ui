@@ -224,6 +224,15 @@ const getList = async _ref => {
               }
             }
           });
+          (modelConfig.columns || []).forEach(column => {
+            const {
+              field,
+              displayIndex
+            } = column;
+            if (displayIndex) {
+              record[field] = record[displayIndex];
+            }
+          });
         });
       }
       setData(response.data);
