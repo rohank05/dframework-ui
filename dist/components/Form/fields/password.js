@@ -9,8 +9,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireDefault(require("react"));
 var _string = _interopRequireDefault(require("./string"));
+var _material = require("@mui/material");
+var _VisibilityOff = _interopRequireDefault(require("@mui/icons-material/VisibilityOff"));
+var _Visibility = _interopRequireDefault(require("@mui/icons-material/Visibility"));
 const _excluded = ["otherProps"];
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
@@ -21,16 +25,36 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (e.includes(n)) continue; t[n] = r[n]; } return t; }
-const field = _ref => {
+const Field = _ref => {
+  var _props$column, _props$column2, _props$column3, _props$column4;
   let {
       otherProps
     } = _ref,
     props = _objectWithoutProperties(_ref, _excluded);
+  const [showPassword, setShowPassword] = _react.default.useState(false);
+  const handleClickShowPassword = () => setShowPassword(show => !show);
+  const handleMouseDownPassword = event => {
+    event.preventDefault();
+  };
   otherProps = _objectSpread({
-    type: 'password'
+    type: showPassword ? 'text' : 'password',
+    InputProps: {
+      readOnly: ((_props$column = props.column) === null || _props$column === void 0 ? void 0 : _props$column.readOnly) || false,
+      disabled: ((_props$column2 = props.column) === null || _props$column2 === void 0 ? void 0 : _props$column2.disabled) || false,
+      endAdornment: /*#__PURE__*/_react.default.createElement(_material.InputAdornment, {
+        position: "end"
+      }, /*#__PURE__*/_react.default.createElement(_material.IconButton, {
+        "aria-label": "toggle password visibility",
+        onClick: handleClickShowPassword,
+        onMouseDown: handleMouseDownPassword,
+        edge: "end",
+        disabled: ((_props$column3 = props.column) === null || _props$column3 === void 0 ? void 0 : _props$column3.disabled) || false,
+        readOnly: ((_props$column4 = props.column) === null || _props$column4 === void 0 ? void 0 : _props$column4.readOnly) || false
+      }, showPassword ? /*#__PURE__*/_react.default.createElement(_VisibilityOff.default, null) : /*#__PURE__*/_react.default.createElement(_Visibility.default, null)))
+    }
   }, otherProps);
   return /*#__PURE__*/_react.default.createElement(_string.default, _extends({
     otherProps: otherProps
   }, props));
 };
-var _default = exports.default = field;
+var _default = exports.default = Field;

@@ -15,6 +15,7 @@ const defaultValueConfigs = {
 	"radio": false,
 	"oneToMany": ""
 }
+const compareValidatorRegex = /^compare:(.+)$/;
 
 class UiModel {
 
@@ -45,7 +46,7 @@ class UiModel {
 		const { columns } = this;
 		let validationConfig = {};
 		for (const column of columns) {
-			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validationLength = 0 } = column;
+			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validationLength = 0, validate } = column;
 			const formLabel = label || header || field;
 			if (!formLabel) {
 				continue;
@@ -103,7 +104,22 @@ class UiModel {
 			}
 			if (requiredIfNew && (!id || id === '')) {
 				config = config.trim().required(`${formLabel} is required`);
+			}	
+			if (validate) {
+				const compareValidator = compareValidatorRegex.exec(validate);
+				if (compareValidator) {
+					const compareFieldName = compareValidator[1];
+					const compareField = columns.find(
+						(f) => (f.formField === compareFieldName || f.field) === compareFieldName
+					);
+					config = config.oneOf(
+						[yup.ref(compareFieldName)],
+						`${formLabel} must match ${compareField.label}`
+					);
+				}
+
 			}
+			
 			validationConfig[field] = config;
 		}
 
