@@ -37,7 +37,7 @@ const fieldMappers = {
     "autocomplete": AutocompleteField,
     "dayRadio": DaySelection,
     "gridInForm": GridForm,
-	"email": StringField
+    "email": StringField
 };
 
 const useStyles = makeStyles({
@@ -139,7 +139,7 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     )
 }
 
-const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, getRecordAndLookups = () => {} }) => {
+const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, getRecordAndLookups = () => { } }) => {
     const classes = useStyles();
     if (!formElements?.length) {
         return null;
@@ -170,7 +170,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     )
 }
 
-const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups}) {
+const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id }) {
     const formElements = [], tabColumns = {};
     for (const tab in tabs) {
         tabColumns[tab] = [];
@@ -186,7 +186,7 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups}) {
             otherProps.options = column.options;
         }
         const Component = fieldMappers[fieldType];
-        if (!Component) {
+        if (!Component || (column.hideInAddGrid && id === '0')) {
             continue;
         }
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
@@ -199,11 +199,11 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups}) {
     return { formElements, tabColumns: tabsData };
 }
 
-const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit, getRecordAndLookups = () => {}}) => {
+const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit, getRecordAndLookups = () => { } }) => {
     const classes = useStyles();
     const { formElements, tabColumns, showTabs } = React.useMemo(() => {
         let showTabs = model?.formConfig?.showTabbed;
-        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups });
+        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
     console.log("form layouts", formElements, fieldConfigs);

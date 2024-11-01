@@ -160,7 +160,8 @@ const GridBase = memo(({
     onRowClick = () => { },
     gridStyle,
     reRenderKey,
-    additionalFilters
+    additionalFilters,
+    ...props
 }) => {
 
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
@@ -445,10 +446,10 @@ const GridBase = memo(({
                 chartFilters.items.length = 0;
             }
         }
-        if (model.parentIdRelatedField) {
+        if (model.joinColumn) {
             baseFilters = [
                 {
-                    field: model.parentIdRelatedField,
+                    field: model.joinColumn,
                     operator: 'is',
                     type: "number",
                     value: Number(id)
@@ -576,9 +577,18 @@ const GridBase = memo(({
         setErrorMessage(null);
         setIsDeleting(false);
     };
+    
+    const processRowUpdate = (updatedRow) => {
+        if (props.processRowUpdate) {
+            props.processRowUpdate(updatedRow, data);
+        }
+        return updatedRow;
+    }
+
     const onCellDoubleClick = (event) => {
         const { row: record } = event;
-        if ((!isReadOnly && !isDoubleClicked) && !disableCellRedirect) {
+        console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
+        if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm(record[idProperty]);
         }
 
@@ -825,6 +835,7 @@ const GridBase = memo(({
                 paginationMode={isClient}
                 sortingMode={isClient}
                 filterMode={isClient}
+                processRowUpdate={processRowUpdate}
                 keepNonExistentRowsSelected
                 onSortModelChange={updateSort}
                 onFilterModelChange={updateFilters}
