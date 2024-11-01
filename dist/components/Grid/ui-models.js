@@ -44,6 +44,7 @@ const defaultValueConfigs = {
   "radio": false,
   "oneToMany": ""
 };
+const compareValidatorRegex = /^compare:(.+)$/;
 class UiModel {
   constructor(modelConfig) {
     _defineProperty(this, "Form", _ref => {
@@ -128,7 +129,8 @@ class UiModel {
         required = false,
         min = '',
         max = '',
-        validationLength = 0
+        validationLength = 0,
+        validate
       } = column;
       const formLabel = label || header || field;
       if (!formLabel) {
@@ -180,6 +182,14 @@ class UiModel {
       }
       if (requiredIfNew && (!id || id === '')) {
         config = config.trim().required("".concat(formLabel, " is required"));
+      }
+      if (validate) {
+        const compareValidator = compareValidatorRegex.exec(validate);
+        if (compareValidator) {
+          const compareFieldName = compareValidator[1];
+          const compareField = columns.find(f => (f.formField === compareFieldName || f.field) === compareFieldName);
+          config = config.oneOf([yup.ref(compareFieldName)], "".concat(formLabel, " must match ").concat(compareField.label));
+        }
       }
       validationConfig[field] = config;
     }
