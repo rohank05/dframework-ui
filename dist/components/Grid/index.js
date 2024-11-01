@@ -258,9 +258,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }
   const [filterModel, setFilterModel] = (0, _react.useState)(_objectSpread({}, initialFilterModel));
   const {
-    pathname,
-    navigate
+    navigate,
+    getParams,
+    useParams,
+    pathname
   } = (0, _StateProvider.useRouter)();
+  const {
+    id: idWithOptions
+  } = useParams() || getParams;
+  const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-')[0];
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
   const {
     idProperty = "id",
@@ -603,6 +609,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         finalFilters = filters;
         chartFilters.items.length = 0;
       }
+    }
+    if (model.parentIdRelatedField) {
+      baseFilters = [{
+        field: model.parentIdRelatedField,
+        operator: 'is',
+        type: "number",
+        value: Number(id)
+      }];
     }
     if (additionalFilters) {
       finalFilters.items = [...finalFilters.items, ...additionalFilters];

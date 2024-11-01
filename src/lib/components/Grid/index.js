@@ -162,6 +162,7 @@ const GridBase = memo(({
     reRenderKey,
     additionalFilters
 }) => {
+
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
     const [data, setData] = useState({ recordCount: 0, records: [], lookups: {} });
     const [isLoading, setIsLoading] = useState(true);
@@ -185,7 +186,9 @@ const GridBase = memo(({
         })
     }
     const [filterModel, setFilterModel] = useState({ ...initialFilterModel });
-    const { pathname, navigate } = useRouter()
+    const { navigate, getParams, useParams, pathname } = useRouter();
+    const { id: idWithOptions } = useParams() || getParams;
+    const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
     const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false } = model;
     const isReadOnly = model.readOnly === true;
@@ -441,6 +444,16 @@ const GridBase = memo(({
                 finalFilters = filters;
                 chartFilters.items.length = 0;
             }
+        }
+        if (model.parentIdRelatedField) {
+            baseFilters = [
+                {
+                    field: model.parentIdRelatedField,
+                    operator: 'is',
+                    type: "number",
+                    value: Number(id)
+                }
+            ]
         }
         if (additionalFilters) {
             finalFilters.items = [...finalFilters.items, ...additionalFilters];
