@@ -85,15 +85,29 @@ class UiModel {
 					break;
 				case 'password':
 					config = yup.string()
-						.min(8, `${formLabel} must be at least 8 characters`)
-						.max(50, `${formLabel} must be at most 50 characters`)
-						.matches(
-							/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
-							`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
-						);
+					.label(formLabel)
+					.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
+						// Skip further validations if value is exactly "******"
+						if (value === "******") return true;
+						// Check minimum length, maximum length, and pattern if not "******"
+						return yup.string()
+							.min(8, `${formLabel} must be at least 8 characters`)
+							.max(50, `${formLabel} must be at most 50 characters`)
+							.matches(
+								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
+								`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
+							)
+							.isValidSync(value);
+					});
 					break;
 				case 'email':
-					config = yup.string().email(`${formLabel} must be a valid email`)
+					config = yup
+						.string()
+						.trim()
+						.matches(
+							/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+							'Email must be a valid email'
+						)
 					break;
 				default:
 					config = yup.mixed().label(formLabel);

@@ -41,7 +41,7 @@ function PageTitle(props) {
     titleClass = "text-theme-blue text-max-width",
     showTitleInfo,
     showBreadcrumbs,
-    breadcrumbs
+    breadcrumbs = []
   } = props;
   const [showTooltip, setShowTooltip] = (0, _react.useState)(false);
   const isMobile = (0, _useMobile.default)(true);
@@ -93,15 +93,16 @@ function PageTitle(props) {
       }
     });
   }
-  const breadcrumbsLasIndex = (breadcrumbs === null || breadcrumbs === void 0 ? void 0 : breadcrumbs.length) - 1;
+  const breadcrumbsLasIndex = breadcrumbs.length - 1;
+  const needToShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactHelmetAsync.Helmet, null, /*#__PURE__*/_react.default.createElement("title", null, title)), /*#__PURE__*/_react.default.createElement(_Typography.default, {
     className: "print-only",
     text: titleHeading
-  }), /*#__PURE__*/_react.default.createElement(_material.Card, {
+  }), needToShowBreadcrumbs && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, " ", /*#__PURE__*/_react.default.createElement(_material.Card, {
     sx: {
       mb: 3
     }
-  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, showBreadcrumbs && breadcrumbs && /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
+  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
     variant: "h5",
     "aria-label": "breadcrumb",
     separator: ">",
@@ -161,6 +162,6 @@ function PageTitle(props) {
     },
     onMouseEnter: () => setShowTooltip(true),
     onMouseLeave: () => setShowTooltip(false)
-  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null));
+  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null), " "));
 }
 var _default = exports.default = (0, _reactI18next.withTranslation)()(PageTitle);

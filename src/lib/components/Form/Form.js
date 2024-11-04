@@ -217,7 +217,7 @@ const Form = ({
     ]
     return (
         <>
-        <PageTitle title={model.formTitle} showBreadcrumbs={true} breadcrumbs={breadcrumbs} />
+        <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
         <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
             <Paper sx={{ padding: 2 }}>
                 <form>

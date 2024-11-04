@@ -809,7 +809,7 @@ const GridBase = memo(({
 
     return (
         <>
-        <PageTitle showBreadcrumbs={true}
+        <PageTitle showBreadcrumbs={model.showBreadcrumbs }
                 breadcrumbs={breadCrumbs} />
         <Card style={gridStyle || customStyle} elevation={0} sx={{'& .MuiCardContent-root': {p: 0}}}>
         <CardContent>

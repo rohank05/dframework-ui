@@ -13,6 +13,7 @@ exports.UiModel = void 0;
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.regexp.test.js");
 require("core-js/modules/es.string.match.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.replace-all.js");
@@ -172,10 +173,15 @@ class UiModel {
           config = yup.string().trim().label(formLabel).required("Select at least one ".concat(formLabel));
           break;
         case 'password':
-          config = yup.string().min(8, "".concat(formLabel, " must be at least 8 characters")).max(50, "".concat(formLabel, " must be at most 50 characters")).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"));
+          config = yup.string().label(formLabel).test("ignore-asterisks", "".concat(formLabel, " must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"), value => {
+            // Skip further validations if value is exactly "******"
+            if (value === "******") return true;
+            // Check minimum length, maximum length, and pattern if not "******"
+            return yup.string().min(8, "".concat(formLabel, " must be at least 8 characters")).max(50, "".concat(formLabel, " must be at most 50 characters")).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character")).isValidSync(value);
+          });
           break;
         case 'email':
-          config = yup.string().email("".concat(formLabel, " must be a valid email"));
+          config = yup.string().trim().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, 'Email must be a valid email');
           break;
         default:
           config = yup.mixed().label(formLabel);

@@ -1086,7 +1086,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     text: model.gridTitle
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: true,
+    showBreadcrumbs: model.showBreadcrumbs,
     breadcrumbs: breadCrumbs
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,
