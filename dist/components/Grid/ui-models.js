@@ -4,6 +4,8 @@ require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.weak-map.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -15,6 +17,8 @@ require("core-js/modules/es.string.match.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.replace-all.js");
 require("core-js/modules/es.string.trim.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _index = _interopRequireDefault(require("./index"));
 var _react = _interopRequireDefault(require("react"));
@@ -62,10 +66,10 @@ class UiModel {
           match
         } = _ref2,
         props = _objectWithoutProperties(_ref2, _excluded2);
-      return /*#__PURE__*/_react.default.createElement(_Paper.default, null, /*#__PURE__*/_react.default.createElement(_index.default, _extends({
+      return /*#__PURE__*/_react.default.createElement(_index.default, _extends({
         model: this,
         showRowsSelected: showRowsSelected
-      }, props)));
+      }, props));
     });
     _defineProperty(this, "ChildGrid", props => {
       return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_index.default, _extends({

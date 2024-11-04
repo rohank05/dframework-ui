@@ -17,6 +17,11 @@ require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.trim.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
@@ -1077,9 +1082,21 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
     setSortModel(sort);
   };
-  return /*#__PURE__*/_react.default.createElement("div", {
-    style: gridStyle || customStyle
-  }, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
+  const breadCrumbs = [{
+    text: model.gridTitle
+  }];
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+    showBreadcrumbs: true,
+    breadcrumbs: breadCrumbs
+  }), /*#__PURE__*/_react.default.createElement(_material.Card, {
+    style: gridStyle || customStyle,
+    elevation: 0,
+    sx: {
+      '& .MuiCardContent-root': {
+        p: 0
+      }
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
     sx: {
       "& .MuiTablePagination-selectLabel": {
         marginTop: 2
@@ -1170,6 +1187,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")));
+  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")))));
 }, areEqual);
 var _default = exports.default = GridBase;

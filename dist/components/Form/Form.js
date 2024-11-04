@@ -2,6 +2,8 @@
 
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.weak-map.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -9,6 +11,8 @@ exports.default = exports.ActiveStepContext = void 0;
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _formik = require("formik");
@@ -23,6 +27,7 @@ var _SnackBar = require("../SnackBar");
 var _Dialog = require("../Dialog");
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
+var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -39,9 +44,9 @@ const Form = _ref => {
     model,
     api,
     permissions = {
-      edit: true,
-      export: true,
-      delete: true
+      edit: model.permissions.edit,
+      export: model.permissions.export,
+      delete: false
     },
     Layout = _fieldMapper.default
   } = _ref;
@@ -268,7 +273,16 @@ const Form = _ref => {
       setActiveStep(tabKeys.indexOf(fieldConfig.tab));
     }
   };
-  return /*#__PURE__*/_react.default.createElement(ActiveStepContext.Provider, {
+  const breadcrumbs = [{
+    text: model.formTitle
+  }, {
+    text: id === '0' ? 'New' : 'Update'
+  }];
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+    title: model.formTitle,
+    showBreadcrumbs: true,
+    breadcrumbs: breadcrumbs
+  }), /*#__PURE__*/_react.default.createElement(ActiveStepContext.Provider, {
     value: {
       activeStep,
       setActiveStep
@@ -329,6 +343,6 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?"))));
+  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")))));
 };
 var _default = exports.default = Form;

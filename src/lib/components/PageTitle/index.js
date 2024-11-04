@@ -11,6 +11,8 @@ import { Breadcrumbs, Typography } from "@mui/material";
 import HelpModal from "../HelpModal";
 import actionsStateProvider from "../useRouter/actions";
 import { useStateContext } from "../useRouter/StateProvider";
+import {  Card, CardContent } from '@mui/material';
+import { Link } from "react-router-dom";
 
 function PageTitle(props) {
   let gridUrl;
@@ -53,23 +55,20 @@ function PageTitle(props) {
       type: actionsStateProvider.OPEN_MODAL, payload: { status: true, data: obj }
     })
   }
-
+  const breadcrumbsLasIndex = breadcrumbs?.length -1
   return (
     <>
       <Helmet>
         <title>{title}</title>
       </Helmet>
       <MuiTypography className="print-only" text={titleHeading} />
-      <div
-        className={
-          !showTitleInfo ? clsx(pageTitleStyle, pageTitleBackground) : ""
-        }
-      >
+      <Card sx={{mb: 3 }}>
+      <CardContent>
         {/* Add BreadCrumbs  */}
         {showBreadcrumbs && breadcrumbs && (
-          <Breadcrumbs aria-label="breadcrumb" separator=">" className={`${titleClass} breadcrumbs-text-title text-max-width`}>
+          <Breadcrumbs variant="h5" aria-label="breadcrumb" separator=">" className={`${titleClass} breadcrumbs-text-title text-max-width`}>
             {breadcrumbs.map((breadcrumb, index) => (
-              <Typography sx={{ fontSize: '16px', fontWeight: "bold" }} key={index} className={`${titleClass} breadcrumbs-text-title text-max-width`}>
+              <Typography component={index === breadcrumbsLasIndex && breadcrumb.href && Link}  href={breadcrumb.href} key={index} className={`${titleClass} breadcrumbs-text-title text-max-width`}  variant="inherit"  >
                 {breadcrumb.text}
               </Typography>
             ))}
@@ -152,7 +151,8 @@ function PageTitle(props) {
             <Box> {mobileRightComponent} </Box>
           </>
         )}
-      </div>
+        </CardContent>
+      </Card>
       <HelpModal />
     </>
   );
