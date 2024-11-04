@@ -303,7 +303,8 @@ const getFormConfig = function getFormConfig(_ref5) {
   let {
     columns,
     tabs = {},
-    getRecordAndLookups
+    getRecordAndLookups,
+    id
   } = _ref5;
   const formElements = [],
     tabColumns = {};
@@ -326,7 +327,7 @@ const getFormConfig = function getFormConfig(_ref5) {
       otherProps.options = column.options;
     }
     const Component = fieldMappers[fieldType];
-    if (!Component) {
+    if (!Component || column.hideInAddGrid && id === '0') {
       continue;
     }
     const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
@@ -379,7 +380,8 @@ const FormLayout = _ref6 => {
     } = getFormConfig({
       columns: model.columns,
       tabs: showTabs ? model.tabs : {},
-      getRecordAndLookups
+      getRecordAndLookups,
+      id: displayId
     });
     return {
       formElements,

@@ -95,6 +95,9 @@ const Form = ({
             })
                 .then(success => {
                     if (success) {
+                        if(model.updateChildGridRecords){
+                            model.updateChildGridRecords();
+                        }
                         snackbar.showMessage('Record Updated Successfully.');
                         navigate(navigateBack);
                     }
