@@ -29,7 +29,7 @@ import { getList, getRecord, deleteRecord } from './crud-helper';
 import PropTypes from 'prop-types';
 import { Footer } from './footer';
 import template from './template';
-import { Tooltip } from "@mui/material";
+import { Tooltip, CardContent, Card } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from "@material-ui/core";
@@ -39,7 +39,6 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
-
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -794,8 +793,16 @@ const GridBase = memo(({
         setSortModel(sort);
     }
 
+    const breadCrumbs = [
+        {text: model.gridTitle}
+    ]
+
     return (
-        <div style={gridStyle || customStyle}>
+        <>
+        <PageTitle showBreadcrumbs={true}
+                breadcrumbs={breadCrumbs} />
+        <Card style={gridStyle || customStyle} elevation={0} sx={{'& .MuiCardContent-root': {p: 0}}}>
+        <CardContent>
             <DataGridPremium
                 sx={{
                     "& .MuiTablePagination-selectLabel": {
@@ -882,7 +889,9 @@ const GridBase = memo(({
             {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
             }
             {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-        </div >
+            </CardContent>
+        </Card >
+        </>
     );
 }, areEqual);
 
