@@ -132,7 +132,7 @@ class UiModel {
 	}
 
 	Grid = ({ match, ...props }) => {
-		return <Paper><GridBase model={this} showRowsSelected={showRowsSelected} {...props} /></Paper>
+		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />
 	}
 	ChildGrid = (props) => {
 		return <>

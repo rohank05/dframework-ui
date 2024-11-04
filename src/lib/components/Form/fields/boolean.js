@@ -13,8 +13,8 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
                 <Checkbox
                     {...otherProps}
                     name={field}
-                    readOnly={column.readOnly === true}
-                    checked={formik.values[field]}
+                    disabled={column?.readOnly === true || column?.disabled}
+                    checked={formik.values[field] === true}
                     onChange={handleChange}
                     onBlur={formik.handleBlur}
                 />

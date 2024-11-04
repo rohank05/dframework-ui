@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _clsx = _interopRequireDefault(require("clsx"));
@@ -19,6 +20,7 @@ var _material = require("@mui/material");
 var _HelpModal = _interopRequireDefault(require("../HelpModal"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _StateProvider = require("../useRouter/StateProvider");
+var _reactRouterDom = require("react-router-dom");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -91,22 +93,25 @@ function PageTitle(props) {
       }
     });
   }
+  const breadcrumbsLasIndex = (breadcrumbs === null || breadcrumbs === void 0 ? void 0 : breadcrumbs.length) - 1;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactHelmetAsync.Helmet, null, /*#__PURE__*/_react.default.createElement("title", null, title)), /*#__PURE__*/_react.default.createElement(_Typography.default, {
     className: "print-only",
     text: titleHeading
-  }), /*#__PURE__*/_react.default.createElement("div", {
-    className: !showTitleInfo ? (0, _clsx.default)(pageTitleStyle, pageTitleBackground) : ""
-  }, showBreadcrumbs && breadcrumbs && /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
+  }), /*#__PURE__*/_react.default.createElement(_material.Card, {
+    sx: {
+      mb: 3
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, showBreadcrumbs && breadcrumbs && /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
+    variant: "h5",
     "aria-label": "breadcrumb",
     separator: ">",
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width")
   }, breadcrumbs.map((breadcrumb, index) => /*#__PURE__*/_react.default.createElement(_material.Typography, {
-    sx: {
-      fontSize: '16px',
-      fontWeight: "bold"
-    },
+    component: index === breadcrumbsLasIndex && breadcrumb.href && _reactRouterDom.Link,
+    href: breadcrumb.href,
     key: index,
-    className: "".concat(titleClass, " breadcrumbs-text-title text-max-width")
+    className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
+    variant: "inherit"
   }, breadcrumb.text))), Icon && /*#__PURE__*/_react.default.createElement(_core.Box, null, /*#__PURE__*/_react.default.createElement(Icon, {
     iconclass: iconclass || "cameraIconTitle",
     className: iconclass || "cameraIconTitle"
@@ -156,6 +161,6 @@ function PageTitle(props) {
     },
     onMouseEnter: () => setShowTooltip(true),
     onMouseLeave: () => setShowTooltip(false)
-  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " "))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null));
+  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null));
 }
 var _default = exports.default = (0, _reactI18next.withTranslation)()(PageTitle);

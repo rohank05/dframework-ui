@@ -12,13 +12,14 @@ import { useSnackbar } from '../SnackBar';
 import { DialogComponent } from '../Dialog';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
+import PageTitle from '../PageTitle';
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
 const Form = ({
     model,
     api,
-    permissions = { edit: true, export: true, delete: true },
+    permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: false },
     Layout = FormLayout,
 }) => {
     const { navigate, getParams, useParams, pathname } = useRouter()
@@ -209,7 +210,14 @@ const Form = ({
             setActiveStep(tabKeys.indexOf(fieldConfig.tab));
         }
     }
+
+    const breadcrumbs = [
+        {text: model.formTitle},
+        {text: id === '0' ? 'New' : 'Update'}
+    ]
     return (
+        <>
+        <PageTitle title={model.formTitle} showBreadcrumbs={true} breadcrumbs={breadcrumbs} />
         <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
             <Paper sx={{ padding: 2 }}>
                 <form>
@@ -234,6 +242,7 @@ const Form = ({
                 <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
             </Paper>
         </ActiveStepContext.Provider >
+        </>
     )
 }
 export default Form;
