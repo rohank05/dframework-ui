@@ -66,7 +66,8 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         where,
         oderStatusId: oderStatusId,
         isElasticExport,
-        fileName: modelConfig?.overrideFileName
+        fileName: modelConfig?.overrideFileName,
+        userTimezoneOffset: new Date().getTimezoneOffset() * -1
     };
 
     if (lookups) {

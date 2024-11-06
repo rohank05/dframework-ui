@@ -12,6 +12,11 @@ require("core-js/modules/es.array.sort.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.to-string.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url-search-params.js");
 require("core-js/modules/web.url-search-params.delete.js");
@@ -133,7 +138,8 @@ const getList = async _ref => {
     where,
     oderStatusId: oderStatusId,
     isElasticExport,
-    fileName: modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.overrideFileName
+    fileName: modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.overrideFileName,
+    userTimezoneOffset: new Date().getTimezoneOffset() * -1
   });
   if (lookups) {
     requestData.lookups = lookups.join(',');
