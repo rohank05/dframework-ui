@@ -144,7 +144,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                         record["TotalOrder"] = `${userCurrencySymbol}${record["TotalOrder"]}`;
                     }
                     dateColumns.forEach(column => {
-						const { field, keepLocal, keepLocalDate } = column;
+                        const { field, keepLocal, keepLocalDate } = column;
                         if (record[field]) {
                             record[field] = new Date(record[field]);
                             if (keepLocalDate) {
@@ -169,16 +169,18 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 });
             }
             setData(response.data);
-        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        } else {
+            setError(response.statusText);
+        }
+    } catch (error) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
         } else {
-            setError(response.statusText);
+            setError('Could not list record', error.message || error.toString());
         }
-    } catch (err) {
-        setError(err);
     } finally {
         if (!contentType) {
             setIsLoading(false);
@@ -199,7 +201,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     fields?.forEach(field => {
         if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
-        }  
+        }
     });
     searchParams.set("lookups", lookupsToFetch);
     if (where && Object.keys(where)?.length) {
@@ -227,16 +229,19 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             const defaultValues = { ...modelConfig.defaultValues };
 
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
-        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        } else {
+            setError('Could not load record', response.body.toString());
+        }
+    } catch (error) {
+        // Handle 401 specifically in the error block
+        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
         } else {
-            setError('Could not load record', response.body.toString());
+            setError('Could not load record', error.message || error.toString());
         }
-    } catch (error) {
-        setError('Could not load record', error);
     } finally {
         setIsLoading(false);
     }
@@ -258,19 +263,19 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
         if (response.status === HTTP_STATUS_CODES.OK) {
             result.success = true;
             return true;
+        } else {
+            setError('Delete failed', response.body);
         }
-        if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    } catch (error) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
         } else {
-            setError('Delete failed', response.body);
+            setError('Could not delete record', error.message || error.toString());
         }
-    } catch (error) {
-        const errorMessage = error?.response?.data?.error;
-        result.error = errorMessage;
-        setErrorMessage(errorMessage);
+
     } finally {
         setIsLoading(false);
     }
@@ -307,17 +312,18 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             }
             setError('Save failed', data.err || data.message);
             return;
+        } else {
+            setError('Save failed', response.body);
         }
-        if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+    } catch (error) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
         } else {
-            setError('Save failed', response.body);
+            setError('Could not save record', error.message || error.toString());
         }
-    } catch (error) {
-        setError('Save failed', error);
     } finally {
         setIsLoading(false);
     }

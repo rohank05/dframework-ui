@@ -202,6 +202,7 @@ const getList = async _ref => {
       const dateOffset = date.getTimezoneOffset();
       return localOffset === dateOffset;
     }
+    console.log('status', response.status);
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
         records,
@@ -242,16 +243,18 @@ const getList = async _ref => {
         });
       }
       setData(response.data);
-    } else if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    } else {
+      setError(response.statusText);
+    }
+  } catch (error) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } else {
-      setError(response.statusText);
+      setError('Could not list record', error.message || error.toString());
     }
-  } catch (err) {
-    setError(err);
   } finally {
     if (!contentType) {
       setIsLoading(false);
@@ -299,6 +302,7 @@ const getRecord = async _ref3 => {
       method: 'GET',
       credentials: 'include'
     });
+    console.log('status', response.status);
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
         data: record,
@@ -322,16 +326,19 @@ const getRecord = async _ref3 => {
         record: _objectSpread(_objectSpread(_objectSpread({}, defaultValues), record), parentFilters),
         lookups
       });
-    } else if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    } else {
+      setError('Could not load record', response.body.toString());
+    }
+  } catch (error) {
+    // Handle 401 specifically in the error block
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } else {
-      setError('Could not load record', response.body.toString());
+      setError('Could not load record', error.message || error.toString());
     }
-  } catch (error) {
-    setError('Could not load record', error);
   } finally {
     setIsLoading(false);
   }
@@ -363,20 +370,18 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       result.success = true;
       return true;
+    } else {
+      setError('Delete failed', response.body);
     }
-    if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+  } catch (error) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } else {
-      setError('Delete failed', response.body);
+      setError('Could not delete record', error.message || error.toString());
     }
-  } catch (error) {
-    var _error$response;
-    const errorMessage = error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.error;
-    result.error = errorMessage;
-    setErrorMessage(errorMessage);
   } finally {
     setIsLoading(false);
   }
@@ -418,17 +423,18 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       }
       setError('Save failed', data.err || data.message);
       return;
+    } else {
+      setError('Save failed', response.body);
     }
-    if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+  } catch (error) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
     } else {
-      setError('Save failed', response.body);
+      setError('Could not save record', error.message || error.toString());
     }
-  } catch (error) {
-    setError('Save failed', error);
   } finally {
     setIsLoading(false);
   }

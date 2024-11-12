@@ -1,6 +1,6 @@
 const initialState = {
     dataLocalization: 'en',
-    dateTime: 'DD-MM-YYYY',
+    dateTime: 'MM/DD/YYYY hh:mm:ss A',
     dataForm: '',
     pageTitleDetails:null,
     modal:null,

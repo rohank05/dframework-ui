@@ -2,6 +2,9 @@
 
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.push.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -78,6 +81,7 @@ const request = async _ref => {
   let reqParams = _objectSpread({
     method: 'POST',
     credentials: 'include',
+    // withCredentials: true,
     url: url,
     headers: jsonPayload ? _objectSpread({}, additionalHeaders) : _objectSpread({
       'Content-Type': 'multipart/form-data'
