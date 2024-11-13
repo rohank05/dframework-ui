@@ -96,7 +96,7 @@ const getList = async _ref => {
   const where = [];
   if (filterModel !== null && filterModel !== void 0 && (_filterModel$items = filterModel.items) !== null && _filterModel$items !== void 0 && _filterModel$items.length) {
     filterModel.items.forEach(filter => {
-      if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value) {
+      if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || filter.value === false && filter.type === 'boolean') {
         var _column$;
         const {
           field,
@@ -109,7 +109,7 @@ const getList = async _ref => {
         const column = gridColumns.filter(item => item.field === filter.field);
         const type = (_column$ = column[0]) === null || _column$ === void 0 ? void 0 : _column$.type;
         if (type === 'boolean') {
-          value = value === 'true' ? 1 : 0;
+          value = value === 'true' || value === true ? 1 : 0;
         } else if (type === 'number') {
           value = Array.isArray(value) ? value.filter(e => e) : value;
         }
@@ -202,7 +202,6 @@ const getList = async _ref => {
       const dateOffset = date.getTimezoneOffset();
       return localOffset === dateOffset;
     }
-    console.log('status', response.status);
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
         records,
@@ -302,7 +301,6 @@ const getRecord = async _ref3 => {
       method: 'GET',
       credentials: 'include'
     });
-    console.log('status', response.status);
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
         data: record,

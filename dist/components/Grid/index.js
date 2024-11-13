@@ -880,7 +880,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", t(model.gridSubTitle, tOpts)), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, " ", model.gridSubTitle), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       className: "preference-name-text",
       variant: "h6",
       component: "h6",
@@ -1040,7 +1040,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         if (isKeywordField) {
           item.filterField = "".concat(item.field, ".keyword");
         }
-        return item;
+        return _objectSpread(_objectSpread({}, item), {}, {
+          type: column.type
+        });
       }
       const updatedValue = isNumber ? null : value;
       return {
@@ -1146,10 +1148,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       },
       panel: {
         placement: "bottom-end"
-      },
-      loadingOverlay: {
-        variant: 'skeleton',
-        noRowsVariant: 'skeleton'
       }
     },
     hideFooterSelectedRowCount: rowsSelected,
@@ -1165,6 +1163,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         columnVisibilityModel: visibilityModel
       },
       pinnedColumns: pinnedColumns
+    },
+    localeText: {
+      filterValueTrue: 'Yes',
+      filterValueFalse: 'No'
     }
   }), isOrderDetailModalOpen && selectedOrder && model.OrderModal && /*#__PURE__*/_react.default.createElement(model.OrderModal, {
     orderId: selectedOrder.OrderId,

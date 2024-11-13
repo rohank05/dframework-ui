@@ -658,7 +658,7 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
-                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {t(model.gridSubTitle, tOpts)}</Typography>}
+                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
                 {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title ? model.title : 'Add'}`}</Button>}
@@ -767,7 +767,7 @@ const GridBase = memo(({
                 if (isKeywordField) {
                     item.filterField = `${item.field}.keyword`;
                 }
-                return item;
+                return { ...item, type: column.type };
             }
             const updatedValue = isNumber ? null : value;
             return { field, operator, type, value: updatedValue };
@@ -863,10 +863,6 @@ const GridBase = memo(({
                     },
                     panel: {
                         placement: "bottom-end"
-                    },
-                    loadingOverlay: {
-                        variant: 'skeleton',
-                        noRowsVariant: 'skeleton',
                     }
                 }}
                 hideFooterSelectedRowCount={rowsSelected}
@@ -882,6 +878,10 @@ const GridBase = memo(({
                         columnVisibilityModel: visibilityModel
                     },
                     pinnedColumns: pinnedColumns
+                }}
+                 localeText={{
+                            filterValueTrue: 'Yes',
+                            filterValueFalse: 'No'
                 }}
             />
             {isOrderDetailModalOpen && selectedOrder && model.OrderModal && (
