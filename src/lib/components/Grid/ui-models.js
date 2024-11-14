@@ -4,6 +4,7 @@ import * as yup from 'yup';
 import Paper from '@mui/material/Paper';
 import { Divider } from '@mui/material';
 import Form from '../Form/Form';
+import ReadonlyPanel from '../ReadonlyPanel';
 
 
 const nonAlphaNumeric = /[^a-zA-Z0-9]/g;
@@ -147,6 +148,9 @@ class UiModel {
 
 	Grid = ({ match, ...props }) => {
 		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />
+	}
+	Readonly = ({ match, ...props }) => {
+		return <ReadonlyPanel model={this} {...props} />
 	}
 	ChildGrid = (props) => {
 		return <>
