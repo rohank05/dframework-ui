@@ -50,7 +50,8 @@ var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
-const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters"],
+var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
+const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -223,7 +224,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       onRowClick = () => {},
       gridStyle,
       reRenderKey,
-      additionalFilters
+      additionalFilters,
+      onCellDoubleClickOverride,
+      onAddOverride
     } = _ref2,
     props = _objectWithoutProperties(_ref2, _excluded);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
@@ -785,6 +788,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return updatedRow;
   };
   const onCellDoubleClick = event => {
+    if (typeof onCellDoubleClickOverride === 'function') {
+      onCellDoubleClickOverride(event);
+      return;
+    }
     const {
       row: record
     } = event;
@@ -811,7 +818,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     fetchData();
   };
   const onAdd = () => {
-    openForm(0);
+    if (typeof onAddOverride === 'function') {
+      onAddOverride();
+    } else {
+      openForm(0);
+    }
   };
   const clearFilters = () => {
     var _filterModel$items;
