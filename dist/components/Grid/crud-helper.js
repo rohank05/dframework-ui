@@ -366,6 +366,11 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
+      if (response.data && !response.data.success) {
+        result.success = false;
+        setError('Delete failed', response.data.message);
+        return false;
+      }
       result.success = true;
       return true;
     } else {

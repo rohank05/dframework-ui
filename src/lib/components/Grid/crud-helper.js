@@ -261,6 +261,11 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
+            if (response.data && !response.data.success) {
+                result.success = false;
+                setError('Delete failed', response.data.message);
+                return false;
+            }
             result.success = true;
             return true;
         } else {

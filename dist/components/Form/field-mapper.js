@@ -390,7 +390,6 @@ const FormLayout = _ref6 => {
       showTabs: showTabs && tabColumns.length > 0
     };
   }, [model]);
-  console.log("form layouts", formElements, fieldConfigs);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
     getRecordAndLookups: getRecordAndLookups,
     formElements: formElements,
