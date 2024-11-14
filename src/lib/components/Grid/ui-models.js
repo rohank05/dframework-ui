@@ -82,8 +82,11 @@ class UiModel {
 					break;
 				case 'select':
 				case 'autocomplete':
-					config = yup.string()
-					// config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
+					if (required) {
+						config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
+					} else {
+						config = yup.string()
+					}
 					break;
 				case 'password':
 					config = yup.string()
