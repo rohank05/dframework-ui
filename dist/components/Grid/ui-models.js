@@ -181,7 +181,8 @@ class UiModel {
           break;
         case 'select':
         case 'autocomplete':
-          config = yup.string().trim().label(formLabel).required("Select at least one ".concat(formLabel));
+          config = yup.string();
+          // config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
           break;
         case 'password':
           config = yup.string().label(formLabel).test("ignore-asterisks", "".concat(formLabel, " must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"), value => {
