@@ -21,6 +21,7 @@ const Form = ({
     api,
     permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: false },
     Layout = FormLayout,
+    baseSaveData = {}
 }) => {
     const { navigate, getParams, useParams, pathname } = useRouter()
     const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
@@ -48,16 +49,16 @@ const Form = ({
         try {
             const params = {
                 api: api || gridApi,
-                modelConfig: model, 
+                modelConfig: model,
                 setError: errorOnLoad
             }
-            if(lookups){
+            if (lookups) {
                 getLookups({
                     ...params,
                     // setIsLoading, 
-                    setIsLoading: customSetIsLoading || setIsLoading, 
-                    setActiveRecord: customSetActiveRecord, 
-                    lookups, 
+                    setIsLoading: customSetIsLoading || setIsLoading,
+                    setActiveRecord: customSetActiveRecord,
+                    lookups,
                     scopeId
                 })
             }
@@ -89,13 +90,13 @@ const Form = ({
             saveRecord({
                 id,
                 api: gridApi,
-                values,
+                values: {...baseSaveData, ...values },
                 setIsLoading,
                 setError: snackbar.showError
             })
                 .then(success => {
                     if (success) {
-                        if(model.updateChildGridRecords){
+                        if (model.updateChildGridRecords) {
                             model.updateChildGridRecords();
                         }
                         snackbar.showMessage('Record Updated Successfully.');
@@ -212,36 +213,36 @@ const Form = ({
     }
 
     const breadcrumbs = [
-        {text: model.formTitle},
-        {text: id === '0' ? 'New' : 'Update'}
+        { text: model.formTitle },
+        { text: id === '0' ? 'New' : 'Update' }
     ]
     return (
         <>
-        <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
-        <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
-            <Paper sx={{ padding: 2 }}>
-                <form>
-                    <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
-                        {permissions.edit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
-                        <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
-                        {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
-                    </Stack>
-                    <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups}/>
-                </form>
-                {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)}
-                <DialogComponent
-                    open={isDiscardDialogOpen}
-                    onConfirm={handleDiscardChanges}
-                    onCancel={() => setIsDiscardDialogOpen(false)}
-                    title="Changes not saved"
-                    okText="Discard"
-                    cancelText="Continue"
-                >
-                    {"Would you like to continue to edit or discard changes?"}
-                </DialogComponent>
-                <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
-            </Paper>
-        </ActiveStepContext.Provider >
+            <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
+            <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
+                <Paper sx={{ padding: 2 }}>
+                    <form>
+                        <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
+                            {permissions.edit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
+                            <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
+                            {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
+                        </Stack>
+                        <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups} />
+                    </form>
+                    {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)}
+                    <DialogComponent
+                        open={isDiscardDialogOpen}
+                        onConfirm={handleDiscardChanges}
+                        onCancel={() => setIsDiscardDialogOpen(false)}
+                        title="Changes not saved"
+                        okText="Discard"
+                        cancelText="Continue"
+                    >
+                        {"Would you like to continue to edit or discard changes?"}
+                    </DialogComponent>
+                    <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
+                </Paper>
+            </ActiveStepContext.Provider >
         </>
     )
 }

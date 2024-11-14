@@ -48,7 +48,8 @@ const Form = _ref => {
       export: model.permissions.export,
       delete: false
     },
-    Layout = _fieldMapper.default
+    Layout = _fieldMapper.default,
+    baseSaveData = {}
   } = _ref;
   const {
     navigate,
@@ -139,7 +140,7 @@ const Form = _ref => {
       (0, _crudHelper.saveRecord)({
         id,
         api: gridApi,
-        values,
+        values: _objectSpread(_objectSpread({}, baseSaveData), values),
         setIsLoading,
         setError: snackbar.showError
       }).then(success => {
