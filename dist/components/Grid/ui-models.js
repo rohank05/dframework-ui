@@ -27,8 +27,10 @@ var yup = _interopRequireWildcard(require("yup"));
 var _Paper = _interopRequireDefault(require("@mui/material/Paper"));
 var _material = require("@mui/material");
 var _Form = _interopRequireDefault(require("../Form/Form"));
+var _ReadonlyPanel = _interopRequireDefault(require("../ReadonlyPanel"));
 const _excluded = ["match"],
-  _excluded2 = ["match"];
+  _excluded2 = ["match"],
+  _excluded3 = ["match"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -70,6 +72,15 @@ class UiModel {
       return /*#__PURE__*/_react.default.createElement(_index.default, _extends({
         model: this,
         showRowsSelected: showRowsSelected
+      }, props));
+    });
+    _defineProperty(this, "Readonly", _ref3 => {
+      let {
+          match
+        } = _ref3,
+        props = _objectWithoutProperties(_ref3, _excluded3);
+      return /*#__PURE__*/_react.default.createElement(_ReadonlyPanel.default, _extends({
+        model: this
       }, props));
     });
     _defineProperty(this, "ChildGrid", props => {
@@ -116,10 +127,10 @@ class UiModel {
     this.columnVisibilityModel = columnVisibilityModel;
     this.defaultValues = defaultValues;
   }
-  getValidationSchema(_ref3) {
+  getValidationSchema(_ref4) {
     let {
       id
-    } = _ref3;
+    } = _ref4;
     const {
       columns
     } = this;
