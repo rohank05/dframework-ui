@@ -588,7 +588,7 @@ const GridBase = memo(({
     }
 
     const onCellDoubleClick = (event) => {
-        if(typeof onCellDoubleClickOverride === 'function') {
+        if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
