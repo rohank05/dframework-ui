@@ -22,6 +22,8 @@ import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
+import ChipInput from './fields/chipInput';
+
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -37,7 +39,8 @@ const fieldMappers = {
     "autocomplete": AutocompleteField,
     "dayRadio": DaySelection,
     "gridInForm": GridForm,
-    "email": StringField
+    "email": StringField,
+    "chipInput": ChipInput
 };
 
 const useStyles = makeStyles({
