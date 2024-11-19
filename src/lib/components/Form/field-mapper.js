@@ -22,6 +22,8 @@ import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
+import ChipInput from './fields/chipInput';
+
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -37,7 +39,8 @@ const fieldMappers = {
     "autocomplete": AutocompleteField,
     "dayRadio": DaySelection,
     "gridInForm": GridForm,
-    "email": StringField
+    "email": StringField,
+    "chipInput": ChipInput
 };
 
 const useStyles = makeStyles({
@@ -206,7 +209,6 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
         const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
-    console.log("form layouts", formElements, fieldConfigs);
     return (
         <div>
             <RenderColumns getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />

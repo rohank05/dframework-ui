@@ -22,6 +22,7 @@ const Form = ({
     api,
     permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: false },
     Layout = FormLayout,
+    baseSaveData = {}
 }) => {
     const { navigate, getParams, useParams, pathname } = useRouter()
     const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
@@ -52,16 +53,16 @@ const Form = ({
         try {
             const params = {
                 api: api || gridApi,
-                modelConfig: model, 
+                modelConfig: model,
                 setError: errorOnLoad
             }
-            if(lookups){
+            if (lookups) {
                 getLookups({
                     ...params,
                     // setIsLoading, 
-                    setIsLoading: customSetIsLoading || setIsLoading, 
-                    setActiveRecord: customSetActiveRecord, 
-                    lookups, 
+                    setIsLoading: customSetIsLoading || setIsLoading,
+                    setActiveRecord: customSetActiveRecord,
+                    lookups,
                     scopeId
                 })
             }
@@ -93,13 +94,13 @@ const Form = ({
             saveRecord({
                 id,
                 api: gridApi,
-                values,
+                values: {...baseSaveData, ...values },
                 setIsLoading,
                 setError: snackbar.showError
             })
                 .then(success => {
                     if (success) {
-                        if(model.updateChildGridRecords){
+                        if (model.updateChildGridRecords) {
                             model.updateChildGridRecords();
                         }
                         snackbar.showMessage('Record Updated Successfully.');
@@ -216,8 +217,8 @@ const Form = ({
     }
 
     const breadcrumbs = [
-        {text: model.formTitle},
-        {text: id === '0' ? 'New' : 'Update'}
+        { text: model.formTitle },
+        { text: id === '0' ? 'New' : 'Update' }
     ]
     return (
         <>

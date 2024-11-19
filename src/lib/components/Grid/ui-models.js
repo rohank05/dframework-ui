@@ -82,24 +82,28 @@ class UiModel {
 					break;
 				case 'select':
 				case 'autocomplete':
-					config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
+					if (required) {
+						config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
+					} else {
+						config = yup.string()
+					}
 					break;
 				case 'password':
 					config = yup.string()
-					.label(formLabel)
-					.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
-						// Skip further validations if value is exactly "******"
-						if (value === "******") return true;
-						// Check minimum length, maximum length, and pattern if not "******"
-						return yup.string()
-							.min(8, `${formLabel} must be at least 8 characters`)
-							.max(50, `${formLabel} must be at most 50 characters`)
-							.matches(
-								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
-								`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
-							)
-							.isValidSync(value);
-					});
+						.label(formLabel)
+						.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
+							// Skip further validations if value is exactly "******"
+							if (value === "******") return true;
+							// Check minimum length, maximum length, and pattern if not "******"
+							return yup.string()
+								.min(8, `${formLabel} must be at least 8 characters`)
+								.max(50, `${formLabel} must be at most 50 characters`)
+								.matches(
+									/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
+									`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
+								)
+								.isValidSync(value);
+						});
 					break;
 				case 'email':
 					config = yup
@@ -119,7 +123,7 @@ class UiModel {
 			}
 			if (requiredIfNew && (!id || id === '')) {
 				config = config.trim().required(`${formLabel} is required`);
-			}	
+			}
 			if (validate) {
 				const compareValidator = compareValidatorRegex.exec(validate);
 				if (compareValidator) {
@@ -134,7 +138,7 @@ class UiModel {
 				}
 
 			}
-			
+
 			validationConfig[field] = config;
 		}
 

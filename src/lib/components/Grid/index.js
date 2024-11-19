@@ -39,6 +39,7 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
+import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 import { getPermissions } from '../utils';
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -161,6 +162,8 @@ const GridBase = memo(({
     gridStyle,
     reRenderKey,
     additionalFilters,
+    onCellDoubleClickOverride,
+    onAddOverride,
     ...props
 }) => {
 
@@ -366,7 +369,7 @@ const GridBase = memo(({
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
-			lookupMap[column.field] = column;
+            lookupMap[column.field] = column;
             column.label = column?.label
         }
 
@@ -580,7 +583,7 @@ const GridBase = memo(({
         setErrorMessage(null);
         setIsDeleting(false);
     };
-    
+
     const processRowUpdate = (updatedRow) => {
         if (props.processRowUpdate) {
             props.processRowUpdate(updatedRow, data);
@@ -589,6 +592,10 @@ const GridBase = memo(({
     }
 
     const onCellDoubleClick = (event) => {
+        if (typeof onCellDoubleClickOverride === 'function') {
+            onCellDoubleClickOverride(event);
+            return;
+        }
         const { row: record } = event;
         console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
@@ -619,8 +626,12 @@ const GridBase = memo(({
 
 
     const onAdd = () => {
-        openForm(0);
-    };
+        if (typeof onAddOverride === 'function') {
+            onAddOverride();
+        } else {
+            openForm(0);
+        }
+    }
 
     const clearFilters = () => {
         if (filterModel?.items?.length > 0) {
@@ -808,104 +819,104 @@ const GridBase = memo(({
     }
 
     const breadCrumbs = [
-        {text: model.gridTitle}
+        { text: model.gridTitle }
     ]
 
     return (
         <>
-        <PageTitle showBreadcrumbs={model.showBreadcrumbs }
+            <PageTitle showBreadcrumbs={model.showBreadcrumbs}
                 breadcrumbs={breadCrumbs} />
-        <Card style={gridStyle || customStyle} elevation={0} sx={{'& .MuiCardContent-root': {p: 0}}}>
-        <CardContent>
-            <DataGridPremium
-                sx={{
-                    "& .MuiTablePagination-selectLabel": {
-                        marginTop: 2
-                    },
-                    "& .MuiTablePagination-displayedRows": {
-                        marginTop: 2
-                    },
-                    "& .MuiDataGrid-columnHeader .MuiInputLabel-shrink": {
-                        display: "none"
-                    }
-                }}
-                unstable_headerFilters={showHeaderFilters}
-                checkboxSelection={forAssignment}
-                loading={isLoading}
-                className="pagination-fix"
-                onCellClick={onCellClickHandler}
-                onCellDoubleClick={onCellDoubleClick}
-                columns={gridColumns}
-                paginationModel={paginationModel}
-                pageSizeOptions={[5, 10, 20, 50, 100]}
-                onPaginationModelChange={setPaginationModel}
-                pagination
-                rowCount={data.recordCount}
-                rows={data.records}
-                sortModel={sortModel}
-                paginationMode={isClient}
-                sortingMode={isClient}
-                filterMode={isClient}
-                processRowUpdate={processRowUpdate}
-                keepNonExistentRowsSelected
-                onSortModelChange={updateSort}
-                onFilterModelChange={updateFilters}
-                rowSelection={selection}
-                onRowSelectionModelChange={setSelection}
-                filterModel={filterModel}
-                getRowId={getGridRowId}
-                onRowClick={onRowClick}
-                slots={{
-                    headerFilterMenu: false,
-                    toolbar: CustomToolbar,
-                    footer: Footer
-                }}
-                slotProps={{
-                    footer: {
-                        pagination: true,
-                        apiRef
-                    },
-                    panel: {
-                        placement: "bottom-end"
-                    }
-                }}
-                hideFooterSelectedRowCount={rowsSelected}
-                density="compact"
-                disableDensitySelector={true}
-                apiRef={apiRef}
-                disableAggregation={true}
-                disableRowGrouping={true}
-                disableRowSelectionOnClick={disableRowSelectionOnClick}
-                autoHeight
-                initialState={{
-                    columns: {
-                        columnVisibilityModel: visibilityModel
-                    },
-                    pinnedColumns: pinnedColumns
-                }}
-                 localeText={{
+            <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
+                <CardContent>
+                    <DataGridPremium
+                        sx={{
+                            "& .MuiTablePagination-selectLabel": {
+                                marginTop: 2
+                            },
+                            "& .MuiTablePagination-displayedRows": {
+                                marginTop: 2
+                            },
+                            "& .MuiDataGrid-columnHeader .MuiInputLabel-shrink": {
+                                display: "none"
+                            }
+                        }}
+                        unstable_headerFilters={showHeaderFilters}
+                        checkboxSelection={forAssignment}
+                        loading={isLoading}
+                        className="pagination-fix"
+                        onCellClick={onCellClickHandler}
+                        onCellDoubleClick={onCellDoubleClick}
+                        columns={gridColumns}
+                        paginationModel={paginationModel}
+                        pageSizeOptions={[5, 10, 20, 50, 100]}
+                        onPaginationModelChange={setPaginationModel}
+                        pagination
+                        rowCount={data.recordCount}
+                        rows={data.records}
+                        sortModel={sortModel}
+                        paginationMode={isClient}
+                        sortingMode={isClient}
+                        filterMode={isClient}
+                        processRowUpdate={processRowUpdate}
+                        keepNonExistentRowsSelected
+                        onSortModelChange={updateSort}
+                        onFilterModelChange={updateFilters}
+                        rowSelection={selection}
+                        onRowSelectionModelChange={setSelection}
+                        filterModel={filterModel}
+                        getRowId={getGridRowId}
+                        onRowClick={onRowClick}
+                        slots={{
+                            headerFilterMenu: false,
+                            toolbar: CustomToolbar,
+                            footer: Footer
+                        }}
+                        slotProps={{
+                            footer: {
+                                pagination: true,
+                                apiRef
+                            },
+                            panel: {
+                                placement: "bottom-end"
+                            }
+                        }}
+                        hideFooterSelectedRowCount={rowsSelected}
+                        density="compact"
+                        disableDensitySelector={true}
+                        apiRef={apiRef}
+                        disableAggregation={true}
+                        disableRowGrouping={true}
+                        disableRowSelectionOnClick={disableRowSelectionOnClick}
+                        autoHeight
+                        initialState={{
+                            columns: {
+                                columnVisibilityModel: visibilityModel
+                            },
+                            pinnedColumns: pinnedColumns
+                        }}
+                        localeText={{
                             filterValueTrue: 'Yes',
                             filterValueFalse: 'No'
-                }}
-            />
-            {isOrderDetailModalOpen && selectedOrder && model.OrderModal && (
-                <model.OrderModal
-                    orderId={selectedOrder.OrderId}
-                    isOpen={true}
-                    orderTotal={selectedOrder.OrderTotal}
-                    orderDate={selectedOrder.OrderDateTime}
-                    orderStatus={selectedOrder.OrderStatus}
-                    customerNumber={selectedOrder.CustomerPhoneNumber}
-                    customerName={selectedOrder.CustomerName}
-                    customerEmail={selectedOrder.CustomerEmailAddress}
-                    onClose={handleCloseOrderDetailModal}
-                />
-            )}
-            {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
-            }
-            {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
-            </CardContent>
-        </Card >
+                        }}
+                    />
+                    {isOrderDetailModalOpen && selectedOrder && model.OrderModal && (
+                        <model.OrderModal
+                            orderId={selectedOrder.OrderId}
+                            isOpen={true}
+                            orderTotal={selectedOrder.OrderTotal}
+                            orderDate={selectedOrder.OrderDateTime}
+                            orderStatus={selectedOrder.OrderStatus}
+                            customerNumber={selectedOrder.CustomerPhoneNumber}
+                            customerName={selectedOrder.CustomerName}
+                            customerEmail={selectedOrder.CustomerEmailAddress}
+                            onClose={handleCloseOrderDetailModal}
+                        />
+                    )}
+                    {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
+                    }
+                    {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"> {`${'Are you sure you want to delete'} ${record?.name}?`}</DialogComponent>)}
+                </CardContent>
+            </Card >
         </>
     );
 }, areEqual);

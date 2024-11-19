@@ -88,6 +88,7 @@ var _core = require("@material-ui/core");
 var _material = require("@mui/material");
 var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
+var _chipInput = _interopRequireDefault(require("./fields/chipInput"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -109,7 +110,8 @@ const fieldMappers = exports.fieldMappers = {
   "autocomplete": _autocomplete.default,
   "dayRadio": _dayRadio.default,
   "gridInForm": _formGrid.default,
-  "email": _string.default
+  "email": _string.default,
+  "chipInput": _chipInput.default
 };
 const useStyles = (0, _core.makeStyles)({
   root: {
@@ -390,7 +392,6 @@ const FormLayout = _ref6 => {
       showTabs: showTabs && tabColumns.length > 0
     };
   }, [model]);
-  console.log("form layouts", formElements, fieldConfigs);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
     getRecordAndLookups: getRecordAndLookups,
     formElements: formElements,

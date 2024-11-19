@@ -81,7 +81,6 @@ const request = async _ref => {
   let reqParams = _objectSpread({
     method: 'POST',
     credentials: 'include',
-    // withCredentials: true,
     url: url,
     headers: jsonPayload ? _objectSpread({}, additionalHeaders) : _objectSpread({
       'Content-Type': 'multipart/form-data'
