@@ -13,6 +13,7 @@ import { DialogComponent } from '../Dialog';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 import PageTitle from '../PageTitle';
+import { getPermissions } from '../utils';
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
@@ -42,6 +43,9 @@ const Form = ({
     const fieldConfigs = model?.applyFieldConfig ? model?.applyFieldConfig({ data, lookups }) : defaultFieldConfigs;
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
+    const userData = stateData.getUserData;
+    const fallbackPermissions = {edit: permissions.edit,delete: permissions.delete};
+    const { canEdit, canDelete } = getPermissions(userData, model, fallbackPermissions);
 
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
         const options = idWithOptions?.split('-');
@@ -222,9 +226,9 @@ const Form = ({
             <Paper sx={{ padding: 2 }}>
                 <form>
                     <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
-                        {permissions.edit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
+                        {canEdit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
                         <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
-                        {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
+                        {canDelete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
                     </Stack>
                     <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups}/>
                 </form>
