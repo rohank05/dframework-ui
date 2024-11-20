@@ -320,7 +320,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData;
-  const fallbackPermissions = {
+  const userDefinedPermissions = {
     add: effectivePermissions.add,
     edit: effectivePermissions.edit,
     delete: effectivePermissions.delete
@@ -329,7 +329,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     canAdd,
     canEdit,
     canDelete
-  } = (0, _utils.getPermissions)(userData, model, fallbackPermissions);
+  } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const filterFieldDataTypes = {
     Number: 'number',
     String: 'string',

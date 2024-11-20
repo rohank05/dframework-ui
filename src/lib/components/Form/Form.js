@@ -45,8 +45,8 @@ const Form = ({
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
     const userData = stateData.getUserData;
-    const fallbackPermissions = {edit: permissions.edit,delete: permissions.delete};
-    const { canEdit, canDelete } = getPermissions(userData, model, fallbackPermissions);
+    const userDefinedPermissions = { edit: permissions.edit || false, delete: permissions.delete || false, add: permissions.add || false };
+    const { canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
 
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
         const options = idWithOptions?.split('-');

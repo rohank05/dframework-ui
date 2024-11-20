@@ -14,17 +14,13 @@ const utils = {
 export const getPermissions = (userData, model, fallbackPermissions = {}) => {
     const userPermissions = userData?.filter(item => item.Module === model.module) || [];
     const permissionsToUse = userPermissions.length ? userPermissions[0] : {};
-
+    if(!userPermissions.length) {
+	return { canAdd: fallbackPermissions.add || false, canEdit: fallbackPermissions.edit || false, canDelete: fallbackPermissions.delete || false };
+    }
     return {
-        canAdd: userPermissions.length 
-            ? permissionsToUse.Permission2 === 1 
-            : fallbackPermissions.add || false,
-        canEdit: userPermissions.length 
-            ? permissionsToUse.Permission3 === 1 
-            : fallbackPermissions.edit || false,
-        canDelete: userPermissions.length 
-            ? permissionsToUse.Permission4 === 1 
-            : fallbackPermissions.delete || false
+        canAdd: permissionsToUse.Permission2 === 1,
+        canEdit: permissionsToUse.Permission3 === 1,
+        canDelete: permissionsToUse.Permission4 === 1 
     };
 };
 export default utils;

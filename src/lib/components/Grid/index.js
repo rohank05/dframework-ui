@@ -214,8 +214,8 @@ const GridBase = memo(({
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData;
-    const fallbackPermissions = {add: effectivePermissions.add,edit: effectivePermissions.edit,delete: effectivePermissions.delete};
-    const { canAdd, canEdit, canDelete } = getPermissions(userData, model, fallbackPermissions);
+    const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
+    const { canAdd, canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
     const filterFieldDataTypes = {
         Number: 'number',
         String: 'string',

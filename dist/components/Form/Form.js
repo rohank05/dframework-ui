@@ -88,14 +88,15 @@ const Form = _ref => {
     mode
   } = stateData.dataForm;
   const userData = stateData.getUserData;
-  const fallbackPermissions = {
-    edit: permissions.edit,
-    delete: permissions.delete
+  const userDefinedPermissions = {
+    edit: permissions.edit || false,
+    delete: permissions.delete || false,
+    add: permissions.add || false
   };
   const {
     canEdit,
     canDelete
-  } = (0, _utils.getPermissions)(userData, model, fallbackPermissions);
+  } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
