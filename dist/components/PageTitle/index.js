@@ -17,19 +17,16 @@ var _Typography = _interopRequireDefault(require("../Typography"));
 var _useMobile = _interopRequireDefault(require("../useMobile"));
 var _question = _interopRequireDefault(require("../../assets/images/question.png"));
 var _material = require("@mui/material");
+var _Help = _interopRequireDefault(require("@mui/icons-material/Help"));
 var _HelpModal = _interopRequireDefault(require("../HelpModal"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _StateProvider = require("../useRouter/StateProvider");
-var _reactRouterDom = require("react-router-dom");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function PageTitle(props) {
-  let gridUrl;
   const {
-    pageTitleStyle,
     mediaQuery,
-    pageTitleBackground,
     titleHeading,
     name = null,
     icon: Icon,
@@ -95,6 +92,9 @@ function PageTitle(props) {
   }
   const breadcrumbsLasIndex = breadcrumbs.length - 1;
   const needToShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length;
+  const handleBack = () => {
+    window.history.back(); // Navigate to the previous page when clicked
+  };
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactHelmetAsync.Helmet, null, /*#__PURE__*/_react.default.createElement("title", null, title)), /*#__PURE__*/_react.default.createElement(_Typography.default, {
     className: "print-only",
     text: titleHeading
@@ -102,18 +102,57 @@ function PageTitle(props) {
     sx: {
       mb: 3
     }
-  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
+  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, /*#__PURE__*/_react.default.createElement(_material.Grid, {
+    container: true
+  }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
+    item: true,
+    sx: {
+      display: 'flex',
+      alignItems: 'center',
+      flex: 1
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.Breadcrumbs, {
     variant: "h5",
     "aria-label": "breadcrumb",
     separator: ">",
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width")
-  }, breadcrumbs.map((breadcrumb, index) => /*#__PURE__*/_react.default.createElement(_material.Typography, {
-    component: index === breadcrumbsLasIndex && breadcrumb.href && _reactRouterDom.Link,
-    href: breadcrumb.href,
+  }, breadcrumbs.map((breadcrumb, index) => index < breadcrumbsLasIndex ? /*#__PURE__*/_react.default.createElement(_material.Link, {
+    onClick: handleBack,
+    key: index,
+    className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
+    variant: "inherit",
+    sx: {
+      textDecoration: 'none',
+      color: '#1976d2'
+    }
+  }, breadcrumb.text) : /*#__PURE__*/_react.default.createElement(_material.Typography, {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text))), Icon && /*#__PURE__*/_react.default.createElement(_core.Box, null, /*#__PURE__*/_react.default.createElement(Icon, {
+  }, breadcrumb.text)))), breadcrumbs.length > 1 && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+    item: true,
+    sx: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.Button, {
+    variant: "contained",
+    onClick: handleBack
+  }, "Back")), /*#__PURE__*/_react.default.createElement(_material.Grid, {
+    item: true,
+    sx: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.IconButton, {
+    color: "primary",
+    title: "Help",
+    size: "large"
+  }, /*#__PURE__*/_react.default.createElement(_Help.default, {
+    fontSize: "inherit"
+  })))), Icon && /*#__PURE__*/_react.default.createElement(_core.Box, null, /*#__PURE__*/_react.default.createElement(Icon, {
     iconclass: iconclass || "cameraIconTitle",
     className: iconclass || "cameraIconTitle"
   })), /*#__PURE__*/_react.default.createElement(_core.Box, {
