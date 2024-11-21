@@ -661,6 +661,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let {
       mode
     } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    console.log("Entered");
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -788,13 +789,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return updatedRow;
   };
   const onCellDoubleClick = event => {
+    const {
+      row: record
+    } = event;
+    console.log("Record is ", event.row);
+    dispatchData({
+      type: _actions.default.PAGE_TITLE_DETAILS,
+      payload: {
+        title: model === null || model === void 0 ? void 0 : record.LookupType
+      }
+    });
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
       return;
     }
-    const {
-      row: record
-    } = event;
     console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
       openForm(record[idProperty]);
@@ -1095,11 +1103,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
     setSortModel(sort);
   };
-  const breadCrumbs = [{
-    text: model.gridTitle
-  }];
+  let breadCrumbs;
+  if (model !== null && model !== void 0 && model.showCustomiseValue) {
+    breadCrumbs = [{
+      text: stateData.pageTitle
+    }];
+  } else {
+    breadCrumbs = [{
+      text: model.gridTitle
+    }];
+  }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: model.showBreadcrumbs,
+    showBreadcrumbs: !(model !== null && model !== void 0 && model.hideBreadcrumb),
     breadcrumbs: breadCrumbs
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

@@ -57,7 +57,7 @@ const Form = _ref => {
     useParams,
     pathname
   } = (0, _StateProvider.useRouter)();
-  const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
+  const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
   const {
     dispatchData,
     stateData
@@ -149,7 +149,7 @@ const Form = _ref => {
             model.updateChildGridRecords();
           }
           snackbar.showMessage('Record Updated Successfully.');
-          navigate(navigateBack);
+          navigate(model.navigateBack);
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);

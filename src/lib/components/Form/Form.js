@@ -24,7 +24,7 @@ const Form = ({
     baseSaveData = {}
 }) => {
     const { navigate, getParams, useParams, pathname } = useRouter()
-    const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
+    const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
     const { dispatchData, stateData } = useStateContext();
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
@@ -100,7 +100,7 @@ const Form = ({
                             model.updateChildGridRecords();
                         }
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate(navigateBack);
+                        navigate(model.navigateBack);
                     }
                 })
                 .catch((err) => {

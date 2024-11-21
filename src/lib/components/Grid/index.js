@@ -488,6 +488,7 @@ const GridBase = memo(({
         });
     };
     const openForm = (id, { mode } = {}) => {
+        console.log("Entered")
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
             return;
@@ -588,11 +589,18 @@ const GridBase = memo(({
     }
 
     const onCellDoubleClick = (event) => {
+        const { row: record } = event;
+        console.log("Record is ",event.row);
+        dispatchData({
+            type: actionsStateProvider.PAGE_TITLE_DETAILS,
+            payload: {
+              title: model === null || model === void 0 ? void 0 : record.LookupType
+            }
+          });
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
-        const { row: record } = event;
         console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm(record[idProperty]);
@@ -814,13 +822,18 @@ const GridBase = memo(({
         setSortModel(sort);
     }
 
-    const breadCrumbs = [
-        { text: model.gridTitle }
-    ]
+    let breadCrumbs;
+
+    if (model?.showCustomiseValue) {
+        breadCrumbs = [{ text: stateData.pageTitle }];
+    }
+    else {
+        breadCrumbs = [{ text: model.gridTitle }];
+    }
 
     return (
         <>
-            <PageTitle showBreadcrumbs={model.showBreadcrumbs}
+            <PageTitle showBreadcrumbs={!model?.hideBreadcrumb}
                 breadcrumbs={breadCrumbs} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
