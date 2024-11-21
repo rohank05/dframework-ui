@@ -49,7 +49,7 @@ function PageTitle(props) {
   const {
     permissions = {}
   } = stateData.gridSettings || {};
-  gridUrl = permissions.Url;
+  const gridUrl = permissions.Url;
   const showImage = false;
   const card = [{
     title: "New Features",
