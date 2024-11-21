@@ -314,6 +314,7 @@ const GridBase = memo(({
         }
     }, []);
 
+    const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         const baseColumnList = columns || model?.gridColumns || model?.columns;
         const pinnedColumns = { left: [GRID_CHECKBOX_SELECTION_COL_DEF.field], right: [] };
@@ -487,8 +488,8 @@ const GridBase = memo(({
             isElasticExport
         });
     };
-    const openForm = (id, { mode } = {}) => {
-        console.log("Entered")
+    const openForm = (id, record, { mode } = {}) => {
+        const { addUrlParamKey } = model;
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
             return;
@@ -504,6 +505,10 @@ const GridBase = memo(({
         } else {
             path += id;
             dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' })
+        }
+        if (model?.addUrlParamKey) {
+            searchParams.set(addUrlParamKey, record?.[addUrlParamKey]);
+            path += `?${searchParams.toString()}`;
         }
         navigate(path);
     };
@@ -590,20 +595,13 @@ const GridBase = memo(({
 
     const onCellDoubleClick = (event) => {
         const { row: record } = event;
-        console.log("Record is ",event.row);
-        dispatchData({
-            type: actionsStateProvider.PAGE_TITLE_DETAILS,
-            payload: {
-              title: model === null || model === void 0 ? void 0 : record.LookupType
-            }
-          });
+
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
-        console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-            openForm(record[idProperty]);
+            openForm(record[idProperty], record);
         }
 
         if (isReadOnly && model.rowRedirectLink) {
@@ -824,8 +822,9 @@ const GridBase = memo(({
 
     let breadCrumbs;
 
-    if (model?.showCustomiseValue) {
-        breadCrumbs = [{ text: stateData.pageTitle }];
+    if (model?.searchParamKey) {
+        const subBreadcrumbs = searchParams.get(model.searchParamKey);
+        breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
         breadCrumbs = [{ text: model.gridTitle }];

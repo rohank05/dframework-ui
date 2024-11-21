@@ -13,9 +13,11 @@ require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.regexp.to-string.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
+require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -23,6 +25,10 @@ require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url-search-params.js");
+require("core-js/modules/web.url-search-params.delete.js");
+require("core-js/modules/web.url-search-params.has.js");
+require("core-js/modules/web.url-search-params.size.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
@@ -427,6 +433,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   }, []);
+  const searchParams = new URLSearchParams(window.location.search);
   const {
     gridColumns,
     pinnedColumns,
@@ -657,11 +664,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       isElasticExport
     });
   };
-  const openForm = function openForm(id) {
+  const openForm = function openForm(id, record) {
     let {
       mode
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    console.log("Entered");
+    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -690,6 +696,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         type: 'UPDATE_FORM_MODE',
         payload: ''
       });
+    }
+    if (model !== null && model !== void 0 && model.addUrlParamKey) {
+      searchParams.set(model.addUrlParamKey.key, record === null || record === void 0 ? void 0 : record[model.addUrlParamKey.key]);
+      path += "?".concat(searchParams.toString());
     }
     navigate(path);
   };
@@ -792,20 +802,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const {
       row: record
     } = event;
-    console.log("Record is ", event.row);
-    dispatchData({
-      type: _actions.default.PAGE_TITLE_DETAILS,
-      payload: {
-        title: model === null || model === void 0 ? void 0 : record.LookupType
-      }
-    });
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
       return;
     }
-    console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-      openForm(record[idProperty]);
+      openForm(record[idProperty], record);
     }
     if (isReadOnly && model.rowRedirectLink) {
       let historyObject = {
@@ -1104,9 +1106,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setSortModel(sort);
   };
   let breadCrumbs;
-  if (model !== null && model !== void 0 && model.showCustomiseValue) {
+  if (model !== null && model !== void 0 && model.searchParamKey) {
+    const subBreadcrumbs = searchParams.get(model.searchParamKey.key);
     breadCrumbs = [{
-      text: stateData.pageTitle
+      text: subBreadcrumbs
     }];
   } else {
     breadCrumbs = [{
