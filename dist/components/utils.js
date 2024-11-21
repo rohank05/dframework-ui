@@ -20,14 +20,14 @@ const utils = {
   }
 };
 const getPermissions = exports.getPermissions = function getPermissions(userData, model) {
-  let fallbackPermissions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  let userDefinedPermissions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   const userPermissions = (userData === null || userData === void 0 ? void 0 : userData.filter(item => item.Module === model.module)) || [];
   const permissionsToUse = userPermissions.length ? userPermissions[0] : {};
   if (!userPermissions.length) {
     return {
-      canAdd: fallbackPermissions.add || false,
-      canEdit: fallbackPermissions.edit || false,
-      canDelete: fallbackPermissions.delete || false
+      canAdd: userDefinedPermissions.add || false,
+      canEdit: userDefinedPermissions.edit || false,
+      canDelete: userDefinedPermissions.delete || false
     };
   }
   return {
