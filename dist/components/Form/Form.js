@@ -149,7 +149,7 @@ const Form = _ref => {
             model.updateChildGridRecords();
           }
           snackbar.showMessage('Record Updated Successfully.');
-          navigate(model.navigateBack);
+          navigate(navigateBack);
         }
       }).catch(err => {
         snackbar.showError('An error occured, please try after some time.second', err);

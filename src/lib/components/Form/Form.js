@@ -100,7 +100,7 @@ const Form = ({
                             model.updateChildGridRecords();
                         }
                         snackbar.showMessage('Record Updated Successfully.');
-                        navigate(model.navigateBack);
+                        navigate(navigateBack);
                     }
                 })
                 .catch((err) => {
