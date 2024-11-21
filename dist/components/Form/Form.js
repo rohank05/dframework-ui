@@ -86,6 +86,10 @@ const Form = _ref => {
   const {
     mode
   } = stateData.dataForm;
+  const {
+    formTitle,
+    hideBreadcrumb = false
+  } = model;
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
@@ -275,13 +279,13 @@ const Form = _ref => {
     }
   };
   const breadcrumbs = [{
-    text: model.formTitle
+    text: formTitle
   }, {
     text: id === '0' ? 'New' : 'Update'
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    title: model.formTitle,
-    showBreadcrumbs: model.showBreadcrumbs,
+    title: formTitle,
+    showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadcrumbs,
     model: model
   }), /*#__PURE__*/_react.default.createElement(ActiveStepContext.Provider, {

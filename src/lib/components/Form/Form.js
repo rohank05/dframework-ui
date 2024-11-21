@@ -44,6 +44,8 @@ const Form = ({
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
 
+    const { formTitle, hideBreadcrumb = false } = model;
+
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
         const options = idWithOptions?.split('-');
         try {
@@ -213,12 +215,12 @@ const Form = ({
     }
 
     const breadcrumbs = [
-        { text: model.formTitle },
+        { text: formTitle },
         { text: id === '0' ? 'New' : 'Update' }
     ]
     return (
         <>
-            <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
+            <PageTitle title={formTitle} showBreadcrumbs={!hideBreadcrumb} breadcrumbs={breadcrumbs} model={model} />
             <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
                 <Paper sx={{ padding: 2 }}>
                     <form>

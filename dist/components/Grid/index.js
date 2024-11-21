@@ -329,6 +329,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     String: 'string',
     Boolean: 'boolean'
   };
+  const {
+    addUrlParamKey,
+    searchParamKey,
+    hideBreadcrumb = false
+  } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
@@ -664,13 +669,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       isElasticExport
     });
   };
-  const openForm = function openForm(id, record) {
+  const openForm = function openForm(id) {
+    let record = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     let {
       mode
     } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    const {
-      addUrlParamKey
-    } = model;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -700,8 +703,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         payload: ''
       });
     }
-    if (model !== null && model !== void 0 && model.addUrlParamKey) {
-      searchParams.set(addUrlParamKey, record === null || record === void 0 ? void 0 : record[addUrlParamKey]);
+    if (addUrlParamKey) {
+      searchParams.set(addUrlParamKey, record[addUrlParamKey]);
       path += "?".concat(searchParams.toString());
     }
     navigate(path);
@@ -1109,8 +1112,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setSortModel(sort);
   };
   let breadCrumbs;
-  if (model !== null && model !== void 0 && model.searchParamKey) {
-    const subBreadcrumbs = searchParams.get(model.searchParamKey);
+  if (searchParamKey) {
+    const subBreadcrumbs = searchParams.get(searchParamKey);
     breadCrumbs = [{
       text: subBreadcrumbs
     }];
@@ -1120,7 +1123,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }];
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: !(model !== null && model !== void 0 && model.hideBreadcrumb),
+    showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadCrumbs
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

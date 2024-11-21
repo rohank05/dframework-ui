@@ -218,6 +218,8 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false } = model;
+
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
@@ -488,8 +490,7 @@ const GridBase = memo(({
             isElasticExport
         });
     };
-    const openForm = (id, record, { mode } = {}) => {
-        const { addUrlParamKey } = model;
+    const openForm = (id, record = {}, { mode } = {}) => {
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
             return;
@@ -506,8 +507,8 @@ const GridBase = memo(({
             path += id;
             dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' })
         }
-        if (model?.addUrlParamKey) {
-            searchParams.set(addUrlParamKey, record?.[addUrlParamKey]);
+        if (addUrlParamKey) {
+            searchParams.set(addUrlParamKey, record[addUrlParamKey]);
             path += `?${searchParams.toString()}`;
         }
         navigate(path);
@@ -822,8 +823,8 @@ const GridBase = memo(({
 
     let breadCrumbs;
 
-    if (model?.searchParamKey) {
-        const subBreadcrumbs = searchParams.get(model.searchParamKey);
+    if (searchParamKey) {
+        const subBreadcrumbs = searchParams.get(searchParamKey);
         breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
@@ -832,7 +833,7 @@ const GridBase = memo(({
 
     return (
         <>
-            <PageTitle showBreadcrumbs={!model?.hideBreadcrumb}
+            <PageTitle showBreadcrumbs={!hideBreadcrumb}
                 breadcrumbs={breadCrumbs} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
