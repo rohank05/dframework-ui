@@ -918,7 +918,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", isReadOnly ? "" : canAdd ? model.title : ''), !forAssignment && canAdd && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, " ", !canAdd || isReadOnly ? "" : model.title), !forAssignment && canAdd && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
       size: "medium",
