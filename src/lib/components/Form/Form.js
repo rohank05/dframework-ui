@@ -48,7 +48,7 @@ const Form = ({
     const userDefinedPermissions = { edit: permissions.edit || false, delete: permissions.delete || false, add: permissions.add || false };
     const { canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
 
-    const { formTitle, hideBreadcrumb = false } = model;
+    const { formTitle = '', hideBreadcrumb = false } = model;
 
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
         const options = idWithOptions?.split('-');
