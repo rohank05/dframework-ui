@@ -668,6 +668,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let {
       mode
     } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    const {
+      addUrlParamKey
+    } = model;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -698,7 +701,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
     if (model !== null && model !== void 0 && model.addUrlParamKey) {
-      searchParams.set(model.addUrlParamKey.key, record === null || record === void 0 ? void 0 : record[model.addUrlParamKey.key]);
+      searchParams.set(addUrlParamKey, record === null || record === void 0 ? void 0 : record[addUrlParamKey]);
       path += "?".concat(searchParams.toString());
     }
     navigate(path);
@@ -1107,7 +1110,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   };
   let breadCrumbs;
   if (model !== null && model !== void 0 && model.searchParamKey) {
-    const subBreadcrumbs = searchParams.get(model.searchParamKey.key);
+    const subBreadcrumbs = searchParams.get(model.searchParamKey);
     breadCrumbs = [{
       text: subBreadcrumbs
     }];
