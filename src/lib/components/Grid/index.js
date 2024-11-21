@@ -222,6 +222,8 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false } = model;
+
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
@@ -318,6 +320,7 @@ const GridBase = memo(({
         }
     }, []);
 
+    const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         const baseColumnList = columns || model?.gridColumns || model?.columns;
         const pinnedColumns = { left: [GRID_CHECKBOX_SELECTION_COL_DEF.field], right: [] };
@@ -491,7 +494,7 @@ const GridBase = memo(({
             isElasticExport
         });
     };
-    const openForm = (id, { mode } = {}) => {
+    const openForm = (id, record = {}, { mode } = {}) => {
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
             return;
@@ -507,6 +510,10 @@ const GridBase = memo(({
         } else {
             path += id;
             dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' })
+        }
+        if (addUrlParamKey) {
+            searchParams.set(addUrlParamKey, record[addUrlParamKey]);
+            path += `?${searchParams.toString()}`;
         }
         navigate(path);
     };
@@ -592,14 +599,14 @@ const GridBase = memo(({
     }
 
     const onCellDoubleClick = (event) => {
+        const { row: record } = event;
+
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
-        const { row: record } = event;
-        console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-            openForm(record[idProperty]);
+            openForm(record[idProperty], record);
         }
 
         if (isReadOnly && model.rowRedirectLink) {
@@ -818,13 +825,19 @@ const GridBase = memo(({
         setSortModel(sort);
     }
 
-    const breadCrumbs = [
-        { text: model.gridTitle }
-    ]
+    let breadCrumbs;
+
+    if (searchParamKey) {
+        const subBreadcrumbs = searchParams.get(searchParamKey);
+        breadCrumbs = [{ text: subBreadcrumbs }];
+    }
+    else {
+        breadCrumbs = [{ text: model.gridTitle }];
+    }
 
     return (
         <>
-            <PageTitle showBreadcrumbs={model.showBreadcrumbs}
+            <PageTitle showBreadcrumbs={!hideBreadcrumb}
                 breadcrumbs={breadCrumbs} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>

@@ -58,7 +58,7 @@ const Form = _ref => {
     useParams,
     pathname
   } = (0, _StateProvider.useRouter)();
-  const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
+  const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
   const {
     dispatchData,
     stateData
@@ -97,6 +97,10 @@ const Form = _ref => {
     canEdit,
     canDelete
   } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
+  const {
+    formTitle = '',
+    hideBreadcrumb = false
+  } = model;
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
@@ -286,13 +290,13 @@ const Form = _ref => {
     }
   };
   const breadcrumbs = [{
-    text: model.formTitle
+    text: formTitle
   }, {
     text: id === '0' ? 'New' : 'Update'
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    title: model.formTitle,
-    showBreadcrumbs: model.showBreadcrumbs,
+    title: formTitle,
+    showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadcrumbs,
     model: model
   }), /*#__PURE__*/_react.default.createElement(ActiveStepContext.Provider, {

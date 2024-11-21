@@ -13,9 +13,11 @@ require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.regexp.to-string.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
+require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -23,6 +25,10 @@ require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url-search-params.js");
+require("core-js/modules/web.url-search-params.delete.js");
+require("core-js/modules/web.url-search-params.has.js");
+require("core-js/modules/web.url-search-params.size.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
@@ -335,6 +341,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     String: 'string',
     Boolean: 'boolean'
   };
+  const {
+    addUrlParamKey,
+    searchParamKey,
+    hideBreadcrumb = false
+  } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
@@ -439,6 +450,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   }, []);
+  const searchParams = new URLSearchParams(window.location.search);
   const {
     gridColumns,
     pinnedColumns,
@@ -670,9 +682,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   };
   const openForm = function openForm(id) {
+    let record = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     let {
       mode
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -701,6 +714,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         type: 'UPDATE_FORM_MODE',
         payload: ''
       });
+    }
+    if (addUrlParamKey) {
+      searchParams.set(addUrlParamKey, record[addUrlParamKey]);
+      path += "?".concat(searchParams.toString());
     }
     navigate(path);
   };
@@ -800,16 +817,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return updatedRow;
   };
   const onCellDoubleClick = event => {
+    const {
+      row: record
+    } = event;
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
       return;
     }
-    const {
-      row: record
-    } = event;
-    console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-      openForm(record[idProperty]);
+      openForm(record[idProperty], record);
     }
     if (isReadOnly && model.rowRedirectLink) {
       let historyObject = {
@@ -1107,11 +1123,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
     setSortModel(sort);
   };
-  const breadCrumbs = [{
-    text: model.gridTitle
-  }];
+  let breadCrumbs;
+  if (searchParamKey) {
+    const subBreadcrumbs = searchParams.get(searchParamKey);
+    breadCrumbs = [{
+      text: subBreadcrumbs
+    }];
+  } else {
+    breadCrumbs = [{
+      text: model.gridTitle
+    }];
+  }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: model.showBreadcrumbs,
+    showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadCrumbs
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,
