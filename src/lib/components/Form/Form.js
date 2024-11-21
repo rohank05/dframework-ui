@@ -13,6 +13,7 @@ import { DialogComponent } from '../Dialog';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 import PageTitle from '../PageTitle';
+import { getPermissions } from '../utils';
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
@@ -43,6 +44,9 @@ const Form = ({
     const fieldConfigs = model?.applyFieldConfig ? model?.applyFieldConfig({ data, lookups }) : defaultFieldConfigs;
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
+    const userData = stateData.getUserData;
+    const userDefinedPermissions = { edit: permissions.edit || false, delete: permissions.delete || false, add: permissions.add || false };
+    const { canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
 
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
         const options = idWithOptions?.split('-');
@@ -218,31 +222,31 @@ const Form = ({
     ]
     return (
         <>
-            <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
-            <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
-                <Paper sx={{ padding: 2 }}>
-                    <form>
-                        <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
-                            {permissions.edit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
-                            <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
-                            {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
-                        </Stack>
-                        <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups} />
-                    </form>
-                    {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)}
-                    <DialogComponent
-                        open={isDiscardDialogOpen}
-                        onConfirm={handleDiscardChanges}
-                        onCancel={() => setIsDiscardDialogOpen(false)}
-                        title="Changes not saved"
-                        okText="Discard"
-                        cancelText="Continue"
-                    >
-                        {"Would you like to continue to edit or discard changes?"}
-                    </DialogComponent>
-                    <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
-                </Paper>
-            </ActiveStepContext.Provider >
+        <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
+        <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
+            <Paper sx={{ padding: 2 }}>
+                <form>
+                    <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
+                        {canEdit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
+                        <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
+                        {canDelete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
+                    </Stack>
+                    <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups}/>
+                </form>
+                {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)}
+                <DialogComponent
+                    open={isDiscardDialogOpen}
+                    onConfirm={handleDiscardChanges}
+                    onCancel={() => setIsDiscardDialogOpen(false)}
+                    title="Changes not saved"
+                    okText="Discard"
+                    cancelText="Continue"
+                >
+                    {"Would you like to continue to edit or discard changes?"}
+                </DialogComponent>
+                <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
+            </Paper>
+        </ActiveStepContext.Provider >
         </>
     )
 }
