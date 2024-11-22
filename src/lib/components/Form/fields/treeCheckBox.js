@@ -3,8 +3,17 @@ import Box from '@mui/material/Box';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 
-const buildTree = (data) => {
-  if (!data) return {};
+/**
+ * Builds a tree structure from a flat array of data.
+ * 
+ * @param {Array<Object>} data - The array of items to build the tree from.
+ * @param {string|number} data[].ParentId - The ID of the parent item.
+ * @param {string} data[].ParentName - The label for the parent item.
+ * @param {string|number} data[].value - The unique value of the item.
+ * @param {string} data[].label - The label for the item.
+ * @returns {Array<Object>} The tree structure containing parent and child nodes.
+ */
+const buildTree = (data = []) => {
   const tree = {};
   data.forEach((item) => {
     if (item.ParentId && tree[item.ParentId]) {
@@ -26,8 +35,24 @@ const buildTree = (data) => {
   return Object.values(tree);
 };
 
+/**
+ * Renders a tree view component with checkboxes for selection.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.column - The column metadata, including lookup information.
+ * @param {string} props.field - The name of the field in the form to bind.
+ * @param {string} props.fieldLabel - The label for the field.
+ * @param {Object} props.formik - The Formik instance for managing form state.
+ * @param {Object} props.lookups - The lookup data for populating tree items.
+ * @param {Array<Object>} props.data - Additional data for the tree.
+ * @param {Object} props.otherProps - Other props for customization.
+ * @param {Object} props.model - The model configuration.
+ * @param {Object} props.fieldConfigs - Configuration for the field, including disabled state.
+ * @param {string} props.mode - The mode of the form, such as 'edit' or 'copy'.
+ * @returns {JSX.Element} The rendered tree view component.
+ */
 export default function treeCheckBox({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
-  const options = lookups ? lookups[column?.lookup] : [];
+  const options = lookups ? lookups[column.lookup] : [];
   const tree = buildTree(options);
   let inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];
   let isDisabled;

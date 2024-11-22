@@ -18,8 +18,18 @@ var _TreeItem = require("@mui/x-tree-view/TreeItem");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-const buildTree = data => {
-  if (!data) return {};
+/**
+ * Builds a tree structure from a flat array of data.
+ * 
+ * @param {Array<Object>} data - The array of items to build the tree from.
+ * @param {string|number} data[].ParentId - The ID of the parent item.
+ * @param {string} data[].ParentName - The label for the parent item.
+ * @param {string|number} data[].value - The unique value of the item.
+ * @param {string} data[].label - The label for the item.
+ * @returns {Array<Object>} The tree structure containing parent and child nodes.
+ */
+const buildTree = function buildTree() {
+  let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   const tree = {};
   data.forEach(item => {
     if (item.ParentId && tree[item.ParentId]) {
@@ -40,6 +50,23 @@ const buildTree = data => {
   });
   return Object.values(tree);
 };
+
+/**
+ * Renders a tree view component with checkboxes for selection.
+ * 
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.column - The column metadata, including lookup information.
+ * @param {string} props.field - The name of the field in the form to bind.
+ * @param {string} props.fieldLabel - The label for the field.
+ * @param {Object} props.formik - The Formik instance for managing form state.
+ * @param {Object} props.lookups - The lookup data for populating tree items.
+ * @param {Array<Object>} props.data - Additional data for the tree.
+ * @param {Object} props.otherProps - Other props for customization.
+ * @param {Object} props.model - The model configuration.
+ * @param {Object} props.fieldConfigs - Configuration for the field, including disabled state.
+ * @param {string} props.mode - The mode of the form, such as 'edit' or 'copy'.
+ * @returns {JSX.Element} The rendered tree view component.
+ */
 function treeCheckBox(_ref) {
   var _formik$values$field;
   let {
@@ -54,7 +81,7 @@ function treeCheckBox(_ref) {
     fieldConfigs,
     mode
   } = _ref;
-  const options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
+  const options = lookups ? lookups[column.lookup] : [];
   const tree = buildTree(options);
   let inputValue = (_formik$values$field = formik.values[field]) !== null && _formik$values$field !== void 0 && _formik$values$field.length ? formik.values[field].split(", ") : [];
   let isDisabled;
