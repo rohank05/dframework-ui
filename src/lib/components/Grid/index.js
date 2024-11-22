@@ -130,6 +130,7 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     return equal;
 }
 const GridBase = memo(({
+    showGrid = true,
     useLinkColumn = true,
     model,
     columns,
@@ -255,11 +256,18 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
+        // if (props.isChildGrid) {
+        //     console.log('1');
+        //     return;
+        // }
         dataRef.current = data;
     }, [data]);
 
     useEffect(() => {
-
+        // if (props.isChildGrid) {
+        //     console.log('2');
+        //     return;
+        // }
         if (customFilters && Object.keys(customFilters) != 0) {
             if (customFilters.clear) {
                 let filterObject = {
@@ -304,6 +312,10 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            console.log('3');
+            return;
+        }
         if (hideTopFilters) {
             dispatchData({
                 type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
@@ -653,7 +665,7 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (model.preferenceId) {
+       if (model.preferenceId) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
@@ -730,6 +742,10 @@ const GridBase = memo(({
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            console.log('6');
+            return;
+        }
         if (forAssignment || !updatePageTitle) {
             return;
         }
@@ -742,6 +758,10 @@ const GridBase = memo(({
     }, [])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            console.log('7');
+            return;
+        }
         let backRoute = pathname;
 
         // we do not need to show the back button for these routes

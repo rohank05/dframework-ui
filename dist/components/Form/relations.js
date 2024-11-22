@@ -12,7 +12,6 @@ require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _Tab = _interopRequireDefault(require("@mui/material/Tab"));
 var _Box = _interopRequireDefault(require("@mui/material/Box"));
-var _styles = require("@mui/styles");
 var _TabContext = _interopRequireDefault(require("@mui/lab/TabContext"));
 var _TabList = _interopRequireDefault(require("@mui/lab/TabList"));
 var _TabPanel = _interopRequireDefault(require("@mui/lab/TabPanel"));
@@ -20,9 +19,20 @@ var _uiModels = require("../Grid/ui-models");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+// import { useTheme } from '@mui/styles';
+
 // import { useSearchParams } from 'react-router-dom';
 
-const childGrid = _ref => {
+/**
+ * Memoized ChildGrid Component
+ * @param {Object} params - Parameters for rendering the child grid
+ * @param {string} params.relation - Name of the related model
+ * @param {Object} params.parentFilters - Filters to apply to the parent
+ * @param {Object} params.parent - Parent data
+ * @param {Object} params.where - Conditions for the grid
+ * @param {Array} params.models - List of available models
+ */
+const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
   let {
     relation,
     parentFilters,
@@ -34,14 +44,15 @@ const childGrid = _ref => {
   if (!modelConfigOfChildGrid) return null;
   const ChildModel = new _uiModels.UiModel(modelConfigOfChildGrid);
   if (!ChildModel) return null;
-  // return <div>hello</div>
-  return /*#__PURE__*/_react.default.createElement(ChildModel.ChildGrid, {
-    // return <ChildModel.Grid
+  console.log('0000000');
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(ChildModel.ChildGrid, {
     parentFilters: parentFilters,
     parent: parent,
-    where: where
-  });
-};
+    model: modelConfigOfChildGrid,
+    where: where,
+    isChildGrid: true
+  }), /*#__PURE__*/_react.default.createElement("div", null, "HH"));
+});
 const Relations = _ref2 => {
   let {
     relations,
@@ -50,56 +61,26 @@ const Relations = _ref2 => {
     where,
     models
   } = _ref2;
-  const [activeTab, setActiveTab] = (0, _react.useState)(relations !== null && relations !== void 0 && relations.length ? relations[0] : null);
+  const [activeTab, setActiveTab] = (0, _react.useState)(relations[0]);
   // const { palette } = useTheme();
-
-  if (!(relations !== null && relations !== void 0 && relations.length)) return null;
-  // if (!relations?.length || !parentFilters) return null;
 
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
   return /*#__PURE__*/_react.default.createElement(_TabContext.default, {
     value: activeTab
-  }, /*#__PURE__*/_react.default.createElement(_Box.default, null, /*#__PURE__*/_react.default.createElement(_TabList.default
-  // sx={{
-  //     '& .css-1mhpt05-MuiButtonBase-root-MuiTab-root': {
-  //         color: "red"
-  //         // color: palette.primary.text.dark
-  //     },
-  //     '.Mui-selected': {
-  //         color: `blue !important`
-  //         // color: `${palette.primary.selected_tab} !important`
-  //     },
-  //     '.MuiButtonBase-root': {
-  //         color: `green`
-  //         // color: `${palette.primary.unselected_tab}`
-  //     }
-  // }}
-  , {
-    onChange: handleChange
-  }, relations.map(relation => {
-    var _models$find;
-    return /*#__PURE__*/_react.default.createElement(_Tab.default, {
-      key: relation,
-      label: ((_models$find = models.find(model => model.name === relation)) === null || _models$find === void 0 ? void 0 : _models$find.listTitle) || "ModelLabel",
-      value: relation
-      // sx={{
-      //     color: "gray"
-      // }}
-    });
-  }))), relations.map(relation => /*#__PURE__*/_react.default.createElement(_TabPanel.default, {
-    sx: {
-      padding: 0
-    },
-    value: relation,
-    key: relation
-  }, childGrid({
-    relation,
-    models,
-    parentFilters,
-    parent,
-    where
-  }))));
+  }, /*#__PURE__*/_react.default.createElement(_Box.default, null), relations.map(relation =>
+  /*#__PURE__*/
+  // <TabPanel sx={{ padding: 0 }} value={relation} key={relation}>
+  _react.default.createElement(ChildGrid, {
+    relation: relation,
+    models: models,
+    parentFilters: parentFilters,
+    parent: parent,
+    where: where
+  })
+
+  // </TabPanel>
+  ));
 };
 var _default = exports.default = Relations;

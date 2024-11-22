@@ -28,6 +28,7 @@ var _Dialog = require("../Dialog");
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
+var _relations = _interopRequireDefault(require("./relations"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -43,6 +44,7 @@ const Form = _ref => {
   let {
     model,
     api,
+    models,
     permissions = {
       edit: model.permissions.edit,
       export: model.permissions.export,
@@ -57,6 +59,9 @@ const Form = _ref => {
     useParams,
     pathname
   } = (0, _StateProvider.useRouter)();
+  const {
+    relations = []
+  } = model;
   const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
   const {
     dispatchData,
@@ -66,6 +71,7 @@ const Form = _ref => {
     id: idWithOptions
   } = useParams() || getParams;
   const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-')[0];
+  const [childFilters, setChildFilters] = (0, _react.useState)(null);
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [data, setData] = (0, _react.useState)(null);
   const [lookups, setLookups] = (0, _react.useState)(null);
@@ -345,6 +351,12 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")))));
+  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), relations.length && /*#__PURE__*/_react.default.createElement(_relations.default, {
+    models: models,
+    relations: relations,
+    parentFilters: [],
+    parent: model.name || model.title || "",
+    where: []
+  }))));
 };
 var _default = exports.default = Form;

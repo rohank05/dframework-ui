@@ -51,7 +51,7 @@ var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
-const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
+const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -194,6 +194,7 @@ const areEqual = function areEqual() {
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
   let {
+      showGrid = true,
       useLinkColumn = true,
       model,
       columns,
@@ -360,9 +361,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   (0, _react.useEffect)(() => {
+    // if (props.isChildGrid) {
+    //     console.log('1');
+    //     return;
+    // }
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
+    // if (props.isChildGrid) {
+    //     console.log('2');
+    //     return;
+    // }
     if (customFilters && Object.keys(customFilters) != 0) {
       if (customFilters.clear) {
         let filterObject = {
@@ -411,6 +420,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return lookupData[lookupMap[field].lookup] || [];
   };
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      console.log('3');
+      return;
+    }
     if (hideTopFilters) {
       dispatchData({
         type: _actions.default.PASS_FILTERS_TOHEADER,
@@ -980,6 +993,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     // }
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey]);
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      console.log('6');
+      return;
+    }
     if (forAssignment || !updatePageTitle) {
       return;
     }
@@ -1000,6 +1017,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     };
   }, []);
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      console.log('7');
+      return;
+    }
     let backRoute = pathname;
 
     // we do not need to show the back button for these routes
