@@ -13,22 +13,26 @@ import { DialogComponent } from '../Dialog';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 import PageTitle from '../PageTitle';
+import Relations from './relations';
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
 const Form = ({
     model,
     api,
+    models,
     permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: false },
     Layout = FormLayout,
     baseSaveData = {}
 }) => {
     const formTitle = model.formTitle || model.title ;
     const { navigate, getParams, useParams, pathname } = useRouter()
+    const { relations = [] } = model;
     const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
     const { dispatchData, stateData } = useStateContext();
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
+    const [childFilters, setChildFilters] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [data, setData] = useState(null);
     const [lookups, setLookups] = useState(null);
@@ -91,7 +95,7 @@ const Form = ({
             saveRecord({
                 id,
                 api: gridApi,
-                values: {...baseSaveData, ...values },
+                values: { ...baseSaveData, ...values },
                 setIsLoading,
                 setError: snackbar.showError
             })
@@ -242,6 +246,9 @@ const Form = ({
                         {"Would you like to continue to edit or discard changes?"}
                     </DialogComponent>
                     <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => { setIsDeleting(false); setDeleteError(null); }} title={deleteError ? "Error Deleting Record" : "Confirm Delete"}>{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName}?`}</DialogComponent>
+                    {relations.length &&
+                        <Relations models={models} relations={relations} parentFilters={[]} parent={model.name || model.title || ""} where={[]} />
+                    }
                 </Paper>
             </ActiveStepContext.Provider >
         </>
