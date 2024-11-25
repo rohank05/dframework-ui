@@ -114,6 +114,16 @@ class UiModel {
 							'Email must be a valid email'
 						)
 					break;
+				case 'number':
+					config = yup.number().label(formLabel);
+					if (min) {
+						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
+					}
+					if (max) {
+						config = config.max(Number(max), `${formLabel} must be less than or equal to ${max}`);
+					}
+					config = config.typeError(`${formLabel} must be a valid number`);
+					break;
 				default:
 					config = yup.mixed().label(formLabel);
 					break;
