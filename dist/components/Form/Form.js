@@ -47,7 +47,7 @@ const Form = _ref => {
     permissions = {
       edit: model.permissions.edit,
       export: model.permissions.export,
-      delete: false
+      delete: model.permissions.allowFormDelete || false
     },
     Layout = _fieldMapper.default,
     baseSaveData = {}
@@ -90,11 +90,12 @@ const Form = _ref => {
   const userData = stateData.getUserData;
   const userDefinedPermissions = {
     edit: permissions.edit || false,
-    delete: false,
+    delete: permissions.delete || false,
     add: permissions.add || false
   };
   const {
-    canEdit
+    canEdit,
+    canDelete = false
   } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const {
     formTitle = '',
@@ -173,9 +174,6 @@ const Form = _ref => {
   const {
     dirty
   } = formik;
-  const handleAttachment = e => {
-    navigate("/attachment");
-  };
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);

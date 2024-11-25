@@ -20,7 +20,7 @@ const defaultFieldConfigs = {};
 const Form = ({
     model,
     api,
-    permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: false },
+    permissions = { edit: model.permissions.edit, export: model.permissions.export, delete: model.permissions.allowFormDelete || false },
     Layout = FormLayout,
     baseSaveData = {}
 }) => {
@@ -45,9 +45,8 @@ const Form = ({
     let gridApi = `${url}${model.api || api}`
     const { mode } = stateData.dataForm;
     const userData = stateData.getUserData;
-    const userDefinedPermissions = { edit: permissions.edit || false, delete: false, add: permissions.add || false };
-    const { canEdit } = getPermissions(userData, model, userDefinedPermissions);
-
+    const userDefinedPermissions = { edit: permissions.edit || false, delete: permissions.delete || false, add: permissions.add || false };
+    const { canEdit, canDelete = false } = getPermissions(userData, model, userDefinedPermissions);
     const { formTitle = '', hideBreadcrumb = false } = model;
 
     const getRecordAndLookups = ({ lookups, scopeId, customSetIsLoading, customSetActiveRecord }) => {
@@ -118,9 +117,7 @@ const Form = ({
 
     const { dirty } = formik;
 
-    const handleAttachment = (e) => {
-        navigate("/attachment");
-    }
+
 
     const handleDiscardChanges = () => {
         formik.resetForm();
