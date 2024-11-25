@@ -47,7 +47,7 @@ const Form = _ref => {
     permissions = {
       edit: model.permissions.edit,
       export: model.permissions.export,
-      delete: false
+      delete: model.permissions.allowFormDelete || false
     },
     Layout = _fieldMapper.default,
     baseSaveData = {}
@@ -95,7 +95,7 @@ const Form = _ref => {
   };
   const {
     canEdit,
-    canDelete
+    canDelete = false
   } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const {
     formTitle = '',
@@ -323,7 +323,12 @@ const Form = _ref => {
     type: "cancel",
     color: "error",
     onClick: e => handleFormCancel(e)
-  }, "Cancel"), canDelete && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    variant: "contained",
+    type: "file",
+    color: "success",
+    onClick: e => handleAttachment(e)
+  }, "Attachment"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",
     onClick: () => setIsDeleting(true)
