@@ -40,6 +40,7 @@ import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
 import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
+import { getPermissions } from '../utils';
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -213,11 +214,16 @@ const GridBase = memo(({
     const currentPreference = stateData?.currentPreference;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
+    const userData = stateData.getUserData;
+    const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
+    const { canAdd, canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
     const filterFieldDataTypes = {
         Number: 'number',
         String: 'string',
         Boolean: 'boolean'
     };
+
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -326,6 +332,7 @@ const GridBase = memo(({
         }
     }, []);
 
+    const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         const baseColumnList = columns || model?.gridColumns || model?.columns;
         const pinnedColumns = { left: [GRID_CHECKBOX_SELECTION_COL_DEF.field], right: [] };
@@ -413,13 +420,13 @@ const GridBase = memo(({
 
         if (!forAssignment && !isReadOnly) {
             const actions = [];
-            if (effectivePermissions?.edit) {
+            if (canEdit) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Edit">   <EditIcon /></Tooltip>} data-action={actionTypes.Edit} label="Edit" color="primary" />);
             }
             if (effectivePermissions.copy) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Copy"><CopyIcon /> </Tooltip>} data-action={actionTypes.Copy} label="Copy" color="primary" />);
             }
-            if (effectivePermissions.delete) {
+            if (canDelete) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Delete"><DeleteIcon /> </Tooltip>} data-action={actionTypes.Delete} label="Delete" color="error" />);
             }
             if (actions.length > 0) {
@@ -499,7 +506,7 @@ const GridBase = memo(({
             isElasticExport
         });
     };
-    const openForm = (id, { mode } = {}) => {
+    const openForm = (id, record = {}, { mode } = {}) => {
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
             return;
@@ -515,6 +522,10 @@ const GridBase = memo(({
         } else {
             path += id;
             dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' })
+        }
+        if (addUrlParamKey) {
+            searchParams.set(addUrlParamKey, record[addUrlParamKey]);
+            path += `?${searchParams.toString()}`;
         }
         navigate(path);
     };
@@ -600,14 +611,14 @@ const GridBase = memo(({
     }
 
     const onCellDoubleClick = (event) => {
+        const { row: record } = event;
+
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
-        const { row: record } = event;
-        console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-            openForm(record[idProperty]);
+            openForm(record[idProperty], record);
         }
 
         if (isReadOnly && model.rowRedirectLink) {
@@ -683,8 +694,8 @@ const GridBase = memo(({
             >
                 {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
                 {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
-                {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title ? model.title : 'Add'}`}</Button>}
+                {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
+                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title ? model.title : 'Add'}`}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                 {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
 
@@ -834,13 +845,19 @@ const GridBase = memo(({
         setSortModel(sort);
     }
 
-    const breadCrumbs = [
-        { text: model.title || model.gridTitle }
-    ]
+    let breadCrumbs;
+
+    if (searchParamKey) {
+        const subBreadcrumbs = searchParams.get(searchParamKey);
+        breadCrumbs = [{ text: subBreadcrumbs }];
+    }
+    else {
+        breadCrumbs = [{ text: model.title || model.gridTitle }];
+    }
 
     return (
         <>
-            <PageTitle showBreadcrumbs={model.showBreadcrumbs}
+            <PageTitle showBreadcrumbs={!hideBreadcrumb}
                 breadcrumbs={breadCrumbs} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>

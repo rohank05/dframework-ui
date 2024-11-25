@@ -13,9 +13,11 @@ require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.regexp.to-string.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
+require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -23,6 +25,10 @@ require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url-search-params.js");
+require("core-js/modules/web.url-search-params.delete.js");
+require("core-js/modules/web.url-search-params.has.js");
+require("core-js/modules/web.url-search-params.size.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
@@ -51,6 +57,7 @@ var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
+var _utils = require("../utils");
 const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
@@ -319,11 +326,27 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
+  const userData = stateData.getUserData;
+  const userDefinedPermissions = {
+    add: effectivePermissions.add,
+    edit: effectivePermissions.edit,
+    delete: effectivePermissions.delete
+  };
+  const {
+    canAdd,
+    canEdit,
+    canDelete
+  } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const filterFieldDataTypes = {
     Number: 'number',
     String: 'string',
     Boolean: 'boolean'
   };
+  const {
+    addUrlParamKey,
+    searchParamKey,
+    hideBreadcrumb = false
+  } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
@@ -440,6 +463,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   }, []);
+  const searchParams = new URLSearchParams(window.location.search);
   const {
     gridColumns,
     pinnedColumns,
@@ -545,7 +569,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     if (!forAssignment && !isReadOnly) {
       const actions = [];
-      if (effectivePermissions !== null && effectivePermissions !== void 0 && effectivePermissions.edit) {
+      if (canEdit) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Edit"
@@ -565,7 +589,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
-      if (effectivePermissions.delete) {
+      if (canDelete) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Delete"
@@ -671,9 +695,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   };
   const openForm = function openForm(id) {
+    let record = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     let {
       mode
-    } = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -702,6 +727,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         type: 'UPDATE_FORM_MODE',
         payload: ''
       });
+    }
+    if (addUrlParamKey) {
+      searchParams.set(addUrlParamKey, record[addUrlParamKey]);
+      path += "?".concat(searchParams.toString());
     }
     navigate(path);
   };
@@ -801,16 +830,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return updatedRow;
   };
   const onCellDoubleClick = event => {
+    const {
+      row: record
+    } = event;
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
       return;
     }
-    const {
-      row: record
-    } = event;
-    console.log(isReadOnly, isDoubleClicked, disableCellRedirect, record, model.rowRedirectLink, onRowDoubleClick);
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-      openForm(record[idProperty]);
+      openForm(record[idProperty], record);
     }
     if (isReadOnly && model.rowRedirectLink) {
       let historyObject = {
@@ -912,14 +940,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, "Applied Preference - ", currentPreference), (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, "Applied Preference - ", currentPreference), (isReadOnly || !canAdd && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
       sx: {
         ml: 1
       }
-    }, " ", isReadOnly ? "" : model.title), !forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, " ", !canAdd || isReadOnly ? "" : model.title), !forAssignment && canAdd && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
       size: "medium",
@@ -1116,11 +1144,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
     setSortModel(sort);
   };
-  const breadCrumbs = [{
-    text: model.title || model.gridTitle
-  }];
+  let breadCrumbs;
+  if (searchParamKey) {
+    const subBreadcrumbs = searchParams.get(searchParamKey);
+    breadCrumbs = [{
+      text: subBreadcrumbs
+    }];
+  } else {
+    breadCrumbs = [{
+      text: model.title || model.gridTitle
+    }];
+  }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: model.showBreadcrumbs,
+    showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadCrumbs
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

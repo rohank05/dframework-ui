@@ -37,7 +37,6 @@ const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, m
                 // value={filteredCombos}
                 size="small"
                 disabled={isDisabled}
-                style={{ width: 500 }}
             />
             {formik.touched[field] && formik.errors[field] && <FormHelperText>{formik.errors[field]}</FormHelperText>}
         </FormControl>

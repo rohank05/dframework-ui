@@ -61,10 +61,7 @@ const Field = _ref => {
     // value={filteredCombos}
     ,
     size: "small",
-    disabled: isDisabled,
-    style: {
-      width: 500
-    }
+    disabled: isDisabled
   })), formik.touched[field] && formik.errors[field] && /*#__PURE__*/React.createElement(_material.FormHelperText, null, formik.errors[field]));
 };
 var _default = exports.default = Field;
