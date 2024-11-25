@@ -89,6 +89,7 @@ var _material = require("@mui/material");
 var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
 var _chipInput = _interopRequireDefault(require("./fields/chipInput"));
+var _treeCheckBox = _interopRequireDefault(require("./fields/treeCheckBox"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -111,7 +112,8 @@ const fieldMappers = exports.fieldMappers = {
   "dayRadio": _dayRadio.default,
   "gridInForm": _formGrid.default,
   "email": _string.default,
-  "chipInput": _chipInput.default
+  "chipInput": _chipInput.default,
+  "treeCheckbox": _treeCheckBox.default
 };
 const useStyles = (0, _core.makeStyles)({
   root: {
