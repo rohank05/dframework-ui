@@ -90,12 +90,11 @@ const Form = _ref => {
   const userData = stateData.getUserData;
   const userDefinedPermissions = {
     edit: permissions.edit || false,
-    delete: permissions.delete || false,
+    delete: false,
     add: permissions.add || false
   };
   const {
-    canEdit,
-    canDelete
+    canEdit
   } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const {
     formTitle = '',
@@ -174,6 +173,9 @@ const Form = _ref => {
   const {
     dirty
   } = formik;
+  const handleAttachment = e => {
+    navigate("/attachment");
+  };
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
@@ -323,7 +325,12 @@ const Form = _ref => {
     type: "cancel",
     color: "error",
     onClick: e => handleFormCancel(e)
-  }, "Cancel"), canDelete && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    variant: "contained",
+    type: "file",
+    color: "success",
+    onClick: e => handleAttachment(e)
+  }, "Attachment"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",
     onClick: () => setIsDeleting(true)
