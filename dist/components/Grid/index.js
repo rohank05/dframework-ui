@@ -1096,7 +1096,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setSortModel(sort);
   };
   const breadCrumbs = [{
-    text: model.gridTitle
+    text: model.title || model.gridTitle
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: model.showBreadcrumbs,

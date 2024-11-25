@@ -51,6 +51,7 @@ const Form = _ref => {
     Layout = _fieldMapper.default,
     baseSaveData = {}
   } = _ref;
+  const formTitle = model.formTitle || model.title;
   const {
     navigate,
     getParams,
@@ -275,12 +276,12 @@ const Form = _ref => {
     }
   };
   const breadcrumbs = [{
-    text: model.formTitle
+    text: formTitle
   }, {
     text: id === '0' ? 'New' : 'Update'
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    title: model.formTitle,
+    title: formTitle,
     showBreadcrumbs: model.showBreadcrumbs,
     breadcrumbs: breadcrumbs,
     model: model

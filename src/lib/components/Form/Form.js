@@ -23,6 +23,7 @@ const Form = ({
     Layout = FormLayout,
     baseSaveData = {}
 }) => {
+    const formTitle = model.formTitle || model.title ;
     const { navigate, getParams, useParams, pathname } = useRouter()
     const navigateBack = pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
     const { dispatchData, stateData } = useStateContext();
@@ -213,12 +214,12 @@ const Form = ({
     }
 
     const breadcrumbs = [
-        { text: model.formTitle },
+        { text: formTitle },
         { text: id === '0' ? 'New' : 'Update' }
     ]
     return (
         <>
-            <PageTitle title={model.formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
+            <PageTitle title={formTitle} showBreadcrumbs={model.showBreadcrumbs} breadcrumbs={breadcrumbs} model={model} />
             <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
                 <Paper sx={{ padding: 2 }}>
                     <form>
