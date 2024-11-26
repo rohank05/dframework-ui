@@ -295,7 +295,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideBackButton = false,
     hideTopFilters = true,
     updatePageTitle = true,
-    isElasticScreen = false
+    isElasticScreen = false,
+    nestedGrid = false
   } = model;
   const isReadOnly = model.readOnly === true;
   const isDoubleClicked = model.doubleClicked === false;
@@ -1154,7 +1155,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb,
-    breadcrumbs: breadCrumbs
+    breadcrumbs: breadCrumbs,
+    nestedGrid: nestedGrid
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,
     elevation: 0,
