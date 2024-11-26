@@ -319,7 +319,6 @@ const GridBase = memo(({
 
     useEffect(() => {
         if (props.isChildGrid) {
-            console.log('3');
             return;
         }
         if (hideTopFilters) {
@@ -754,7 +753,6 @@ const GridBase = memo(({
 
     useEffect(() => {
         if (props.isChildGrid) {
-            console.log('6');
             return;
         }
         if (forAssignment || !updatePageTitle) {
@@ -770,7 +768,6 @@ const GridBase = memo(({
 
     useEffect(() => {
         if (props.isChildGrid) {
-            console.log('7');
             return;
         }
         let backRoute = pathname;
