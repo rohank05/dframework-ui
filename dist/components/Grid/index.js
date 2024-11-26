@@ -444,7 +444,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   };
   (0, _react.useEffect)(() => {
     if (props.isChildGrid) {
-      console.log('3');
       return;
     }
     if (hideTopFilters) {
@@ -920,6 +919,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }, []);
   const CustomToolbar = function CustomToolbar(props) {
+    const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "Add ".concat(model.title) : 'Add';
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
@@ -953,7 +953,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, model !== null && model !== void 0 && model.customAddTextTitle ? model.customAddTextTitle : " ".concat(!showAddIcon ? "" : "Add", " ").concat(model.title ? model.title : 'Add')), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
@@ -1022,7 +1022,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey]);
   (0, _react.useEffect)(() => {
     if (props.isChildGrid) {
-      console.log('6');
       return;
     }
     if (forAssignment || !updatePageTitle) {
@@ -1046,7 +1045,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }, []);
   (0, _react.useEffect)(() => {
     if (props.isChildGrid) {
-      console.log('7');
       return;
     }
     let backRoute = pathname;
