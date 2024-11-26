@@ -41,13 +41,15 @@ import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
 import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 import { getPermissions } from '../utils';
+import HistoryIcon from '@mui/icons-material/History';
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
 const actionTypes = {
     Copy: "Copy",
     Edit: "Edit",
-    Delete: "Delete"
+    Delete: "Delete",
+    History: "History"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -214,7 +216,7 @@ const GridBase = memo(({
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData;
-    const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
+    const userDefinedPermissions = { add: effectivePermissions.add || true, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
     const filterFieldDataTypes = {
         Number: 'number',
@@ -222,7 +224,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, canHistory = true, gridTitle } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -417,6 +419,9 @@ const GridBase = memo(({
             if (canDelete) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Delete"><DeleteIcon /> </Tooltip>} data-action={actionTypes.Delete} label="Delete" color="error" />);
             }
+            if (canHistory) {
+                actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
+            }
             if (actions.length > 0) {
                 finalColumns.push({
                     field: 'actions',
@@ -552,6 +557,9 @@ const GridBase = memo(({
             if (action === actionTypes.Delete) {
                 setIsDeleting(true);
                 setRecord({ name: record[model?.linkColumn], id: record[idProperty] });
+            }
+            if (action === actionTypes.History) {
+                return navigate(`historyScreen?tableName=${tableName}&PrimaryKey=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
         }
         if (isReadOnly && toLink) {

@@ -58,6 +58,7 @@ var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
 var _utils = require("../utils");
+var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
@@ -78,7 +79,8 @@ const recordCounts = 60000;
 const actionTypes = {
   Copy: "Copy",
   Edit: "Edit",
-  Delete: "Delete"
+  Delete: "Delete",
+  History: "History"
 };
 const constants = {
   gridFilterModel: {
@@ -327,7 +329,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData;
   const userDefinedPermissions = {
-    add: effectivePermissions.add,
+    add: effectivePermissions.add || true,
     edit: effectivePermissions.edit,
     delete: effectivePermissions.delete
   };
@@ -344,7 +346,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const {
     addUrlParamKey,
     searchParamKey,
-    hideBreadcrumb = false
+    hideBreadcrumb = false,
+    tableName,
+    canHistory = true,
+    gridTitle
   } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
@@ -586,6 +591,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "error"
         }));
       }
+      if (canHistory) {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "History"
+          }, /*#__PURE__*/_react.default.createElement(_History.default, null), " "),
+          "data-action": actionTypes.History,
+          label: "History",
+          color: "primary"
+        }));
+      }
       if (actions.length > 0) {
         finalColumns.push({
           field: 'actions',
@@ -767,6 +782,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           name: record[model === null || model === void 0 ? void 0 : model.linkColumn],
           id: record[idProperty]
         });
+      }
+      if (action === actionTypes.History) {
+        return navigate("historyScreen?tableName=".concat(tableName, "&PrimaryKey=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
       }
     }
     if (isReadOnly && toLink) {
