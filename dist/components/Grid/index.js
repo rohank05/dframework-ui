@@ -330,7 +330,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData;
   const userDefinedPermissions = {
-    add: effectivePermissions.add || true,
+    add: effectivePermissions.add,
     edit: effectivePermissions.edit,
     delete: effectivePermissions.delete
   };
@@ -349,7 +349,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     searchParamKey,
     hideBreadcrumb = false,
     tableName,
-    canHistory = true,
+    showHistory = true,
     gridTitle
   } = model;
   const OrderSuggestionHistoryFields = {
@@ -592,7 +592,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "error"
         }));
       }
-      if (canHistory) {
+      if (showHistory) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "History"
@@ -785,7 +785,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         });
       }
       if (action === actionTypes.History) {
-        return navigate("historyScreen?tableName=".concat(tableName, "&PrimaryKey=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
+        return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
       }
     }
     if (isReadOnly && toLink) {

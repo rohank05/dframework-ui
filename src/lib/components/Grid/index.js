@@ -216,7 +216,7 @@ const GridBase = memo(({
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData;
-    const userDefinedPermissions = { add: effectivePermissions.add || true, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
+    const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions(userData, model, userDefinedPermissions);
     const filterFieldDataTypes = {
         Number: 'number',
@@ -224,7 +224,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, canHistory = true, gridTitle } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -419,7 +419,7 @@ const GridBase = memo(({
             if (canDelete) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Delete"><DeleteIcon /> </Tooltip>} data-action={actionTypes.Delete} label="Delete" color="error" />);
             }
-            if (canHistory) {
+            if (showHistory) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
             }
             if (actions.length > 0) {
@@ -559,7 +559,7 @@ const GridBase = memo(({
                 setRecord({ name: record[model?.linkColumn], id: record[idProperty] });
             }
             if (action === actionTypes.History) {
-                return navigate(`historyScreen?tableName=${tableName}&PrimaryKey=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
+                return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
         }
         if (isReadOnly && toLink) {
