@@ -23,6 +23,7 @@ import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
+import TreeCheckbox from './fields/treeCheckBox';
 
 const fieldMappers = {
     "boolean": BooleanField,
@@ -40,7 +41,8 @@ const fieldMappers = {
     "dayRadio": DaySelection,
     "gridInForm": GridForm,
     "email": StringField,
-    "chipInput": ChipInput
+    "chipInput": ChipInput,
+    "treeCheckbox": TreeCheckbox
 };
 
 const useStyles = makeStyles({
