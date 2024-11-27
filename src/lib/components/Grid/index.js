@@ -428,6 +428,7 @@ const GridBase = memo(({
                     type: 'actions',
                     label: '',
                     width: actions.length * 50,
+                    hideable: false,
                     getActions: () => actions,
                 });
             }

@@ -323,12 +323,7 @@ const Form = _ref => {
     type: "cancel",
     color: "error",
     onClick: e => handleFormCancel(e)
-  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_Button.default, {
-    variant: "contained",
-    type: "file",
-    color: "success",
-    onClick: e => handleAttachment(e)
-  }, "Attachment"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, "Cancel"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",
     onClick: () => setIsDeleting(true)

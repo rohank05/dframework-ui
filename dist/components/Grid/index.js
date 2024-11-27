@@ -608,6 +608,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           type: 'actions',
           label: '',
           width: actions.length * 50,
+          hideable: false,
           getActions: () => actions
         });
       }

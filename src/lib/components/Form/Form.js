@@ -232,7 +232,6 @@ const Form = ({
                     <Stack direction="row" spacing={2} justifyContent="flex-end" mb={1}>
                         {canEdit && <Button variant="contained" type="submit" color="success" onClick={handleSubmit}>{`${"Save"}`}</Button>}
                         <Button variant="contained" type="cancel" color="error" onClick={(e) => handleFormCancel(e)}>{`${"Cancel"}`}</Button>
-                        <Button variant="contained" type="file" color="success" onClick={(e) => handleAttachment(e)}>{`${"Attachment"}`}</Button>
                         {permissions.delete && <Button variant="contained" color="error" onClick={() => setIsDeleting(true)}>{`${"Delete"}`}</Button>}
                     </Stack>
                     <Layout model={model} formik={formik} data={data} fieldConfigs={fieldConfigs} combos={combos} onChange={handleChange} lookups={lookups} id={id} handleSubmit={handleSubmit} mode={mode} getRecordAndLookups={getRecordAndLookups}/>
