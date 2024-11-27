@@ -694,7 +694,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       showFullScreenLoader,
       history: navigate,
       baseFilters,
-      isElasticExport
+      isElasticExport,
+      model: model
     });
   };
   const openForm = function openForm(id) {
@@ -710,7 +711,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         setActiveRecord,
         modelConfig: model,
         parentFilters,
-        where
+        where,
+        model
       });
       return;
     }

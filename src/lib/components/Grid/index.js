@@ -496,12 +496,13 @@ const GridBase = memo(({
             showFullScreenLoader,
             history: navigate,
             baseFilters,
-            isElasticExport
+            isElasticExport,
+            model:model
         });
     };
     const openForm = (id, record = {}, { mode } = {}) => {
         if (setActiveRecord) {
-            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
+            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;
         }
         let path = pathname;
@@ -846,7 +847,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb}
-                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid}/>
+                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
