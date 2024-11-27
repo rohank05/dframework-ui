@@ -894,7 +894,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   };
   (0, _react.useEffect)(() => {
-    if (model.preferenceId) {
+    if (model.preferenceId && preferenceApi) {
       removeCurrentPreferenceName({
         dispatchData
       });
@@ -917,7 +917,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         tablePreferenceEnums
       });
     }
-  }, []);
+  }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
     const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "Add ".concat(model.title) : 'Add';
     return /*#__PURE__*/_react.default.createElement("div", {

@@ -675,12 +675,12 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-       if (model.preferenceId) {
+       if (model.preferenceId && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
         }
-    }, [])
+    }, [preferenceApi])
 
     const CustomToolbar = function (props) {
         const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `Add ${model.title}` : 'Add';
