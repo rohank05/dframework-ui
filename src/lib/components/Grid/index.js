@@ -41,13 +41,15 @@ import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
 import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 import { getPermissions } from '../utils';
+import HistoryIcon from '@mui/icons-material/History';
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
 const actionTypes = {
     Copy: "Copy",
     Edit: "Edit",
-    Delete: "Delete"
+    Delete: "Delete",
+    History: "History"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -194,7 +196,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, nestedGrid = false } = model;
     const isReadOnly = model.readOnly === true;
     const isDoubleClicked = model.doubleClicked === false;
     const customExportRef = useRef();
@@ -222,7 +224,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -417,6 +419,9 @@ const GridBase = memo(({
             if (canDelete) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Delete"><DeleteIcon /> </Tooltip>} data-action={actionTypes.Delete} label="Delete" color="error" />);
             }
+            if (showHistory) {
+                actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
+            }
             if (actions.length > 0) {
                 finalColumns.push({
                     field: 'actions',
@@ -552,6 +557,9 @@ const GridBase = memo(({
             if (action === actionTypes.Delete) {
                 setIsDeleting(true);
                 setRecord({ name: record[model?.linkColumn], id: record[idProperty] });
+            }
+            if (action === actionTypes.History) {
+                return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
         }
         if (isReadOnly && toLink) {
@@ -838,7 +846,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb}
-                breadcrumbs={breadCrumbs} />
+                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid}/>
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium

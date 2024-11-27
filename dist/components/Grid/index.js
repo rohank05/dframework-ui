@@ -58,6 +58,7 @@ var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
 var _utils = require("../utils");
+var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
@@ -78,7 +79,8 @@ const recordCounts = 60000;
 const actionTypes = {
   Copy: "Copy",
   Edit: "Edit",
-  Delete: "Delete"
+  Delete: "Delete",
+  History: "History"
 };
 const constants = {
   gridFilterModel: {
@@ -293,7 +295,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideBackButton = false,
     hideTopFilters = true,
     updatePageTitle = true,
-    isElasticScreen = false
+    isElasticScreen = false,
+    nestedGrid = false
   } = model;
   const isReadOnly = model.readOnly === true;
   const isDoubleClicked = model.doubleClicked === false;
@@ -344,7 +347,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const {
     addUrlParamKey,
     searchParamKey,
-    hideBreadcrumb = false
+    hideBreadcrumb = false,
+    tableName,
+    showHistory = true,
+    gridTitle
   } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
@@ -586,6 +592,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "error"
         }));
       }
+      if (showHistory) {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "History"
+          }, /*#__PURE__*/_react.default.createElement(_History.default, null), " "),
+          "data-action": actionTypes.History,
+          label: "History",
+          color: "primary"
+        }));
+      }
       if (actions.length > 0) {
         finalColumns.push({
           field: 'actions',
@@ -767,6 +783,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           name: record[model === null || model === void 0 ? void 0 : model.linkColumn],
           id: record[idProperty]
         });
+      }
+      if (action === actionTypes.History) {
+        return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
       }
     }
     if (isReadOnly && toLink) {
@@ -1136,7 +1155,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb,
-    breadcrumbs: breadCrumbs
+    breadcrumbs: breadCrumbs,
+    nestedGrid: nestedGrid
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,
     elevation: 0,

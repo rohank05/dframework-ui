@@ -38,7 +38,8 @@ function PageTitle(props) {
     titleClass = "text-theme-blue text-max-width",
     showTitleInfo,
     showBreadcrumbs,
-    breadcrumbs = []
+    breadcrumbs = [],
+    nestedGrid = false
   } = props;
   const [showTooltip, setShowTooltip] = (0, _react.useState)(false);
   const isMobile = (0, _useMobile.default)(true);
@@ -129,7 +130,7 @@ function PageTitle(props) {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text)))), breadcrumbs.length > 1 && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, breadcrumb.text)))), breadcrumbs.length > 1 || nestedGrid && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     sx: {
       display: 'flex',
