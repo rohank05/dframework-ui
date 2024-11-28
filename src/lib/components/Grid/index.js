@@ -133,6 +133,7 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     return equal;
 }
 const GridBase = memo(({
+    showGrid = true,
     useLinkColumn = true,
     model,
     columns,
@@ -263,11 +264,18 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
+        // if (props.isChildGrid) {
+        //     console.log('1');
+        //     return;
+        // }
         dataRef.current = data;
     }, [data]);
 
     useEffect(() => {
-
+        // if (props.isChildGrid) {
+        //     console.log('2');
+        //     return;
+        // }
         if (customFilters && Object.keys(customFilters) != 0) {
             if (customFilters.clear) {
                 let filterObject = {
@@ -312,6 +320,9 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         if (hideTopFilters) {
             dispatchData({
                 type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
@@ -672,7 +683,7 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (model.preferenceId) {
+       if (model.preferenceId) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
@@ -680,7 +691,7 @@ const GridBase = memo(({
     }, [])
 
     const CustomToolbar = function (props) {
-
+        const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `Add ${model.title}` : 'Add';
         return (
             <div
                 style={{
@@ -691,7 +702,7 @@ const GridBase = memo(({
                 {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
                 {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title ? model.title : 'Add'}`}</Button>}
+                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                 {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
 
@@ -749,6 +760,9 @@ const GridBase = memo(({
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         if (forAssignment || !updatePageTitle) {
             return;
         }
@@ -761,6 +775,9 @@ const GridBase = memo(({
     }, [])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         let backRoute = pathname;
 
         // we do not need to show the back button for these routes
@@ -840,7 +857,7 @@ const GridBase = memo(({
         breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
-        breadCrumbs = [{ text: model.gridTitle }];
+        breadCrumbs = [{ text: model.title || model.gridTitle }];
     }
 
     return (
