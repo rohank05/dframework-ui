@@ -59,7 +59,7 @@ var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu")
 var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
-const _excluded = ["useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
+const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -203,6 +203,7 @@ const areEqual = function areEqual() {
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
   let {
+      showGrid = true,
       useLinkColumn = true,
       model,
       columns,
@@ -389,9 +390,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   (0, _react.useEffect)(() => {
+    // if (props.isChildGrid) {
+    //     console.log('1');
+    //     return;
+    // }
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
+    // if (props.isChildGrid) {
+    //     console.log('2');
+    //     return;
+    // }
     if (customFilters && Object.keys(customFilters) != 0) {
       if (customFilters.clear) {
         let filterObject = {
@@ -440,6 +449,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return lookupData[lookupMap[field].lookup] || [];
   };
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      return;
+    }
     if (hideTopFilters) {
       dispatchData({
         type: _actions.default.PASS_FILTERS_TOHEADER,
@@ -902,7 +914,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   };
   (0, _react.useEffect)(() => {
-    if (model.preferenceId) {
+    if (model.preferenceId && preferenceApi) {
       removeCurrentPreferenceName({
         dispatchData
       });
@@ -925,8 +937,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         tablePreferenceEnums
       });
     }
-  }, []);
+  }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
+    const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "Add ".concat(model.title) : 'Add';
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
@@ -960,7 +973,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, model !== null && model !== void 0 && model.customAddTextTitle ? model.customAddTextTitle : " ".concat(!showAddIcon ? "" : "Add", " ").concat(model.title ? model.title : 'Add')), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
@@ -1028,6 +1041,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      return;
+    }
     if (forAssignment || !updatePageTitle) {
       return;
     }
@@ -1048,6 +1064,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     };
   }, []);
   (0, _react.useEffect)(() => {
+    if (props.isChildGrid) {
+      return;
+    }
     let backRoute = pathname;
 
     // we do not need to show the back button for these routes
@@ -1151,7 +1170,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }];
   } else {
     breadCrumbs = [{
-      text: model.gridTitle
+      text: model.title || model.gridTitle
     }];
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
