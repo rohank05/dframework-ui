@@ -130,7 +130,7 @@ function PageTitle(props) {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text)))), breadcrumbs.length > 1 || nestedGrid && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, breadcrumb.text)))), (breadcrumbs.length > 1 || nestedGrid) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     sx: {
       display: 'flex',

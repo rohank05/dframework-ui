@@ -439,6 +439,7 @@ const GridBase = memo(({
                     type: 'actions',
                     label: '',
                     width: actions.length * 50,
+                    hideable: false,
                     getActions: () => actions,
                 });
             }
@@ -754,10 +755,10 @@ const GridBase = memo(({
         }
     };
     useEffect(() => {
-        // if (isGridPreferenceFetched) {
-        fetchData();
-        // }
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
+        if (url) {
+            fetchData();
+        }
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url])
 
     useEffect(() => {
         if (props.isChildGrid) {

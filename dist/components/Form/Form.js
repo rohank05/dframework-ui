@@ -142,12 +142,14 @@ const Form = _ref => {
     }
   };
   (0, _react.useEffect)(() => {
-    setValidationSchema(model.getValidationSchema({
-      id,
-      snackbar
-    }));
-    getRecordAndLookups({});
-  }, [id, idWithOptions, model]);
+    if (url) {
+      setValidationSchema(model.getValidationSchema({
+        id,
+        snackbar
+      }));
+      getRecordAndLookups({});
+    }
+  }, [id, idWithOptions, model, url]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),

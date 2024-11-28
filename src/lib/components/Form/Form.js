@@ -112,10 +112,12 @@ const Form = ({
       navigate(navigateBack);
     }
   };
-  useEffect(() => {
-    setValidationSchema(model.getValidationSchema({ id, snackbar }));
-    getRecordAndLookups({});
-  }, [id, idWithOptions, model]);
+    useEffect(() => {
+        if (url) {
+            setValidationSchema(model.getValidationSchema({ id, snackbar }));
+            getRecordAndLookups({});
+        }
+    }, [id, idWithOptions, model, url]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -292,12 +294,6 @@ const Form = ({
                 color="error"
                 onClick={(e) => handleFormCancel(e)}
               >{`${"Cancel"}`}</Button>
-              {/* <Button
-                variant="contained"
-                type="file"
-                color="success"
-                onClick={(e) => handleAttachment(e)}
-              >{`${"Attachment"}`}</Button> */}
               {permissions.delete && (
                 <Button
                   variant="contained"
