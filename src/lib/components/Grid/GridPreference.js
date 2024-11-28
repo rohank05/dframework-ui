@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip } from '@mui/material';
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip, ListItemIcon, DialogContentText } from '@mui/material';
 import { DataGridPremium, GridActionsCellItem, gridFilterModelSelector, gridSortModelSelector, useGridSelector, useGridApiRef, } from '@mui/x-data-grid-premium';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -13,6 +13,7 @@ import request from './httpRequest';
 // import { useRouter } from '../useRouter/useRouter';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
+import AddIcon from '@mui/icons-material/Add';
 
 const actionTypes = {
     Copy: "Copy",
@@ -40,10 +41,10 @@ const initialValues = {
     isDefault: false
 };
 
-const defaultPrefName= "default"
+const defaultPrefName = "default";
 const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
-    const { pathname, navigate } = useRouter();
+    const { stateData, dispatchData, removeCurrentPreferenceName, getAllSavedPreferences } = useStateContext();
+    const { navigate } = useRouter();
     const apiRef = useGridApiRef();
     const snackbar = useSnackbar();
 
@@ -53,6 +54,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const [formType, setFormType] = useState();
     const [menuAnchorEl, setMenuAnchorEl] = useState();
     const [openPreferenceExistsModal, setOpenPreferenceExistsModal] = useState(false);
+    const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState({});
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const preferences = stateData?.preferences;
     const currentPreference = stateData?.currentPreference;
@@ -71,15 +73,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         return schema;
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         const filteredPrefs = preferences?.filter(pref => {
             if (pref.prefId === 0) {
-                return false
+                return false;
             }
             return true;
         });
-        setFilteredPrefs(filteredPrefs)
-    },[preferences])
+        setFilteredPrefs(filteredPrefs);
+    }, [preferences])
 
     const formik = useFormik({
         initialValues,
@@ -111,7 +113,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             prefIdArray: id
         }
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
-        if (response === true) {
+        if (response === true || response?.success) {
             if (prefName === currentPreference) {
                 removeCurrentPreferenceName({ dispatchData });
             }
@@ -226,6 +228,13 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         setOpenDialog(false);
     }
 
+    const confirmDeletePreference = async () => {
+        const { prefId, preferenceName: currentPrefname } = openConfirmDeleteDialog;
+        await deletePreference(prefId, currentPrefname);
+        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+        setOpenConfirmDeleteDialog({});
+    }
+
     const onCellClick = async (cellParams, event, details) => {
         let action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
         if (cellParams.id === 0 && (action === actionTypes.Edit || action === actionTypes.Delete)) {
@@ -238,12 +247,21 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             setOpenForm(true);
         }
         if (action === actionTypes.Delete) {
-            await deletePreference(cellParams.id, cellParams?.row?.prefName);
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            setOpenConfirmDeleteDialog({
+                prefId: cellParams.id,
+                preferenceName: cellParams.row.prefName
+            });
         }
     }
 
     const prefName = formik.values.prefName.trim();
+
+    // field is within a dialog that's not visible when the top-level component mounts
+    const focusUsernameInputField = input => {
+        if (input) {
+            setTimeout(() => { input.focus(); }, 10);
+        }
+    };
 
     return (
         <Box>
@@ -256,7 +274,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 title='Preference'
                 startIcon={<SettingsIcon />}
             >
-                Preferences
+                Preferences {currentPreference && `(${currentPreference})`}
             </Button>
             <Menu
                 id={`grid-preference-menu`}
@@ -282,9 +300,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 }}
             >
                 <MenuItem component={ListItemButton} dense onClick={() => openModal(formTypes.Add)}>
+                    <ListItemIcon>
+                        <AddIcon />
+                    </ListItemIcon>
                     Add Preference
                 </MenuItem>
                 <MenuItem component={ListItemButton} dense divider={preferences?.length > 0} onClick={() => openModal(formTypes.Manage, false)}>
+                    <ListItemIcon>
+                        <SettingsIcon />
+                    </ListItemIcon>
                     Manage Preferences
                 </MenuItem>
 
@@ -294,6 +318,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                         <MenuItem
                             onClick={() => applySelectedPreference(prefId, key)}
                             component={ListItem}
+                            selected={currentPreference === prefName}
                             key={`pref-item-${key}`}
                             title={prefDesc}
                             dense
@@ -340,6 +365,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                                     helperText={formik.errors.prefName}
                                     required
                                     fullWidth
+                                    inputRef={focusUsernameInputField}
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -451,6 +477,20 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 <DialogActions sx={{ justifyContent: 'center', marginTop: '4%' }}>
                     <Button color="success" variant="contained" size="small" onClick={() => setOpenPreferenceExistsModal(false)} disableElevation>
                         Ok
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openConfirmDeleteDialog.preferenceName} maxWidth='sm' fullWidth>
+                <DialogTitle>Confirm delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure you wish to delete "{openConfirmDeleteDialog.preferenceName}"
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenConfirmDeleteDialog({})}>Disagree</Button>
+                    <Button onClick={confirmDeletePreference} autoFocus>
+                        Agree
                     </Button>
                 </DialogActions>
             </Dialog>

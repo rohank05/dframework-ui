@@ -55,6 +55,18 @@ const StateProvider = ({ children }) => {
     dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: preferences });
     dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: preferences.length });
   }
+
+  /**
+ * Filters out data elements whose fields do not exist in the grid's columns.
+ *
+ * @param {Object} params - The parameters object.
+ * @param {Object} params.gridRef - A reference to the grid component.
+ * @param {Array} params.data - The data array to filter.
+ * @returns {Array} The filtered array containing only elements with existing columns in the grid.
+ */
+  const filterNonExistingColumns = ({ gridRef, data }) => {
+    return data.filter(ele => gridRef.current.getColumnIndex(ele.field) !== -1);
+  };
   async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums = {} }) {
     const params = {
       action: 'default',
@@ -65,11 +77,9 @@ const StateProvider = ({ children }) => {
     const response = await request({ url: preferenceApi, params, history, dispatchData });
     let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
-      userPreferenceCharts.gridColumn.forEach(ele => {
-        if (gridRef.current.getColumnIndex(ele.field) !== -1) {
-          gridRef.current.setColumnWidth(ele.field, ele.width);
-        }
-      })
+      userPreferenceCharts.gridColumn = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.gridColumn });
+      userPreferenceCharts.sortModel = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.sortModel });
+      userPreferenceCharts.filterModel.items = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.filterModel.items });
       gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
