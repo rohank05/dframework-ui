@@ -1023,10 +1023,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   (0, _react.useEffect)(() => {
-    // if (isGridPreferenceFetched) {
-    fetchData();
-    // }
-  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey]);
+    if (url) {
+      fetchData();
+    }
+  }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {
     if (forAssignment || !updatePageTitle) {
       return;

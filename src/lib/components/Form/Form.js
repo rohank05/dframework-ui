@@ -81,9 +81,11 @@ const Form = ({
         }
     }
     useEffect(() => {
-        setValidationSchema(model.getValidationSchema({ id, snackbar }));
-        getRecordAndLookups({});
-    }, [id, idWithOptions, model]);
+        if(url){
+            setValidationSchema(model.getValidationSchema({ id, snackbar }));
+            getRecordAndLookups({});
+        }
+    }, [id, idWithOptions, model, url]);
 
     const formik = useFormik({
         enableReinitialize: true,
