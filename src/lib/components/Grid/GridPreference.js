@@ -40,7 +40,7 @@ const initialValues = {
     isDefault: false
 };
 
-const defaultCoolRPrefName= "coolr default"
+const defaultPrefName= "default"
 const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
     const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
     const { pathname, navigate } = useRouter();
@@ -126,14 +126,14 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         await applyPreference(prefId);
     }
 
-    function isNotCoolRDefault(prefName = '') {
-        return [defaultCoolRPrefName].includes(prefName.trim().toLowerCase());
+    function isNotDefault(prefName = '') {
+        return [defaultPrefName].includes(prefName.trim().toLowerCase());
     }
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
         const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
-        const isNotCoolRDefaultName = isNotCoolRDefault(presetName)
-        if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotCoolRDefaultName) {
+        const isNotDefaultName = isNotDefault(presetName)
+        if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotDefaultName) {
             setOpenPreferenceExistsModal(true);
             return;
         }
@@ -171,7 +171,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
 
     const applyPreference = async (prefId) => {
         let userPreferenceCharts;
-        let coolrDefaultPreference = 'CoolR Default'
+        let defaultPreference = 'Default';
         // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
         if (prefId === 0) {
             userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
@@ -184,7 +184,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             };
             const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
             userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : null;
-            coolrDefaultPreference = response?.prefValue ? response.prefName : '';
+            defaultPreference = response?.prefValue ? response.prefName : '';
         }
 
         // If userPreferenceCharts is available, apply preferences to the grid
@@ -201,7 +201,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             gridRef.current.setSortModel(sortModel || []);
             gridRef.current.setFilterModel(filterModel);
 
-            dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: coolrDefaultPreference });
+            dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference });
             setIsGridPreferenceFetched(true);
         }
     }
