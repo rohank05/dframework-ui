@@ -33,16 +33,18 @@ const buildTree = function buildTree() {
   const tree = {};
   data.forEach(item => {
     if (item.ParentId && tree[item.ParentId]) {
+      var _item$value;
       tree[item.ParentId].children.push({
-        value: item.value.toString(),
+        value: (_item$value = item.value) === null || _item$value === void 0 ? void 0 : _item$value.toString(),
         label: item.label
       });
     } else {
+      var _item$value2;
       tree[item.ParentId] = {
         label: item.ParentName,
         value: "Parent" + item.ParentId.toString(),
         children: [{
-          value: item.value.toString(),
+          value: (_item$value2 = item.value) === null || _item$value2 === void 0 ? void 0 : _item$value2.toString(),
           label: item.label
         }]
       };
