@@ -121,13 +121,11 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     for (const o in prevProps) {
         if (prevProps[o] !== nextProps[o]) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     for (const o in nextProps) {
         if (!prevProps.hasOwnProperty(o)) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     return equal;
@@ -225,7 +223,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -692,7 +690,7 @@ const GridBase = memo(({
     }, [preferenceApi])
 
     const CustomToolbar = function (props) {
-        const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `Add ${model.title}` : 'Add';
+        const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `${model.title}` : 'Add';
         return (
             <div
                 style={{
@@ -858,12 +856,12 @@ const GridBase = memo(({
         breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
-        breadCrumbs = [{ text: model.title || model.gridTitle }];
+        breadCrumbs = [{ text: model.gridTitle || model.title }];
     }
 
     return (
         <>
-            <PageTitle showBreadcrumbs={!hideBreadcrumb}
+            <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
                 breadcrumbs={breadCrumbs} nestedGrid={nestedGrid}/>
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>

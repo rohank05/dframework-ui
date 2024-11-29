@@ -181,21 +181,11 @@ const areEqual = function areEqual() {
   for (const o in prevProps) {
     if (prevProps[o] !== nextProps[o]) {
       equal = false;
-      console.error({
-        o,
-        prev: prevProps[o],
-        next: nextProps[o]
-      });
     }
   }
   for (const o in nextProps) {
     if (!prevProps.hasOwnProperty(o)) {
       equal = false;
-      console.error({
-        o,
-        prev: prevProps[o],
-        next: nextProps[o]
-      });
     }
   }
   return equal;
@@ -351,7 +341,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideBreadcrumb = false,
     tableName,
     showHistory = true,
-    gridTitle
+    gridTitle,
+    hideBreadcrumbInGrid = false
   } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
@@ -939,7 +930,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
-    const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "Add ".concat(model.title) : 'Add';
+    const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "".concat(model.title) : 'Add';
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
@@ -1170,11 +1161,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }];
   } else {
     breadCrumbs = [{
-      text: model.title || model.gridTitle
+      text: model.gridTitle || model.title
     }];
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
-    showBreadcrumbs: !hideBreadcrumb,
+    showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
     nestedGrid: nestedGrid
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
