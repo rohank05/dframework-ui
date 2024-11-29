@@ -8,9 +8,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.ActiveStepContext = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -138,7 +140,7 @@ const Form = _ref => {
       }
     } catch (error) {
       snackbar.showError("An error occured, please try after some time.", error);
-      navigate(navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
     }
   };
   (0, _react.useEffect)(() => {
@@ -172,7 +174,7 @@ const Form = _ref => {
             model.updateChildGridRecords();
           }
           snackbar.showMessage("Record Updated Successfully.");
-          navigate(navigateBack);
+          navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
@@ -185,7 +187,7 @@ const Form = _ref => {
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
   const warnUnsavedChanges = () => {
     if (dirty) {
@@ -194,7 +196,7 @@ const Form = _ref => {
   };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
   const setActiveRecord = function setActiveRecord(_ref4) {
     let {
@@ -235,7 +237,8 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+      event.preventDefault();
     }
   };
   const handleDelete = async function handleDelete() {
@@ -250,7 +253,7 @@ const Form = _ref => {
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateBack);
+        navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
       }
     } catch (error) {
       snackbar === null || snackbar === void 0 || snackbar.showError("An error occured, please try after some time.");

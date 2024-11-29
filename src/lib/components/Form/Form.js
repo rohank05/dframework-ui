@@ -109,7 +109,7 @@ const Form = ({
         "An error occured, please try after some time.",
         error
       );
-      navigate(navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
     }
   };
     useEffect(() => {
@@ -139,7 +139,7 @@ const Form = ({
               model.updateChildGridRecords();
             }
             snackbar.showMessage("Record Updated Successfully.");
-            navigate(navigateBack);
+            navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
           }
         })
         .catch((err) => {
@@ -157,7 +157,7 @@ const Form = ({
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
   };
 
   const warnUnsavedChanges = () => {
@@ -168,7 +168,7 @@ const Form = ({
 
   const errorOnLoad = function (title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
   };
 
   const setActiveRecord = function ({ id, title, record, lookups }) {
@@ -200,7 +200,8 @@ const Form = ({
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+      event.preventDefault();
     }
   };
   const handleDelete = async function () {
@@ -215,7 +216,7 @@ const Form = ({
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateBack);
+        navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
       }
     } catch (error) {
       snackbar?.showError("An error occured, please try after some time.");
