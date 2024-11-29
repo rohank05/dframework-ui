@@ -121,13 +121,11 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     for (const o in prevProps) {
         if (prevProps[o] !== nextProps[o]) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     for (const o in nextProps) {
         if (!prevProps.hasOwnProperty(o)) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     return equal;

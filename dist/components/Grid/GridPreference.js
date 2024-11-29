@@ -106,29 +106,6 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
-function useFocusableInput(shouldFocus) {
-  const inputRef = (0, _react.useRef)(null);
-  const setInputRef = instance => {
-    inputRef.current = instance;
-  };
-  (0, _react.useEffect)(() => {
-    let timeout;
-    if (shouldFocus) {
-      timeout = setTimeout(() => {
-        var _inputRef$current;
-        (_inputRef$current = inputRef.current) === null || _inputRef$current === void 0 || _inputRef$current.focus();
-      });
-    }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [shouldFocus]);
-  return {
-    setInputRef
-  };
-}
 const defaultPrefName = "default";
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
@@ -139,16 +116,12 @@ const GridPreferences = _ref => {
     setIsGridPreferenceFetched
   } = _ref;
   const {
-    systemDateTimeFormat,
     stateData,
     dispatchData,
-    formatDate,
     removeCurrentPreferenceName,
-    getAllSavedPreferences,
-    applyDefaultPreferenceIfExists
+    getAllSavedPreferences
   } = (0, _StateProvider.useStateContext)();
   const {
-    pathname,
     navigate
   } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
@@ -422,7 +395,8 @@ const GridPreferences = _ref => {
     }
   };
   const prefName = formik.values.prefName.trim();
-  // dialog isnt rendered at root
+
+  // field is within a dialog that's not visible when the top-level component mounts
   const focusUsernameInputField = input => {
     if (input) {
       setTimeout(() => {
@@ -531,7 +505,6 @@ const GridPreferences = _ref => {
     required: true,
     fullWidth: true,
     inputRef: focusUsernameInputField
-    // autoFocus={true}
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     xs: 12

@@ -16,15 +16,10 @@ const ReadonlyPanel = _ref => {
     onDataFetched
   } = _ref;
   const {
-    navigate,
-    getParams,
-    useParams,
-    pathname
+    useParams
   } = (0, _StateProvider.useRouter)();
-  const [data, setData] = (0, _react.useState)(null);
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [error, setError] = (0, _react.useState)(null);
-  const [lookups, setLookups] = (0, _react.useState)(null);
 
   // Retrieve `id` with a default fallback value
   const {
@@ -39,28 +34,27 @@ const ReadonlyPanel = _ref => {
       record,
       lookups
     } = _ref2;
-    setData(record);
-    setLookups(lookups);
-    onDataFetched(record);
+    onDataFetched({
+      record,
+      lookups
+    });
+  };
+  const fetchData = async () => {
+    try {
+      await (0, _crudHelper.getRecord)({
+        api: apiEndpoint,
+        modelConfig: model,
+        setIsLoading,
+        setActiveRecord,
+        id
+      });
+    } catch (err) {
+      setError('Failed to load data');
+    } finally {
+      setIsLoading(false);
+    }
   };
   (0, _react.useEffect)(() => {
-    const fetchData = async () => {
-      try {
-        const recordData = await (0, _crudHelper.getRecord)({
-          api: apiEndpoint,
-          modelConfig: model,
-          setIsLoading,
-          setActiveRecord,
-          id
-        });
-        setData(recordData);
-        onDataFetched(recordData);
-      } catch (err) {
-        setError('Failed to load data');
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchData();
   }, [apiEndpoint, model, onDataFetched, id]);
 };
