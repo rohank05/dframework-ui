@@ -12,7 +12,7 @@ const ReadonlyPanel = ({ apiEndpoint, model, onDataFetched }) => {
     const id = idWithOptions || 11; // Default to 11 if idWithOptions is not available
 
     const setActiveRecord = ({ id, title, record, lookups }) => {
-        onDataFetched({ record, lookups });
+        onDataFetched(record);
     };
     const fetchData = async () => {
         try {

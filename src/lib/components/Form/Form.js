@@ -109,15 +109,15 @@ const Form = ({
         "An error occured, please try after some time.",
         error
       );
-      navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
     }
   };
-    useEffect(() => {
-        if (url) {
-            setValidationSchema(model.getValidationSchema({ id, snackbar }));
-            getRecordAndLookups({});
-        }
-    }, [id, idWithOptions, model, url]);
+  useEffect(() => {
+    if (url) {
+      setValidationSchema(model.getValidationSchema({ id, snackbar }));
+      getRecordAndLookups({});
+    }
+  }, [id, idWithOptions, model, url]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -139,7 +139,7 @@ const Form = ({
               model.updateChildGridRecords();
             }
             snackbar.showMessage("Record Updated Successfully.");
-            navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+            navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
           }
         })
         .catch((err) => {
@@ -157,7 +157,7 @@ const Form = ({
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
 
   const warnUnsavedChanges = () => {
@@ -168,7 +168,7 @@ const Form = ({
 
   const errorOnLoad = function (title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
 
   const setActiveRecord = function ({ id, title, record, lookups }) {
@@ -200,7 +200,7 @@ const Form = ({
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
       event.preventDefault();
     }
   };
@@ -216,7 +216,7 @@ const Form = ({
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateBack.includes("window.history") ? window.history.back(): navigateBack);
+        navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
       }
     } catch (error) {
       snackbar?.showError("An error occured, please try after some time.");
@@ -347,10 +347,9 @@ const Form = ({
               setDeleteError(null);
             }}
             title={deleteError ? "Error Deleting Record" : "Confirm Delete"}
-          >{`Are you sure you want to delete ${
-            data?.GroupName || data?.SurveyName
-          }?`}</DialogComponent>
-          {relations.length && (
+          >{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName
+            }?`}</DialogComponent>
+          {Boolean(relations.length) ? (
             <Relations
               models={models}
               relations={relations}
@@ -358,7 +357,7 @@ const Form = ({
               parent={model.name || model.title || ""}
               where={[]}
             />
-          )}
+          ) : null}
         </Paper>
       </ActiveStepContext.Provider>
     </>

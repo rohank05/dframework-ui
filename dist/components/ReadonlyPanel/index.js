@@ -34,10 +34,7 @@ const ReadonlyPanel = _ref => {
       record,
       lookups
     } = _ref2;
-    onDataFetched({
-      record,
-      lookups
-    });
+    onDataFetched(record);
   };
   const fetchData = async () => {
     try {
