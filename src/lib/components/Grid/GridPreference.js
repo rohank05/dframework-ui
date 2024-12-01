@@ -258,11 +258,11 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
 
     // field is within a dialog that's not visible when the top-level component mounts
     const focusUsernameInputField = input => {
-        if (input) {
-            setTimeout(() => { input.focus(); }, 10);
+        if (input && !input.dataset?.touched) {
+            setTimeout(() => { input.focus(); input.dataset.touched = "true"; }, 10);
         }
     };
-
+    const isManageForm = formType === formTypes.Manage;
     return (
         <Box>
             <Button
@@ -328,11 +328,11 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                     )
                 })}
             </Menu>
-            <Dialog open={openDialog} maxWidth={formType === formTypes.Manage ? 'md' : 'sm'} fullWidth>
+            <Dialog open={openDialog} maxWidth={isManageForm ? 'md' : 'sm'} fullWidth>
                 <DialogTitle sx={{ backgroundColor: '#e0e0e0', mb: 2 }}>
                     <Stack direction="row" columnGap={2}>
                         <Typography variant="h5" >
-                            {formType} Preference
+                            {formType} Preference{(formType === formTypes.Manage ? 's' : '')}
                         </Typography>
                     </Stack>
                 </DialogTitle>
@@ -462,7 +462,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                         </Grid>
                     )}
                 </DialogContent>
-                {formType === formTypes.Manage && (
+                {isManageForm && (
                     <DialogActions>
                         <Button color="error" variant="contained" size="small" onClick={() => closeModal()} disableElevation>
                             Close

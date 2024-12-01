@@ -398,12 +398,15 @@ const GridPreferences = _ref => {
 
   // field is within a dialog that's not visible when the top-level component mounts
   const focusUsernameInputField = input => {
-    if (input) {
+    var _input$dataset;
+    if (input && !((_input$dataset = input.dataset) !== null && _input$dataset !== void 0 && _input$dataset.touched)) {
       setTimeout(() => {
         input.focus();
+        input.dataset.touched = "true";
       }, 10);
     }
   };
+  const isManageForm = formType === formTypes.Manage;
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     id: "grid-preferences-btn",
     "aria-controls": menuAnchorEl ? 'basic-menu' : undefined,
@@ -464,7 +467,7 @@ const GridPreferences = _ref => {
     }));
   })), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
     open: openDialog,
-    maxWidth: formType === formTypes.Manage ? 'md' : 'sm',
+    maxWidth: isManageForm ? 'md' : 'sm',
     fullWidth: true
   }, /*#__PURE__*/_react.default.createElement(_material.DialogTitle, {
     sx: {
@@ -476,7 +479,7 @@ const GridPreferences = _ref => {
     columnGap: 2
   }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "h5"
-  }, formType, " Preference"))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, formType, " Preference", formType === formTypes.Manage ? 's' : ''))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
     rowGap: 2,
@@ -590,7 +593,7 @@ const GridPreferences = _ref => {
     disableRowGrouping: true,
     disableRowSelectionOnClick: true,
     autoHeight: true
-  })))), formType === formTypes.Manage && /*#__PURE__*/_react.default.createElement(_material.DialogActions, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
+  })))), isManageForm && /*#__PURE__*/_react.default.createElement(_material.DialogActions, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     color: "error",
     variant: "contained",
     size: "small",

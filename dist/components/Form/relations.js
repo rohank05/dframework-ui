@@ -7,7 +7,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
-require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _Tab = _interopRequireDefault(require("@mui/material/Tab"));
@@ -60,30 +59,42 @@ const Relations = _ref2 => {
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
-  return /*#__PURE__*/_react.default.createElement(_TabContext.default, {
-    value: activeTab
-  }, /*#__PURE__*/_react.default.createElement(_Box.default, null, /*#__PURE__*/_react.default.createElement(_TabList.default, {
-    onChange: handleChange
-  }, relations.map(relation => {
-    var _models$find;
-    return /*#__PURE__*/_react.default.createElement(_Tab.default, {
-      key: relation,
-      label: ((_models$find = models.find(model => model.name === relation)) === null || _models$find === void 0 ? void 0 : _models$find.listTitle) || "ModelLabel",
-      value: relation
-    });
-  }))), relations.map(relation => /*#__PURE__*/_react.default.createElement(_TabPanel.default, {
-    sx: {
-      padding: 0
-    },
-    value: relation,
-    key: relation
-  }, /*#__PURE__*/_react.default.createElement(ChildGrid, {
-    relation: relation,
-    key: relation,
-    models: models,
-    parentFilters: parentFilters,
-    parent: parent,
-    where: where
-  }))));
+  return null;
+  // return (
+  //   <TabContext value={activeTab}>
+  //     <Box>
+  //       <TabList
+  //         onChange={handleChange}
+  //       >
+  //         {relations.map((relation) => (
+  //           <Tab
+  //             key={relation}
+  //             label={
+  //               models.find((model) => model.name === relation)?.listTitle ||
+  //               "ModelLabel"
+  //             }
+  //             value={relation}
+  //           />
+  //         ))}
+  //       </TabList>
+  //     </Box>
+  //     {relations.map((relation) => (
+  //       <TabPanel
+  //         sx={{ padding: 0 }}
+  //         value={relation}
+  //         key={relation}
+  //       >
+  //         <ChildGrid
+  //           relation={relation}
+  //           key={relation}
+  //           models={models}
+  //           parentFilters={parentFilters}
+  //           parent={parent}
+  //           where={where}
+  //         />
+  //       </TabPanel>
+  //     ))}
+  //   </TabContext>
+  // );
 };
 var _default = exports.default = Relations;

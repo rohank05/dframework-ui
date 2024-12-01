@@ -44,42 +44,43 @@ const Relations = ({ relations, parentFilters, parent, where, models }) => {
   const handleChange = (event, newValue) => {
     setActiveTab(newValue);
   };
-  return (
-    <TabContext value={activeTab}>
-      <Box>
-        <TabList
-          onChange={handleChange}
-        >
-          {relations.map((relation) => (
-            <Tab
-              key={relation}
-              label={
-                models.find((model) => model.name === relation)?.listTitle ||
-                "ModelLabel"
-              }
-              value={relation}
-            />
-          ))}
-        </TabList>
-      </Box>
-      {relations.map((relation) => (
-        <TabPanel
-          sx={{ padding: 0 }}
-          value={relation}
-          key={relation}
-        >
-          <ChildGrid
-            relation={relation}
-            key={relation}
-            models={models}
-            parentFilters={parentFilters}
-            parent={parent}
-            where={where}
-          />
-        </TabPanel>
-      ))}
-    </TabContext>
-  );
+  return null;
+  // return (
+  //   <TabContext value={activeTab}>
+  //     <Box>
+  //       <TabList
+  //         onChange={handleChange}
+  //       >
+  //         {relations.map((relation) => (
+  //           <Tab
+  //             key={relation}
+  //             label={
+  //               models.find((model) => model.name === relation)?.listTitle ||
+  //               "ModelLabel"
+  //             }
+  //             value={relation}
+  //           />
+  //         ))}
+  //       </TabList>
+  //     </Box>
+  //     {relations.map((relation) => (
+  //       <TabPanel
+  //         sx={{ padding: 0 }}
+  //         value={relation}
+  //         key={relation}
+  //       >
+  //         <ChildGrid
+  //           relation={relation}
+  //           key={relation}
+  //           models={models}
+  //           parentFilters={parentFilters}
+  //           parent={parent}
+  //           where={where}
+  //         />
+  //       </TabPanel>
+  //     ))}
+  //   </TabContext>
+  // );
 };
 
 export default Relations;

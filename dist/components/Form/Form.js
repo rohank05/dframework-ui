@@ -371,12 +371,12 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), relations.length && /*#__PURE__*/_react.default.createElement(_relations.default, {
+  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), Boolean(relations.length) ? /*#__PURE__*/_react.default.createElement(_relations.default, {
     models: models,
     relations: relations,
     parentFilters: [],
     parent: model.name || model.title || "",
     where: []
-  }))));
+  }) : null)));
 };
 var _default = exports.default = Form;
