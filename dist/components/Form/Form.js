@@ -118,6 +118,7 @@ const Form = _ref => {
     } = _ref2;
     const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
     try {
+      console.log("api", api, gridApi);
       const params = {
         api: api || gridApi,
         modelConfig: model,

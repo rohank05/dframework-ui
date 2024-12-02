@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getRecord } from '../Grid/crud-helper';
-import { useRouter } from '../useRouter/StateProvider';
+import { useRouter, useStateContext } from '../useRouter/StateProvider';
 
 const ReadonlyPanel = ({ apiEndpoint, model, onDataFetched }) => {
     const { useParams } = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { stateData } = useStateContext();
 
     // Retrieve `id` with a default fallback value
     const { id: idWithOptions } = useParams() || {};
@@ -14,10 +15,10 @@ const ReadonlyPanel = ({ apiEndpoint, model, onDataFetched }) => {
     const setActiveRecord = ({ id, title, record, lookups }) => {
         onDataFetched(record);
     };
-    const fetchData = async () => {
+    const fetchData = async (gridApi) => {
         try {
             await getRecord({
-                api: apiEndpoint,
+                api: gridApi,
                 modelConfig: model,
                 setIsLoading,
                 setActiveRecord,
@@ -31,8 +32,10 @@ const ReadonlyPanel = ({ apiEndpoint, model, onDataFetched }) => {
         }
     };
     useEffect(() => {
-        fetchData();
-    }, [apiEndpoint, model, onDataFetched, id]);
+        const url = stateData?.gridSettings?.permissions?.Url || "";
+        let gridApi = `${url}${model.api}`;
+        fetchData(gridApi);
+    }, [apiEndpoint, model, onDataFetched, id, fetchData, JSON.stringify(stateData)]);
 };
 
 export default ReadonlyPanel;

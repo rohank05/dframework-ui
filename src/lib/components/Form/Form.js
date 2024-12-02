@@ -82,6 +82,7 @@ const Form = ({
   }) => {
     const options = idWithOptions?.split("-");
     try {
+      console.log("api", api, gridApi);
       const params = {
         api: api || gridApi,
         modelConfig: model,

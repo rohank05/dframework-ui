@@ -192,7 +192,8 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
 };
 
 const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
-    api = api || modelConfig?.api
+    console.log(modelConfig, api)
+    api = api || modelConfig?.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/${id === undefined || id === null ? '-' : id}`;

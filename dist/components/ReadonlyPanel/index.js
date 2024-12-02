@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = require("react");
@@ -20,6 +21,9 @@ const ReadonlyPanel = _ref => {
   } = (0, _StateProvider.useRouter)();
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [error, setError] = (0, _react.useState)(null);
+  const {
+    stateData
+  } = (0, _StateProvider.useStateContext)();
 
   // Retrieve `id` with a default fallback value
   const {
@@ -36,10 +40,10 @@ const ReadonlyPanel = _ref => {
     } = _ref2;
     onDataFetched(record);
   };
-  const fetchData = async () => {
+  const fetchData = async gridApi => {
     try {
       await (0, _crudHelper.getRecord)({
-        api: apiEndpoint,
+        api: gridApi,
         modelConfig: model,
         setIsLoading,
         setActiveRecord,
@@ -52,7 +56,10 @@ const ReadonlyPanel = _ref => {
     }
   };
   (0, _react.useEffect)(() => {
-    fetchData();
-  }, [apiEndpoint, model, onDataFetched, id]);
+    var _stateData$gridSettin;
+    const url = (stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url) || "";
+    let gridApi = "".concat(url).concat(model.api);
+    fetchData(gridApi);
+  }, [apiEndpoint, model, onDataFetched, id, fetchData, JSON.stringify(stateData)]);
 };
 var _default = exports.default = ReadonlyPanel;
