@@ -776,7 +776,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         }
       }
       if (action === actionTypes.Edit) {
-        return openForm(record[idProperty]);
+        return openForm(record[idProperty], record);
       }
       if (action === actionTypes.Copy) {
         return openForm(record[idProperty], {

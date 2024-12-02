@@ -224,7 +224,6 @@ const GridBase = memo(({
     };
 
     const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false } = model;
-
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
@@ -560,7 +559,7 @@ const GridBase = memo(({
                 }
             }
             if (action === actionTypes.Edit) {
-                return openForm(record[idProperty]);
+                return openForm(record[idProperty], record);
             }
             if (action === actionTypes.Copy) {
                 return openForm(record[idProperty], { mode: 'copy' });
