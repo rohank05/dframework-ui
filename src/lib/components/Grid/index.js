@@ -121,18 +121,17 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     for (const o in prevProps) {
         if (prevProps[o] !== nextProps[o]) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     for (const o in nextProps) {
         if (!prevProps.hasOwnProperty(o)) {
             equal = false;
-            console.error({ o, prev: prevProps[o], next: nextProps[o] });
         }
     }
     return equal;
 }
 const GridBase = memo(({
+    showGrid = true,
     useLinkColumn = true,
     model,
     columns,
@@ -224,7 +223,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false } = model;
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -263,11 +262,18 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
+        // if (props.isChildGrid) {
+        //     console.log('1');
+        //     return;
+        // }
         dataRef.current = data;
     }, [data]);
 
     useEffect(() => {
-
+        // if (props.isChildGrid) {
+        //     console.log('2');
+        //     return;
+        // }
         if (customFilters && Object.keys(customFilters) != 0) {
             if (customFilters.clear) {
                 let filterObject = {
@@ -312,6 +318,9 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         if (hideTopFilters) {
             dispatchData({
                 type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
@@ -428,6 +437,7 @@ const GridBase = memo(({
                     type: 'actions',
                     label: '',
                     width: actions.length * 50,
+                    hideable: false,
                     getActions: () => actions,
                 });
             }
@@ -497,7 +507,7 @@ const GridBase = memo(({
             history: navigate,
             baseFilters,
             isElasticExport,
-            model:model
+            model: model
         });
     };
     const openForm = (id, record = {}, { mode } = {}) => {
@@ -673,15 +683,15 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (model.preferenceId) {
+        if (model.preferenceId && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
         }
-    }, [])
+    }, [preferenceApi])
 
     const CustomToolbar = function (props) {
-
+        const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `${model.title}` : 'Add';
         return (
             <div
                 style={{
@@ -690,9 +700,9 @@ const GridBase = memo(({
                 }}
             >
                 {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
-                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
+                {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title ? model.title : 'Add'}`}</Button>}
+                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                 {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
 
@@ -744,12 +754,15 @@ const GridBase = memo(({
         }
     };
     useEffect(() => {
-        // if (isGridPreferenceFetched) {
-        fetchData();
-        // }
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey])
+        if (url) {
+            fetchData();
+        }
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         if (forAssignment || !updatePageTitle) {
             return;
         }
@@ -762,6 +775,9 @@ const GridBase = memo(({
     }, [])
 
     useEffect(() => {
+        if (props.isChildGrid) {
+            return;
+        }
         let backRoute = pathname;
 
         // we do not need to show the back button for these routes
@@ -841,12 +857,12 @@ const GridBase = memo(({
         breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
-        breadCrumbs = [{ text: model.gridTitle }];
+        breadCrumbs = [{ text: model.gridTitle || model.title }];
     }
 
     return (
         <>
-            <PageTitle showBreadcrumbs={!hideBreadcrumb}
+            <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
                 breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>

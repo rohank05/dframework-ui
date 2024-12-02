@@ -80,7 +80,7 @@ function PageTitle(props) {
                 </Typography>)}
               </Breadcrumbs>
             </Grid>
-            {breadcrumbs.length > 1 || nestedGrid && <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+            {(breadcrumbs.length > 1 || nestedGrid) && <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
               <Button variant="contained" onClick={handleBack}>Back</Button>
             </Grid>}
             <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>

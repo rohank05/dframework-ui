@@ -8,7 +8,7 @@ exports.useStateContext = exports.useRouter = exports.StateProvider = exports.Ro
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/esnext.iterator.constructor.js");
-require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _stateReducer = _interopRequireDefault(require("./stateReducer"));
@@ -57,19 +57,13 @@ const StateProvider = _ref => {
       history,
       dispatchData,
       preferenceApi,
-      tablePreferenceEnums
+      tablePreferenceEnums = {},
+      addDefaultPreference = false
     } = _ref2;
     const params = {
       action: 'list',
       id: preferenceName,
       Username
-    };
-    const defaultCoolrPref = {
-      "prefName": "CoolR Default",
-      "prefId": 0,
-      "GridId": preferenceName,
-      "GridPreferenceId": 0,
-      "prefValue": tablePreferenceEnums[preferenceName]
     };
     const response = await (0, _httpRequest.default)({
       url: preferenceApi,
@@ -77,17 +71,43 @@ const StateProvider = _ref => {
       history,
       dispatchData
     });
-    let preferences = response !== null && response !== void 0 && response.preferences ? [defaultCoolrPref, ...(response === null || response === void 0 ? void 0 : response.preferences)] : defaultCoolrPref;
+    let preferences = (response === null || response === void 0 ? void 0 : response.preferences) || [];
+    if (addDefaultPreference) {
+      const defaultPref = {
+        "prefName": "Default",
+        "prefId": 0,
+        "GridId": preferenceName,
+        "GridPreferenceId": 0,
+        "prefValue": tablePreferenceEnums[preferenceName]
+      };
+      preferences = [defaultPref, ...preferences];
+    }
     dispatchData({
       type: _actions.default.UDPATE_PREFERENCES,
       payload: preferences
     });
     dispatchData({
       type: _actions.default.TOTAL_PREFERENCES,
-      payload: response === null || response === void 0 ? void 0 : response.preferences.length
+      payload: preferences.length
     });
   }
-  async function applyDefaultPreferenceIfExists(_ref3) {
+
+  /**
+  * Filters out data elements whose fields do not exist in the grid's columns.
+  *
+  * @param {Object} params - The parameters object.
+  * @param {Object} params.gridRef - A reference to the grid component.
+  * @param {Array} params.data - The data array to filter.
+  * @returns {Array} The filtered array containing only elements with existing columns in the grid.
+  */
+  const filterNonExistingColumns = _ref3 => {
+    let {
+      gridRef,
+      data
+    } = _ref3;
+    return data.filter(ele => gridRef.current.getColumnIndex(ele.field) !== -1);
+  };
+  async function applyDefaultPreferenceIfExists(_ref4) {
     let {
       gridRef,
       history,
@@ -96,8 +116,8 @@ const StateProvider = _ref => {
       preferenceName,
       setIsGridPreferenceFetched,
       preferenceApi,
-      tablePreferenceEnums
-    } = _ref3;
+      tablePreferenceEnums = {}
+    } = _ref4;
     const params = {
       action: 'default',
       id: preferenceName,
@@ -110,11 +130,18 @@ const StateProvider = _ref => {
       dispatchData
     });
     let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
-    if (userPreferenceCharts) {
-      userPreferenceCharts === null || userPreferenceCharts === void 0 || userPreferenceCharts.gridColumn.forEach(ele => {
-        if (gridRef.current.getColumnIndex(ele.field) !== -1) {
-          gridRef.current.setColumnWidth(ele.field, ele.width);
-        }
+    if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
+      userPreferenceCharts.gridColumn = filterNonExistingColumns({
+        gridRef,
+        data: userPreferenceCharts.gridColumn
+      });
+      userPreferenceCharts.sortModel = filterNonExistingColumns({
+        gridRef,
+        data: userPreferenceCharts.sortModel
+      });
+      userPreferenceCharts.filterModel.items = filterNonExistingColumns({
+        gridRef,
+        data: userPreferenceCharts.filterModel.items
       });
       gridRef.current.setColumnVisibilityModel(userPreferenceCharts.columnVisibilityModel);
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
@@ -122,17 +149,17 @@ const StateProvider = _ref => {
       gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
-        payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'CoolR Default'
+        payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'Default'
       });
     }
     if (setIsGridPreferenceFetched) {
       setIsGridPreferenceFetched(true);
     }
   }
-  function removeCurrentPreferenceName(_ref4) {
+  function removeCurrentPreferenceName(_ref5) {
     let {
       dispatchData
-    } = _ref4;
+    } = _ref5;
     dispatchData({
       type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
       payload: null

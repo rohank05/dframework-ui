@@ -18,7 +18,7 @@ const buildTree = (data = []) => {
   data.forEach((item) => {
     if (item.ParentId && tree[item.ParentId]) {
       tree[item.ParentId].children.push({
-        value: item.value.toString(),
+        value: item.value?.toString(),
         label: item.label
       });
     } else {
@@ -26,7 +26,7 @@ const buildTree = (data = []) => {
         label: item.ParentName,
         value: "Parent" + item.ParentId.toString(),
         children: [{
-          value: item.value.toString(),
+          value: item.value?.toString(),
           label: item.label
         }]
       }

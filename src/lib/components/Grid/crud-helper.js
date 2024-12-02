@@ -194,8 +194,9 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
 };
 
-const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError, model }) => {
-    api = api || modelConfig?.api
+const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
+    console.log(modelConfig, api)
+    api = api || modelConfig?.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/${id === undefined || id === null ? '-' : id}`;
@@ -213,7 +214,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     try {
         const response = await transport({
             url: `${url}?${searchParams.toString()}`,
-            model: model.module,
+            model: modelConfig.module,
             method: 'GET',
             credentials: 'include'
         });

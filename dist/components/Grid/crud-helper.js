@@ -284,6 +284,7 @@ const getRecord = async _ref3 => {
     setError,
     model
   } = _ref3;
+  console.log(modelConfig, api);
   api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
   setIsLoading(true);
   const searchParams = new URLSearchParams();

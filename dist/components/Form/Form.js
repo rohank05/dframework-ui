@@ -8,9 +8,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.ActiveStepContext = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -29,6 +31,7 @@ var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _utils = require("../utils");
+var _relations = _interopRequireDefault(require("./relations"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -44,6 +47,7 @@ const Form = _ref => {
   let {
     model,
     api,
+    models,
     permissions = {
       edit: model.permissions.edit,
       export: model.permissions.export,
@@ -52,13 +56,17 @@ const Form = _ref => {
     Layout = _fieldMapper.default,
     baseSaveData = {}
   } = _ref;
+  const formTitle = model.formTitle || model.title;
   const {
     navigate,
     getParams,
     useParams,
     pathname
   } = (0, _StateProvider.useRouter)();
-  const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf('/')); // removes the last segment
+  const {
+    relations = []
+  } = model;
+  const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
   const {
     dispatchData,
     stateData
@@ -66,7 +74,8 @@ const Form = _ref => {
   const {
     id: idWithOptions
   } = useParams() || getParams;
-  const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-')[0];
+  const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-")[0];
+  const [childFilters, setChildFilters] = (0, _react.useState)(null);
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [data, setData] = (0, _react.useState)(null);
   const [lookups, setLookups] = (0, _react.useState)(null);
@@ -77,7 +86,7 @@ const Form = _ref => {
   const [activeStep, setActiveStep] = (0, _react.useState)(0);
   const [isDiscardDialogOpen, setIsDiscardDialogOpen] = (0, _react.useState)(false);
   const [deleteError, setDeleteError] = (0, _react.useState)(null);
-  const [errorMessage, setErrorMessage] = (0, _react.useState)('');
+  const [errorMessage, setErrorMessage] = (0, _react.useState)("");
   const url = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url;
   const fieldConfigs = model !== null && model !== void 0 && model.applyFieldConfig ? model === null || model === void 0 ? void 0 : model.applyFieldConfig({
     data,
@@ -98,7 +107,6 @@ const Form = _ref => {
     canDelete = false
   } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
   const {
-    formTitle = '',
     hideBreadcrumb = false
   } = model;
   const getRecordAndLookups = _ref2 => {
@@ -108,8 +116,9 @@ const Form = _ref => {
       customSetIsLoading,
       customSetActiveRecord
     } = _ref2;
-    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split('-');
+    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
     try {
+      console.log("api", api, gridApi);
       const params = {
         api: api || gridApi,
         modelConfig: model,
@@ -117,7 +126,7 @@ const Form = _ref => {
       };
       if (lookups) {
         (0, _crudHelper.getLookups)(_objectSpread(_objectSpread({}, params), {}, {
-          // setIsLoading, 
+          // setIsLoading,
           setIsLoading: customSetIsLoading || setIsLoading,
           setActiveRecord: customSetActiveRecord,
           lookups,
@@ -131,17 +140,19 @@ const Form = _ref => {
         }));
       }
     } catch (error) {
-      snackbar.showError('An error occured, please try after some time.', error);
-      navigate(navigateBack);
+      snackbar.showError("An error occured, please try after some time.", error);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
     }
   };
   (0, _react.useEffect)(() => {
-    setValidationSchema(model.getValidationSchema({
-      id,
-      snackbar
-    }));
-    getRecordAndLookups({});
-  }, [id, idWithOptions, model]);
+    if (url) {
+      setValidationSchema(model.getValidationSchema({
+        id,
+        snackbar
+      }));
+      getRecordAndLookups({});
+    }
+  }, [id, idWithOptions, model, url]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
@@ -163,11 +174,11 @@ const Form = _ref => {
           if (model.updateChildGridRecords) {
             model.updateChildGridRecords();
           }
-          snackbar.showMessage('Record Updated Successfully.');
-          navigate(navigateBack);
+          snackbar.showMessage("Record Updated Successfully.");
+          navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
         }
       }).catch(err => {
-        snackbar.showError('An error occured, please try after some time.second', err);
+        snackbar.showError("An error occured, please try after some time.second", err);
       }).finally(() => setIsLoading(false));
     }
   });
@@ -177,7 +188,7 @@ const Form = _ref => {
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
   const warnUnsavedChanges = () => {
     if (dirty) {
@@ -186,7 +197,7 @@ const Form = _ref => {
   };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack);
+    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
   };
   const setActiveRecord = function setActiveRecord(_ref4) {
     let {
@@ -227,7 +238,8 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack);
+      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+      event.preventDefault();
     }
   };
   const handleDelete = async function handleDelete() {
@@ -241,11 +253,11 @@ const Form = _ref => {
         setErrorMessage
       });
       if (response === true) {
-        snackbar.showMessage('Record Deleted Successfully.');
-        navigate(navigateBack);
+        snackbar.showMessage("Record Deleted Successfully.");
+        navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
       }
     } catch (error) {
-      snackbar === null || snackbar === void 0 || snackbar.showError('An error occured, please try after some time.');
+      snackbar === null || snackbar === void 0 || snackbar.showError("An error occured, please try after some time.");
     } finally {
       setIsDeleting(false);
     }
@@ -257,9 +269,9 @@ const Form = _ref => {
   if (isLoading) {
     return /*#__PURE__*/_react.default.createElement(_Box.default, {
       sx: {
-        display: 'flex',
-        pt: '20%',
-        justifyContent: 'center'
+        display: "flex",
+        pt: "20%",
+        justifyContent: "center"
       }
     }, /*#__PURE__*/_react.default.createElement(_CircularProgress.default, null));
   }
@@ -292,7 +304,7 @@ const Form = _ref => {
   const breadcrumbs = [{
     text: formTitle
   }, {
-    text: id === '0' ? 'New' : 'Update'
+    text: id === "0" ? "New" : "Update"
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     title: formTitle,
@@ -323,12 +335,7 @@ const Form = _ref => {
     type: "cancel",
     color: "error",
     onClick: e => handleFormCancel(e)
-  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_Button.default, {
-    variant: "contained",
-    type: "file",
-    color: "success",
-    onClick: e => handleAttachment(e)
-  }, "Attachment"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, "Cancel"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",
     onClick: () => setIsDeleting(true)
@@ -365,6 +372,12 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")))));
+  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), Boolean(relations.length) ? /*#__PURE__*/_react.default.createElement(_relations.default, {
+    models: models,
+    relations: relations,
+    parentFilters: [],
+    parent: model.name || model.title || "",
+    where: []
+  }) : null)));
 };
 var _default = exports.default = Form;

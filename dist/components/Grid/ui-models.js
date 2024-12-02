@@ -198,6 +198,16 @@ class UiModel {
         case 'email':
           config = yup.string().trim().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, 'Email must be a valid email');
           break;
+        case 'number':
+          config = yup.number().label(formLabel);
+          if (min) {
+            config = config.min(Number(min), "".concat(formLabel, " must be greater than or equal to ").concat(min));
+          }
+          if (max) {
+            config = config.max(Number(max), "".concat(formLabel, " must be less than or equal to ").concat(max));
+          }
+          config = config.typeError("".concat(formLabel, " must be a valid number"));
+          break;
         default:
           config = yup.mixed().label(formLabel);
           break;
