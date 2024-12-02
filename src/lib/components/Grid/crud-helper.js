@@ -6,7 +6,7 @@ const dateDataTypes = ['date', 'dateTime'];
 
 const exportRecordSize = 10000;
 
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport }) => {
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport, model }) => {
     if (!contentType) {
         if (showFullScreenLoader) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
@@ -66,6 +66,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         where,
         oderStatusId: oderStatusId,
         isElasticExport,
+        model: model.module,
         fileName: modelConfig?.overrideFileName,
         userTimezoneOffset: new Date().getTimezoneOffset() * -1
     };
@@ -178,6 +179,8 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
+        } else if (error.response && error.response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+            window.location.href = '/';
         } else {
             setError('Could not list record', error.message || error.toString());
         }
@@ -211,6 +214,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     try {
         const response = await transport({
             url: `${url}?${searchParams.toString()}`,
+            model: modelConfig.module,
             method: 'GET',
             credentials: 'include'
         });
@@ -230,7 +234,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             const defaultValues = { ...modelConfig.defaultValues };
 
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
-        } else {
+        }
+        else {
             setError('Could not load record', response.body.toString());
         }
     } catch (error) {
@@ -240,7 +245,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             setTimeout(() => {
                 window.location.href = '/';
             }, 2000);
-        } else {
+        }
+        else {
             setError('Could not load record', error.message || error.toString());
         }
     } finally {

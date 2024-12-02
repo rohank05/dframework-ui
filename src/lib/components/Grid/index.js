@@ -506,12 +506,13 @@ const GridBase = memo(({
             showFullScreenLoader,
             history: navigate,
             baseFilters,
-            isElasticExport
+            isElasticExport,
+            model: model
         });
     };
     const openForm = (id, record = {}, { mode } = {}) => {
         if (setActiveRecord) {
-            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where });
+            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;
         }
         let path = pathname;
@@ -682,7 +683,7 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-       if (model.preferenceId && preferenceApi) {
+        if (model.preferenceId && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
             getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
@@ -862,7 +863,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid}/>
+                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium

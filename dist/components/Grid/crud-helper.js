@@ -59,7 +59,8 @@ const getList = async _ref => {
     oderStatusId = 0,
     modelConfig = null,
     baseFilters = null,
-    isElasticExport
+    isElasticExport,
+    model
   } = _ref;
   if (!contentType) {
     if (showFullScreenLoader) {
@@ -138,6 +139,7 @@ const getList = async _ref => {
     where,
     oderStatusId: oderStatusId,
     isElasticExport,
+    model: model.module,
     fileName: modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.overrideFileName,
     userTimezoneOffset: new Date().getTimezoneOffset() * -1
   });
@@ -251,6 +253,8 @@ const getList = async _ref => {
       setTimeout(() => {
         window.location.href = '/';
       }, 2000);
+    } else if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.FORBIDDEN) {
+      window.location.href = '/';
     } else {
       setError('Could not list record', error.message || error.toString());
     }
@@ -299,6 +303,7 @@ const getRecord = async _ref3 => {
   try {
     const response = await (0, _httpRequest.transport)({
       url: "".concat(url, "?").concat(searchParams.toString()),
+      model: modelConfig.module,
       method: 'GET',
       credentials: 'include'
     });
