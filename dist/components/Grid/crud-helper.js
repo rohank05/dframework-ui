@@ -254,7 +254,7 @@ const getList = async _ref => {
         window.location.href = '/';
       }, 2000);
     } else if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.FORBIDDEN) {
-      window.location.href = '/dashboard';
+      window.location.href = '/';
     } else {
       setError('Could not list record', error.message || error.toString());
     }
@@ -281,8 +281,7 @@ const getRecord = async _ref3 => {
     modelConfig,
     parentFilters,
     where = {},
-    setError,
-    model
+    setError
   } = _ref3;
   console.log(modelConfig, api);
   api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
@@ -304,7 +303,7 @@ const getRecord = async _ref3 => {
   try {
     const response = await (0, _httpRequest.transport)({
       url: "".concat(url, "?").concat(searchParams.toString()),
-      model: model.module,
+      model: modelConfig.module,
       method: 'GET',
       credentials: 'include'
     });

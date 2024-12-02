@@ -180,7 +180,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 window.location.href = '/';
             }, 2000);
         } else if (error.response && error.response.status === HTTP_STATUS_CODES.FORBIDDEN) {
-            window.location.href = '/dashboard';
+            window.location.href = '/';
         } else {
             setError('Could not list record', error.message || error.toString());
         }
