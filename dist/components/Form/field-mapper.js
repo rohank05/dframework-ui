@@ -110,7 +110,6 @@ const fieldMappers = exports.fieldMappers = {
   "radio": _radio.default,
   "autocomplete": _autocomplete.default,
   "dayRadio": _dayRadio.default,
-  "gridInForm": _formGrid.default,
   "email": _string.default,
   "chipInput": _chipInput.default,
   "treeCheckbox": _treeCheckBox.default

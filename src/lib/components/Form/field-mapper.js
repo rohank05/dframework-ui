@@ -39,7 +39,6 @@ const fieldMappers = {
     "radio": RadioField,
     "autocomplete": AutocompleteField,
     "dayRadio": DaySelection,
-    "gridInForm": GridForm,
     "email": StringField,
     "chipInput": ChipInput,
     "treeCheckbox": TreeCheckbox
