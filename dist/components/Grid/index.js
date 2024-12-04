@@ -1000,33 +1000,32 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     if ((data === null || data === void 0 ? void 0 : data.recordCount) > recordCounts) {
       snackbar.showMessage('Cannot export more than 60k records, please apply filters or reduce your results using filters');
       return;
-    } else {
-      const {
-        orderedFields,
-        columnVisibilityModel,
-        lookup
-      } = apiRef.current.state.columns;
-      const columns = {};
-      const isPivotExport = e.target.dataset.isPivotExport === 'true';
-      const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-      const visibleColumns = orderedFields.filter(ele => !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
-      if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
-        snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
-        return;
-      }
-      visibleColumns.forEach(ele => {
-        var _lookup$ele;
-        columns[ele] = {
-          field: ele,
-          width: lookup[ele].width,
-          headerName: lookup[ele].headerName || lookup[ele].field,
-          type: lookup[ele].type,
-          keepLocal: lookup[ele].keepLocal === true,
-          isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable
-        };
-      });
-      fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     }
+    const {
+      orderedFields,
+      columnVisibilityModel,
+      lookup
+    } = apiRef.current.state.columns;
+    const columns = {};
+    const isPivotExport = e.target.dataset.isPivotExport === 'true';
+    const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
+    const visibleColumns = orderedFields.filter(ele => !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
+    if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
+      snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
+      return;
+    }
+    visibleColumns.forEach(ele => {
+      var _lookup$ele;
+      columns[ele] = {
+        field: ele,
+        width: lookup[ele].width,
+        headerName: lookup[ele].headerName || lookup[ele].field,
+        type: lookup[ele].type,
+        keepLocal: lookup[ele].keepLocal === true,
+        isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable
+      };
+    });
+    fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
     if (url) {

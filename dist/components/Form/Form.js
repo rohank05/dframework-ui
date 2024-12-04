@@ -13,6 +13,7 @@ require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.string.includes.js");
+require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -162,6 +163,11 @@ const Form = _ref => {
       let {
         resetForm
       } = _ref3;
+      for (const key in values) {
+        if (typeof values[key] === "string") {
+          values[key] = values[key].trim();
+        }
+      }
       setIsLoading(true);
       (0, _crudHelper.saveRecord)({
         id,

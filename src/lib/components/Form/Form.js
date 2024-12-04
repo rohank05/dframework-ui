@@ -126,6 +126,11 @@ const Form = ({
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
+      for (const key in values) {
+        if (typeof values[key] === "string") {
+          values[key] = values[key].trim();
+        }
+      }
       setIsLoading(true);
       saveRecord({
         id,
