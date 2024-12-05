@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getPermissions = exports.default = void 0;
 require("core-js/modules/esnext.iterator.constructor.js");
-require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
 const utils = {
   filterFieldDataTypes: {
     Number: 'number',
@@ -19,21 +19,31 @@ const utils = {
     OverrideDateFormat: "DD-MMM-YYYY"
   }
 };
-const getPermissions = exports.getPermissions = function getPermissions(userData, model) {
-  let userDefinedPermissions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-  const userPermissions = (userData === null || userData === void 0 ? void 0 : userData.filter(item => item.Module === model.module)) || [];
-  const permissionsToUse = userPermissions.length ? userPermissions[0] : {};
-  if (!userPermissions.length) {
+const getPermissions = _ref => {
+  let {
+    userData,
+    model,
+    userDefinedPermissions
+  } = _ref;
+  userData = userData || [];
+  userDefinedPermissions = userDefinedPermissions || {
+    add: true,
+    edit: true,
+    delete: true
+  };
+  const userPermissions = userData.find(item => item.Module === model.module);
+  if (!userPermissions) {
     return {
-      canAdd: userDefinedPermissions.add || false,
-      canEdit: userDefinedPermissions.edit || false,
-      canDelete: userDefinedPermissions.delete || false
+      canAdd: userDefinedPermissions.add,
+      canEdit: userDefinedPermissions.edit,
+      canDelete: userDefinedPermissions.delete
     };
   }
   return {
-    canAdd: permissionsToUse.Permission2 === 1,
-    canEdit: permissionsToUse.Permission3 === 1,
-    canDelete: permissionsToUse.Permission4 === 1
+    canAdd: userDefinedPermissions.add && Boolean(userPermissions.Permission2),
+    canEdit: userDefinedPermissions.edit && Boolean(userPermissions.Permission3),
+    canDelete: userDefinedPermissions.delete && Boolean(userPermissions.Permission4)
   };
 };
+exports.getPermissions = getPermissions;
 var _default = exports.default = utils;

@@ -329,7 +329,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     canAdd,
     canEdit,
     canDelete
-  } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
+  } = (0, _utils.getPermissions)({
+    userData,
+    model,
+    userDefinedPermissions
+  });
   const filterFieldDataTypes = {
     Number: 'number',
     String: 'string',

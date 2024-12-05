@@ -11,16 +11,17 @@ const utils = {
         OverrideDateFormat: "DD-MMM-YYYY"
     }
 }
-export const getPermissions = (userData, model, userDefinedPermissions = {}) => {
-    const userPermissions = userData?.filter(item => item.Module === model.module) || [];
-    const permissionsToUse = userPermissions.length ? userPermissions[0] : {};
-    if(!userPermissions.length) {
-	return { canAdd: userDefinedPermissions.add || false, canEdit: userDefinedPermissions.edit || false, canDelete: userDefinedPermissions.delete || false };
+export const getPermissions = ({ userData, model, userDefinedPermissions }) => {
+    userData = userData || [];
+    userDefinedPermissions = userDefinedPermissions || { add: true, edit: true, delete: true };
+    const userPermissions = userData.find(item => item.Module === model.module);
+    if (!userPermissions) {
+        return { canAdd: userDefinedPermissions.add, canEdit: userDefinedPermissions.edit, canDelete: userDefinedPermissions.delete };
     }
     return {
-        canAdd: permissionsToUse.Permission2 === 1,
-        canEdit: permissionsToUse.Permission3 === 1,
-        canDelete: permissionsToUse.Permission4 === 1 
+        canAdd: userDefinedPermissions.add && Boolean(userPermissions.Permission2),
+        canEdit: userDefinedPermissions.edit && Boolean(userPermissions.Permission3),
+        canDelete: userDefinedPermissions.delete && Boolean(userPermissions.Permission4)
     };
 };
 export default utils;

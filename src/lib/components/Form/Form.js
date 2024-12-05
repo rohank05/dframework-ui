@@ -67,11 +67,11 @@ const Form = ({
     delete: permissions.delete || false,
     add: permissions.add || false
   };
-  const { canEdit, canDelete = false } = getPermissions(
+  const { canEdit, canDelete = false } = getPermissions({
     userData,
     model,
     userDefinedPermissions
-  );
+  });
   const { hideBreadcrumb = false } = model;
 
   const getRecordAndLookups = ({

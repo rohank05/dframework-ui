@@ -106,7 +106,11 @@ const Form = _ref => {
   const {
     canEdit,
     canDelete = false
-  } = (0, _utils.getPermissions)(userData, model, userDefinedPermissions);
+  } = (0, _utils.getPermissions)({
+    userData,
+    model,
+    userDefinedPermissions
+  });
   const {
     hideBreadcrumb = false
   } = model;
