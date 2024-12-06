@@ -208,6 +208,9 @@ class UiModel {
           }
           config = config.typeError("".concat(formLabel, " must be a valid number"));
           break;
+        case 'document':
+          config = yup.string().trim().label(formLabel);
+          break;
         default:
           config = yup.mixed().label(formLabel);
           break;

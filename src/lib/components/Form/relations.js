@@ -23,15 +23,15 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
     (model) => model.name === relation
   );
   if (!modelConfigOfChildGrid) return null;
-
-  const ChildModel = new UiModel(modelConfigOfChildGrid);
+  const config = { ...modelConfigOfChildGrid, hideBreadcrumb: true };
+  const ChildModel = new UiModel(config);
   if (!ChildModel) return null;
 
   return (
     <ChildModel.ChildGrid
       parentFilters={parentFilters}
       parent={parent}
-      model={modelConfigOfChildGrid}
+      model={config}
       where={where}
       isChildGrid={true}
     />
@@ -50,16 +50,19 @@ const Relations = ({ relations, parentFilters, parent, where, models }) => {
         <TabList
           onChange={handleChange}
         >
-          {relations.map((relation) => (
-            <Tab
-              key={relation}
-              label={
-                models.find((model) => model.name === relation)?.listTitle ||
-                "ModelLabel"
-              }
-              value={relation}
-            />
-          ))}
+          {relations.map((relation) => {
+            const modelConfigOfChildGrid = models.find(
+              (model) => model.name === relation
+            ) || {};
+            const label = modelConfigOfChildGrid.listTitle || modelConfigOfChildGrid.title || "";
+            return (
+              <Tab
+                key={relation}
+                label={label}
+                value={relation}
+              />
+            )
+          })}
         </TabList>
       </Box>
       {relations.map((relation) => (

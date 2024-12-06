@@ -24,6 +24,7 @@ import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
 import TreeCheckbox from './fields/treeCheckBox';
+import Document from './fields/document';
 
 const fieldMappers = {
     "boolean": BooleanField,
@@ -41,7 +42,8 @@ const fieldMappers = {
     "dayRadio": DaySelection,
     "email": StringField,
     "chipInput": ChipInput,
-    "treeCheckbox": TreeCheckbox
+    "treeCheckbox": TreeCheckbox,
+    "document": Document
 };
 
 const useStyles = makeStyles({
