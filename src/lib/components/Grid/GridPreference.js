@@ -271,7 +271,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                 aria-haspopup="true"
                 aria-expanded={menuAnchorEl ? 'true' : undefined}
                 onClick={handleOpen}
-                title='Preference'
+                title='Preferences'
                 startIcon={<SettingsIcon />}
             >
                 Preferences {currentPreference && `(${currentPreference})`}
@@ -488,9 +488,9 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenConfirmDeleteDialog({})}>Disagree</Button>
+                    <Button onClick={() => setOpenConfirmDeleteDialog({})}>Cancel</Button>
                     <Button onClick={confirmDeletePreference} autoFocus>
-                        Agree
+                        Ok
                     </Button>
                 </DialogActions>
             </Dialog>

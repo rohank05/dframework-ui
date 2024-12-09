@@ -413,7 +413,7 @@ const GridPreferences = _ref => {
     "aria-haspopup": "true",
     "aria-expanded": menuAnchorEl ? 'true' : undefined,
     onClick: handleOpen,
-    title: "Preference",
+    title: "Preferences",
     startIcon: /*#__PURE__*/_react.default.createElement(_Settings.default, null)
   }, "Preferences ", currentPreference && "(".concat(currentPreference, ")")), /*#__PURE__*/_react.default.createElement(_material.Menu, {
     id: "grid-preference-menu",
@@ -626,9 +626,9 @@ const GridPreferences = _ref => {
     id: "alert-dialog-description"
   }, "Are you sure you wish to delete \"", openConfirmDeleteDialog.preferenceName, "\"")), /*#__PURE__*/_react.default.createElement(_material.DialogActions, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     onClick: () => setOpenConfirmDeleteDialog({})
-  }, "Disagree"), /*#__PURE__*/_react.default.createElement(_material.Button, {
+  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_material.Button, {
     onClick: confirmDeletePreference,
     autoFocus: true
-  }, "Agree"))));
+  }, "Ok"))));
 };
 var _default = exports.default = GridPreferences;

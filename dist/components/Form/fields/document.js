@@ -39,10 +39,9 @@ function Document(_ref) {
     fieldConfigs,
     mode
   } = _ref;
+  let inputValue = formik.values[field] || "";
   const [formState, setFormState] = (0, _react.useState)({
     isExternal: "no",
-    externalLink: "",
-    uploadedFileUrl: "",
     selectedFile: null
   });
   const snackbar = (0, _SnackBar.useSnackbar)();
@@ -60,16 +59,11 @@ function Document(_ref) {
     const isExternal = event.target.value;
     setFormState(_objectSpread(_objectSpread({}, formState), {}, {
       isExternal,
-      externalLink: "",
-      uploadedFileUrl: "",
       selectedFile: null
     }));
-    formik.setFieldValue(field, "");
+    formik.setFieldValue(field, formik.values[field]); // Reset form field value
   };
   const handleInputChange = value => {
-    setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
-      externalLink: value
-    }));
     formik.setFieldValue(field, value);
   };
   const handleFileChange = event => {
@@ -97,15 +91,12 @@ function Document(_ref) {
         data: formData
       });
       const data = response.data || {};
-      console.log(data, data.success);
       if (!data.success) {
         snackbar.showError(data.message || "Upload failed");
         return;
       }
       const fileUrl = mediaApi + '/' + data.filePath;
-      setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
-        uploadedFileUrl: fileUrl
-      }));
+      formik.setFieldValue(field, fileUrl);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -148,14 +139,14 @@ function Document(_ref) {
       width: "150px",
       marginRight: 2
     }
-  }, "External Document Link"), formState.isExternal === "yes" ? /*#__PURE__*/_react.default.createElement(_material.TextField, {
+  }, "Document Link"), formState.isExternal === "yes" ? /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,
-    value: formState.externalLink,
+    value: inputValue,
     onChange: e => handleInputChange(e.target.value),
     placeholder: "Enter external link"
   }) : /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,
-    value: formState.uploadedFileUrl,
+    value: inputValue,
     placeholder: "Link autopopulated once uploaded",
     InputProps: {
       readOnly: true

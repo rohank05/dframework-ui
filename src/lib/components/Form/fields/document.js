@@ -6,10 +6,9 @@ import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 
 function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
+    let inputValue = formik.values[field] || "";
     const [formState, setFormState] = useState({
         isExternal: "no",
-        externalLink: "",
-        uploadedFileUrl: "",
         selectedFile: null,
     });
     const snackbar = useSnackbar();
@@ -24,18 +23,13 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
         setFormState({
             ...formState,
             isExternal,
-            externalLink: "",
-            uploadedFileUrl: "",
             selectedFile: null,
         });
-        formik.setFieldValue(field, "");
-
+        formik.setFieldValue(field, formik.values[field]); // Reset form field value
     };
 
     const handleInputChange = (value) => {
-        setFormState((prev) => ({ ...prev, externalLink: value }));
         formik.setFieldValue(field, value);
-
     };
 
     const handleFileChange = (event) => {
@@ -60,21 +54,18 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                 data: formData
             });
             const data = response.data || {};
-            console.log(data, data.success)
             if (!data.success) {
                 snackbar.showError(data.message || "Upload failed");
                 return;
             }
-            const fileUrl = mediaApi + '/' + data.filePath
-            setFormState((prev) => ({ ...prev, uploadedFileUrl: fileUrl }));
+            const fileUrl = mediaApi + '/' + data.filePath;
+            formik.setFieldValue(field, fileUrl);
         } catch (error) {
             console.error("Error uploading file:", error);
         }
     };
-
-
     return (
-        <Box >
+        <Box>
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                 <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
                     External Link?
@@ -90,21 +81,22 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                     <FormControlLabel value="no" control={<Radio />} label="No" />
                 </RadioGroup>
             </Box>
+
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
                 <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
-                    External Document Link
+                    Document Link
                 </Typography>
                 {formState.isExternal === "yes" ? (
                     <TextField
                         fullWidth
-                        value={formState.externalLink}
+                        value={inputValue}
                         onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter external link"
                     />
                 ) : (
                     <TextField
                         fullWidth
-                        value={formState.uploadedFileUrl}
+                        value={inputValue}
                         placeholder="Link autopopulated once uploaded"
                         InputProps={{
                             readOnly: true,
@@ -112,6 +104,7 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                     />
                 )}
             </Box>
+
             {formState.isExternal === "no" && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <Button
