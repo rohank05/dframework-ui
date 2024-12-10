@@ -24,7 +24,11 @@ const field = _ref => {
     type: "text",
     variant: column.variant || "standard",
     InputProps: {
-      readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true
+      readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
+      sx: column !== null && column !== void 0 && column.readOnly ? {
+        backgroundColor: '#dfdede'
+      } // Light grey background for read-only inputs
+      : undefined
     },
     key: field,
     required: column === null || column === void 0 ? void 0 : column.required,

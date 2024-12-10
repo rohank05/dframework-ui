@@ -7,6 +7,9 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
         variant={column.variant || "standard"}
         InputProps={{
             readOnly: column?.readOnly === true,
+            sx: column?.readOnly
+                ? { backgroundColor: '#dfdede' } // Light grey background for read-only inputs
+                : undefined,
         }}
         key={field}
         required={column?.required}
