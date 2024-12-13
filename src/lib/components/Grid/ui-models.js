@@ -115,14 +115,17 @@ class UiModel {
 						)
 					break;
 				case 'number':
-					config = yup.number().label(formLabel);
+					if (required) {
+						config = yup.number().label(formLabel).required(`${formLabel} is required.`);
+					} else {
+						config = yup.number()
+					}
 					if (min) {
 						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
 					}
 					if (max) {
 						config = config.max(Number(max), `${formLabel} must be less than or equal to ${max}`);
 					}
-					config = config.typeError(`${formLabel} must be a valid number`);
 					break;
 				case 'document':
 					config = yup.string().trim().label(formLabel);
@@ -131,7 +134,7 @@ class UiModel {
 					config = yup.mixed().label(formLabel);
 					break;
 			}
-			if (required) {
+			if (required && type !== "number") {
 				config = config.trim().required(`${formLabel} is required`);
 			}
 			if (requiredIfNew && (!id || id === '')) {

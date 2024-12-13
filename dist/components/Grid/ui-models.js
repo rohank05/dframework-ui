@@ -199,14 +199,17 @@ class UiModel {
           config = yup.string().trim().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, 'Email must be a valid email');
           break;
         case 'number':
-          config = yup.number().label(formLabel);
+          if (required) {
+            config = yup.number().label(formLabel).required("".concat(formLabel, " is required."));
+          } else {
+            config = yup.number();
+          }
           if (min) {
             config = config.min(Number(min), "".concat(formLabel, " must be greater than or equal to ").concat(min));
           }
           if (max) {
             config = config.max(Number(max), "".concat(formLabel, " must be less than or equal to ").concat(max));
           }
-          config = config.typeError("".concat(formLabel, " must be a valid number"));
           break;
         case 'document':
           config = yup.string().trim().label(formLabel);
@@ -215,7 +218,7 @@ class UiModel {
           config = yup.mixed().label(formLabel);
           break;
       }
-      if (required) {
+      if (required && type !== "number") {
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (requiredIfNew && (!id || id === '')) {
