@@ -31,6 +31,13 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
     }, [formik.values[column.parentComboField]])
 
     let inputValue = formik.values[field];
+    if (options?.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
+        const isDefaultOption =  options.find(e => e.IsDefault);
+        if (isDefaultOption) {
+            inputValue = isDefaultOption.value;
+            formik.setFieldValue(field, isDefaultOption.value);
+        }
+    }
     if (column.multiSelect) {
         if (!inputValue || inputValue.length === 0) {
             inputValue = [];

@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 require("core-js/modules/es.parse-int.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
@@ -57,6 +59,13 @@ const SelectField = _ref => {
     onOpen();
   }, [formik.values[column.parentComboField]]);
   let inputValue = formik.values[field];
+  if (options !== null && options !== void 0 && options.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
+    const isDefaultOption = options.find(e => e.IsDefault);
+    if (isDefaultOption) {
+      inputValue = isDefaultOption.value;
+      formik.setFieldValue(field, isDefaultOption.value);
+    }
+  }
   if (column.multiSelect) {
     if (!inputValue || inputValue.length === 0) {
       inputValue = [];
