@@ -854,7 +854,7 @@ const GridBase = memo(({
         breadCrumbs = [{ text: subBreadcrumbs }];
     }
     else {
-        breadCrumbs = [{ text: model.gridTitle || model.title }];
+        breadCrumbs = [{ text: title || model.gridTitle || model.title }];
     }
 
     return (
