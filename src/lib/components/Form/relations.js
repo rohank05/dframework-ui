@@ -38,7 +38,7 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
   );
 });
 
-const Relations = ({ relations, parentFilters, parent, where, models }) => {
+const Relations = ({ relations, parent, where, models, relationFilters }) => {
   const [activeTab, setActiveTab] = useState(relations[0]);
 
   const handleChange = (event, newValue) => {
@@ -75,7 +75,7 @@ const Relations = ({ relations, parentFilters, parent, where, models }) => {
             relation={relation}
             key={relation}
             models={models}
-            parentFilters={parentFilters}
+            parentFilters={relationFilters[relation] || []}
             parent={parent}
             where={where}
           />

@@ -49,6 +49,7 @@ const Form = _ref => {
     model,
     api,
     models,
+    relationFilters = {},
     permissions = {
       edit: model.permissions.edit,
       export: model.permissions.export,
@@ -65,7 +66,8 @@ const Form = _ref => {
     pathname
   } = (0, _StateProvider.useRouter)();
   const {
-    relations = []
+    relations = [],
+    hideRelationsInAdd = false
   } = model;
   const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
   const {
@@ -160,7 +162,7 @@ const Form = _ref => {
   }, [id, idWithOptions, model, url]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
-    initialValues: _objectSpread(_objectSpread({}, model.initialValues), data),
+    initialValues: _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData),
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, _ref3) => {
@@ -176,7 +178,7 @@ const Form = _ref => {
       (0, _crudHelper.saveRecord)({
         id,
         api: gridApi,
-        values: _objectSpread(_objectSpread({}, baseSaveData), values),
+        values,
         setIsLoading,
         setError: snackbar.showError
       }).then(success => {
@@ -316,6 +318,7 @@ const Form = _ref => {
   }, {
     text: id === "0" ? "New" : "Update"
   }];
+  const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     title: formTitle,
     showBreadcrumbs: !hideBreadcrumb,
@@ -382,8 +385,9 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), Boolean(relations.length) ? /*#__PURE__*/_react.default.createElement(_relations.default, {
+  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), showRelations ? /*#__PURE__*/_react.default.createElement(_relations.default, {
     models: models,
+    relationFilters: relationFilters,
     relations: relations,
     parentFilters: [],
     parent: model.name || model.title || "",

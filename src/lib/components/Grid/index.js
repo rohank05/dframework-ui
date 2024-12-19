@@ -469,7 +469,7 @@ const GridBase = memo(({
                 chartFilters.items.length = 0;
             }
         }
-        if (model.joinColumn) {
+        if (model.joinColumn && id) {
             baseFilters = [
                 {
                     field: model.joinColumn,

@@ -668,7 +668,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         chartFilters.items.length = 0;
       }
     }
-    if (model.joinColumn) {
+    if (model.joinColumn && id) {
       baseFilters = [{
         field: model.joinColumn,
         operator: 'is',

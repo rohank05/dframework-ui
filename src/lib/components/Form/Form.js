@@ -27,6 +27,7 @@ const Form = ({
   model,
   api,
   models,
+  relationFilters = {},
   permissions = {
     edit: model.permissions.edit,
     export: model.permissions.export,
@@ -37,7 +38,7 @@ const Form = ({
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
-  const { relations = [] } = model;
+  const { relations = [], hideRelationsInAdd = false } = model;
   const navigateBack =
     model.navigateBack || pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
   const { dispatchData, stateData } = useStateContext();
@@ -122,7 +123,7 @@ const Form = ({
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: { ...model.initialValues, ...data },
+    initialValues: { ...model.initialValues, ...data, ...baseSaveData },
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
@@ -135,7 +136,7 @@ const Form = ({
       saveRecord({
         id,
         api: gridApi,
-        values: { ...baseSaveData, ...values },
+        values,
         setIsLoading,
         setError: snackbar.showError
       })
@@ -270,6 +271,7 @@ const Form = ({
     { text: formTitle },
     { text: id === "0" ? "New" : "Update" }
   ];
+  const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   return (
     <>
       <PageTitle
@@ -355,9 +357,10 @@ const Form = ({
             title={deleteError ? "Error Deleting Record" : "Confirm Delete"}
           >{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName
             }?`}</DialogComponent>
-          {Boolean(relations.length) ? (
+          {showRelations ? (
             <Relations
               models={models}
+              relationFilters={relationFilters}
               relations={relations}
               parentFilters={[]}
               parent={model.name || model.title || ""}

@@ -63,10 +63,10 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
 const Relations = _ref2 => {
   let {
     relations,
-    parentFilters,
     parent,
     where,
-    models
+    models,
+    relationFilters
   } = _ref2;
   const [activeTab, setActiveTab] = (0, _react.useState)(relations[0]);
   const handleChange = (event, newValue) => {
@@ -94,7 +94,7 @@ const Relations = _ref2 => {
     relation: relation,
     key: relation,
     models: models,
-    parentFilters: parentFilters,
+    parentFilters: relationFilters[relation] || [],
     parent: parent,
     where: where
   }))));
