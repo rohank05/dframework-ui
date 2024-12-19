@@ -1166,7 +1166,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }];
   } else {
     breadCrumbs = [{
-      text: model.gridTitle || model.title
+      text: title || model.gridTitle || model.title
     }];
   }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
