@@ -39,7 +39,6 @@ import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
-import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 import { getPermissions } from '../utils';
 import HistoryIcon from '@mui/icons-material/History';
 const defaultPageSize = 10;
@@ -509,7 +508,7 @@ const GridBase = memo(({
             model: model
         });
     };
-    const openForm = (id, record = {}, { mode } = {}) => {
+    const openForm = ({ id, record = {}, mode }) => {
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;
@@ -559,10 +558,10 @@ const GridBase = memo(({
                 }
             }
             if (action === actionTypes.Edit) {
-                return openForm(record[idProperty], record);
+                return openForm({ id: record[idProperty], record });
             }
             if (action === actionTypes.Copy) {
-                return openForm(record[idProperty], { mode: 'copy' });
+                return openForm({ id: record[idProperty], mode: 'copy' });
             }
             if (action === actionTypes.Delete) {
                 setIsDeleting(true);
@@ -624,7 +623,7 @@ const GridBase = memo(({
             return;
         }
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-            openForm(record[idProperty], record);
+            openForm({ id: record[idProperty], record });
         }
 
         if (isReadOnly && model.rowRedirectLink) {
@@ -654,7 +653,7 @@ const GridBase = memo(({
         if (typeof onAddOverride === 'function') {
             onAddOverride();
         } else {
-            openForm(0);
+            openForm({ id: 0 });
         }
     }
 

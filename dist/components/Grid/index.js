@@ -56,7 +56,6 @@ var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
-var _type = require("@testing-library/user-event/dist/cjs/utility/type.js");
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
@@ -706,11 +705,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       model: model
     });
   };
-  const openForm = function openForm(id) {
-    let record = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  const openForm = _ref4 => {
     let {
+      id,
+      record = {},
       mode
-    } = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    } = _ref4;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -780,10 +780,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         }
       }
       if (action === actionTypes.Edit) {
-        return openForm(record[idProperty], record);
+        return openForm({
+          id: record[idProperty],
+          record
+        });
       }
       if (action === actionTypes.Copy) {
-        return openForm(record[idProperty], {
+        return openForm({
+          id: record[idProperty],
           mode: 'copy'
         });
       }
@@ -854,7 +858,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       return;
     }
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
-      openForm(record[idProperty], record);
+      openForm({
+        id: record[idProperty],
+        record
+      });
     }
     if (isReadOnly && model.rowRedirectLink) {
       let historyObject = {
@@ -878,7 +885,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     if (typeof onAddOverride === 'function') {
       onAddOverride();
     } else {
-      openForm(0);
+      openForm({
+        id: 0
+      });
     }
   };
   const clearFilters = () => {
@@ -891,11 +900,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref4 => {
+  const updateAssignment = _ref5 => {
     let {
       unassign,
       assign
-    } = _ref4;
+    } = _ref5;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);

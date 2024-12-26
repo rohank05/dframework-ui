@@ -1,6 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.weak-map.js");
 require("core-js/modules/esnext.iterator.constructor.js");
@@ -10,11 +9,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url.js");
+require("core-js/modules/web.url.to-json.js");
+require("core-js/modules/web.url-search-params.js");
+require("core-js/modules/web.url-search-params.delete.js");
+require("core-js/modules/web.url-search-params.has.js");
+require("core-js/modules/web.url-search-params.size.js");
 var _react = _interopRequireWildcard(require("react"));
 var _material = require("@mui/material");
-var _reactRouter = require("react-router");
 var _StateProvider = require("../../useRouter/StateProvider");
 var _httpRequest = require("../../Grid/httpRequest");
 var _SnackBar = require("../../SnackBar");
@@ -50,10 +55,15 @@ function Document(_ref) {
   } = (0, _StateProvider.useStateContext)();
   const uploadApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.uploadApi;
   const mediaApi = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.mediaApi;
-  // Get associationId from query parameters
   const {
-    associationId
-  } = (0, _reactRouter.useParams)();
+    getParams,
+    useParams
+  } = (0, _StateProvider.useRouter)();
+  const {
+    associationId,
+    id: documentId
+  } = useParams() || getParams;
+  const showDownloadButton = Number(documentId) !== 0;
   const id = (associationId === null || associationId === void 0 ? void 0 : associationId.split("-")[0]) || 1;
   const handleRadioChange = event => {
     const isExternal = event.target.value;
@@ -99,6 +109,28 @@ function Document(_ref) {
       formik.setFieldValue(field, fileUrl);
     } catch (error) {
       console.error("Error uploading file:", error);
+    }
+  };
+  const handleDownload = async () => {
+    if (!inputValue) return;
+    try {
+      const response = await fetch(inputValue);
+      if (!response.ok) {
+        throw new Error("Failed to fetch the file: ".concat(response.statusText));
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const fileName = inputValue.split("/").pop() || "downloaded-file.".concat(blob.type.split("/")[1] || "txt");
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+      snackbar.showError("Failed to download the file. Please try again.");
     }
   };
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
@@ -171,6 +203,14 @@ function Document(_ref) {
     color: "primary",
     onClick: handleFileUpload,
     disabled: !formState.selectedFile
-  }, "Upload File")));
+  }, "Upload File")), showDownloadButton && /*#__PURE__*/_react.default.createElement(_material.Box, {
+    sx: {
+      marginTop: 2
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.Button, {
+    variant: "contained",
+    color: "secondary",
+    onClick: handleDownload
+  }, "Download Document")));
 }
 var _default = exports.default = Document;

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, RadioGroup, FormControlLabel, Radio, TextField, Button, Typography } from "@mui/material";
-import { useParams } from "react-router";
-import { useStateContext } from "../../useRouter/StateProvider";
+import { useRouter, useStateContext } from "../../useRouter/StateProvider";
 import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 
@@ -15,8 +14,9 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
     const { stateData } = useStateContext();
     const uploadApi = stateData?.gridSettings?.permissions?.uploadApi;
     const mediaApi = stateData?.gridSettings?.permissions?.mediaApi;
-    // Get associationId from query parameters
-    const { associationId } = useParams();
+    const { getParams, useParams } = useRouter();
+    const { associationId, id: documentId } = useParams() || getParams;
+    const showDownloadButton = Number(documentId) !== 0;
     const id = associationId?.split("-")[0] || 1;
     const handleRadioChange = (event) => {
         const isExternal = event.target.value;
@@ -64,6 +64,31 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
             console.error("Error uploading file:", error);
         }
     };
+
+    const handleDownload = async () => {
+        if (!inputValue) return;
+        try {
+            const response = await fetch(inputValue);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch the file: ${response.statusText}`);
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            const fileName = inputValue.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error downloading the file:", error);
+            snackbar.showError("Failed to download the file. Please try again.");
+        }
+    };
+
+
     return (
         <Box>
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
@@ -124,6 +149,18 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         disabled={!formState.selectedFile}
                     >
                         Upload File
+                    </Button>
+                </Box>
+            )}
+
+            {showDownloadButton && (
+                <Box sx={{ marginTop: 2 }}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleDownload}
+                    >
+                        Download Document
                     </Button>
                 </Box>
             )}
