@@ -1,11 +1,11 @@
 "use strict";
 
-require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.weak-map.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.json.stringify.js");
@@ -25,6 +25,8 @@ require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url.js");
+require("core-js/modules/web.url.to-json.js");
 require("core-js/modules/web.url-search-params.js");
 require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
@@ -58,6 +60,7 @@ var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
+var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
@@ -79,7 +82,8 @@ const actionTypes = {
   Copy: "Copy",
   Edit: "Edit",
   Delete: "Delete",
-  History: "History"
+  History: "History",
+  Download: "Download"
 };
 const constants = {
   gridFilterModel: {
@@ -190,7 +194,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5;
   let {
       showGrid = true,
       useLinkColumn = true,
@@ -319,6 +323,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData;
+  const documentField = ((_model$columns$find = model.columns.find(ele => ele.type === 'document')) === null || _model$columns$find === void 0 ? void 0 : _model$columns$find.field) || "";
   const userDefinedPermissions = {
     add: effectivePermissions.add,
     edit: effectivePermissions.edit,
@@ -608,6 +613,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
+      if (documentField.length) {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "Download document"
+          }, /*#__PURE__*/_react.default.createElement(_FileDownload.default, null), " "),
+          "data-action": actionTypes.Download,
+          label: "Download document",
+          color: "primary"
+        }));
+      }
       if (actions.length > 0) {
         finalColumns.push({
           field: 'actions',
@@ -747,6 +762,32 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     navigate(path);
   };
+  const handleDownload = async _ref5 => {
+    let {
+      documentLink,
+      fileName
+    } = _ref5;
+    if (!documentLink) return;
+    try {
+      const response = await fetch(documentLink);
+      if (!response.ok) {
+        throw new Error("Failed to fetch the file: ".concat(response.statusText));
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const fileNameFromLink = documentLink.split("/").pop() || "downloaded-file.".concat(blob.type.split("/")[1] || "txt");
+      link.download = fileName || fileNameFromLink;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading the file:", error);
+      snackbar.showError("Failed to download the file. Please try again.");
+    }
+  };
   const onCellClickHandler = async (cellParams, event, details) => {
     if (!isReadOnly) {
       if (onCellClick) {
@@ -800,6 +841,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
       if (action === actionTypes.History) {
         return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
+      }
+      if (action === actionTypes.Download) {
+        handleDownload({
+          documentLink: record[documentField],
+          fileName: record.FileName
+        });
       }
     }
     if (isReadOnly && toLink) {
@@ -900,11 +947,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref5 => {
+  const updateAssignment = _ref6 => {
     let {
       unassign,
       assign
-    } = _ref5;
+    } = _ref6;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);

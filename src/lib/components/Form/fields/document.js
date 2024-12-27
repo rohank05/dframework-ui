@@ -6,17 +6,15 @@ import { useSnackbar } from "../../SnackBar";
 
 function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
     let inputValue = formik.values[field] || "";
+    const { stateData } = useStateContext();
+    const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
     const [formState, setFormState] = useState({
         isExternal: "no",
         selectedFile: null,
     });
     const snackbar = useSnackbar();
-    const { stateData } = useStateContext();
-    const uploadApi = stateData?.gridSettings?.permissions?.uploadApi;
-    const mediaApi = stateData?.gridSettings?.permissions?.mediaApi;
     const { getParams, useParams } = useRouter();
-    const { associationId, id: documentId } = useParams() || getParams;
-    const showDownloadButton = Number(documentId) !== 0;
+    const { associationId } = useParams() || getParams;
     const id = associationId?.split("-")[0] || 1;
     const handleRadioChange = (event) => {
         const isExternal = event.target.value;
@@ -65,30 +63,13 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
         }
     };
 
-    const handleDownload = async () => {
-        if (!inputValue) return;
-        try {
-            const response = await fetch(inputValue);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch the file: ${response.statusText}`);
-            }
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            const fileName = inputValue.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error("Error downloading the file:", error);
-            snackbar.showError("Failed to download the file. Please try again.");
-        }
-    };
-
-
+    const host = new URL(Url).hostname;
+    React.useEffect(() => {
+        setFormState({
+            ...formState,
+            isExternal: !inputValue.includes(host) ? "yes" : "no",
+        });
+    }, [inputValue]);
     return (
         <Box>
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
@@ -149,18 +130,6 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         disabled={!formState.selectedFile}
                     >
                         Upload File
-                    </Button>
-                </Box>
-            )}
-
-            {showDownloadButton && (
-                <Box sx={{ marginTop: 2 }}>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleDownload}
-                    >
-                        Download Document
                     </Button>
                 </Box>
             )}

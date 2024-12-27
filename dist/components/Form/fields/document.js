@@ -1,5 +1,6 @@
 "use strict";
 
+require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.weak-map.js");
 require("core-js/modules/esnext.iterator.constructor.js");
@@ -9,8 +10,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/es.error.cause.js");
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.promise.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url.js");
 require("core-js/modules/web.url.to-json.js");
@@ -31,7 +33,7 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function Document(_ref) {
-  var _stateData$gridSettin, _stateData$gridSettin2;
+  var _stateData$gridSettin;
   let {
     column,
     field,
@@ -45,25 +47,26 @@ function Document(_ref) {
     mode
   } = _ref;
   let inputValue = formik.values[field] || "";
+  const {
+    stateData
+  } = (0, _StateProvider.useStateContext)();
+  const {
+    uploadApi,
+    mediaApi,
+    Url
+  } = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.permissions;
   const [formState, setFormState] = (0, _react.useState)({
     isExternal: "no",
     selectedFile: null
   });
   const snackbar = (0, _SnackBar.useSnackbar)();
   const {
-    stateData
-  } = (0, _StateProvider.useStateContext)();
-  const uploadApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.uploadApi;
-  const mediaApi = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.mediaApi;
-  const {
     getParams,
     useParams
   } = (0, _StateProvider.useRouter)();
   const {
-    associationId,
-    id: documentId
+    associationId
   } = useParams() || getParams;
-  const showDownloadButton = Number(documentId) !== 0;
   const id = (associationId === null || associationId === void 0 ? void 0 : associationId.split("-")[0]) || 1;
   const handleRadioChange = event => {
     const isExternal = event.target.value;
@@ -111,28 +114,13 @@ function Document(_ref) {
       console.error("Error uploading file:", error);
     }
   };
-  const handleDownload = async () => {
-    if (!inputValue) return;
-    try {
-      const response = await fetch(inputValue);
-      if (!response.ok) {
-        throw new Error("Failed to fetch the file: ".concat(response.statusText));
-      }
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      const fileName = inputValue.split("/").pop() || "downloaded-file.".concat(blob.type.split("/")[1] || "txt");
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Error downloading the file:", error);
-      snackbar.showError("Failed to download the file. Please try again.");
-    }
-  };
+  const host = new URL(Url).hostname;
+  _react.default.useEffect(() => {
+    setFormState(_objectSpread(_objectSpread({}, formState), {}, {
+      isExternal: !inputValue.includes(host) ? "yes" : "no"
+    }));
+  }, [inputValue]);
+  console.log(formState);
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",
@@ -203,14 +191,6 @@ function Document(_ref) {
     color: "primary",
     onClick: handleFileUpload,
     disabled: !formState.selectedFile
-  }, "Upload File")), showDownloadButton && /*#__PURE__*/_react.default.createElement(_material.Box, {
-    sx: {
-      marginTop: 2
-    }
-  }, /*#__PURE__*/_react.default.createElement(_material.Button, {
-    variant: "contained",
-    color: "secondary",
-    onClick: handleDownload
-  }, "Download Document")));
+  }, "Upload File")));
 }
 var _default = exports.default = Document;

@@ -41,6 +41,8 @@ import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
 import { getPermissions } from '../utils';
 import HistoryIcon from '@mui/icons-material/History';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -48,7 +50,8 @@ const actionTypes = {
     Copy: "Copy",
     Edit: "Edit",
     Delete: "Delete",
-    History: "History"
+    History: "History",
+    Download: "Download"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -214,6 +217,7 @@ const GridBase = memo(({
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData;
+    const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions({ userData, model, userDefinedPermissions });
     const filterFieldDataTypes = {
@@ -429,6 +433,9 @@ const GridBase = memo(({
             if (showHistory) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
             }
+            if (documentField.length) {
+                actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
+            }
             if (actions.length > 0) {
                 finalColumns.push({
                     field: 'actions',
@@ -531,6 +538,29 @@ const GridBase = memo(({
         }
         navigate(path);
     };
+
+    const handleDownload = async ({ documentLink, fileName }) => {
+        if (!documentLink) return;
+        try {
+            const response = await fetch(documentLink);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch the file: ${response.statusText}`);
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            const fileNameFromLink = documentLink.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
+            link.download = fileName || fileNameFromLink;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Error downloading the file:", error);
+            snackbar.showError("Failed to download the file. Please try again.");
+        }
+    };
     const onCellClickHandler = async (cellParams, event, details) => {
         if (!isReadOnly) {
             if (onCellClick) {
@@ -569,6 +599,9 @@ const GridBase = memo(({
             }
             if (action === actionTypes.History) {
                 return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
+            }
+            if (action === actionTypes.Download) {
+                handleDownload({ documentLink: record[documentField], fileName: record.FileName });
             }
         }
         if (isReadOnly && toLink) {
