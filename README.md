@@ -147,7 +147,7 @@ export default function App() {
 
 # Properties of UiModel
 
-## Uimodel configuration properties
+## UiModel Configuration Properties
 
 | **Property**            | **Type**  | **Description**                                                       | **Can be extended from**                   |
 | ----------------------- | --------- | --------------------------------------------------------------------- | ------------------------------------------ |
@@ -185,5 +185,13 @@ export default function App() {
 | `tablePreferenceEnums`  | `object`  | Enumerations for specific table preferences.                          |                                            |
 | `showPivotExportBtn`    | `boolean` | Displays the button for exporting pivot data.                         |                                            |
 | `showOnlyExcelExport`   | `boolean` | Limits export options to only Excel formats.                          |                                            |
+| `formTitle`             | `string`  | Title used in the form layout.                                        |                                            |
+| `initialValues`         | `object`  | Initial values for form fields.                                       |                                            |
+| `hideRelationsInAdd`    | `boolean` | Hides relations section in add mode.                                  |                                            |
+| `navigateBack`          | `string`  | Specifies the route for navigation on cancel or save.                 |                                            |
+| `applyFieldConfig`      | `function`| A function to apply custom field configurations.                      |                                            |
+| `updateChildGridRecords`| `function`| Updates child grid records after a form action.                       |                                            |
+| `getValidationSchema`   | `function`| Function to return the validation schema for the form.                |                                            |
+| `relations`             | `array`   | Defines the relationship configurations for related grids.            |                                            |
 
 ## Column Properties Table
