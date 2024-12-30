@@ -1,6 +1,6 @@
 # how we will use the durlabh/dframework-ui
 
-**:** In Dframework we have create Multple Component for for our Use
+**:** In Dframework we have create Multple Component for our Use
 
 **1:** SnackBar
 **2:** Dialog
