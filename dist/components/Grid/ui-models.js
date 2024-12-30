@@ -24,7 +24,6 @@ require("core-js/modules/web.dom-collections.iterator.js");
 var _index = _interopRequireDefault(require("./index"));
 var _react = _interopRequireDefault(require("react"));
 var yup = _interopRequireWildcard(require("yup"));
-var _Paper = _interopRequireDefault(require("@mui/material/Paper"));
 var _material = require("@mui/material");
 var _Form = _interopRequireDefault(require("../Form/Form"));
 var _ReadonlyPanel = _interopRequireDefault(require("../ReadonlyPanel"));

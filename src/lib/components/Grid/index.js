@@ -226,7 +226,8 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false } = model;
+    const gridTitle = model.gridTitle || model.title;
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
@@ -722,7 +723,7 @@ const GridBase = memo(({
     }, [preferenceApi])
 
     const CustomToolbar = function (props) {
-        const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? `${model.title}` : 'Add';
+        const addtext = model.customAddTextTitle || (model.title ? `Add ${model.title}` : 'Add');
         return (
             <div
                 style={{

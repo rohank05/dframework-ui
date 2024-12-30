@@ -349,9 +349,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideBreadcrumb = false,
     tableName,
     showHistory = true,
-    gridTitle,
     hideBreadcrumbInGrid = false
   } = model;
+  const gridTitle = model.gridTitle || model.title;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
@@ -992,7 +992,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
-    const addtext = model.customAddTextTitle ? model.customAddTextTitle : model.title ? "".concat(model.title) : 'Add';
+    const addtext = model.customAddTextTitle || (model.title ? "Add ".concat(model.title) : 'Add');
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
