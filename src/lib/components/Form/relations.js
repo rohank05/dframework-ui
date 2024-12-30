@@ -24,7 +24,7 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
   );
   if (!modelConfigOfChildGrid) return null;
   const config = { ...modelConfigOfChildGrid, hideBreadcrumb: true };
-  const ChildModel = new UiModel(config);
+  const ChildModel = config instanceof UiModel ? config : new UiModel(config);
   if (!ChildModel) return null;
 
   return (
