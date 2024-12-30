@@ -1,60 +1,61 @@
-# how we will use the durlabh/dframework-ui 
+# how we will use the durlabh/dframework-ui
 
+**:** In Dframework we have create Multple Component for for our Use
 
-**:** In Dframework we have create Multple Component for for our Use 
+**1:** SnackBar
+**2:** Dialog
+**3:** Grid
+**4:** ChildGrid
 
-**1:**  SnackBar
-**2:**  Dialog
-**3:**  Grid
-**4:**  ChildGrid
+**Example:** \***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\*** Example of SnackBar \***\*\*\*\*\***\*\*\***\*\*\*\*\***
 
+# How we will use the SnackBar Component
 
-
-
-**Example:**  ************************************************ Example of SnackBar **********************
-# How we will use the SnackBar Component 
 ## frist import in your Index.js folder of your Project
-```js
 
-import React from 'react';
-import {SnackbarProvider} from '@durlabh/dfamework-ui';
+```js
+import React from "react";
+import { SnackbarProvider } from "@durlabh/dfamework-ui";
 export default function App() {
   return (
-      <SnackbarProvider SnackbarProps={{ autoHideDuration: 1000 }}>
-          ******************* Import Your Component ********************
-      </SnackbarProvider>
+    <SnackbarProvider SnackbarProps={{ autoHideDuration: 1000 }}>
+      ******************* Import Your Component ********************
+    </SnackbarProvider>
   );
 }
 ```
 
-
-## Then use in Your Project 
+## Then use in Your Project
 
 ```js
-
-import React from 'react';
-import { useSnackbar } from '@durlabh/dfamework-ui';
+import React from "react";
+import { useSnackbar } from "@durlabh/dfamework-ui";
 export default function App() {
-const snac = useSnackbar();
+  const snac = useSnackbar();
   return (
     <div>
-      <Button variant="contained" color="primary"
-        onClick={() => snac.showMessage('An error occured, please try after some time.')}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() =>
+          snac.showMessage("An error occured, please try after some time.")
+        }
+      >
         Show Snackbar
-      </Button> 
+      </Button>
     </div>
-  )
+  );
 }
 ```
 
-**Example:**  ************************************************ Example of Dialog **********************
+**Example:** \***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\*** Example of Dialog \***\*\*\*\*\***\*\*\***\*\*\*\*\***
 
+# How we will use the Dialog Component
 
-# How we will use the Dialog Component 
 ```js
 import {DialogComponent} from '@durlabh/dfamework-ui';
 import React from 'react'
-import 
+import
 export default function App() {
   return (
     <div>
@@ -64,65 +65,125 @@ export default function App() {
 }
 ```
 
-**Example:**  ************************************************ Example of Grid **********************
+**Example:** \***\*\*\*\*\***\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\*\*\***\*\*\***\*\*\*\*\*** Example of Grid \***\*\*\*\*\***\*\*\***\*\*\*\*\***
 
-
-# Example of Grid 
+# Example of Grid
 
 ```js
-
-import React from 'react'
-import {UiModel} from './lib/components/Grid/ui-models';
+import React from "react";
+import { UiModel } from "./lib/components/Grid/ui-models";
 export default function App() {
-const surveyModel = new UiModel({
+  const surveyModel = new UiModel({
     title: "Questionnaires",
-    defaultSort: 'SurveyTypeName ASC',
-    linkColumn: 'SurveyTypeName',
-    titleDescription: 'Build flexible questionnaire for use in Surveys',
-    api: 'SurveyType',
+    defaultSort: "SurveyTypeName ASC",
+    linkColumn: "SurveyTypeName",
+    titleDescription: "Build flexible questionnaire for use in Surveys",
+    api: "SurveyType",
     idProperty: "id",
     columns: [
-        { field: "id", type: 'number',  flex: 1, headerName: "User Id", fieldLabel: null, pinned: true },
-        { field: "title", type:"string",  headerName: "User Post Id", flex:1 },      
-        { field: "Completed", type:"boolean",  headerName: "Completion Status", flex:1}  
+      {
+        field: "id",
+        type: "number",
+        flex: 1,
+        headerName: "User Id",
+        fieldLabel: null,
+        pinned: true
+      },
+      { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
+      {
+        field: "Completed",
+        type: "boolean",
+        headerName: "Completion Status",
+        flex: 1
+      }
     ]
-});
+  });
   return (
     <div>
-       <surveyModel.Grid/>
+      <surveyModel.Grid />
     </div>
-  )
+  );
 }
-
 ```
-
-
 
 # Example of ChildGrid of Grid
 
 ```js
-
-import React from 'react'
-import {UiModel} from './lib/components/Grid/ui-models';
+import React from "react";
+import { UiModel } from "./lib/components/Grid/ui-models";
 export default function App() {
-const surveyModel = new UiModel({
+  const surveyModel = new UiModel({
     title: "Questionnaires",
-    defaultSort: 'SurveyTypeName ASC',
-    linkColumn: 'SurveyTypeName',
-    titleDescription: 'Build flexible questionnaire for use in Surveys',
-    api: 'SurveyType',
+    defaultSort: "SurveyTypeName ASC",
+    linkColumn: "SurveyTypeName",
+    titleDescription: "Build flexible questionnaire for use in Surveys",
+    api: "SurveyType",
     idProperty: "id",
     columns: [
-        { field: "id", type: 'number',  flex: 1, headerName: "User Id", fieldLabel: null, pinned: true },
-        { field: "title", type:"string",  headerName: "User Post Id", flex:1 },      
-        { field: "Completed", type:"boolean",  headerName: "Completion Status", flex:1}  
+      {
+        field: "id",
+        type: "number",
+        flex: 1,
+        headerName: "User Id",
+        fieldLabel: null,
+        pinned: true
+      },
+      { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
+      {
+        field: "Completed",
+        type: "boolean",
+        headerName: "Completion Status",
+        flex: 1
+      }
     ]
-});
+  });
   return (
     <div>
-       <surveyModel.ChildGrid/>
+      <surveyModel.ChildGrid />
     </div>
-  )
+  );
 }
-
 ```
+
+# Properties of UiModel
+
+## Uimodel configuration properties
+
+| **Property**            | **Type**  | **Description**                                                       | **Can be extended from**                   |
+| ----------------------- | --------- | --------------------------------------------------------------------- | ------------------------------------------ |
+| `title`                 | `string`  | The title of the grid.                                                |                                            |
+| `api`                   | `string`  | The API endpoint to fetch grid data.                                  | `"title"`                                  |
+| `idProperty`            | `string`  | Specifies the unique identifier for grid rows.                        | `"api, title"`                             |
+| `standard`              | `string`  | Checks whether it is a standard table.                                |                                            |
+| `defaultSort`           | `string`  | Specifies the default sort order for the grid data.                   |                                            |
+| `linkColumn`            | `string`  | The column that contains the main link for the grid rows.             |                                            |
+| `titleDescription`      | `string`  | A description displayed as the subtitle for the grid.                 |                                            |
+| `columns`               | `array`   | The list of column definitions for the grid.                          | See the **Column Properties Table** below. |
+| `columnVisibilityModel` | `object`  | Defines the visibility of specific columns in the grid.               |                                            |
+| `isClient`              | `boolean` | Determines if the grid operates in client mode.                       |                                            |
+| `defaultFilters`        | `array`   | Sets the default filters applied to the grid.                         |                                            |
+| `showHeaderFilters`     | `boolean` | Displays header filters on grid columns.                              |                                            |
+| `readOnly`              | `boolean` | If true, the grid becomes read-only.                                  |                                            |
+| `doubleClicked`         | `boolean` | Controls if double-clicking is enabled for rows.                      |                                            |
+| `gridSubTitle`          | `string`  | Subtitle displayed below the grid title.                              |                                            |
+| `permissions`           | `object`  | Permissions for grid actions like add, edit, delete, and export.      |                                            |
+| `joinColumn`            | `string`  | Specifies the column used for joining data with a parent grid.        |                                            |
+| `addCreatedOnColumn`    | `boolean` | Adds a column to show the creation date of rows.                      |                                            |
+| `addCreatedByColumn`    | `boolean` | Adds a column to show the user who created the rows.                  |                                            |
+| `addModifiedOnColumn`   | `boolean` | Adds a column to show the modification date of rows.                  |                                            |
+| `addModifiedByColumn`   | `boolean` | Adds a column to show the user who modified the rows.                 |                                            |
+| `controllerType`        | `string`  | Specifies the type of controller (`cs` for client/server).            |                                            |
+| `template`              | `string`  | Template configuration for exporting or rendering specific grid rows. |                                            |
+| `pivotAPI`              | `string`  | API endpoint for pivot-specific data.                                 |                                            |
+| `preferenceId`          | `string`  | Identifier for saved grid preferences.                                |                                            |
+| `rowRedirectLink`       | `string`  | URL to redirect when a row is clicked.                                |                                            |
+| `showAddIcon`           | `boolean` | Indicates if the "Add" button icon should be displayed.               |                                            |
+| `pageTitle`             | `string`  | Sets the title for the page.                                          |                                            |
+| `addUrlParamKey`        | `string`  | Key for additional URL parameters when navigating to forms.           |                                            |
+| `searchParamKey`        | `string`  | Key for fetching parameters from the URL.                             |                                            |
+| `nestedGrid`            | `boolean` | Indicates if the grid is nested within another grid.                  |                                            |
+| `tablePreferenceEnums`  | `object`  | Enumerations for specific table preferences.                          |                                            |
+| `showPivotExportBtn`    | `boolean` | Displays the button for exporting pivot data.                         |                                            |
+| `showOnlyExcelExport`   | `boolean` | Limits export options to only Excel formats.                          |                                            |
+
+## Column Properties Table
