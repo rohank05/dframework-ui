@@ -12,11 +12,17 @@ require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
+require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.includes.js");
+require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
+require("core-js/modules/web.url-search-params.js");
+require("core-js/modules/web.url-search-params.delete.js");
+require("core-js/modules/web.url-search-params.has.js");
+require("core-js/modules/web.url-search-params.size.js");
 var _react = _interopRequireWildcard(require("react"));
 var _formik = require("formik");
 var _crudHelper = require("../Grid/crud-helper");
@@ -319,6 +325,8 @@ const Form = _ref => {
     text: id === "0" ? "New" : "Update"
   }];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
+  const searchParams = new URLSearchParams(window.location.search);
+  const showSaveButton = searchParams.has("showRelation");
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     title: formTitle,
     showBreadcrumbs: !hideBreadcrumb,
@@ -338,7 +346,7 @@ const Form = _ref => {
     spacing: 2,
     justifyContent: "flex-end",
     mb: 1
-  }, canEdit && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, canEdit && !showSaveButton && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     type: "submit",
     color: "success",

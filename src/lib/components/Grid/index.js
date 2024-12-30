@@ -12,6 +12,7 @@ import {
 } from '@mui/x-data-grid-premium';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CopyIcon from '@mui/icons-material/FileCopy';
+import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import {
@@ -51,7 +52,8 @@ const actionTypes = {
     Edit: "Edit",
     Delete: "Delete",
     History: "History",
-    Download: "Download"
+    Download: "Download",
+    Document: "Document"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -436,6 +438,9 @@ const GridBase = memo(({
             if (documentField.length) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
             }
+            if(effectivePermissions.document){
+                actions.push(<GridActionsCellItem icon={<Tooltip title="Document"><ArticleIcon /> </Tooltip>} data-action={actionTypes.Document} color="primary" label= "Document"/>);
+            }
             if (actions.length > 0) {
                 finalColumns.push({
                     field: 'actions',
@@ -602,6 +607,9 @@ const GridBase = memo(({
             }
             if (action === actionTypes.Download) {
                 handleDownload({ documentLink: record[documentField], fileName: record.FileName });
+            }
+            if (action === actionTypes.Document) {
+                return navigate(`/masterScope/${record[idProperty]}?showRelation=Document`);
             }
         }
         if (isReadOnly && toLink) {

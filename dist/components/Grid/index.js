@@ -36,6 +36,7 @@ var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
 var _FileCopy = _interopRequireDefault(require("@mui/icons-material/FileCopy"));
+var _Article = _interopRequireDefault(require("@mui/icons-material/Article"));
 var _Edit = _interopRequireDefault(require("@mui/icons-material/Edit"));
 var _FilterListOff = _interopRequireDefault(require("@mui/icons-material/FilterListOff"));
 var _Add = _interopRequireDefault(require("@mui/icons-material/Add"));
@@ -83,7 +84,8 @@ const actionTypes = {
   Edit: "Edit",
   Delete: "Delete",
   History: "History",
-  Download: "Download"
+  Download: "Download",
+  Document: "Document"
 };
 const constants = {
   gridFilterModel: {
@@ -623,6 +625,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
+      if (effectivePermissions.document) {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: "Document"
+          }, /*#__PURE__*/_react.default.createElement(_Article.default, null), " "),
+          "data-action": actionTypes.Document,
+          color: "primary",
+          label: "Document"
+        }));
+      }
       if (actions.length > 0) {
         finalColumns.push({
           field: 'actions',
@@ -847,6 +859,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           documentLink: record[documentField],
           fileName: record.FileName
         });
+      }
+      if (action === actionTypes.Document) {
+        return navigate("/masterScope/".concat(record[idProperty], "?showRelation=Document"));
       }
     }
     if (isReadOnly && toLink) {

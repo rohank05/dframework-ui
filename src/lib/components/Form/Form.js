@@ -272,6 +272,8 @@ const Form = ({
     { text: id === "0" ? "New" : "Update" }
   ];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
+  const searchParams = new URLSearchParams(window.location.search);
+  const showSaveButton = searchParams.has("showRelation");
   return (
     <>
       <PageTitle
@@ -289,7 +291,7 @@ const Form = ({
               justifyContent="flex-end"
               mb={1}
             >
-              {canEdit && (
+              {canEdit && !showSaveButton && (
                 <Button
                   variant="contained"
                   type="submit"
