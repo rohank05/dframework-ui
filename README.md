@@ -244,7 +244,3 @@ export default function App() {
 | `multiline`           | `boolean`        | Indicates if the text field should support multiple lines.           |                          |
 | `rows`                | `number`         | Number of rows to display in a multiline text field.                 |                          |
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                |                          |
-| `data`                | `array`          | Specifies additional data for rendering components (e.g., trees).    |                          |
-| `tree`                | `array`          | Tree structure for displaying hierarchical data in components.       |                          |
-| `checkboxSelection`   | `boolean`        | Enables checkbox selection in tree components.                       |                          |
-| `selectedItems`       | `array`          | List of selected items in tree or multi-select components.           |                          |
