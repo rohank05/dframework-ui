@@ -228,7 +228,7 @@ const Form = _ref => {
       text: localTitle
     }];
     if (isCopy) {
-      record[model.linkColumn] += " (Copy)";
+      record[model.linkColumn] = "";
     }
     setData(record);
     setLookups(lookups);
