@@ -50,7 +50,7 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
   const config = _objectSpread(_objectSpread({}, modelConfigOfChildGrid), {}, {
     hideBreadcrumb: true
   });
-  const ChildModel = new _uiModels.UiModel(config);
+  const ChildModel = config instanceof _uiModels.UiModel ? config : new _uiModels.UiModel(config);
   if (!ChildModel) return null;
   return /*#__PURE__*/_react.default.createElement(ChildModel.ChildGrid, {
     parentFilters: parentFilters,

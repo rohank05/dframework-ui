@@ -186,7 +186,7 @@ const Form = ({
     const breadcrumbs = [{ text: model?.breadCrumbs }, { text: localTitle }];
 
     if (isCopy) {
-      record[model.linkColumn] += " (Copy)";
+      record[model.linkColumn] = "";
     }
     setData(record);
     setLookups(lookups);

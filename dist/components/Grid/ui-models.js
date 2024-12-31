@@ -24,7 +24,6 @@ require("core-js/modules/web.dom-collections.iterator.js");
 var _index = _interopRequireDefault(require("./index"));
 var _react = _interopRequireDefault(require("react"));
 var yup = _interopRequireWildcard(require("yup"));
-var _Paper = _interopRequireDefault(require("@mui/material/Paper"));
 var _material = require("@mui/material");
 var _Form = _interopRequireDefault(require("../Form/Form"));
 var _ReadonlyPanel = _interopRequireDefault(require("../ReadonlyPanel"));
@@ -97,22 +96,34 @@ class UiModel {
       }));
     });
     const {
-      title,
+      title = "",
       controllerType
     } = modelConfig;
     let {
       api,
       idProperty = api + 'Id'
     } = modelConfig;
+    // if module is not specified, use title as module name after removing all alphanumeric characters
+    const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
     if (!api) {
       api = "".concat(title.replaceAll(nonAlphaNumeric, '-').toLowerCase());
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
     api = controllerType === 'cs' ? "".concat(api, ".ashx") : "".concat(api);
     const defaultValues = _objectSpread({}, modelConfig.defaultValues);
+    const name = module || title;
     Object.assign(this, _objectSpread(_objectSpread({
       standard: true,
-      idProperty
+      name,
+      // for child grid wuth no specific module but wants name to be identified in models list in relations.
+      permissions: _objectSpread({}, UiModel.defaultPermissions),
+      idProperty,
+      defaultSort: "ModifiedOn DESC",
+      linkColumn: "".concat(name, "Name"),
+      overrideFileName: title,
+      preferenceId: name,
+      tableName: name,
+      module
     }, modelConfig), {}, {
       api
     }));
@@ -239,3 +250,8 @@ class UiModel {
   }
 }
 exports.UiModel = UiModel;
+_defineProperty(UiModel, "defaultPermissions", {
+  add: true,
+  edit: true,
+  delete: true
+});

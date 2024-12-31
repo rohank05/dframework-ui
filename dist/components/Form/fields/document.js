@@ -120,7 +120,6 @@ function Document(_ref) {
       isExternal: !inputValue.includes(host) ? "yes" : "no"
     }));
   }, [inputValue]);
-  console.log(formState);
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",

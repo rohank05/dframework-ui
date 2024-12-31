@@ -1,7 +1,6 @@
 import GridBase from './index';
 import React from 'react';
 import * as yup from 'yup';
-import Paper from '@mui/material/Paper';
 import { Divider } from '@mui/material';
 import Form from '../Form/Form';
 import ReadonlyPanel from '../ReadonlyPanel';
@@ -20,17 +19,37 @@ const compareValidatorRegex = /^compare:(.+)$/;
 
 class UiModel {
 
+	static defaultPermissions = {
+		add: true,
+		edit: true,
+		delete: true,
+	}
 	constructor(modelConfig) {
-		const { title, controllerType } = modelConfig;
+		const { title = "", controllerType } = modelConfig;
 		let { api, idProperty = api + 'Id' } = modelConfig;
-
+		// if module is not specified, use title as module name after removing all alphanumeric characters
+		const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
 		if (!api) {
 			api = `${title.replaceAll(nonAlphaNumeric, '-').toLowerCase()}`;
 			idProperty = title.replaceAll(' ', '') + 'Id';
 		}
 		api = controllerType === 'cs' ? `${api}.ashx` : `${api}`;
 		const defaultValues = { ...modelConfig.defaultValues };
-		Object.assign(this, { standard: true, idProperty, ...modelConfig, api });
+		const name = module || title;
+		Object.assign(this, {
+			standard: true,
+			name, // for child grid wuth no specific module but wants name to be identified in models list in relations.
+			permissions: { ...UiModel.defaultPermissions },
+			idProperty,
+			defaultSort: "ModifiedOn DESC",
+			linkColumn: `${name}Name`,
+			overrideFileName: title,
+			preferenceId: name,
+			tableName: name,
+			module,
+			...modelConfig,
+			api
+		});
 		const columnVisibilityModel = {};
 		for (const col of this.columns) {
 			const name = col.field || col.id;
