@@ -85,7 +85,7 @@ const actionTypes = {
   Delete: "Delete",
   History: "History",
   Download: "Download",
-  Document: "Document"
+  Relation: "Relation"
 };
 const constants = {
   gridFilterModel: {
@@ -352,7 +352,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     tableName,
     showHistory = true,
     gridTitle,
-    hideBreadcrumbInGrid = false
+    hideBreadcrumbInGrid = false,
+    navigateToRelation = []
   } = model;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
@@ -625,14 +626,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
-      if (effectivePermissions.document) {
+      if (navigateToRelation.length > 0) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-            title: "Document"
+            title: "Relation"
           }, /*#__PURE__*/_react.default.createElement(_Article.default, null), " "),
-          "data-action": actionTypes.Document,
+          "data-action": actionTypes.Relation,
           color: "primary",
-          label: "Document"
+          label: "Relation"
         }));
       }
       if (actions.length > 0) {
@@ -860,8 +861,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           fileName: record.FileName
         });
       }
-      if (action === actionTypes.Document) {
-        return navigate("/masterScope/".concat(record[idProperty], "?showRelation=Document"));
+      if (action === actionTypes.Relation) {
+        return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
       }
     }
     if (isReadOnly && toLink) {

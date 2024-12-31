@@ -53,7 +53,7 @@ const actionTypes = {
     Delete: "Delete",
     History: "History",
     Download: "Download",
-    Document: "Document"
+    Relation: "Relation"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -228,7 +228,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, gridTitle, hideBreadcrumbInGrid = false, navigateToRelation = [] } = model;
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
@@ -438,8 +438,8 @@ const GridBase = memo(({
             if (documentField.length) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
             }
-            if(effectivePermissions.document){
-                actions.push(<GridActionsCellItem icon={<Tooltip title="Document"><ArticleIcon /> </Tooltip>} data-action={actionTypes.Document} color="primary" label= "Document"/>);
+            if(navigateToRelation.length > 0){
+                actions.push(<GridActionsCellItem icon={<Tooltip title="Relation"><ArticleIcon /> </Tooltip>} data-action={actionTypes.Relation} color="primary" label= "Relation"/>);
             }
             if (actions.length > 0) {
                 finalColumns.push({
@@ -608,8 +608,8 @@ const GridBase = memo(({
             if (action === actionTypes.Download) {
                 handleDownload({ documentLink: record[documentField], fileName: record.FileName });
             }
-            if (action === actionTypes.Document) {
-                return navigate(`/masterScope/${record[idProperty]}?showRelation=Document`);
+            if (action === actionTypes.Relation) {
+                return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
             }
         }
         if (isReadOnly && toLink) {

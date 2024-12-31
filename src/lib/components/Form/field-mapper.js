@@ -196,12 +196,8 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id , 
             continue;
         }
 
-        const copiedColumn = { ...column };
-        if(searchParams.has('showRelation')){
-            copiedColumn.readOnly = true
-        }
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, fieldLabel, column: copiedColumn, otherProps });
+        target.push({ Component, field, fieldLabel, column: {...column, readOnly: searchParams.has('showRelation') || false}, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {

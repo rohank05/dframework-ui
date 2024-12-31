@@ -284,7 +284,7 @@ const RenderColumns = _ref3 => {
       fieldLabel,
       otherProps
     } = _ref4;
-    let isGridComponent = typeof (column === null || column === void 0 ? void 0 : column.relation) === 'function';
+    let isGridComponent = typeof column.relation === 'function';
     return /*#__PURE__*/React.createElement(_Grid.default, {
       container: true,
       spacing: 2,
@@ -300,7 +300,7 @@ const RenderColumns = _ref3 => {
         fontSize: '16px',
         fontWeight: 'bold'
       }
-    }, (column === null || column === void 0 ? void 0 : column.label) || field, ": ", (column === null || column === void 0 ? void 0 : column.required) && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
+    }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
       xs: isGridComponent ? 12 : 10.5,
       className: classes.childStyles
@@ -352,16 +352,14 @@ const getFormConfig = function getFormConfig(_ref5) {
     if (!Component || column.hideInAddGrid && id === '0') {
       continue;
     }
-    const copiedColumn = _objectSpread({}, column);
-    if (searchParams.has('showRelation')) {
-      copiedColumn.readOnly = true;
-    }
     const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
     target.push({
       Component,
       field,
       fieldLabel,
-      column: copiedColumn,
+      column: _objectSpread(_objectSpread({}, column), {}, {
+        readOnly: searchParams.has('showRelation') || false
+      }),
       otherProps
     });
   }
