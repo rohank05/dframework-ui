@@ -53,7 +53,7 @@ const actionTypes = {
     Delete: "Delete",
     History: "History",
     Download: "Download",
-    Relation: "Relation"
+    NavigateToRelation: "NavigateToRelation"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -240,7 +240,7 @@ const GridBase = memo(({
         },
         "date": {
             "valueFormatter": (value) => (
-                formatDate(value, true, false, stateData.dateTime)
+                formatDate(value, true, false, stateData.dateTime, stateData.timeZone)
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
@@ -266,18 +266,10 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        // if (props.isChildGrid) {
-        //     console.log('1');
-        //     return;
-        // }
         dataRef.current = data;
     }, [data]);
 
     useEffect(() => {
-        // if (props.isChildGrid) {
-        //     console.log('2');
-        //     return;
-        // }
         if (customFilters && Object.keys(customFilters) != 0) {
             if (customFilters.clear) {
                 let filterObject = {
@@ -439,7 +431,7 @@ const GridBase = memo(({
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
             }
             if(navigateToRelation.length > 0){
-                actions.push(<GridActionsCellItem icon={<Tooltip title="Relation"><ArticleIcon /> </Tooltip>} data-action={actionTypes.Relation} color="primary" label= "Relation"/>);
+                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label= ""/>);
             }
             if (actions.length > 0) {
                 finalColumns.push({
@@ -608,7 +600,7 @@ const GridBase = memo(({
             if (action === actionTypes.Download) {
                 handleDownload({ documentLink: record[documentField], fileName: record.FileName });
             }
-            if (action === actionTypes.Relation) {
+            if (action === actionTypes.NavigateToRelation) {
                 return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
             }
         }

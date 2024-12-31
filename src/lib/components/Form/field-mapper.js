@@ -197,7 +197,7 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id , 
         }
 
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, fieldLabel, column: {...column, readOnly: searchParams.has('showRelation') || false}, otherProps });
+        target.push({ Component, field, fieldLabel, column: {...column, readOnly: searchParams.has('showRelation')}, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {

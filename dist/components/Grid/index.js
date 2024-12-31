@@ -85,7 +85,7 @@ const actionTypes = {
   Delete: "Delete",
   History: "History",
   Download: "Download",
-  Relation: "Relation"
+  NavigateToRelation: "NavigateToRelation"
 };
 const constants = {
   gridFilterModel: {
@@ -365,7 +365,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       "valueOptions": "lookup"
     },
     "date": {
-      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime),
+      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime, stateData.timeZone),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "date"
       })
@@ -392,17 +392,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   (0, _react.useEffect)(() => {
-    // if (props.isChildGrid) {
-    //     console.log('1');
-    //     return;
-    // }
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
-    // if (props.isChildGrid) {
-    //     console.log('2');
-    //     return;
-    // }
     if (customFilters && Object.keys(customFilters) != 0) {
       if (customFilters.clear) {
         let filterObject = {
@@ -629,11 +621,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (navigateToRelation.length > 0) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-            title: "Relation"
+            title: ""
           }, /*#__PURE__*/_react.default.createElement(_Article.default, null), " "),
-          "data-action": actionTypes.Relation,
+          "data-action": actionTypes.NavigateToRelation,
           color: "primary",
-          label: "Relation"
+          label: ""
         }));
       }
       if (actions.length > 0) {
@@ -861,7 +853,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           fileName: record.FileName
         });
       }
-      if (action === actionTypes.Relation) {
+      if (action === actionTypes.NavigateToRelation) {
         return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
       }
     }
