@@ -36,6 +36,7 @@ var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
 var _FileCopy = _interopRequireDefault(require("@mui/icons-material/FileCopy"));
+var _Article = _interopRequireDefault(require("@mui/icons-material/Article"));
 var _Edit = _interopRequireDefault(require("@mui/icons-material/Edit"));
 var _FilterListOff = _interopRequireDefault(require("@mui/icons-material/FilterListOff"));
 var _Add = _interopRequireDefault(require("@mui/icons-material/Add"));
@@ -83,7 +84,8 @@ const actionTypes = {
   Edit: "Edit",
   Delete: "Delete",
   History: "History",
-  Download: "Download"
+  Download: "Download",
+  NavigateToRelation: "NavigateToRelation"
 };
 const constants = {
   gridFilterModel: {
@@ -349,7 +351,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideBreadcrumb = false,
     tableName,
     showHistory = true,
-    hideBreadcrumbInGrid = false
+    hideBreadcrumbInGrid = false,
+    navigateToRelation = []
   } = model;
   const gridTitle = model.gridTitle || model.title;
   const OrderSuggestionHistoryFields = {
@@ -362,7 +365,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       "valueOptions": "lookup"
     },
     "date": {
-      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime),
+      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime, stateData.timeZone),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "date"
       })
@@ -389,17 +392,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   (0, _react.useEffect)(() => {
-    // if (props.isChildGrid) {
-    //     console.log('1');
-    //     return;
-    // }
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
-    // if (props.isChildGrid) {
-    //     console.log('2');
-    //     return;
-    // }
     if (customFilters && Object.keys(customFilters) != 0) {
       if (customFilters.clear) {
         let filterObject = {
@@ -621,6 +616,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           "data-action": actionTypes.Download,
           label: "Download document",
           color: "primary"
+        }));
+      }
+      if (navigateToRelation.length > 0) {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+            title: ""
+          }, /*#__PURE__*/_react.default.createElement(_Article.default, null), " "),
+          "data-action": actionTypes.NavigateToRelation,
+          color: "primary",
+          label: ""
         }));
       }
       if (actions.length > 0) {
@@ -847,6 +852,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           documentLink: record[documentField],
           fileName: record.FileName
         });
+      }
+      if (action === actionTypes.NavigateToRelation) {
+        return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
       }
     }
     if (isReadOnly && toLink) {

@@ -176,7 +176,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     )
 }
 
-const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id }) {
+const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id , searchParams}) {
     const formElements = [], tabColumns = {};
     for (const tab in tabs) {
         tabColumns[tab] = [];
@@ -195,8 +195,9 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id })
         if (!Component || (column.hideInAddGrid && id === '0')) {
             continue;
         }
+
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, fieldLabel, column, otherProps });
+        target.push({ Component, field, fieldLabel, column: {...column, readOnly: searchParams.has('showRelation')}, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {
@@ -209,7 +210,8 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
     const classes = useStyles();
     const { formElements, tabColumns, showTabs } = React.useMemo(() => {
         let showTabs = model?.formConfig?.showTabbed;
-        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId });
+        const searchParams = new URLSearchParams(window.location.search);
+        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId, searchParams });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
     return (

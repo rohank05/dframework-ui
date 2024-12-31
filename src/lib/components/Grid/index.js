@@ -12,6 +12,7 @@ import {
 } from '@mui/x-data-grid-premium';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CopyIcon from '@mui/icons-material/FileCopy';
+import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import {
@@ -51,7 +52,8 @@ const actionTypes = {
     Edit: "Edit",
     Delete: "Delete",
     History: "History",
-    Download: "Download"
+    Download: "Download",
+    NavigateToRelation: "NavigateToRelation"
 };
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
@@ -226,7 +228,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [] } = model;
     const gridTitle = model.gridTitle || model.title;
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -239,7 +241,7 @@ const GridBase = memo(({
         },
         "date": {
             "valueFormatter": (value) => (
-                formatDate(value, true, false, stateData.dateTime)
+                formatDate(value, true, false, stateData.dateTime, stateData.timeZone)
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
@@ -265,18 +267,10 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        // if (props.isChildGrid) {
-        //     console.log('1');
-        //     return;
-        // }
         dataRef.current = data;
     }, [data]);
 
     useEffect(() => {
-        // if (props.isChildGrid) {
-        //     console.log('2');
-        //     return;
-        // }
         if (customFilters && Object.keys(customFilters) != 0) {
             if (customFilters.clear) {
                 let filterObject = {
@@ -436,6 +430,9 @@ const GridBase = memo(({
             }
             if (documentField.length) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
+            }
+            if(navigateToRelation.length > 0){
+                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label= ""/>);
             }
             if (actions.length > 0) {
                 finalColumns.push({
@@ -603,6 +600,9 @@ const GridBase = memo(({
             }
             if (action === actionTypes.Download) {
                 handleDownload({ documentLink: record[documentField], fileName: record.FileName });
+            }
+            if (action === actionTypes.NavigateToRelation) {
+                return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
             }
         }
         if (isReadOnly && toLink) {
