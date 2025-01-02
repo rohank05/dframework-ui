@@ -296,14 +296,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   } = model;
   const isReadOnly = model.readOnly === true;
   const isDoubleClicked = model.doubleClicked === false;
-  const customExportRef = (0, _react.useRef)();
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
   const toLink = model.columns.map(item => item.link);
   const [isGridPreferenceFetched, setIsGridPreferenceFetched] = (0, _react.useState)(false);
   const classes = useStyles();
   const {
-    systemDateTimeFormat,
     stateData,
     dispatchData,
     formatDate,
@@ -311,10 +309,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     getAllSavedPreferences,
     applyDefaultPreferenceIfExists
   } = (0, _StateProvider.useStateContext)();
-  const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
   const {
-    ClientId
-  } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
+    timeZone
+  } = stateData;
+  const effectivePermissions = _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, constants.permissions), stateData.gridSettings.permissions), model.permissions), permissions);
   const {
     Username
   } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
@@ -365,19 +363,37 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       "valueOptions": "lookup"
     },
     "date": {
-      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime, stateData.timeZone),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: true,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "date"
       })
     },
     "dateTime": {
-      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: false,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "datetime"
       })
     },
     "dateTimeLocal": {
-      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: false,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         type: "dateTimeLocal",
         convert: true

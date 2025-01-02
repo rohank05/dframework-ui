@@ -5,6 +5,12 @@ import request from '../Grid/httpRequest';
 import { locales } from '../mui/locale/localization';
 import dayjs from 'dayjs';
 import actionsStateProvider from './actions';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+// Extend dayjs with the plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const StateContext = createContext();
 const RouterContext = createContext(null);
@@ -94,10 +100,11 @@ const StateProvider = ({ children }) => {
     dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: null });
   }
 
-  function formatDate(value, useSystemFormat, showOnlyDate = false, state) {
+  function formatDate({ value, useSystemFormat, showOnlyDate = false, state, timeZone }) {
+    console.log("TimeZone ", timeZone, stateData);
     if (value) {
       const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
-      return dayjs(value).format(format);
+      return dayjs(value).tz(timeZone).format(format);
     }
     return '-';
   }
