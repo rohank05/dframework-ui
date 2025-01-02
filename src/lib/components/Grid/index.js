@@ -721,7 +721,7 @@ const GridBase = memo(({
     }, [preferenceApi])
 
     const CustomToolbar = function (props) {
-        const addtext = model.customAddTextTitle || (model.title ? `Add ${model.title}` : 'Add');
+        const addtext = model.customAddText || (model.title ? `Add ${model.title}` : 'Add');
         return (
             <div
                 style={{

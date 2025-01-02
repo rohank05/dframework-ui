@@ -1016,7 +1016,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
-    const addtext = model.customAddTextTitle || (model.title ? "Add ".concat(model.title) : 'Add');
+    const addtext = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
