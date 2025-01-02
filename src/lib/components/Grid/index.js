@@ -241,19 +241,19 @@ const GridBase = memo(({
         },
         "date": {
             "valueFormatter": (value) => (
-                formatDate(value, true, false, stateData.dateTime, stateData.timeZone)
+                formatDate({ value, useSystemFormat: true, showOnlyDate: false, state: stateData.dateTime, timeZone: stateData.timeZone })
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "date" }),
         },
         "dateTime": {
             "valueFormatter": (value) => (
-                formatDate(value, false, false, stateData.dateTime)
+                formatDate({ value, useSystemFormat: false, showOnlyDate: false, state: stateData.dateTime, timeZone: stateData.timeZone })
             ),
             "filterOperators": LocalizedDatePicker({ columnType: "datetime" }),
         },
         "dateTimeLocal": {
             "valueFormatter": (value) => (
-                formatDate(value, false, false, stateData.dateTime)
+                formatDate({ value, useSystemFormat: false, showOnlyDate: false, state: stateData.dateTime, timeZone: stateData.timeZone })
             ),
             "filterOperators": LocalizedDatePicker({ type: "dateTimeLocal", convert: true }),
         },
@@ -431,8 +431,8 @@ const GridBase = memo(({
             if (documentField.length) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
             }
-            if(navigateToRelation.length > 0){
-                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label= ""/>);
+            if (navigateToRelation.length > 0) {
+                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label="" />);
             }
             if (actions.length > 0) {
                 finalColumns.push({

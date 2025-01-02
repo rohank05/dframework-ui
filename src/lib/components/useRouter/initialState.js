@@ -12,7 +12,8 @@ const initialState = {
     currentPreference: null,
     totalPreferences: null,
     loaderOpen: false,
-    filtersInHeader: {}
+    filtersInHeader: {},
+    timeZone: ""
   };
 
   export default initialState;

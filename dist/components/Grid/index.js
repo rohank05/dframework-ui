@@ -365,19 +365,37 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       "valueOptions": "lookup"
     },
     "date": {
-      "valueFormatter": value => formatDate(value, true, false, stateData.dateTime, stateData.timeZone),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: true,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone: stateData.timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "date"
       })
     },
     "dateTime": {
-      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: false,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone: stateData.timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         columnType: "datetime"
       })
     },
     "dateTimeLocal": {
-      "valueFormatter": value => formatDate(value, false, false, stateData.dateTime),
+      "valueFormatter": value => formatDate({
+        value,
+        useSystemFormat: false,
+        showOnlyDate: false,
+        state: stateData.dateTime,
+        timeZone: stateData.timeZone
+      }),
       "filterOperators": (0, _LocalizedDatePicker.default)({
         type: "dateTimeLocal",
         convert: true

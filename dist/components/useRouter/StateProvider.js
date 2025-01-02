@@ -17,9 +17,14 @@ var _httpRequest = _interopRequireDefault(require("../Grid/httpRequest"));
 var _localization = require("../mui/locale/localization");
 var _dayjs = _interopRequireDefault(require("dayjs"));
 var _actions = _interopRequireDefault(require("./actions"));
+var _utc = _interopRequireDefault(require("dayjs/plugin/utc"));
+var _timezone = _interopRequireDefault(require("dayjs/plugin/timezone"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+// Extend dayjs with the plugins
+_dayjs.default.extend(_utc.default);
+_dayjs.default.extend(_timezone.default);
 const StateContext = /*#__PURE__*/(0, _react.createContext)();
 const RouterContext = /*#__PURE__*/(0, _react.createContext)(null);
 const StateProvider = _ref => {
@@ -165,12 +170,18 @@ const StateProvider = _ref => {
       payload: null
     });
   }
-  function formatDate(value, useSystemFormat) {
-    let showOnlyDate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    let state = arguments.length > 3 ? arguments[3] : undefined;
+  function formatDate(_ref6) {
+    let {
+      value,
+      useSystemFormat,
+      showOnlyDate = false,
+      state,
+      timeZone
+    } = _ref6;
+    console.log("TimeZone ", timeZone, stateData);
     if (value) {
       const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
-      return (0, _dayjs.default)(value).format(format);
+      return (0, _dayjs.default)(value).tz(timeZone).format(format);
     }
     return '-';
   }
