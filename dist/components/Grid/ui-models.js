@@ -190,6 +190,14 @@ class UiModel {
             return value;
           }).label(formLabel).required("".concat(formLabel, " is required"));
           break;
+        case 'dateTime':
+          config = yup.date().nullable() // Allow null values
+          .transform((value, originalValue) => {
+            // Transform empty strings or null values into null
+            if (originalValue === '' || originalValue === null) return null;
+            return value;
+          }).label(formLabel); // Set a label for better error messages
+          break;
         case 'select':
         case 'autocomplete':
           if (required) {
@@ -233,6 +241,7 @@ class UiModel {
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (requiredIfNew && (!id || id === '')) {
+        console.log("Entered here ");
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (validate) {
