@@ -68,7 +68,6 @@ const booleanIconRenderer = (params) => {
     }
 }
 
-
 const useStyles = makeStyles({
     buttons: {
         margin: '6px !important'
