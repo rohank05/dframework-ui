@@ -178,9 +178,11 @@ const StateProvider = _ref => {
       state,
       timeZone
     } = _ref6;
-    console.log("TimeZone ", timeZone, stateData);
     if (value) {
       const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
+      if (!timeZone) {
+        return (0, _dayjs.default)(value).format(format);
+      }
       return (0, _dayjs.default)(value).tz(timeZone).format(format);
     }
     return '-';

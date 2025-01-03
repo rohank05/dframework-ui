@@ -101,9 +101,11 @@ const StateProvider = ({ children }) => {
   }
 
   function formatDate({ value, useSystemFormat, showOnlyDate = false, state, timeZone }) {
-    console.log("TimeZone ", timeZone, stateData);
     if (value) {
       const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
+      if(!timeZone){
+        return dayjs(value).format(format);
+      }
       return dayjs(value).tz(timeZone).format(format);
     }
     return '-';
