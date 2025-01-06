@@ -358,7 +358,7 @@ const getFormConfig = function getFormConfig(_ref5) {
       field,
       fieldLabel,
       column: _objectSpread(_objectSpread({}, column), {}, {
-        readOnly: searchParams.has('showRelation')
+        readOnly: searchParams.has('showRelation') || column.readOnly
       }),
       otherProps
     });
