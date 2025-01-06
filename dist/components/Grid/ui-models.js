@@ -106,7 +106,7 @@ class UiModel {
     // if module is not specified, use title as module name after removing all alphanumeric characters
     const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
     if (!api) {
-      api = "".concat(title.replaceAll(nonAlphaNumeric, '-').toLowerCase());
+      api = "".concat(title.replaceAll(nonAlphaNumeric, '').toLowerCase());
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
     api = controllerType === 'cs' ? "".concat(api, ".ashx") : "".concat(api);
@@ -241,7 +241,6 @@ class UiModel {
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (requiredIfNew && (!id || id === '')) {
-        console.log("Entered here ");
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (validate) {
