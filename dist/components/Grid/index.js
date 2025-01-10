@@ -651,7 +651,26 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           label: '',
           width: actions.length * 50,
           hideable: false,
-          getActions: () => actions
+          getActions: params => {
+            const rowActions = [...actions]; // Copy the base actions array
+
+            if (canEdit && model.disableProperty) {
+              const disableProperty = model.disableProperty;
+              const isDisabled = disableProperty && params.row[disableProperty.key] !== disableProperty.value;
+
+              // Update the specific "Edit" action dynamically
+              rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+                icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+                  title: "Edit"
+                }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
+                "data-action": actionTypes.Edit,
+                label: "Edit",
+                color: "primary",
+                disabled: isDisabled // Dynamically set the disabled prop
+              });
+            }
+            return rowActions;
+          }
         });
       }
       pinnedColumns.right.push('actions');
@@ -926,6 +945,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     } = event;
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
+      return;
+    }
+    if (model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
       return;
     }
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
