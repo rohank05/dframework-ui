@@ -1,6 +1,5 @@
 import actionsStateProvider from "./actions";
 const stateReducer = (state, action) => {
-    console.log("reducer", state, action)
     let newState;
     switch (action.type) {
         case actionsStateProvider.UPDATE_LOCALIZATION:
