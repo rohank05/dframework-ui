@@ -439,7 +439,32 @@ const GridBase = memo(({
                     label: '',
                     width: actions.length * 50,
                     hideable: false,
-                    getActions: () => actions,
+                    getActions: (params) => {
+                        const rowActions = [...actions]; // Copy the base actions array
+
+                        if (canEdit && model.disableProperty) {
+                            const disableProperty = model.disableProperty;
+                            const isDisabled =
+                                disableProperty && params.row[disableProperty.key] !== disableProperty.value;
+
+                            // Update the specific "Edit" action dynamically
+                            rowActions[0] = (
+                                <GridActionsCellItem
+                                    icon={
+                                        <Tooltip title="Edit">
+                                            <EditIcon />
+                                        </Tooltip>
+                                    }
+                                    data-action={actionTypes.Edit}
+                                    label="Edit"
+                                    color="primary"
+                                    disabled={isDisabled} // Dynamically set the disabled prop
+                                />
+                            );
+                        }
+
+                        return rowActions;
+                    },
                 });
             }
             pinnedColumns.right.push('actions');
@@ -653,6 +678,11 @@ const GridBase = memo(({
             onCellDoubleClickOverride(event);
             return;
         }
+
+        if(model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
+            return;
+        }
+
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm({ id: record[idProperty], record });
         }
