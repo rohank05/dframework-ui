@@ -84,7 +84,6 @@ var _date = _interopRequireDefault(require("./fields/date"));
 var _dateTime = _interopRequireDefault(require("./fields/dateTime"));
 var _time = _interopRequireDefault(require("./fields/time"));
 var _select = _interopRequireDefault(require("./fields/select"));
-var _formGrid = _interopRequireDefault(require("./fields/form-grid"));
 var _gridTransfer = _interopRequireDefault(require("./fields/grid-transfer"));
 var _Grid = _interopRequireDefault(require("@mui/material/Grid"));
 var _radio = _interopRequireDefault(require("./fields/radio"));
@@ -101,6 +100,7 @@ var _styled = _interopRequireDefault(require("@emotion/styled"));
 var _chipInput = _interopRequireDefault(require("./fields/chipInput"));
 var _treeCheckBox = _interopRequireDefault(require("./fields/treeCheckBox"));
 var _document = _interopRequireDefault(require("./fields/document"));
+var _jsonInput = _interopRequireDefault(require("./fields/jsonInput"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -129,7 +129,8 @@ const fieldMappers = exports.fieldMappers = {
   "email": _string.default,
   "chipInput": _chipInput.default,
   "treeCheckbox": _treeCheckBox.default,
-  "document": _document.default
+  "document": _document.default,
+  "json": _jsonInput.default
 };
 const useStyles = (0, _core.makeStyles)({
   root: {

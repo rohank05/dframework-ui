@@ -811,13 +811,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   };
   const onCellClickHandler = async (cellParams, event, details) => {
     if (!isReadOnly) {
-      if (typeof onCellClick === 'function') {
-        await onCellClick({
+      if (onCellClick) {
+        const result = await onCellClick({
           cellParams,
           event,
           details
         });
-        return;
+        if (typeof result !== "boolean") {
+          return;
+        }
       }
       const {
         row: record
