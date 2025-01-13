@@ -4,8 +4,9 @@ import Input from '@mui/material/Input';
 import Typography from '@mui/material/Typography';
 import debounce from 'lodash/debounce';
 
-const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
+const Field = ({ field, formik }) => {
     const [state, setState] = React.useState({});
+    console.log('formik values in field', formik.values);
     React.useEffect(() => {
         if (!formik.values[field]) return;
         const inputJSON = JSON.parse(formik.values[field]);
@@ -28,7 +29,7 @@ const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, m
 
     React.useEffect(() => {
         return () => {
-            handleDebouncedChange.cancel(); 
+            handleDebouncedChange.cancel();
         };
     }, [handleDebouncedChange]);
 
@@ -51,7 +52,7 @@ const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, m
                     }}
                 >
                     <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
-                        {key} : 
+                        {key} :
                     </Typography>
                     <Input
                         id={key}

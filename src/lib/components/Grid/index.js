@@ -168,6 +168,7 @@ const GridBase = memo(({
     additionalFilters,
     onCellDoubleClickOverride,
     onAddOverride,
+    dynamicColumns,
     ...props
 }) => {
 
@@ -328,7 +329,10 @@ const GridBase = memo(({
 
     const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
-        const baseColumnList = columns || model?.gridColumns || model?.columns;
+        let baseColumnList = columns || model?.gridColumns || model?.columns;
+        if (dynamicColumns) {
+            baseColumnList = [...dynamicColumns, ...baseColumnList];
+        }
         const pinnedColumns = { left: [GRID_CHECKBOX_SELECTION_COL_DEF.field], right: [] };
         const finalColumns = [];
         const lookupMap = {};
@@ -469,9 +473,9 @@ const GridBase = memo(({
             }
             pinnedColumns.right.push('actions');
         }
-
+        console.log("finalColumns", finalColumns);
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
-    }, [columns, model, parent, permissions, forAssignment]);
+    }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
@@ -537,6 +541,7 @@ const GridBase = memo(({
         });
     };
     const openForm = ({ id, record = {}, mode }) => {
+        // console.log("519 dynamicColumns", dynamicColumns);
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;
@@ -557,6 +562,10 @@ const GridBase = memo(({
             searchParams.set(addUrlParamKey, record[addUrlParamKey]);
             path += `?${searchParams.toString()}`;
         }
+        // if(dynamicColumns){
+        //     const encodedData = encodeURIComponent(JSON.stringify(dynamicColumns));
+        //     path += `?dynamicColumns=${encodedData}`;
+        // }
         navigate(path);
     };
 

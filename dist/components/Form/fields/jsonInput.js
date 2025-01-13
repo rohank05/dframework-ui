@@ -28,32 +28,19 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const Field = _ref => {
   let {
-    column,
     field,
-    fieldLabel,
-    formik,
-    lookups,
-    data,
-    otherProps,
-    model,
-    fieldConfigs,
-    mode
+    formik
   } = _ref;
   const [state, setState] = React.useState({});
-  console.log(formik.values[field]);
-  // Initialize state based on formik values
+  console.log('formik values in field', formik.values);
   React.useEffect(() => {
     if (!formik.values[field]) return;
     const inputJSON = JSON.parse(formik.values[field]);
     setState(inputJSON);
   }, [formik.values[field]]);
-
-  // Debounced handler for updating formik field
   const handleDebouncedChange = React.useMemo(() => (0, _debounce.default)(newState => {
     formik.setFieldValue(field, JSON.stringify(newState));
   }, 300), [formik, field]);
-
-  // Handle input changes
   const handleChange = (key, value) => {
     const updatedState = _objectSpread(_objectSpread({}, state), {}, {
       [key]: value
@@ -63,7 +50,7 @@ const Field = _ref => {
   };
   React.useEffect(() => {
     return () => {
-      handleDebouncedChange.cancel(); // Cleanup debounce on component unmount
+      handleDebouncedChange.cancel();
     };
   }, [handleDebouncedChange]);
   return /*#__PURE__*/React.createElement(_FormControl.default, {

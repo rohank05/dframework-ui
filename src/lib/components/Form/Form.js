@@ -20,6 +20,7 @@ import actionsStateProvider from "../useRouter/actions";
 import PageTitle from "../PageTitle";
 import { getPermissions } from "../utils";
 import Relations from "./relations";
+import { useLocation } from "react-router";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
@@ -44,6 +45,18 @@ const Form = ({
   const { dispatchData, stateData } = useStateContext();
   const { id: idWithOptions } = useParams() || getParams;
   const id = idWithOptions?.split("-")[0];
+  const searchParams = new URLSearchParams(window.location.search);
+  // const location = useLocation();
+  // const params = new URLSearchParams(location.search);
+  const baseDataFromParams = searchParams.has('baseData') && JSON.parse(decodeURIComponent(searchParams.get('baseData')));
+  if (baseDataFromParams) {
+    const columnName = model.columns.find(
+      (column) => column.type === "json"
+    );
+    if (columnName) {
+      baseSaveData[columnName.field] = JSON.stringify(baseDataFromParams);
+    }
+  }
   const [childFilters, setChildFilters] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
@@ -120,7 +133,6 @@ const Form = ({
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url]);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: { ...model.initialValues, ...data, ...baseSaveData },
@@ -272,7 +284,6 @@ const Form = ({
     { text: id === "0" ? "New" : "Update" }
   ];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
-  const searchParams = new URLSearchParams(window.location.search);
   const showSaveButton = searchParams.has("showRelation");
   return (
     <>
