@@ -40,7 +40,6 @@ var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _utils = require("../utils");
 var _relations = _interopRequireDefault(require("./relations"));
-var _reactRouter = require("react-router");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -87,8 +86,6 @@ const Form = _ref => {
   } = useParams() || getParams;
   const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-")[0];
   const searchParams = new URLSearchParams(window.location.search);
-  // const location = useLocation();
-  // const params = new URLSearchParams(location.search);
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);

@@ -20,7 +20,6 @@ import actionsStateProvider from "../useRouter/actions";
 import PageTitle from "../PageTitle";
 import { getPermissions } from "../utils";
 import Relations from "./relations";
-import { useLocation } from "react-router";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 
@@ -46,8 +45,6 @@ const Form = ({
   const { id: idWithOptions } = useParams() || getParams;
   const id = idWithOptions?.split("-")[0];
   const searchParams = new URLSearchParams(window.location.search);
-  // const location = useLocation();
-  // const params = new URLSearchParams(location.search);
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);

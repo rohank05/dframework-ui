@@ -294,7 +294,7 @@ const RenderColumns = _ref3 => {
       alignItems: isGridComponent ? "flex-start" : "center"
     }, (column === null || column === void 0 ? void 0 : column.showLabel) !== false ? /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
-      xs: 1.5,
+      xs: 3,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
       sx: {
@@ -303,7 +303,7 @@ const RenderColumns = _ref3 => {
       }
     }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
-      xs: isGridComponent ? 12 : 10.5,
+      xs: isGridComponent ? 12 : 9,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
       model: model,
