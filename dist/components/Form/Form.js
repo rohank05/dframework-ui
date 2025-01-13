@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = exports.ActiveStepContext = void 0;
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
+require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
@@ -39,6 +40,7 @@ var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _utils = require("../utils");
 var _relations = _interopRequireDefault(require("./relations"));
+var _reactRouter = require("react-router");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -84,6 +86,16 @@ const Form = _ref => {
     id: idWithOptions
   } = useParams() || getParams;
   const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-")[0];
+  const searchParams = new URLSearchParams(window.location.search);
+  // const location = useLocation();
+  // const params = new URLSearchParams(location.search);
+  const baseDataFromParams = searchParams.has('baseData') && JSON.parse(decodeURIComponent(searchParams.get('baseData')));
+  if (baseDataFromParams) {
+    const columnName = model.columns.find(column => column.type === "json");
+    if (columnName) {
+      baseSaveData[columnName.field] = JSON.stringify(baseDataFromParams);
+    }
+  }
   const [childFilters, setChildFilters] = (0, _react.useState)(null);
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [data, setData] = (0, _react.useState)(null);
@@ -325,7 +337,6 @@ const Form = _ref => {
     text: id === "0" ? "New" : "Update"
   }];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
-  const searchParams = new URLSearchParams(window.location.search);
   const showSaveButton = searchParams.has("showRelation");
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     title: formTitle,

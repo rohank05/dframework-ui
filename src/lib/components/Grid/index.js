@@ -168,6 +168,7 @@ const GridBase = memo(({
     additionalFilters,
     onCellDoubleClickOverride,
     onAddOverride,
+    dynamicColumns,
     ...props
 }) => {
 
@@ -206,7 +207,7 @@ const GridBase = memo(({
     const toLink = model.columns.map(item => item.link);
     const [isGridPreferenceFetched, setIsGridPreferenceFetched] = useState(false);
     const classes = useStyles();
-    const {  stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
+    const { stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
     const { timeZone } = stateData;
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
@@ -328,7 +329,10 @@ const GridBase = memo(({
 
     const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
-        const baseColumnList = columns || model?.gridColumns || model?.columns;
+        let baseColumnList = columns || model?.gridColumns || model?.columns;
+        if (dynamicColumns) {
+            baseColumnList = [...dynamicColumns, ...baseColumnList];
+        }
         const pinnedColumns = { left: [GRID_CHECKBOX_SELECTION_COL_DEF.field], right: [] };
         const finalColumns = [];
         const lookupMap = {};
@@ -469,9 +473,8 @@ const GridBase = memo(({
             }
             pinnedColumns.right.push('actions');
         }
-
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
-    }, [columns, model, parent, permissions, forAssignment]);
+    }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
@@ -557,6 +560,10 @@ const GridBase = memo(({
             searchParams.set(addUrlParamKey, record[addUrlParamKey]);
             path += `?${searchParams.toString()}`;
         }
+        // if(dynamicColumns){
+        //     const encodedData = encodeURIComponent(JSON.stringify(dynamicColumns));
+        //     path += `?dynamicColumns=${encodedData}`;
+        // }
         navigate(path);
     };
 
@@ -674,7 +681,6 @@ const GridBase = memo(({
 
     const onCellDoubleClick = (event) => {
         const { row: record } = event;
-
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;

@@ -8,7 +8,6 @@ import DateField from './fields/date';
 import DateTimeField from './fields/dateTime';
 import TimeField from './fields/time';
 import SelectField from './fields/select';
-import GridForm from './fields/form-grid'
 import GridTransfer from './fields/grid-transfer';
 import Grid from '@mui/material/Grid';
 import RadioField from './fields/radio';
@@ -25,6 +24,7 @@ import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
 import TreeCheckbox from './fields/treeCheckBox';
 import Document from './fields/document';
+import JSONInput from './fields/jsonInput';
 
 const fieldMappers = {
     "boolean": BooleanField,
@@ -43,7 +43,8 @@ const fieldMappers = {
     "email": StringField,
     "chipInput": ChipInput,
     "treeCheckbox": TreeCheckbox,
-    "document": Document
+    "document": Document,
+    "json": JSONInput
 };
 
 const useStyles = makeStyles({
@@ -176,7 +177,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     )
 }
 
-const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id , searchParams}) {
+const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, searchParams }) {
     const formElements = [], tabColumns = {};
     for (const tab in tabs) {
         tabColumns[tab] = [];
@@ -197,7 +198,7 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id , 
         }
 
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, fieldLabel, column: {...column, readOnly: searchParams.has('showRelation') || column.readOnly }, otherProps });
+        target.push({ Component, field, fieldLabel, column: { ...column, readOnly: searchParams.has('showRelation') || column.readOnly }, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {

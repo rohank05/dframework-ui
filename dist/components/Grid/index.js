@@ -62,7 +62,7 @@ var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu")
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
-const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride"],
+const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -231,7 +231,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       reRenderKey,
       additionalFilters,
       onCellDoubleClickOverride,
-      onAddOverride
+      onAddOverride,
+      dynamicColumns
     } = _ref2,
     props = _objectWithoutProperties(_ref2, _excluded);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
@@ -484,7 +485,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     pinnedColumns,
     lookupMap
   } = (0, _react.useMemo)(() => {
-    const baseColumnList = columns || (model === null || model === void 0 ? void 0 : model.gridColumns) || (model === null || model === void 0 ? void 0 : model.columns);
+    let baseColumnList = columns || (model === null || model === void 0 ? void 0 : model.gridColumns) || (model === null || model === void 0 ? void 0 : model.columns);
+    if (dynamicColumns) {
+      baseColumnList = [...dynamicColumns, ...baseColumnList];
+    }
     const pinnedColumns = {
       left: [_xDataGridPremium.GRID_CHECKBOX_SELECTION_COL_DEF.field],
       right: []
@@ -680,7 +684,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       pinnedColumns,
       lookupMap
     };
-  }, [columns, model, parent, permissions, forAssignment]);
+  }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
   const fetchData = function fetchData() {
     var _chartFilters$items;
     let action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "list";
@@ -800,6 +804,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       searchParams.set(addUrlParamKey, record[addUrlParamKey]);
       path += "?".concat(searchParams.toString());
     }
+    // if(dynamicColumns){
+    //     const encodedData = encodeURIComponent(JSON.stringify(dynamicColumns));
+    //     path += `?dynamicColumns=${encodedData}`;
+    // }
     navigate(path);
   };
   const handleDownload = async _ref5 => {
