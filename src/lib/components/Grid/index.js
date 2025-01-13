@@ -473,7 +473,6 @@ const GridBase = memo(({
             }
             pinnedColumns.right.push('actions');
         }
-        console.log("finalColumns", finalColumns);
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
     }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
@@ -541,7 +540,6 @@ const GridBase = memo(({
         });
     };
     const openForm = ({ id, record = {}, mode }) => {
-        // console.log("519 dynamicColumns", dynamicColumns);
         if (setActiveRecord) {
             getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;

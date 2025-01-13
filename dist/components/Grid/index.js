@@ -679,7 +679,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
       pinnedColumns.right.push('actions');
     }
-    console.log("finalColumns", finalColumns);
     return {
       gridColumns: finalColumns,
       pinnedColumns,
@@ -771,7 +770,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       record = {},
       mode
     } = _ref4;
-    // console.log("519 dynamicColumns", dynamicColumns);
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
