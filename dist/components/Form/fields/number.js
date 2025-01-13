@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.string.ends-with.js");
+require("core-js/modules/es.string.starts-with.js");
+require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireDefault(require("react"));
 var _string = _interopRequireDefault(require("./string"));
 const _excluded = ["column", "otherProps", "formik", "field"];
@@ -24,25 +27,44 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (e.includes(n)) continue; t[n] = r[n]; } return t; }
-const field = _ref => {
+const resolveValue = _ref => {
+  let {
+    value,
+    state
+  } = _ref;
+  if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
+    const key = value.slice(1, -1); // Extract key inside the braces
+    return state[key] !== undefined ? state[key] : value;
+  }
+  return value;
+};
+const field = _ref2 => {
   let {
       column,
       otherProps,
       formik,
       field
-    } = _ref,
-    props = _objectWithoutProperties(_ref, _excluded);
+    } = _ref2,
+    props = _objectWithoutProperties(_ref2, _excluded);
   const {
     minValue: min,
     maxValue: max
   } = column;
+  const resolvedMin = resolveValue({
+    value: min,
+    state: formik.values
+  });
+  const resolvedMax = resolveValue({
+    value: max,
+    state: formik.values
+  });
   const minKey = 47;
   const maxKey = 58;
   otherProps = _objectSpread(_objectSpread({
     InputProps: {
       inputProps: {
-        min: Math.max(0, min),
-        max,
+        min: Math.max(0, resolvedMin),
+        max: resolvedMax,
         readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
         onKeyPress: event => {
           const keyCode = event.which ? event.which : event.keyCode;
@@ -57,6 +79,9 @@ const field = _ref => {
     onBlur: event => {
       if (event.target.value < Math.max(0, min)) {
         formik.setFieldValue(field, Math.max(0, min));
+      }
+      if (resolvedMax && event.target.value > resolvedMax) {
+        formik.setFieldValue(field, resolvedMax);
       }
       if (props.onBlur) {
         props.onBlur(event);

@@ -89,14 +89,18 @@ const Form = _ref => {
   const searchParams = new URLSearchParams(window.location.search);
   // const location = useLocation();
   // const params = new URLSearchParams(location.search);
-  const baseDataFromParams = searchParams.has('baseData') && JSON.parse(decodeURIComponent(searchParams.get('baseData')));
+  const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
   if (baseDataFromParams) {
-    const columnName = model.columns.find(column => column.type === "json");
-    if (columnName) {
-      baseSaveData[columnName.field] = JSON.stringify(baseDataFromParams);
+    const parsedData = JSON.parse(baseDataFromParams);
+    if (typeof parsedData === 'object' && parsedData !== null) {
+      const jsonColumn = model.columns.find(column => column.type === 'json');
+      if (jsonColumn) {
+        baseSaveData[jsonColumn.field] = JSON.stringify(parsedData);
+      } else {
+        baseSaveData = _objectSpread(_objectSpread({}, baseSaveData), parsedData);
+      }
     }
   }
-  const [childFilters, setChildFilters] = (0, _react.useState)(null);
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
   const [data, setData] = (0, _react.useState)(null);
   const [lookups, setLookups] = (0, _react.useState)(null);

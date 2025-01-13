@@ -560,10 +560,6 @@ const GridBase = memo(({
             searchParams.set(addUrlParamKey, record[addUrlParamKey]);
             path += `?${searchParams.toString()}`;
         }
-        // if(dynamicColumns){
-        //     const encodedData = encodeURIComponent(JSON.stringify(dynamicColumns));
-        //     path += `?dynamicColumns=${encodedData}`;
-        // }
         navigate(path);
     };
 

@@ -804,10 +804,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       searchParams.set(addUrlParamKey, record[addUrlParamKey]);
       path += "?".concat(searchParams.toString());
     }
-    // if(dynamicColumns){
-    //     const encodedData = encodeURIComponent(JSON.stringify(dynamicColumns));
-    //     path += `?dynamicColumns=${encodedData}`;
-    // }
     navigate(path);
   };
   const handleDownload = async _ref5 => {
