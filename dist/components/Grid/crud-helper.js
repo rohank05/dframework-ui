@@ -107,7 +107,8 @@ const getList = async _ref => {
         let {
           value
         } = filter;
-        const column = gridColumns.filter(item => item.field === filter.field);
+        console.log("gridColumns", gridColumns);
+        const column = gridColumns.filter(item => (item === null || item === void 0 ? void 0 : item.field) === (filter === null || filter === void 0 ? void 0 : filter.field));
         const type = (_column$ = column[0]) === null || _column$ === void 0 ? void 0 : _column$.type;
         if (type === 'boolean') {
           value = value === 'true' || value === true ? 1 : 0;
