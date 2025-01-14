@@ -444,29 +444,23 @@ const GridBase = memo(({
                     width: actions.length * 50,
                     hideable: false,
                     getActions: (params) => {
-                        const rowActions = [...actions]; // Copy the base actions array
-
-                        if (canEdit && model.disableProperty) {
-                            const disableProperty = model.disableProperty;
-                            const isDisabled =
-                                disableProperty && params.row[disableProperty.key] !== disableProperty.value;
-
-                            // Update the specific "Edit" action dynamically
-                            rowActions[0] = (
-                                <GridActionsCellItem
-                                    icon={
-                                        <Tooltip title="Edit">
-                                            <EditIcon />
-                                        </Tooltip>
-                                    }
-                                    data-action={actionTypes.Edit}
-                                    label="Edit"
-                                    color="primary"
-                                    disabled={isDisabled} // Dynamically set the disabled prop
-                                />
-                            );
-                        }
-
+                        const rowActions = [...actions];
+                        const { disableProperty } = model;
+                        const { canEdit } = params.row;
+                        const isDisabled = (canEdit === false) || (disableProperty && params.row[disableProperty.key] !== disableProperty.value);
+                        rowActions[0] = (
+                            <GridActionsCellItem
+                                icon={
+                                    <Tooltip title="Edit">
+                                        <EditIcon />
+                                    </Tooltip>
+                                }
+                                data-action={actionTypes.Edit}
+                                label="Edit"
+                                color="primary"
+                                disabled={isDisabled}
+                            />
+                        );
                         return rowActions;
                     },
                 });
@@ -682,7 +676,7 @@ const GridBase = memo(({
             return;
         }
 
-        if(model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
+        if (model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
             return;
         }
 
