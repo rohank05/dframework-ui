@@ -424,9 +424,10 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
-        data = {}
+        data = {},
+        success
       } = response.data;
-      if (data.success) {
+      if (data.success || success) {
         return data;
       }
       setError('Save failed', data.err || data.message);

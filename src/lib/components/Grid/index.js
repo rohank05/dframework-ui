@@ -26,7 +26,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import { useSnackbar } from '../SnackBar/index';
 import { DialogComponent } from '../Dialog/index';
-import { getList, getRecord, deleteRecord } from './crud-helper';
+import { getList, getRecord, deleteRecord, saveRecord } from './crud-helper';
 import PropTypes from 'prop-types';
 import { Footer } from './footer';
 import template from './template';
@@ -43,6 +43,7 @@ import CustomDropdownmenu from './CustomDropdownmenu';
 import { getPermissions } from '../utils';
 import HistoryIcon from '@mui/icons-material/History';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import Checkbox from '@mui/material/Checkbox';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -195,11 +196,12 @@ const GridBase = memo(({
         })
     }
     const [filterModel, setFilterModel] = useState({ ...initialFilterModel });
+    const [selectState, setSelectState] = useState([]);
     const { navigate, getParams, useParams, pathname } = useRouter();
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, nestedGrid = false } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, nestedGrid = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true;
     const isDoubleClicked = model.doubleClicked === false;
     const dataRef = useRef(data);
@@ -233,6 +235,30 @@ const GridBase = memo(({
         OrderStatus: 'OrderStatusId'
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
+
+    const { [selectionApi.KeyField]: dataID } = useParams();
+
+    const customCheckBox = (params) => {
+        
+        const handleSelectRow = (e) => {
+            setSelectState((prevState) => [
+                ...prevState,
+                {
+                    ...params.row,
+                    [selectionApi.KeyField]: dataID
+                },
+            ]);
+        }
+        return (
+            <Checkbox
+                onClick={(event) => handleSelectRow(event)}
+                disabled={false}
+                color="primary"
+                inputProps={{ 'aria-label': 'checkbox' }}
+            />
+        )
+    }
+
     const gridColumnTypes = {
         "radio": {
             "type": "singleSelect",
@@ -262,6 +288,9 @@ const GridBase = memo(({
         "select": {
             "type": "singleSelect",
             "valueOptions": "lookup"
+        },
+        "selection": {
+            renderCell: customCheckBox
         }
     }
 
@@ -714,6 +743,28 @@ const GridBase = memo(({
 
 
     const onAdd = () => {
+        if(Object.keys(selectionApi).length > 0){
+            const url = stateData?.gridSettings?.permissions?.Url;
+            let gridApi = `${url}${selectionApi.api || api}/updateMany`;
+            saveRecord({id: 0, api: gridApi, values: { items: selectState }, setIsLoading, setError: snackbar.showError }).then((success) => {
+                if (success) {
+                  if (model.updateChildGridRecords) {
+                    model.updateChildGridRecords();
+                  }
+                  snackbar.showMessage("Record Updated Successfully.");
+                  window.location.reload();
+                }
+              })
+              .catch((err) => {
+                snackbar.showError(
+                  "An error occured, please try after some time.second",
+                  err
+                );
+              })
+              .finally(() => setIsLoading(false));
+            
+            return;
+        }
         if (typeof onAddOverride === 'function') {
             onAddOverride();
         } else {
