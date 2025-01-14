@@ -32,7 +32,6 @@ const Field = _ref => {
     formik
   } = _ref;
   const [state, setState] = React.useState({});
-  console.log('formik values in field', formik.values);
   React.useEffect(() => {
     if (!formik.values[field]) return;
     const inputJSON = JSON.parse(formik.values[field]);

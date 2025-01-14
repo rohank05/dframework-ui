@@ -1216,7 +1216,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
         var _gridColumns$filter$;
-        console.log("873", gridColumns, item);
         const isKeywordField = isElasticScreen && ((_gridColumns$filter$ = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (item === null || item === void 0 ? void 0 : item.field))[0]) === null || _gridColumns$filter$ === void 0 ? void 0 : _gridColumns$filter$.isKeywordField);
         if (isKeywordField) {
           item.filterField = "".concat(item.field, ".keyword");
@@ -1258,7 +1257,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const updateSort = e => {
     const sort = e.map(ele => {
       var _gridColumns$filter$2;
-      console.log("908", gridColumns, ele);
       const isKeywordField = isElasticScreen && ((_gridColumns$filter$2 = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (ele === null || ele === void 0 ? void 0 : ele.field))[0]) === null || _gridColumns$filter$2 === void 0 ? void 0 : _gridColumns$filter$2.isKeywordField);
       return _objectSpread(_objectSpread({}, ele), {}, {
         filterField: isKeywordField ? "".concat(ele.field, ".keyword") : ele.field

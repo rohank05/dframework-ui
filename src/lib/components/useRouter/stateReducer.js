@@ -32,7 +32,6 @@ const stateReducer = (state, action) => {
             return { ...state, filtersInHeader: action.payload };
         case actionsStateProvider.SET_TIMEZONE:
             newState = { ...state, timeZone: action.payload };
-            console.log('currentState', newState);
             return newState;
         default:
             return state;

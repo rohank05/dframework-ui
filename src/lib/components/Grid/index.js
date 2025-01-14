@@ -870,7 +870,6 @@ const GridBase = memo(({
             }
 
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
-                console.log("873", gridColumns, item);
                 const isKeywordField = isElasticScreen && gridColumns.filter(element => element?.field === item?.field)[0]?.isKeywordField;
                 if (isKeywordField) {
                     item.filterField = `${item.field}.keyword`;
@@ -905,7 +904,6 @@ const GridBase = memo(({
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {
-            console.log("908", gridColumns, ele);
             const isKeywordField = isElasticScreen && gridColumns.filter(element => element?.field === ele?.field)[0]?.isKeywordField
             return { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
         })

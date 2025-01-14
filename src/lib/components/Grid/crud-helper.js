@@ -33,7 +33,6 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || (filter.value === false && filter.type === 'boolean')) {
                 const { field, operator, filterField } = filter;
                 let { value } = filter;
-                console.log("gridColumns", gridColumns);
                 const column = gridColumns.filter((item) => item?.field === filter?.field);
                 const type = column[0]?.type;
                 if (type === 'boolean') {
@@ -196,7 +195,6 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
 };
 
 const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
-    console.log(modelConfig, api)
     api = api || modelConfig?.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();

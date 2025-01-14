@@ -79,7 +79,6 @@ const stateReducer = (state, action) => {
       newState = _objectSpread(_objectSpread({}, state), {}, {
         timeZone: action.payload
       });
-      console.log('currentState', newState);
       return newState;
     default:
       return state;

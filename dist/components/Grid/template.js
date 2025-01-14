@@ -12,11 +12,7 @@ const defaultTemplate = /\${((\w+)\.)?(\w+)}/g;
  * @returns {string} The source with the tags replaced.
  * @example
  * // Replaces all tags in the given source with the given values.
- * console.log(template("${firstName} ${lastName}", { firstName: "John", lastName: "Doe" }));
- * // -> "John Doe"
  * // Two level tags are supported.
- * console.log(template("${user.firstName} ${user.lastName}", { user: { firstName: "John", lastName: "Doe" } }));
- * // -> "John Doe"
  **/
 const replaceTags = function replaceTags(source, tags) {
   let {
