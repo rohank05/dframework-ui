@@ -658,18 +658,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           getActions: params => {
             const rowActions = [...actions];
             const {
-              canEdit
+              canEdit: isRowEditable
             } = params.row;
-            const isDisabled = canEdit === false;
-            rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-              icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-                title: "Edit"
-              }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
-              "data-action": actionTypes.Edit,
-              label: "Edit",
-              color: "primary",
-              disabled: isDisabled
-            });
+            const isDisabled = isRowEditable === false;
+            if (canEdit) {
+              rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+                icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+                  title: "Edit"
+                }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
+                "data-action": actionTypes.Edit,
+                label: "Edit",
+                color: "primary",
+                disabled: isDisabled
+              });
+            }
             return rowActions;
           }
         });

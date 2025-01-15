@@ -445,21 +445,23 @@ const GridBase = memo(({
                     hideable: false,
                     getActions: (params) => {
                         const rowActions = [...actions];
-                        const { canEdit } = params.row;
-                        const isDisabled = canEdit === false;
-                        rowActions[0] = (
-                            <GridActionsCellItem
-                                icon={
-                                    <Tooltip title="Edit">
-                                        <EditIcon />
-                                    </Tooltip>
-                                }
-                                data-action={actionTypes.Edit}
-                                label="Edit"
-                                color="primary"
-                                disabled={isDisabled}
-                            />
-                        );
+                        const { canEdit: isRowEditable } = params.row;
+                        const isDisabled = isRowEditable === false;
+                        if(canEdit) {
+                            rowActions[0] = (
+                                <GridActionsCellItem
+                                    icon={
+                                        <Tooltip title="Edit">
+                                            <EditIcon />
+                                        </Tooltip>
+                                    }
+                                    data-action={actionTypes.Edit}
+                                    label="Edit"
+                                    color="primary"
+                                    disabled={isDisabled}
+                                />
+                            );
+                        }
                         return rowActions;
                     },
                 });
