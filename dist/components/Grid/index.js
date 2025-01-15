@@ -658,12 +658,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           getActions: params => {
             const rowActions = [...actions];
             const {
-              disableProperty
-            } = model;
-            const {
               canEdit
             } = params.row;
-            const isDisabled = canEdit === false || disableProperty && params.row[disableProperty.key] !== disableProperty.value;
+            const isDisabled = canEdit === false;
             rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
               icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
                 title: "Edit"
@@ -951,7 +948,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       onCellDoubleClickOverride(event);
       return;
     }
-    if (model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
+    if (event.row.canEdit === false) {
       return;
     }
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
