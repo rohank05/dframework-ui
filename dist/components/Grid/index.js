@@ -12,6 +12,7 @@ require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
+require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.regexp.to-string.js");
 require("core-js/modules/es.string.ends-with.js");
@@ -62,6 +63,7 @@ var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu")
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
+var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
@@ -273,6 +275,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   }
   const [filterModel, setFilterModel] = (0, _react.useState)(_objectSpread({}, initialFilterModel));
+  const [selectState, setSelectState] = (0, _react.useState)([]);
   const {
     navigate,
     getParams,
@@ -293,7 +296,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideTopFilters = true,
     updatePageTitle = true,
     isElasticScreen = false,
-    nestedGrid = false
+    nestedGrid = false,
+    selectionApi = {}
   } = model;
   const isReadOnly = model.readOnly === true;
   const isDoubleClicked = model.doubleClicked === false;
@@ -358,6 +362,28 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     OrderStatus: 'OrderStatusId'
   };
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
+  const searchParams = new URLSearchParams(window.location.search);
+  let baseSaveData = {};
+  const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+  if (baseDataFromParams) {
+    const parsedData = JSON.parse(baseDataFromParams);
+    if (typeof parsedData === 'object' && parsedData !== null) {
+      baseSaveData = parsedData;
+    }
+  }
+  const handleSelectRow = params => {
+    setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, baseSaveData), params.row)]);
+  };
+  const customCheckBox = params => {
+    return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
+      onClick: () => handleSelectRow(params),
+      disabled: false,
+      color: "primary",
+      inputProps: {
+        'aria-label': 'checkbox'
+      }
+    });
+  };
   const gridColumnTypes = {
     "radio": {
       "type": "singleSelect",
@@ -406,6 +432,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     "select": {
       "type": "singleSelect",
       "valueOptions": "lookup"
+    },
+    "selection": {
+      renderCell: customCheckBox
     }
   };
   (0, _react.useEffect)(() => {
@@ -479,7 +508,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   }, []);
-  const searchParams = new URLSearchParams(window.location.search);
   const {
     gridColumns,
     pinnedColumns,
@@ -975,6 +1003,28 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     fetchData();
   };
   const onAdd = () => {
+    if (selectionApi.length > 0) {
+      var _stateData$gridSettin6;
+      const url = stateData === null || stateData === void 0 || (_stateData$gridSettin6 = stateData.gridSettings) === null || _stateData$gridSettin6 === void 0 || (_stateData$gridSettin6 = _stateData$gridSettin6.permissions) === null || _stateData$gridSettin6 === void 0 ? void 0 : _stateData$gridSettin6.Url;
+      let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
+      (0, _crudHelper.saveRecord)({
+        id: 0,
+        api: gridApi,
+        values: {
+          items: selectState
+        },
+        setIsLoading,
+        setError: snackbar.showError
+      }).then(success => {
+        if (success) {
+          snackbar.showMessage("Record Updated Successfully.");
+          window.location.reload();
+        }
+      }).catch(err => {
+        snackbar.showError("An error occured, please try after some time.second", err);
+      }).finally(() => setIsLoading(false));
+      return;
+    }
     if (typeof onAddOverride === 'function') {
       onAddOverride();
     } else {

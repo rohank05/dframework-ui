@@ -423,6 +423,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
+      console.log("Response is ", response);
       const {
         data = {}
       } = response.data;
