@@ -35,14 +35,39 @@ const SelectField = _ref => {
     onChange,
     getRecordAndLookups
   } = _ref;
-  const [loading, setIsloading] = _react.default.useState(false);
-  const [options, setOptions] = _react.default.useState(typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup);
+  const [loading, setIsLoading] = _react.default.useState(false);
+  const [userSelected, setUserSelected] = _react.default.useState(false); // Tracks if the user has selected a value
+  const {
+    filterOptions
+  } = column;
+
+  // Compute initial options
+  const initialOptions = (0, _react.useMemo)(() => {
+    let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
+    if (filterOptions) {
+      return filterOptions({
+        options,
+        currentValue: formik.values[field]
+      });
+    }
+    return options;
+  }, [column.lookup, filterOptions, lookups, field, formik.values]);
+  const [options, setOptions] = _react.default.useState(initialOptions);
+
+  // Sync options with initialOptions only if the user has not made a selection
+  (0, _react.useEffect)(() => {
+    if (!userSelected) {
+      setOptions(initialOptions);
+    }
+  }, [initialOptions, userSelected]);
   const setActiveRecord = lookups => {
     const {
       State
     } = lookups;
     if (!State) return;
-    setOptions(State);
+    if (!userSelected) {
+      setOptions(State);
+    }
   };
   const onOpen = () => {
     if (!column.parentComboField) return;
@@ -51,7 +76,7 @@ const SelectField = _ref => {
     getRecordAndLookups({
       scopeId: formik.values[valueField],
       lookups: column.lookup,
-      customSetIsLoading: setIsloading,
+      customSetIsLoading: setIsLoading,
       customSetActiveRecord: setActiveRecord
     });
   };
@@ -75,6 +100,10 @@ const SelectField = _ref => {
       }
     }
   }
+  const handleChange = event => {
+    formik.handleChange(event); // Update formik's state
+    setUserSelected(true); // Set the flag to true when the user makes a selection
+  };
   return /*#__PURE__*/_react.default.createElement(_FormControl.default, {
     fullWidth: true,
     key: field,
@@ -82,17 +111,12 @@ const SelectField = _ref => {
   }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
   }, otherProps, {
-    name: field
-    // disabled={loading}
-    ,
+    name: field,
     onOpen: onOpen,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
-    value: "".concat(inputValue)
-    // label={fieldLabel}
-    ,
-    onChange: formik.handleChange
-    // onChange={onChange}
+    value: "".concat(inputValue),
+    onChange: handleChange // Use the custom handler
     ,
     onBlur: formik.handleBlur,
     MenuProps: {

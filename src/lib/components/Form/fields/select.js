@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { FormHelperText } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FormControl from '@mui/material/FormControl';
@@ -7,13 +7,34 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
-    const [loading, setIsloading] = React.useState(false);
-    const [options, setOptions] = React.useState(typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup);
+    const [loading, setIsLoading] = React.useState(false);
+    const [userSelected, setUserSelected] = React.useState(false); 
+    const { filterOptions } = column;
+
+    const initialOptions = useMemo(() => {
+        let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
+        if (filterOptions) {
+            return filterOptions({ options, currentValue: formik.values[field] });
+        }
+        return options;
+    }, [column.lookup, filterOptions, lookups, field, formik.values]);
+
+    const [options, setOptions] = React.useState(initialOptions);
+
+    useEffect(() => {
+        if (!userSelected) {
+            setOptions(initialOptions);
+        }
+    }, [initialOptions, userSelected]);
+
     const setActiveRecord = (lookups) => {
         const { State } = lookups;
         if (!State) return;
-        setOptions(State);
-    }
+        if (!userSelected) {
+            setOptions(State);
+        }
+    };
+
     const onOpen = () => {
         if (!column.parentComboField) return;
         const valueField = column.parentComboField;
@@ -21,18 +42,18 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         getRecordAndLookups({
             scopeId: formik.values[valueField],
             lookups: column.lookup,
-            customSetIsLoading: setIsloading,
+            customSetIsLoading: setIsLoading,
             customSetActiveRecord: setActiveRecord
         });
     };
 
     useEffect(() => {
         onOpen();
-    }, [formik.values[column.parentComboField]])
+    }, [formik.values[column.parentComboField]]);
 
     let inputValue = formik.values[field];
     if (options?.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
-        const isDefaultOption =  options.find(e => e.IsDefault);
+        const isDefaultOption = options.find(e => e.IsDefault);
         if (isDefaultOption) {
             inputValue = isDefaultOption.value;
             formik.setFieldValue(field, isDefaultOption.value);
@@ -48,6 +69,12 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
             }
         }
     }
+
+    const handleChange = (event) => {
+        formik.handleChange(event); // Update formik's state
+        setUserSelected(true); // Set the flag to true when the user makes a selection
+    };
+
     return (
         <FormControl
             fullWidth
@@ -58,14 +85,11 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
                 IconComponent={KeyboardArrowDownIcon}
                 {...otherProps}
                 name={field}
-                // disabled={loading}
                 onOpen={onOpen}
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
                 value={`${inputValue}`}
-                // label={fieldLabel}
-                onChange={formik.handleChange}
-                // onChange={onChange}
+                onChange={handleChange}
                 onBlur={formik.handleBlur}
                 MenuProps={{
                     classes: {
@@ -73,11 +97,15 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
                     }
                 }}
             >
-                {Array.isArray(options) && options.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+                {Array.isArray(options) && options.map(option => (
+                    <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                    </MenuItem>
+                ))}
             </Select>
             <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
         </FormControl>
-    )
-}
+    );
+};
 
 export default SelectField;
