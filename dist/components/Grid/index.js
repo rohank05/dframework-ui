@@ -657,10 +657,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           hideable: false,
           getActions: params => {
             const rowActions = [...actions];
-            const {
-              canEdit: isRowEditable
-            } = params.row;
-            const isDisabled = isRowEditable === false;
+            const isDisabled = params.row.canEdit === false;
             if (canEdit) {
               rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
                 icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {

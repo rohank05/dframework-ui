@@ -445,8 +445,7 @@ const GridBase = memo(({
                     hideable: false,
                     getActions: (params) => {
                         const rowActions = [...actions];
-                        const { canEdit: isRowEditable } = params.row;
-                        const isDisabled = isRowEditable === false;
+                        const isDisabled = params.row.canEdit === false;
                         if(canEdit) {
                             rowActions[0] = (
                                 <GridActionsCellItem
