@@ -166,7 +166,7 @@ class UiModel {
       let config;
       switch (type) {
         case 'string':
-          config = yup.string().trim().label(formLabel);
+          config = yup.string().nullable().trim().label(formLabel);
           if (min) {
             config = config.min(Number(min), "".concat(formLabel, " must be at least ").concat(min, " characters long"));
           }
