@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = exports.ActiveStepContext = void 0;
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
-require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
@@ -90,12 +89,7 @@ const Form = _ref => {
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);
     if (typeof parsedData === 'object' && parsedData !== null) {
-      const jsonColumn = model.columns.find(column => column.type === 'json');
-      if (jsonColumn) {
-        baseSaveData[jsonColumn.field] = JSON.stringify(parsedData);
-      } else {
-        baseSaveData = _objectSpread(_objectSpread({}, baseSaveData), parsedData);
-      }
+      baseSaveData = _objectSpread(_objectSpread({}, baseSaveData), parsedData);
     }
   }
   const [isLoading, setIsLoading] = (0, _react.useState)(true);
@@ -201,8 +195,8 @@ const Form = _ref => {
         setError: snackbar.showError
       }).then(success => {
         if (success) {
-          if (model.updateChildGridRecords) {
-            model.updateChildGridRecords();
+          if (model.reloadOnSave) {
+            return window.location.reload();
           }
           snackbar.showMessage("Record Updated Successfully.");
           navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);

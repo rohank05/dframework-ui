@@ -49,16 +49,9 @@ const Form = ({
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);
     if (typeof parsedData === 'object' && parsedData !== null) {
-      const jsonColumn = model.columns.find((column) => column.type === 'json');
-      if (jsonColumn) {
-        baseSaveData[jsonColumn.field] = JSON.stringify(parsedData);
-      } else {
-        baseSaveData = { ...baseSaveData, ...parsedData };
-      }
+      baseSaveData = { ...baseSaveData, ...parsedData };
     }
-
   }
-
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState(null);
   const [lookups, setLookups] = useState(null);
@@ -154,8 +147,8 @@ const Form = ({
       })
         .then((success) => {
           if (success) {
-            if (model.updateChildGridRecords) {
-              model.updateChildGridRecords();
+            if (model.reloadOnSave) {
+              return window.location.reload();
             }
             snackbar.showMessage("Record Updated Successfully.");
             navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
