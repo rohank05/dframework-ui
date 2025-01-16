@@ -656,13 +656,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           width: actions.length * 50,
           hideable: false,
           getActions: params => {
-            const rowActions = [...actions]; // Copy the base actions array
-
-            if (canEdit && model.disableProperty) {
-              const disableProperty = model.disableProperty;
-              const isDisabled = disableProperty && params.row[disableProperty.key] !== disableProperty.value;
-
-              // Update the specific "Edit" action dynamically
+            const rowActions = [...actions];
+            const isDisabled = params.row.canEdit === false;
+            if (canEdit) {
               rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
                 icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
                   title: "Edit"
@@ -670,7 +666,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
                 "data-action": actionTypes.Edit,
                 label: "Edit",
                 color: "primary",
-                disabled: isDisabled // Dynamically set the disabled prop
+                disabled: isDisabled
               });
             }
             return rowActions;
@@ -951,7 +947,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       onCellDoubleClickOverride(event);
       return;
     }
-    if (model.disableProperty && event.row[model.disableProperty.key] !== model.disableProperty.value) {
+    if (event.row.canEdit === false) {
       return;
     }
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
