@@ -235,8 +235,17 @@ const GridBase = memo(({
         OrderStatus: 'OrderStatusId'
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
+    const searchParams = new URLSearchParams(window.location.search);
 
-    const { [selectionApi.KeyField]: dataID } = useParams();
+    let baseSaveData = {};
+
+    const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+    if (baseDataFromParams) {
+        const parsedData = JSON.parse(baseDataFromParams);
+        if (typeof parsedData === 'object' && parsedData !== null) {
+            baseSaveData = parsedData;
+        }
+    }
 
     const customCheckBox = (params) => {
         
@@ -244,8 +253,8 @@ const GridBase = memo(({
             setSelectState((prevState) => [
                 ...prevState,
                 {
-                    ...params.row,
-                    [selectionApi.KeyField]: dataID
+                    ...baseSaveData,
+                    ...params.row
                 },
             ]);
         }
@@ -356,7 +365,6 @@ const GridBase = memo(({
         }
     }, []);
 
-    const searchParams = new URLSearchParams(window.location.search);
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         let baseColumnList = columns || model?.gridColumns || model?.columns;
         if (dynamicColumns) {
@@ -743,14 +751,11 @@ const GridBase = memo(({
 
 
     const onAdd = () => {
-        if(Object.keys(selectionApi).length > 0){
+        if(selectionApi.length > 0){
             const url = stateData?.gridSettings?.permissions?.Url;
-            let gridApi = `${url}${selectionApi.api || api}/updateMany`;
+            let gridApi = `${url}${selectionApi || api}/updateMany`;
             saveRecord({id: 0, api: gridApi, values: { items: selectState }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
-                  if (model.updateChildGridRecords) {
-                    model.updateChildGridRecords();
-                  }
                   snackbar.showMessage("Record Updated Successfully.");
                   window.location.reload();
                 }

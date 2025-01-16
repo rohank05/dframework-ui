@@ -362,14 +362,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     OrderStatus: 'OrderStatusId'
   };
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
-  const {
-    [selectionApi.KeyField]: dataID
-  } = useParams();
+  const searchParams = new URLSearchParams(window.location.search);
+  let baseSaveData = {};
+  const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+  if (baseDataFromParams) {
+    const parsedData = JSON.parse(baseDataFromParams);
+    if (typeof parsedData === 'object' && parsedData !== null) {
+      baseSaveData = parsedData;
+    }
+  }
   const customCheckBox = params => {
     const handleSelectRow = e => {
-      setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, params.row), {}, {
-        [selectionApi.KeyField]: dataID
-      })]);
+      setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, baseSaveData), params.row)]);
     };
     return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
       onClick: event => handleSelectRow(event),
@@ -504,7 +508,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   }, []);
-  const searchParams = new URLSearchParams(window.location.search);
   const {
     gridColumns,
     pinnedColumns,
@@ -1004,10 +1007,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     fetchData();
   };
   const onAdd = () => {
-    if (Object.keys(selectionApi).length > 0) {
+    if (selectionApi.length > 0) {
       var _stateData$gridSettin6;
       const url = stateData === null || stateData === void 0 || (_stateData$gridSettin6 = stateData.gridSettings) === null || _stateData$gridSettin6 === void 0 || (_stateData$gridSettin6 = _stateData$gridSettin6.permissions) === null || _stateData$gridSettin6 === void 0 ? void 0 : _stateData$gridSettin6.Url;
-      let gridApi = "".concat(url).concat(selectionApi.api || api, "/updateMany");
+      let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
       (0, _crudHelper.saveRecord)({
         id: 0,
         api: gridApi,
@@ -1018,9 +1021,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         setError: snackbar.showError
       }).then(success => {
         if (success) {
-          if (model.updateChildGridRecords) {
-            model.updateChildGridRecords();
-          }
           snackbar.showMessage("Record Updated Successfully.");
           window.location.reload();
         }
