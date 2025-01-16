@@ -36,12 +36,10 @@ const SelectField = _ref => {
     getRecordAndLookups
   } = _ref;
   const [loading, setIsLoading] = _react.default.useState(false);
-  const [userSelected, setUserSelected] = _react.default.useState(false); // Tracks if the user has selected a value
+  const [userSelected, setUserSelected] = _react.default.useState(false);
   const {
     filterOptions
   } = column;
-
-  // Compute initial options
   const initialOptions = (0, _react.useMemo)(() => {
     let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
     if (filterOptions) {
@@ -53,8 +51,6 @@ const SelectField = _ref => {
     return options;
   }, [column.lookup, filterOptions, lookups, field, formik.values]);
   const [options, setOptions] = _react.default.useState(initialOptions);
-
-  // Sync options with initialOptions only if the user has not made a selection
   (0, _react.useEffect)(() => {
     if (!userSelected) {
       setOptions(initialOptions);
@@ -116,8 +112,7 @@ const SelectField = _ref => {
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
     value: "".concat(inputValue),
-    onChange: handleChange // Use the custom handler
-    ,
+    onChange: handleChange,
     onBlur: formik.handleBlur,
     MenuProps: {
       classes: {
