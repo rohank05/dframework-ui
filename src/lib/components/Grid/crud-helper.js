@@ -317,8 +317,8 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const { data = {}, success } = response.data;
-            if (data.success || success) {
+            const { data = {} } = response.data;
+            if (data.success) {
                 return data;
             }
             setError('Save failed', data.err || data.message);

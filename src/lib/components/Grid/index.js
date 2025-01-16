@@ -247,21 +247,21 @@ const GridBase = memo(({
         }
     }
 
+    const handleSelectRow = (params) => {
+        setSelectState((prevState) => [
+            ...prevState,
+            {
+                ...baseSaveData,
+                ...params.row
+            },
+        ]);
+    }
+
     const customCheckBox = (params) => {
         
-        const handleSelectRow = (e) => {
-            setSelectState((prevState) => [
-                ...prevState,
-                {
-                    ...baseSaveData,
-                    ...params.row
-                },
-            ]);
-        }
         return (
             <Checkbox
-                onClick={(event) => handleSelectRow(event)}
-                disabled={false}
+                onClick={() => handleSelectRow(params)}
                 color="primary"
                 inputProps={{ 'aria-label': 'checkbox' }}
             />

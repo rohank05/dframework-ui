@@ -423,11 +423,11 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
+      console.log("Response is ", response);
       const {
-        data = {},
-        success
+        data = {}
       } = response.data;
-      if (data.success || success) {
+      if (data.success) {
         return data;
       }
       setError('Save failed', data.err || data.message);

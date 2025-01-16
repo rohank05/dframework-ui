@@ -371,12 +371,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       baseSaveData = parsedData;
     }
   }
+  const handleSelectRow = params => {
+    setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, baseSaveData), params.row)]);
+  };
   const customCheckBox = params => {
-    const handleSelectRow = e => {
-      setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, baseSaveData), params.row)]);
-    };
     return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
-      onClick: event => handleSelectRow(event),
+      onClick: () => handleSelectRow(params),
       disabled: false,
       color: "primary",
       inputProps: {
