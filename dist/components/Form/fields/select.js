@@ -35,7 +35,6 @@ const SelectField = _ref => {
     onChange,
     getRecordAndLookups
   } = _ref;
-  const [loading, setIsLoading] = _react.default.useState(false);
   const [userSelected, setUserSelected] = _react.default.useState(false);
   const {
     filterOptions
@@ -72,7 +71,7 @@ const SelectField = _ref => {
     getRecordAndLookups({
       scopeId: formik.values[valueField],
       lookups: column.lookup,
-      customSetIsLoading: setIsLoading,
+      customSetIsLoading: () => {},
       customSetActiveRecord: setActiveRecord
     });
   };

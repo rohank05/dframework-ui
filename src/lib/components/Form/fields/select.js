@@ -7,7 +7,6 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
-    const [loading, setIsLoading] = React.useState(false);
     const [userSelected, setUserSelected] = React.useState(false); 
     const { filterOptions } = column;
 
@@ -42,7 +41,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         getRecordAndLookups({
             scopeId: formik.values[valueField],
             lookups: column.lookup,
-            customSetIsLoading: setIsLoading,
+            customSetIsLoading: () => {},
             customSetActiveRecord: setActiveRecord
         });
     };
