@@ -193,6 +193,13 @@ const Form = ({
     if (isCopy) {
       record[model.linkColumn] = "";
     }
+
+    model.columns.map((item) => {
+      if(item.skipCopy && isCopy){
+        record[item.field] = "";
+      }
+    })
+
     setData(record);
     setLookups(lookups);
 
