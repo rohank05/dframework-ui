@@ -285,7 +285,6 @@ const Form = ({
   ];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
-
   return (
     <>
       <PageTitle
