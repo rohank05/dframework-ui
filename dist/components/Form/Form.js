@@ -18,6 +18,7 @@ require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url-search-params.js");
 require("core-js/modules/web.url-search-params.delete.js");
@@ -242,6 +243,11 @@ const Form = _ref => {
     if (isCopy) {
       record[model.linkColumn] = "";
     }
+    model.columns.map(item => {
+      if (item.copy && isCopy) {
+        record[item.field] = "";
+      }
+    });
     setData(record);
     setLookups(lookups);
     if (localValue !== "") {

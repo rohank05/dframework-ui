@@ -193,6 +193,13 @@ const Form = ({
     if (isCopy) {
       record[model.linkColumn] = "";
     }
+
+    model.columns.map((item) => {
+      if(item.copy && isCopy){
+        record[item.field] = "";
+      }
+    })
+
     setData(record);
     setLookups(lookups);
 
@@ -278,6 +285,7 @@ const Form = ({
   ];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
+
   return (
     <>
       <PageTitle
