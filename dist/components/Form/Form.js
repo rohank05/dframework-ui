@@ -244,7 +244,7 @@ const Form = _ref => {
       record[model.linkColumn] = "";
     }
     model.columns.map(item => {
-      if (item.copy && isCopy) {
+      if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
     });

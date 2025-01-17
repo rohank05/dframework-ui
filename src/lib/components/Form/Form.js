@@ -195,7 +195,7 @@ const Form = ({
     }
 
     model.columns.map((item) => {
-      if(item.copy && isCopy){
+      if(item.skipCopy && isCopy){
         record[item.field] = "";
       }
     })
