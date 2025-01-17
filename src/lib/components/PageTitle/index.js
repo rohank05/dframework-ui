@@ -30,6 +30,7 @@ function PageTitle(props) {
     showBreadcrumbs,
     breadcrumbs = [],
     nestedGrid = false,
+    breadcrumbColor,
   } = props;
   const [showTooltip, setShowTooltip] = useState(false);
   const isMobile = useMobile(true);
@@ -66,7 +67,7 @@ function PageTitle(props) {
       </Helmet>
       <MuiTypography className="print-only" text={titleHeading} />
       {needToShowBreadcrumbs && (<> <Card sx={{ mb: 3 }}>
-        <CardContent>
+        <CardContent sx = {{ backgroundColor: breadcrumbColor || '#fff' }}>
           {/* Add BreadCrumbs  */}
           <Grid container>
             <Grid item sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>

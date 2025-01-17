@@ -355,7 +355,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     tableName,
     showHistory = true,
     hideBreadcrumbInGrid = false,
-    navigateToRelation = []
+    navigateToRelation = [],
+    breadcrumbColor
   } = model;
   const gridTitle = model.gridTitle || model.title;
   const OrderSuggestionHistoryFields = {
@@ -377,7 +378,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const customCheckBox = params => {
     return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
       onClick: () => handleSelectRow(params),
-      disabled: false,
       color: "primary",
       inputProps: {
         'aria-label': 'checkbox'
@@ -1324,7 +1324,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
-    nestedGrid: nestedGrid
+    nestedGrid: nestedGrid,
+    breadcrumbColor: breadcrumbColor
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,
     elevation: 0,

@@ -229,7 +229,7 @@ const GridBase = memo(({
         Boolean: 'boolean'
     };
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [] } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [], breadcrumbColor } = model;
     const gridTitle = model.gridTitle || model.title;
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -973,7 +973,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} />
+                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} breadcrumbColor={breadcrumbColor}/>
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
