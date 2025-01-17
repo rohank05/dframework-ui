@@ -39,7 +39,8 @@ function PageTitle(props) {
     showTitleInfo,
     showBreadcrumbs,
     breadcrumbs = [],
-    nestedGrid = false
+    nestedGrid = false,
+    breadcrumbColor
   } = props;
   const [showTooltip, setShowTooltip] = (0, _react.useState)(false);
   const isMobile = (0, _useMobile.default)(true);
@@ -103,7 +104,11 @@ function PageTitle(props) {
     sx: {
       mb: 3
     }
-  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, null, /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, /*#__PURE__*/_react.default.createElement(_material.CardContent, {
+    sx: {
+      backgroundColor: breadcrumbColor || '#fff'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
