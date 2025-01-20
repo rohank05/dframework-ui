@@ -38,10 +38,10 @@ const Field = _ref => {
   let inputValue = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 || (_formik$values$field = _formik$values$field.split(", ")) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.map(Number)) || [];
   let options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
   const {
-    FilterOptions
+    filter
   } = column;
-  if (FilterOptions) {
-    options = FilterOptions({
+  if (filter) {
+    options = filter({
       options
     });
   }
