@@ -26,8 +26,8 @@ const getPermissions = _ref => {
     userDefinedPermissions
   } = _ref;
   const {
-    menuDetails
-  } = userData || [];
+    menuDetails = []
+  } = userData;
   userDefinedPermissions = userDefinedPermissions || {
     add: true,
     edit: true,
