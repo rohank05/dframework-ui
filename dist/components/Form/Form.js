@@ -123,7 +123,7 @@ const Form = _ref => {
     canEdit,
     canDelete = false
   } = (0, _utils.getPermissions)({
-    userData: userData,
+    userData,
     model,
     userDefinedPermissions
   });

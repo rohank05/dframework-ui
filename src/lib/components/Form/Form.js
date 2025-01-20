@@ -76,7 +76,7 @@ const Form = ({
     add: permissions.add || false
   };
   const { canEdit, canDelete = false } = getPermissions({
-    userData: userData,
+    userData,
     model,
     userDefinedPermissions
   });
