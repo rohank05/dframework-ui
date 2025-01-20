@@ -21,7 +21,7 @@ const utils = {
 };
 const getPermissions = _ref => {
   let {
-    userData,
+    userData = {},
     model,
     userDefinedPermissions
   } = _ref;
