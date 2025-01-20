@@ -222,7 +222,7 @@ const GridBase = memo(({
     const userData = stateData.getUserData;
     const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
-    const { canAdd, canEdit, canDelete } = getPermissions({ userData: userData?.menuDetails, model, userDefinedPermissions });
+    const { canAdd, canEdit, canDelete } = getPermissions({ userData: userData, model, userDefinedPermissions });
     const filterFieldDataTypes = {
         Number: 'number',
         String: 'string',

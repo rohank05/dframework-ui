@@ -339,7 +339,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     canEdit,
     canDelete
   } = (0, _utils.getPermissions)({
-    userData: userData === null || userData === void 0 ? void 0 : userData.menuDetails,
+    userData: userData,
     model,
     userDefinedPermissions
   });
