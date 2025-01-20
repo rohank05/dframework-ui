@@ -25,6 +25,14 @@ require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
+require("core-js/modules/esnext.iterator.some.js");
+require("core-js/modules/esnext.set.difference.v2.js");
+require("core-js/modules/esnext.set.intersection.v2.js");
+require("core-js/modules/esnext.set.is-disjoint-from.v2.js");
+require("core-js/modules/esnext.set.is-subset-of.v2.js");
+require("core-js/modules/esnext.set.is-superset-of.v2.js");
+require("core-js/modules/esnext.set.symmetric-difference.v2.js");
+require("core-js/modules/esnext.set.union.v2.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url.js");
 require("core-js/modules/web.url.to-json.js");
@@ -365,6 +373,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
   const searchParams = new URLSearchParams(window.location.search);
   let baseSaveData = {};
+  const selectedSet = (0, _react.useRef)(new Set());
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);
@@ -373,7 +382,23 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }
   const handleSelectRow = params => {
-    setSelectState(prevState => [...prevState, _objectSpread(_objectSpread({}, baseSaveData), params.row)]);
+    const mergedRow = _objectSpread(_objectSpread({}, baseSaveData), params.row);
+    const {
+      ScopeModelId
+    } = mergedRow;
+    const isAlreadySelected = Array.from(selectedSet.current).some(item => item.ScopeModelId === ScopeModelId);
+    if (isAlreadySelected) {
+      // Remove the object if it is already selected
+      for (let item of selectedSet.current) {
+        if (item.ScopeModelId === ScopeModelId) {
+          selectedSet.current.delete(item);
+          break;
+        }
+      }
+    } else {
+      // Add the object if it is not selected
+      selectedSet.current.add(mergedRow);
+    }
   };
   const customCheckBox = params => {
     return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
@@ -1007,17 +1032,22 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       var _stateData$gridSettin6;
       const url = stateData === null || stateData === void 0 || (_stateData$gridSettin6 = stateData.gridSettings) === null || _stateData$gridSettin6 === void 0 || (_stateData$gridSettin6 = _stateData$gridSettin6.permissions) === null || _stateData$gridSettin6 === void 0 ? void 0 : _stateData$gridSettin6.Url;
       let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
+      if (selectedSet.current.size < 1) {
+        snackbar.showError("Please select atleast one record to proceed");
+        setIsLoading(false);
+        return;
+      }
       (0, _crudHelper.saveRecord)({
         id: 0,
         api: gridApi,
         values: {
-          items: selectState
+          items: selectedSet
         },
         setIsLoading,
         setError: snackbar.showError
       }).then(success => {
         if (success) {
-          snackbar.showMessage("Record Updated Successfully.");
+          snackbar.showMessage("Record Added Successfully.");
           window.location.reload();
         }
       }).catch(err => {
