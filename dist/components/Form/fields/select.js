@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -37,18 +38,18 @@ const SelectField = _ref => {
   } = _ref;
   const [userSelected, setUserSelected] = _react.default.useState(false);
   const {
-    filterOptions
+    filter
   } = column;
   const initialOptions = (0, _react.useMemo)(() => {
     let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
-    if (filterOptions) {
-      return filterOptions({
+    if (filter) {
+      return filter({
         options,
         currentValue: formik.values[field]
       });
     }
     return options;
-  }, [column.lookup, filterOptions, lookups, field, formik.values]);
+  }, [column.lookup, filter, lookups, field, formik.values]);
   const [options, setOptions] = _react.default.useState(initialOptions);
   (0, _react.useEffect)(() => {
     if (!userSelected) {

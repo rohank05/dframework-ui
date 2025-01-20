@@ -8,15 +8,15 @@ import MenuItem from '@mui/material/MenuItem';
 
 const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
     const [userSelected, setUserSelected] = React.useState(false); 
-    const { filterOptions } = column;
+    const { filter } = column;
 
     const initialOptions = useMemo(() => {
         let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
-        if (filterOptions) {
-            return filterOptions({ options, currentValue: formik.values[field] });
+        if (filter) {
+            return filter({ options, currentValue: formik.values[field] });
         }
         return options;
-    }, [column.lookup, filterOptions, lookups, field, formik.values]);
+    }, [column.lookup, filter, lookups, field, formik.values]);
 
     const [options, setOptions] = React.useState(initialOptions);
 
