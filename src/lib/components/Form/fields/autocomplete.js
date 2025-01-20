@@ -6,7 +6,13 @@ import TextField from '@mui/material/TextField';
 
 const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
     let inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
-    const options = lookups ? lookups[column?.lookup] : [];
+    let options = lookups ? lookups[column?.lookup] : [];
+    const { filter } = column;
+
+    if(filter){
+        options = filter({ options });
+    }
+
     let filteredCombos = options?.filter(option => inputValue.includes(option.value)) || [];
     let isDisabled;
     if (mode !== 'copy') {

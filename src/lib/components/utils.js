@@ -11,10 +11,10 @@ const utils = {
         OverrideDateFormat: "DD-MMM-YYYY"
     }
 }
-export const getPermissions = ({ userData, model, userDefinedPermissions }) => {
-    userData = userData || [];
+export const getPermissions = ({ userData = {}, model, userDefinedPermissions }) => {
+    const { menuDetails = [] } = userData;
     userDefinedPermissions = userDefinedPermissions || { add: true, edit: true, delete: true };
-    const userPermissions = userData.find(item => item.Module === model.module);
+    const userPermissions = menuDetails.find(item => item.Module === model.module);
     if (!userPermissions) {
         return { canAdd: userDefinedPermissions.add, canEdit: userDefinedPermissions.edit, canDelete: userDefinedPermissions.delete };
     }

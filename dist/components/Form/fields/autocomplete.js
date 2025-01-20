@@ -22,7 +22,7 @@ function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return 
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const Field = _ref => {
-  var _formik$values$field;
+  var _formik$values$field, _options;
   let {
     column,
     field,
@@ -36,8 +36,16 @@ const Field = _ref => {
     mode
   } = _ref;
   let inputValue = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 || (_formik$values$field = _formik$values$field.split(", ")) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.map(Number)) || [];
-  const options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
-  let filteredCombos = (options === null || options === void 0 ? void 0 : options.filter(option => inputValue.includes(option.value))) || [];
+  let options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
+  const {
+    filter
+  } = column;
+  if (filter) {
+    options = filter({
+      options
+    });
+  }
+  let filteredCombos = ((_options = options) === null || _options === void 0 ? void 0 : _options.filter(option => inputValue.includes(option.value))) || [];
   let isDisabled;
   if (mode !== 'copy') {
     isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
