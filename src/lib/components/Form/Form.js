@@ -164,6 +164,13 @@ const Form = ({
     }
   });
 
+  // useEffect(() => {
+  //   console.log(formik.values)
+  //   if (!validationSchema && formik.values) {
+  //     setValidationSchema(model.getValidationSchema({ id, snackbar, values: formik.values }));
+  //   }
+  // }, [model, formik.values]);
+
   const { dirty } = formik;
 
   const handleDiscardChanges = () => {
