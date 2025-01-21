@@ -69,7 +69,7 @@ const Form = ({
     : defaultFieldConfigs;
   let gridApi = `${url}${model.api || api}`;
   const { mode } = stateData.dataForm;
-  const userData = stateData.getUserData;
+  const userData = stateData.getUserData || {};
   const userDefinedPermissions = {
     edit: permissions.edit || false,
     delete: permissions.delete || false,

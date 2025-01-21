@@ -219,7 +219,7 @@ const GridBase = memo(({
     const currentPreference = stateData?.currentPreference;
     const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-    const userData = stateData.getUserData;
+    const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions({ userData, model, userDefinedPermissions });
