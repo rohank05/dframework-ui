@@ -1041,7 +1041,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         id: 0,
         api: gridApi,
         values: {
-          items: selectedSet
+          items: Array.from(selectedSet.current)
         },
         setIsLoading,
         setError: snackbar.showError

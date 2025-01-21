@@ -760,29 +760,29 @@ const GridBase = memo(({
 
 
     const onAdd = () => {
-        if(selectionApi.length > 0){
+        if (selectionApi.length > 0) {
             const url = stateData?.gridSettings?.permissions?.Url;
             let gridApi = `${url}${selectionApi || api}/updateMany`;
             if(selectedSet.current.size < 1) {
                 snackbar.showError(
                     "Please select atleast one record to proceed"
-                  );
+                );
                 setIsLoading(false);
                 return;
             }
-            saveRecord({id: 0, api: gridApi, values: { items: selectedSet }, setIsLoading, setError: snackbar.showError }).then((success) => {
+            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
-                  snackbar.showMessage("Record Added Successfully.");
-                   window.location.reload();
+                    snackbar.showMessage("Record Added Successfully.");
+                    window.location.reload();
                 }
-              })
-              .catch((err) => {
-                snackbar.showError(
-                  "An error occured, please try after some time.second",
-                  err
-                );
-              })
-              .finally(() => setIsLoading(false));
+            })
+                .catch((err) => {
+                    snackbar.showError(
+                        "An error occured, please try after some time.second",
+                        err
+                    );
+                })
+                .finally(() => setIsLoading(false));
             return;
         }
         if (typeof onAddOverride === 'function') {
