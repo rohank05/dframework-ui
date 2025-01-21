@@ -239,6 +239,8 @@ const GridBase = memo(({
 
     let baseSaveData = {};
 
+    const selectedSet = useRef(new Set());
+
     const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
     if (baseDataFromParams) {
         const parsedData = JSON.parse(baseDataFromParams);
@@ -248,14 +250,26 @@ const GridBase = memo(({
     }
 
     const handleSelectRow = (params) => {
-        setSelectState((prevState) => [
-            ...prevState,
-            {
-                ...baseSaveData,
-                ...params.row
-            },
-        ]);
-    }
+        const mergedRow = { ...baseSaveData, ...params.row };
+        const isAlreadySelected = Array.from(selectedSet.current).some(
+            (item) => item[idProperty] === mergedRow[idProperty]
+        );
+
+        if (isAlreadySelected) {
+            // Remove the object if it is already selected
+            for (let item of selectedSet.current) {
+                if (item[idProperty] === mergedRow[idProperty]) {
+                    selectedSet.current.delete(item);
+                    break;
+                }
+            }
+        } else {
+            // Add the object if it is not selected
+            selectedSet.current.add(mergedRow);
+        }
+
+    };
+    
 
     const customCheckBox = (params) => {
         
@@ -745,23 +759,29 @@ const GridBase = memo(({
 
 
     const onAdd = () => {
-        if(selectionApi.length > 0){
+        if (selectionApi.length > 0) {
             const url = stateData?.gridSettings?.permissions?.Url;
             let gridApi = `${url}${selectionApi || api}/updateMany`;
-            saveRecord({id: 0, api: gridApi, values: { items: selectState }, setIsLoading, setError: snackbar.showError }).then((success) => {
-                if (success) {
-                  snackbar.showMessage("Record Updated Successfully.");
-                  window.location.reload();
-                }
-              })
-              .catch((err) => {
+            if(selectedSet.current.size < 1) {
                 snackbar.showError(
-                  "An error occured, please try after some time.second",
-                  err
+                    "Please select atleast one record to proceed"
                 );
-              })
-              .finally(() => setIsLoading(false));
-            
+                setIsLoading(false);
+                return;
+            }
+            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
+                if (success) {
+                    snackbar.showMessage("Record Added Successfully.");
+                    window.location.reload();
+                }
+            })
+                .catch((err) => {
+                    snackbar.showError(
+                        "An error occured, please try after some time.second",
+                        err
+                    );
+                })
+                .finally(() => setIsLoading(false));
             return;
         }
         if (typeof onAddOverride === 'function') {
