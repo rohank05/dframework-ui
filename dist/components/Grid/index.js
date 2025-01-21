@@ -383,14 +383,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }
   const handleSelectRow = params => {
     const mergedRow = _objectSpread(_objectSpread({}, baseSaveData), params.row);
-    const {
-      ScopeModelId
-    } = mergedRow;
-    const isAlreadySelected = Array.from(selectedSet.current).some(item => item.ScopeModelId === ScopeModelId);
+    const isAlreadySelected = Array.from(selectedSet.current).some(item => item[idProperty] === mergedRow[idProperty]);
     if (isAlreadySelected) {
       // Remove the object if it is already selected
       for (let item of selectedSet.current) {
-        if (item.ScopeModelId === ScopeModelId) {
+        if (item[idProperty] === mergedRow[idProperty]) {
           selectedSet.current.delete(item);
           break;
         }
