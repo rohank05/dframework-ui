@@ -335,7 +335,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
-  const userData = stateData.getUserData;
+  const userData = stateData.getUserData || {};
   const documentField = ((_model$columns$find = model.columns.find(ele => ele.type === 'document')) === null || _model$columns$find === void 0 ? void 0 : _model$columns$find.field) || "";
   const userDefinedPermissions = {
     add: effectivePermissions.add,
