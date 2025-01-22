@@ -72,6 +72,12 @@ const booleanIconRenderer = (params) => {
 const useStyles = makeStyles({
     buttons: {
         margin: '6px !important'
+    },
+    deleteContent: {
+        width: '230px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
     }
 })
 
@@ -914,6 +920,10 @@ const GridBase = memo(({
             const column = gridColumns.find(col => col.field === field);
             const isNumber = column?.type === filterFieldDataTypes.Number;
 
+            if (isNumber && value < 0) {
+                return null;
+            }
+
             if (field === OrderSuggestionHistoryFields.OrderStatus) {
                 const { filterField, ...newItem } = item;
                 return newItem;
@@ -1062,7 +1072,7 @@ const GridBase = memo(({
                     )}
                     {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
                     }
-                    {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"><div className="deletePopDescription"> {`${'Are you sure you want to delete'} ${record?.name}?`}</div></DialogComponent>)}
+                    {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"><div className={classes.deleteContent}> {`${'Are you sure you want to delete'} ${record?.name}?`}</div></DialogComponent>)}
                 </CardContent>
             </Card >
         </>

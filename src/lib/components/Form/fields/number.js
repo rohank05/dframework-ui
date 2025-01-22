@@ -19,9 +19,7 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
     const maxval = Math.max(0, resolvedMin);
     const debouncedSetFieldValue = useCallback(
         debounce((field, value) => {
-            if (value === '' || /^[0-9]*$/.test(value)) {
-                formik.setFieldValue(field, value);
-            } else if (value < maxval) {
+            if (value < maxval) {
                 formik.setFieldValue(field, maxval);
             } else if (resolvedMax && value > resolvedMax) {
                 formik.setFieldValue(field, resolvedMax);
