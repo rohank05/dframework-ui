@@ -92,13 +92,27 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                 <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
                     Document Link
                 </Typography>
+                <Box  sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
                 {formState.isExternal === "yes" ? (
                     <TextField
                         fullWidth
                         value={inputValue}
+                        sx={{ "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: formik.values[field].length > 500 ? "red": "" // Default border color
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: formik.values[field].length > 500 ? "red": "" // Focused state
+                            },
+                            "&:hover fieldset": {
+                              borderColor: formik.values[field].length > 500 ? "red": "" // Hover state
+                            }
+                        }}}
                         onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter external link"
+                        // inputProps={{ maxLength: 500 }} 
                     />
+                    
                 ) : (
                     <TextField
                         fullWidth
@@ -109,6 +123,8 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         }}
                     />
                 )}
+                {formik.values[field]?.length > 500 && <Typography sx={{color: 'red'}}>Document Link must be at most 500 characters long</Typography>}
+                </Box>
             </Box>
 
             {formState.isExternal === "no" && (

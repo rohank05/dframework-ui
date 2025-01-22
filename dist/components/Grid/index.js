@@ -868,6 +868,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       const link = document.createElement("a");
       link.href = url;
       const fileNameFromLink = documentLink.split("/").pop() || "downloaded-file.".concat(blob.type.split("/")[1] || "txt");
+      window.open(link);
       link.download = fileName || fileNameFromLink;
       document.body.appendChild(link);
       link.click();

@@ -33,7 +33,7 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function Document(_ref) {
-  var _stateData$gridSettin;
+  var _stateData$gridSettin, _formik$values$field;
   let {
     column,
     field,
@@ -158,11 +158,31 @@ function Document(_ref) {
       width: "150px",
       marginRight: 2
     }
-  }, "Document Link"), formState.isExternal === "yes" ? /*#__PURE__*/_react.default.createElement(_material.TextField, {
+  }, "Document Link"), /*#__PURE__*/_react.default.createElement(_material.Box, {
+    sx: {
+      flex: 1,
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, formState.isExternal === "yes" ? /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,
     value: inputValue,
+    sx: {
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          borderColor: formik.values[field].length > 500 ? "red" : "" // Default border color
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: formik.values[field].length > 500 ? "red" : "" // Focused state
+        },
+        "&:hover fieldset": {
+          borderColor: formik.values[field].length > 500 ? "red" : "" // Hover state
+        }
+      }
+    },
     onChange: e => handleInputChange(e.target.value),
     placeholder: "Enter external link"
+    // inputProps={{ maxLength: 500 }} 
   }) : /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,
     value: inputValue,
@@ -170,7 +190,11 @@ function Document(_ref) {
     InputProps: {
       readOnly: true
     }
-  })), formState.isExternal === "no" && /*#__PURE__*/_react.default.createElement(_material.Box, {
+  }), ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > 500 && /*#__PURE__*/_react.default.createElement(_material.Typography, {
+    sx: {
+      color: 'red'
+    }
+  }, "Document Link must be at most 500 characters long"))), formState.isExternal === "no" && /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",
       alignItems: "center",

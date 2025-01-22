@@ -620,6 +620,7 @@ const GridBase = memo(({
             const link = document.createElement("a");
             link.href = url;
             const fileNameFromLink = documentLink.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
+            window.open(link);
             link.download = fileName || fileNameFromLink;
             document.body.appendChild(link);
             link.click();
