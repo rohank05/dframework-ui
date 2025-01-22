@@ -25,7 +25,7 @@ const field = _ref => {
     variant: column.variant || "standard",
     InputProps: {
       readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
-      maxLength: column === null || column === void 0 ? void 0 : column.maxLength,
+      maxLength: column.max,
       sx: column !== null && column !== void 0 && column.readOnly ? {
         backgroundColor: '#dfdede'
       } // Light grey background for read-only inputs

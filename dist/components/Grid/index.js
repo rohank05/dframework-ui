@@ -124,6 +124,12 @@ const booleanIconRenderer = params => {
 const useStyles = (0, _core.makeStyles)({
   buttons: {
     margin: '6px !important'
+  },
+  deleteContent: {
+    width: '230px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   }
 });
 const convertDefaultSort = defaultSort => {
@@ -1253,6 +1259,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       } = item;
       const column = gridColumns.find(col => col.field === field);
       const isNumber = (column === null || column === void 0 ? void 0 : column.type) === filterFieldDataTypes.Number;
+      if (isNumber && value < 0) {
+        return null;
+      }
       if (field === OrderSuggestionHistoryFields.OrderStatus) {
         const {
             filterField
@@ -1426,7 +1435,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
   }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "deletePopDescription"
+    className: classes.deleteContent
   }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?"))))));
 }, areEqual);
 var _default = exports.default = GridBase;
