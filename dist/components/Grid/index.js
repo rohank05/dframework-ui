@@ -126,7 +126,7 @@ const useStyles = (0, _core.makeStyles)({
     margin: '6px !important'
   },
   deleteContent: {
-    width: '230px',
+    width: '70%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
