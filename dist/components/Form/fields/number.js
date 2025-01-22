@@ -13,6 +13,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.regexp.test.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.starts-with.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -66,7 +68,9 @@ const Field = _ref2 => {
   const maxKey = 58;
   const maxval = Math.max(0, resolvedMin);
   const debouncedSetFieldValue = (0, _react.useCallback)((0, _lodash.default)((field, value) => {
-    if (value < maxval) {
+    if (value === '' || /^[0-9]*$/.test(value)) {
+      formik.setFieldValue(field, value);
+    } else if (value < maxval) {
       formik.setFieldValue(field, maxval);
     } else if (resolvedMax && value > resolvedMax) {
       formik.setFieldValue(field, resolvedMax);

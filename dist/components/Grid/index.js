@@ -1425,6 +1425,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")))));
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "deletePopDescription"
+  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?"))))));
 }, areEqual);
 var _default = exports.default = GridBase;
