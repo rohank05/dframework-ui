@@ -23,6 +23,7 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
         onBlur={formik.handleBlur}
         error={formik.touched[field] && Boolean(formik.errors[field])}
         helperText={formik.touched[field] && formik.errors[field]}
+        autoComplete={column.autoComplete}
         {...otherProps}
     />
 };

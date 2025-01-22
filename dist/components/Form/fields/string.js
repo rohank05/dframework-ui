@@ -41,7 +41,8 @@ const field = _ref => {
     onChange: formik.handleChange,
     onBlur: formik.handleBlur,
     error: formik.touched[field] && Boolean(formik.errors[field]),
-    helperText: formik.touched[field] && formik.errors[field]
+    helperText: formik.touched[field] && formik.errors[field],
+    autoComplete: column.autoComplete
   }, otherProps));
 };
 var _default = exports.default = field;
