@@ -152,12 +152,15 @@ export default function App() {
 | **Property**             | **Type**   | **Description**                                                       | **Can be extended from**                   |
 | ------------------------ | ---------- | --------------------------------------------------------------------- | ------------------------------------------ |
 | `title`                  | `string`   | The title of the grid.                                                |                                            |
+| `formTitle`              | `string`   | Title used in the form layout.                                        |                                            |
+| `gridTitle`              | `string`   | Title used in the grid layout.                                        |                                            |
+| `gridSubTitle`           | `string`   | Subtitle displayed below the grid title.                              |                                            |
+| `titleDescription`       | `string`   | A description displayed as the subtitle for the grid.                 |                                            |
 | `api`                    | `string`   | The API endpoint to fetch grid data.                                  | `"title"`                                  |
 | `idProperty`             | `string`   | Specifies the unique identifier for grid rows.                        | `"api, title"`                             |
 | `standard`               | `string`   | Checks whether it is a standard table.                                |                                            |
 | `defaultSort`            | `string`   | Specifies the default sort order for the grid data.                   |                                            |
 | `linkColumn`             | `string`   | The column that contains the main link for the grid rows.             |                                            |
-| `titleDescription`       | `string`   | A description displayed as the subtitle for the grid.                 |                                            |
 | `columns`                | `array`    | The list of column definitions for the grid.                          | See the **Column Properties Table** below. |
 | `columnVisibilityModel`  | `object`   | Defines the visibility of specific columns in the grid.               |                                            |
 | `isClient`               | `boolean`  | Determines if the grid operates in client mode.                       |                                            |
@@ -165,7 +168,6 @@ export default function App() {
 | `showHeaderFilters`      | `boolean`  | Displays header filters on grid columns.                              |                                            |
 | `readOnly`               | `boolean`  | If true, the grid becomes read-only.                                  |                                            |
 | `doubleClicked`          | `boolean`  | Controls if double-clicking is enabled for rows.                      |                                            |
-| `gridSubTitle`           | `string`   | Subtitle displayed below the grid title.                              |                                            |
 | `permissions`            | `object`   | Permissions for grid actions like add, edit, delete, and export.      |                                            |
 | `joinColumn`             | `string`   | Specifies the column used for joining data with a parent grid.        |                                            |
 | `addCreatedOnColumn`     | `boolean`  | Adds a column to show the creation date of rows.                      |                                            |
@@ -175,17 +177,16 @@ export default function App() {
 | `controllerType`         | `string`   | Specifies the type of controller (`cs` for client/server).            |                                            |
 | `template`               | `string`   | Template configuration for exporting or rendering specific grid rows. |                                            |
 | `pivotAPI`               | `string`   | API endpoint for pivot-specific data.                                 |                                            |
+| `showPivotExportBtn`     | `boolean`  | Displays the button for exporting pivot data.                         |                                            |
 | `preferenceId`           | `string`   | Identifier for saved grid preferences.                                |                                            |
+| `tablePreferenceEnums`   | `object`   | Enumerations for specific table preferences.                          |                                            |
 | `rowRedirectLink`        | `string`   | URL to redirect when a row is clicked.                                |                                            |
 | `showAddIcon`            | `boolean`  | Indicates if the "Add" button icon should be displayed.               |                                            |
 | `pageTitle`              | `string`   | Sets the title for the page.                                          |                                            |
 | `addUrlParamKey`         | `string`   | Key for additional URL parameters when navigating to forms.           |                                            |
 | `searchParamKey`         | `string`   | Key for fetching parameters from the URL.                             |                                            |
 | `nestedGrid`             | `boolean`  | Indicates if the grid is nested within another grid.                  |                                            |
-| `tablePreferenceEnums`   | `object`   | Enumerations for specific table preferences.                          |                                            |
-| `showPivotExportBtn`     | `boolean`  | Displays the button for exporting pivot data.                         |                                            |
 | `showOnlyExcelExport`    | `boolean`  | Limits export options to only Excel formats.                          |                                            |
-| `formTitle`              | `string`   | Title used in the form layout.                                        |                                            |
 | `initialValues`          | `object`   | Initial values for form fields.                                       |                                            |
 | `hideRelationsInAdd`     | `boolean`  | Hides relations section in add mode.                                  |                                            |
 | `navigateBack`           | `string`   | Specifies the route for navigation on cancel or save.                 |                                            |
@@ -201,15 +202,16 @@ export default function App() {
 | **Property**          | **Type**         | **Description**                                                      | **Can be extended from** |
 | --------------------- | ---------------- | -------------------------------------------------------------------- | ------------------------ |
 | `field`               | `string`         | The name of the field displayed in the column.                       |                          |
+| `fieldLabel`          | `string`         | Optional label for the column field to be shown as override in form. |                          |
+| `label`               | `string`         | Label text to display for available and assigned values.             |                          |
+| `headerName`          | `string`         | The label displayed as the column header in grid.                    |                          |
 | `type`                | `string`         | Specifies the type of data in the column (e.g., `number`, `string`). |                          |
-| `headerName`          | `string`         | The label displayed as the column header.                            |                          |
 | `flex`                | `number`         | Defines the column's flexibility in width compared to others.        |                          |
 | `pinned`              | `boolean`        | Determines if the column is pinned to the left.                      |                          |
 | `sortable`            | `boolean`        | Specifies if the column can be sorted.                               |                          |
 | `filterable`          | `boolean`        | Specifies if the column can be filtered.                             |                          |
 | `editable`            | `boolean`        | Indicates if the cells in the column are editable.                   |                          |
 | `tab`                 | `string`         | Specifies the tab associated with this column in a tabbed layout.    |                          |
-| `fieldLabel`          | `string`         | Optional label for the column field.                                 |                          |
 | `defaultSort`         | `string`         | Sets the default sort order for this column (e.g., `asc`, `desc`).   |                          |
 | `required`            | `boolean`        | Indicates if this column is required in the form.                    |                          |
 | `validation`          | `function`       | Custom validation function for the column's data.                    |                          |
@@ -233,7 +235,6 @@ export default function App() {
 | `relation`            | `component`      | Component used for rendering related fields (e.g., TransferField).   |                          |
 | `multiSelect`         | `boolean`        | Enables multiple selections in a `Select` field.                     |                          |
 | `parentComboField`    | `string`         | Field name used to fetch dependent data for a `Select` field.        |                          |
-| `label`               | `string`         | Label text to display for available and assigned values.             |                          |
 | `lookup`              | `string`/`array` | Defines the lookup source for dropdown values in the column.         |                          |
 | `assigned`            | `boolean`        | Indicates if the field displays assigned values.                     |                          |
 | `available`           | `boolean`        | Indicates if the field displays available values.                    |                          |
