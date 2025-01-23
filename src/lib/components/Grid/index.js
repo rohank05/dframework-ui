@@ -921,8 +921,7 @@ const GridBase = memo(({
             const isNumber = column?.type === filterFieldDataTypes.Number;
 
             if (isNumber && value < 0) {
-                const { ...newItem } = item;
-                return {...newItem, value: null};
+                return {...item, value: null};
             }
 
             if (field === OrderSuggestionHistoryFields.OrderStatus) {
