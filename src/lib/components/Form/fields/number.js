@@ -29,11 +29,10 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
         }, 400),
         [resolvedMin, resolvedMax, formik.values]
     );
-
     otherProps = {
         InputProps: {
             inputProps: {
-                min: Math.max(0, resolvedMin),
+                min,
                 max: resolvedMax,
                 readOnly: column?.readOnly === true,
                 onKeyPress: (event) => {

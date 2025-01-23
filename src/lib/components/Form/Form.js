@@ -34,7 +34,8 @@ const Form = ({
     delete: model.permissions.allowFormDelete || false
   },
   Layout = FormLayout,
-  baseSaveData = {}
+  baseSaveData = {},
+  sx
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
@@ -294,7 +295,7 @@ const Form = ({
         model={model}
       />
       <ActiveStepContext.Provider value={{ activeStep, setActiveStep }}>
-        <Paper sx={{ padding: 2 }}>
+        <Paper sx={{ padding: 2, ...sx }}>
           <form>
             <Stack
               direction="row"

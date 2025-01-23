@@ -1125,7 +1125,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: '10px'
       }
     }, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",

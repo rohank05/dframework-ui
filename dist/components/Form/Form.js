@@ -63,7 +63,8 @@ const Form = _ref => {
       delete: model.permissions.allowFormDelete || false
     },
     Layout = _fieldMapper.default,
-    baseSaveData = {}
+    baseSaveData = {},
+    sx
   } = _ref;
   const formTitle = model.formTitle || model.title;
   const {
@@ -349,9 +350,9 @@ const Form = _ref => {
       setActiveStep
     }
   }, /*#__PURE__*/_react.default.createElement(_Paper.default, {
-    sx: {
+    sx: _objectSpread({
       padding: 2
-    }
+    }, sx)
   }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement(_Stack.default, {
     direction: "row",
     spacing: 2,
