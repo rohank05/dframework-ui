@@ -921,7 +921,7 @@ const GridBase = memo(({
             const isNumber = column?.type === filterFieldDataTypes.Number;
 
             if (isNumber && value < 0) {
-                const { filterField, ...newItem } = item;
+                const { ...newItem } = item;
                 return {...newItem, value: null};
             }
 
