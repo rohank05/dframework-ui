@@ -134,7 +134,7 @@ const useStyles = (0, _core.makeStyles)({
     margin: '6px !important'
   },
   deleteContent: {
-    width: '70%',
+    width: '90%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -1287,7 +1287,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       const column = gridColumns.find(col => col.field === field);
       const isNumber = (column === null || column === void 0 ? void 0 : column.type) === filterFieldDataTypes.Number;
       if (isNumber && value < 0) {
-        return null;
+        return _objectSpread(_objectSpread({}, item), {}, {
+          value: null
+        });
       }
       if (field === OrderSuggestionHistoryFields.OrderStatus) {
         const {

@@ -74,7 +74,7 @@ const useStyles = makeStyles({
         margin: '6px !important'
     },
     deleteContent: {
-        width: '70%',
+        width: '90%',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -941,7 +941,7 @@ const GridBase = memo(({
             const isNumber = column?.type === filterFieldDataTypes.Number;
 
             if (isNumber && value < 0) {
-                return null;
+                return {...item, value: null};
             }
 
             if (field === OrderSuggestionHistoryFields.OrderStatus) {
