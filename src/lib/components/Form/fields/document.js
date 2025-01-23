@@ -5,7 +5,6 @@ import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 
 function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
-    console.log("Column is ",column);
     let inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
     const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
@@ -72,7 +71,7 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
         });
     }, [inputValue]);
 
-    const isLengthExceded = formik.values[field]?.length > column.max;
+    const isLengthExceded = formik.values[field]?.length > (column.max || 500);
     const colorScheme = isLengthExceded ? 'red' : '';
 
     return (
@@ -97,37 +96,39 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                 <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
                     Document Link
                 </Typography>
-                <Box  sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                {formState.isExternal === "yes" ? (
-                    <TextField
-                        fullWidth
-                        value={inputValue}
-                        sx={{ "& .MuiOutlinedInput-root": {
-                            "& fieldset": {
-                              borderColor: colorScheme // Default border color
-                            },
-                            "&.Mui-focused fieldset": {
-                                borderColor: colorScheme // Focused state
-                            },
-                            "&:hover fieldset": {
-                              borderColor: colorScheme // Hover state
-                            }
-                        }}}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        placeholder="Enter external link"
-                    />
-                    
-                ) : (
-                    <TextField
-                        fullWidth
-                        value={inputValue}
-                        placeholder="Link autopopulated once uploaded"
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                )}
-                {formik.values[field]?.length > 500 && <Typography sx={{color: 'red'}}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
+                <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                    {formState.isExternal === "yes" ? (
+                        <TextField
+                            fullWidth
+                            value={inputValue}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    "& fieldset": {
+                                        borderColor: colorScheme // Default border color
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: colorScheme // Focused state
+                                    },
+                                    "&:hover fieldset": {
+                                        borderColor: colorScheme // Hover state
+                                    }
+                                }
+                            }}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            placeholder="Enter external link"
+                        />
+
+                    ) : (
+                        <TextField
+                            fullWidth
+                            value={inputValue}
+                            placeholder="Link autopopulated once uploaded"
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                        />
+                    )}
+                    {isLengthExceded && <Typography sx={{ color: 'red' }}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
                 </Box>
             </Box>
 
