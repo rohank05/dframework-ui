@@ -70,6 +70,10 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
             isExternal: !inputValue.includes(host) ? "yes" : "no",
         });
     }, [inputValue]);
+
+    const isLengthExceded = formik.values[field]?.length > (column.max || 500);
+    const colorScheme = isLengthExceded ? 'red' : '';
+
     return (
         <Box>
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
@@ -92,23 +96,40 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                 <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
                     Document Link
                 </Typography>
-                {formState.isExternal === "yes" ? (
-                    <TextField
-                        fullWidth
-                        value={inputValue}
-                        onChange={(e) => handleInputChange(e.target.value)}
-                        placeholder="Enter external link"
-                    />
-                ) : (
-                    <TextField
-                        fullWidth
-                        value={inputValue}
-                        placeholder="Link autopopulated once uploaded"
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                )}
+                <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                    {formState.isExternal === "yes" ? (
+                        <TextField
+                            fullWidth
+                            value={inputValue}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    "& fieldset": {
+                                        borderColor: colorScheme // Default border color
+                                    },
+                                    "&.Mui-focused fieldset": {
+                                        borderColor: colorScheme // Focused state
+                                    },
+                                    "&:hover fieldset": {
+                                        borderColor: colorScheme // Hover state
+                                    }
+                                }
+                            }}
+                            onChange={(e) => handleInputChange(e.target.value)}
+                            placeholder="Enter external link"
+                        />
+
+                    ) : (
+                        <TextField
+                            fullWidth
+                            value={inputValue}
+                            placeholder="Link autopopulated once uploaded"
+                            InputProps={{
+                                readOnly: true,
+                            }}
+                        />
+                    )}
+                    {isLengthExceded && <Typography sx={{ color: 'red' }}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
+                </Box>
             </Box>
 
             {formState.isExternal === "no" && (

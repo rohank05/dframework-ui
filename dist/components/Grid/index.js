@@ -873,11 +873,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
+
+      // Derive a file name from the URL or fall back to default
       const fileNameFromLink = documentLink.split("/").pop() || "downloaded-file.".concat(blob.type.split("/")[1] || "txt");
       link.download = fileName || fileNameFromLink;
+
+      // Append the link to the DOM and trigger a click
       document.body.appendChild(link);
       link.click();
+
+      // Cleanup after the download
       document.body.removeChild(link);
+      window.open(documentLink);
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading the file:", error);
