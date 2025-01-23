@@ -5,6 +5,7 @@ import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 
 function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
+    console.log("Column is ",column);
     let inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
     const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
@@ -70,6 +71,10 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
             isExternal: !inputValue.includes(host) ? "yes" : "no",
         });
     }, [inputValue]);
+
+    const isLengthExceded = formik.values[field]?.length > column.max;
+    const colorScheme = isLengthExceded ? 'red' : '';
+
     return (
         <Box>
             <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
@@ -99,13 +104,13 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         value={inputValue}
                         sx={{ "& .MuiOutlinedInput-root": {
                             "& fieldset": {
-                              borderColor: formik.values[field].length > 500 ? "red": "" // Default border color
+                              borderColor: colorScheme // Default border color
                             },
                             "&.Mui-focused fieldset": {
-                                borderColor: formik.values[field].length > 500 ? "red": "" // Focused state
+                                borderColor: colorScheme // Focused state
                             },
                             "&:hover fieldset": {
-                              borderColor: formik.values[field].length > 500 ? "red": "" // Hover state
+                              borderColor: colorScheme // Hover state
                             }
                         }}}
                         onChange={(e) => handleInputChange(e.target.value)}
@@ -122,7 +127,7 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         }}
                     />
                 )}
-                {formik.values[field]?.length > 500 && <Typography sx={{color: 'red'}}>Document Link must be at most 500 characters long</Typography>}
+                {formik.values[field]?.length > 500 && <Typography sx={{color: 'red'}}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
                 </Box>
             </Box>
 

@@ -33,7 +33,7 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function Document(_ref) {
-  var _stateData$gridSettin, _formik$values$field;
+  var _stateData$gridSettin, _formik$values$field, _formik$values$field2;
   let {
     column,
     field,
@@ -46,6 +46,7 @@ function Document(_ref) {
     fieldConfigs,
     mode
   } = _ref;
+  console.log("Column is ", column);
   let inputValue = formik.values[field] || "";
   const {
     stateData
@@ -120,6 +121,8 @@ function Document(_ref) {
       isExternal: !inputValue.includes(host) ? "yes" : "no"
     }));
   }, [inputValue]);
+  const isLengthExceded = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > column.max;
+  const colorScheme = isLengthExceded ? 'red' : '';
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",
@@ -170,13 +173,13 @@ function Document(_ref) {
     sx: {
       "& .MuiOutlinedInput-root": {
         "& fieldset": {
-          borderColor: formik.values[field].length > 500 ? "red" : "" // Default border color
+          borderColor: colorScheme // Default border color
         },
         "&.Mui-focused fieldset": {
-          borderColor: formik.values[field].length > 500 ? "red" : "" // Focused state
+          borderColor: colorScheme // Focused state
         },
         "&:hover fieldset": {
-          borderColor: formik.values[field].length > 500 ? "red" : "" // Hover state
+          borderColor: colorScheme // Hover state
         }
       }
     },
@@ -189,11 +192,11 @@ function Document(_ref) {
     InputProps: {
       readOnly: true
     }
-  }), ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > 500 && /*#__PURE__*/_react.default.createElement(_material.Typography, {
+  }), ((_formik$values$field2 = formik.values[field]) === null || _formik$values$field2 === void 0 ? void 0 : _formik$values$field2.length) > 500 && /*#__PURE__*/_react.default.createElement(_material.Typography, {
     sx: {
       color: 'red'
     }
-  }, "Document Link must be at most 500 characters long"))), formState.isExternal === "no" && /*#__PURE__*/_react.default.createElement(_material.Box, {
+  }, "Maximum allowed length for the document link is ", column.max, " characters."))), formState.isExternal === "no" && /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",
       alignItems: "center",
