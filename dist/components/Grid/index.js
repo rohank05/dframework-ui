@@ -66,7 +66,8 @@ var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDown
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns"],
   _excluded2 = ["row", "field", "id"],
-  _excluded3 = ["filterField"];
+  _excluded3 = ["filterField"],
+  _excluded4 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -126,7 +127,7 @@ const useStyles = (0, _core.makeStyles)({
     margin: '6px !important'
   },
   deleteContent: {
-    width: '70%',
+    width: '90%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -1260,13 +1261,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       const column = gridColumns.find(col => col.field === field);
       const isNumber = (column === null || column === void 0 ? void 0 : column.type) === filterFieldDataTypes.Number;
       if (isNumber && value < 0) {
-        return null;
+        const {
+            filterField
+          } = item,
+          newItem = _objectWithoutProperties(item, _excluded3);
+        return _objectSpread(_objectSpread({}, newItem), {}, {
+          value: null
+        });
       }
       if (field === OrderSuggestionHistoryFields.OrderStatus) {
         const {
             filterField
           } = item,
-          newItem = _objectWithoutProperties(item, _excluded3);
+          newItem = _objectWithoutProperties(item, _excluded4);
         return newItem;
       }
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
