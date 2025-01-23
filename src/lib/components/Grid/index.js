@@ -632,6 +632,7 @@ const GridBase = memo(({
     
             // Cleanup after the download
             document.body.removeChild(link);
+            window.open(documentLink);
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error downloading the file:", error);
