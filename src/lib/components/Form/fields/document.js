@@ -110,7 +110,6 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
                         }}}
                         onChange={(e) => handleInputChange(e.target.value)}
                         placeholder="Enter external link"
-                        // inputProps={{ maxLength: 500 }} 
                     />
                     
                 ) : (

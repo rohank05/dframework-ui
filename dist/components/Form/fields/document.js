@@ -182,7 +182,6 @@ function Document(_ref) {
     },
     onChange: e => handleInputChange(e.target.value),
     placeholder: "Enter external link"
-    // inputProps={{ maxLength: 500 }} 
   }) : /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,
     value: inputValue,

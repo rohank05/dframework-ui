@@ -615,15 +615,22 @@ const GridBase = memo(({
             if (!response.ok) {
                 throw new Error(`Failed to fetch the file: ${response.statusText}`);
             }
+    
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
+            
             const link = document.createElement("a");
             link.href = url;
+            
+            // Derive a file name from the URL or fall back to default
             const fileNameFromLink = documentLink.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
-            window.open(link);
             link.download = fileName || fileNameFromLink;
+    
+            // Append the link to the DOM and trigger a click
             document.body.appendChild(link);
             link.click();
+    
+            // Cleanup after the download
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
         } catch (error) {
