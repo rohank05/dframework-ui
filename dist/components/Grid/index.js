@@ -945,12 +945,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (action === actionTypes.History) {
         return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
       }
-      if (action === actionTypes.Download) {
-        return handleDownload({
-          documentLink: record[documentField],
-          fileName: record.FileName
-        });
-      }
       if (action === actionTypes.NavigateToRelation) {
         return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
       }

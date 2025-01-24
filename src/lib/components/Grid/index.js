@@ -683,9 +683,6 @@ const GridBase = memo(({
             if (action === actionTypes.History) {
                 return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
-            if (action === actionTypes.Download) {
-                return handleDownload({ documentLink: record[documentField], fileName: record.FileName });
-            }
             if (action === actionTypes.NavigateToRelation) {
                 return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
             }
