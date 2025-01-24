@@ -633,10 +633,9 @@ const GridBase = memo(({
             // Cleanup after the download
             document.body.removeChild(link);
             window.open(documentLink);
-            window.URL.revokeObjectURL(url);
         } catch (error) {
+            window.open(documentLink);
             console.error("Error downloading the file:", error);
-            snackbar.showError("Failed to download the file. Please try again.");
         }
     };
     const onCellClickHandler = async (cellParams, event, details) => {
