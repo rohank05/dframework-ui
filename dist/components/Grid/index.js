@@ -72,7 +72,7 @@ var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
-const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns"],
+const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -132,6 +132,12 @@ const booleanIconRenderer = params => {
 const useStyles = (0, _core.makeStyles)({
   buttons: {
     margin: '6px !important'
+  },
+  deleteContent: {
+    width: '100%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   }
 });
 const convertDefaultSort = defaultSort => {
@@ -242,7 +248,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       additionalFilters,
       onCellDoubleClickOverride,
       onAddOverride,
-      dynamicColumns
+      dynamicColumns,
+      readOnly = false
     } = _ref2,
     props = _objectWithoutProperties(_ref2, _excluded);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
@@ -307,7 +314,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     nestedGrid = false,
     selectionApi = {}
   } = model;
-  const isReadOnly = model.readOnly === true;
+  const isReadOnly = model.readOnly === true || readOnly;
   const isDoubleClicked = model.doubleClicked === false;
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
@@ -636,13 +643,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         });
       }
     }
+    const actions = [];
     if (!forAssignment && !isReadOnly) {
-      const actions = [];
       if (canEdit) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Edit"
-          }, "   ", /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
+          }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
           "data-action": actionTypes.Edit,
           label: "Edit",
           color: "primary"
@@ -678,16 +685,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           color: "primary"
         }));
       }
-      if (documentField.length) {
-        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-            title: "Download document"
-          }, /*#__PURE__*/_react.default.createElement(_FileDownload.default, null), " "),
-          "data-action": actionTypes.Download,
-          label: "Download document",
-          color: "primary"
-        }));
-      }
       if (navigateToRelation.length > 0) {
         actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
@@ -698,33 +695,43 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           label: ""
         }));
       }
-      if (actions.length > 0) {
-        finalColumns.push({
-          field: 'actions',
-          type: 'actions',
-          label: '',
-          width: actions.length * 50,
-          hideable: false,
-          getActions: params => {
-            const rowActions = [...actions];
-            const isDisabled = params.row.canEdit === false;
-            if (canEdit) {
-              rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-                icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-                  title: "Edit"
-                }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
-                "data-action": actionTypes.Edit,
-                label: "Edit",
-                color: "primary",
-                disabled: isDisabled
-              });
-            }
-            return rowActions;
-          }
-        });
-      }
-      pinnedColumns.right.push('actions');
     }
+    if (documentField.length) {
+      actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+        icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+          title: "Download document"
+        }, /*#__PURE__*/_react.default.createElement(_FileDownload.default, null), " "),
+        "data-action": actionTypes.Download,
+        label: "Download document",
+        color: "primary"
+      }));
+    }
+    if (actions.length > 0) {
+      finalColumns.push({
+        field: 'actions',
+        type: 'actions',
+        label: '',
+        width: actions.length * 50,
+        hideable: false,
+        getActions: params => {
+          const rowActions = [...actions];
+          const isDisabled = params.row.canEdit === false;
+          if (canEdit && !isReadOnly) {
+            rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+              icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+                title: "Edit"
+              }, /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
+              "data-action": actionTypes.Edit,
+              label: "Edit",
+              color: "primary",
+              disabled: isDisabled
+            });
+          }
+          return rowActions;
+        }
+      });
+    }
+    pinnedColumns.right.push('actions');
     return {
       gridColumns: finalColumns,
       pinnedColumns,
@@ -885,6 +892,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   const onCellClickHandler = async (cellParams, event, details) => {
+    let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
+    if (!action && cellParams.field === 'actions') {
+      action = details === null || details === void 0 ? void 0 : details.action;
+      if (!action) {
+        const el = event.target.closest('button');
+        if (el) {
+          action = el.dataset.action;
+        }
+      }
+    }
+    const {
+      row: record
+    } = cellParams;
     if (!isReadOnly) {
       if (onCellClick) {
         const result = await onCellClick({
@@ -896,25 +916,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           return;
         }
       }
-      const {
-        row: record
-      } = cellParams;
       const columnConfig = lookupMap[cellParams.field] || {};
       if (columnConfig.linkTo) {
         navigate({
           pathname: _template.default.replaceTags(columnConfig.linkTo, record)
         });
         return;
-      }
-      let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
-      if (!action && cellParams.field === 'actions') {
-        action = details === null || details === void 0 ? void 0 : details.action;
-        if (!action) {
-          const el = event.target.closest('button');
-          if (el) {
-            action = el.dataset.action;
-          }
-        }
       }
       if (action === actionTypes.Edit) {
         return openForm({
@@ -947,6 +954,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (action === actionTypes.NavigateToRelation) {
         return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
       }
+    }
+    if (action === actionTypes.Download) {
+      handleDownload({
+        documentLink: record[documentField],
+        fileName: record.FileName
+      });
     }
     if (isReadOnly && toLink) {
       if (model !== null && model !== void 0 && model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
@@ -1125,7 +1138,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        padding: '10px'
       }
     }, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
@@ -1198,7 +1212,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const columns = {};
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-    const visibleColumns = orderedFields.filter(ele => !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
+    const nonExportColumns = new Set();
+    gridColumns.forEach(_ref7 => {
+      let {
+        exportable,
+        field
+      } = _ref7;
+      if (exportable === false) nonExportColumns.add(field);
+    });
+    const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
     if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
       snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
       return;
@@ -1286,6 +1308,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       } = item;
       const column = gridColumns.find(col => col.field === field);
       const isNumber = (column === null || column === void 0 ? void 0 : column.type) === filterFieldDataTypes.Number;
+      if (isNumber && value < 0) {
+        return _objectSpread(_objectSpread({}, item), {}, {
+          value: null
+        });
+      }
       if (field === OrderSuggestionHistoryFields.OrderStatus) {
         const {
             filterField
@@ -1458,6 +1485,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?")))));
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: classes.deleteContent
+  }, "Are you sure you want to delete", ' ', /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+    title: record.name,
+    arrow: true
+  }, /*#__PURE__*/_react.default.createElement(_material.Box, {
+    className: classes.deleteContent
+  }, /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    variant: "body2"
+  }, record.name))), "?")))));
 }, areEqual);
 var _default = exports.default = GridBase;

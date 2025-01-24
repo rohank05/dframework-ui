@@ -43,7 +43,8 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
     parentFilters,
     parent,
     where,
-    models
+    models,
+    readOnly
   } = _ref;
   const modelConfigOfChildGrid = models.find(model => model.name === relation);
   if (!modelConfigOfChildGrid) return null;
@@ -53,6 +54,7 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
   const ChildModel = config instanceof _uiModels.UiModel ? config : new _uiModels.UiModel(config);
   if (!ChildModel) return null;
   return /*#__PURE__*/_react.default.createElement(ChildModel.ChildGrid, {
+    readOnly: readOnly,
     parentFilters: parentFilters,
     parent: parent,
     model: config,
@@ -66,7 +68,8 @@ const Relations = _ref2 => {
     parent,
     where,
     models,
-    relationFilters
+    relationFilters,
+    readOnly
   } = _ref2;
   const [activeTab, setActiveTab] = (0, _react.useState)(relations[0]);
   const handleChange = (event, newValue) => {
@@ -91,6 +94,7 @@ const Relations = _ref2 => {
     value: relation,
     key: relation
   }, /*#__PURE__*/_react.default.createElement(ChildGrid, {
+    readOnly: readOnly,
     relation: relation,
     key: relation,
     models: models,

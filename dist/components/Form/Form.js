@@ -63,7 +63,8 @@ const Form = _ref => {
       delete: model.permissions.allowFormDelete || false
     },
     Layout = _fieldMapper.default,
-    baseSaveData = {}
+    baseSaveData = {},
+    sx
   } = _ref;
   const formTitle = model.formTitle || model.title;
   const {
@@ -338,6 +339,8 @@ const Form = _ref => {
   }];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
+  const recordEditable = !("canEdit" in data) || data.canEdit;
+  const readOnlyRelations = !recordEditable || data.readOnlyRelations;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     title: formTitle,
     showBreadcrumbs: !hideBreadcrumb,
@@ -349,15 +352,15 @@ const Form = _ref => {
       setActiveStep
     }
   }, /*#__PURE__*/_react.default.createElement(_Paper.default, {
-    sx: {
+    sx: _objectSpread({
       padding: 2
-    }
+    }, sx)
   }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement(_Stack.default, {
     direction: "row",
     spacing: 2,
     justifyContent: "flex-end",
     mb: 1
-  }, canEdit && !showSaveButton && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, canEdit && recordEditable && !showSaveButton && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     type: "submit",
     color: "success",
@@ -405,6 +408,7 @@ const Form = _ref => {
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
   }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), showRelations ? /*#__PURE__*/_react.default.createElement(_relations.default, {
+    readOnly: readOnlyRelations,
     models: models,
     relationFilters: relationFilters,
     relations: relations,

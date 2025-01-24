@@ -77,7 +77,7 @@ const Field = _ref2 => {
   otherProps = _objectSpread(_objectSpread({
     InputProps: {
       inputProps: {
-        min: Math.max(0, resolvedMin),
+        min,
         max: resolvedMax,
         readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
         onKeyPress: event => {

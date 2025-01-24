@@ -11,6 +11,9 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
                 ? { backgroundColor: '#dfdede' } // Light grey background for read-only inputs
                 : undefined,
         }}
+        inputProps={{
+            maxLength: column.max, // Apply maxLength directly here
+        }}
         key={field}
         required={column?.required}
         multiline={column.multiline}
@@ -22,6 +25,7 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
         onBlur={formik.handleBlur}
         error={formik.touched[field] && Boolean(formik.errors[field])}
         helperText={formik.touched[field] && formik.errors[field]}
+        autoComplete={column.autoComplete}
         {...otherProps}
     />
 };

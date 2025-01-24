@@ -30,6 +30,9 @@ const field = _ref => {
       } // Light grey background for read-only inputs
       : undefined
     },
+    inputProps: {
+      maxLength: column.max // Apply maxLength directly here
+    },
     key: field,
     required: column === null || column === void 0 ? void 0 : column.required,
     multiline: column.multiline,
@@ -40,7 +43,8 @@ const field = _ref => {
     onChange: formik.handleChange,
     onBlur: formik.handleBlur,
     error: formik.touched[field] && Boolean(formik.errors[field]),
-    helperText: formik.touched[field] && formik.errors[field]
+    helperText: formik.touched[field] && formik.errors[field],
+    autoComplete: column.autoComplete
   }, otherProps));
 };
 var _default = exports.default = field;
