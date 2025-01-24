@@ -134,7 +134,7 @@ const useStyles = (0, _core.makeStyles)({
     margin: '6px !important'
   },
   deleteContent: {
-    width: '90%',
+    width: '100%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -1473,6 +1473,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     title: "Confirm Delete"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: classes.deleteContent
-  }, " ", 'Are you sure you want to delete'.concat(" ", record === null || record === void 0 ? void 0 : record.name, "?"))))));
+  }, "Are you sure you want to delete", ' ', /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+    title: record.name,
+    arrow: true
+  }, /*#__PURE__*/_react.default.createElement(_material.Box, {
+    className: classes.deleteContent
+  }, /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    variant: "body2"
+  }, record.name))), "?")))));
 }, areEqual);
 var _default = exports.default = GridBase;
