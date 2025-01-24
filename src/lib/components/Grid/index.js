@@ -30,7 +30,7 @@ import { getList, getRecord, deleteRecord, saveRecord } from './crud-helper';
 import PropTypes from 'prop-types';
 import { Footer } from './footer';
 import template from './template';
-import { Tooltip, CardContent, Card } from "@mui/material";
+import { Tooltip, CardContent, Card, Box } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from "@material-ui/core";
@@ -74,7 +74,7 @@ const useStyles = makeStyles({
         margin: '6px !important'
     },
     deleteContent: {
-        width: '90%',
+        width: '100%',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -1102,7 +1102,20 @@ const GridBase = memo(({
                     )}
                     {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
                     }
-                    {isDeleting && !errorMessage && (<DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete"><div className={classes.deleteContent}> {`${'Are you sure you want to delete'} ${record?.name}?`}</div></DialogComponent>)}
+                    {isDeleting && !errorMessage && (
+                    <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete">
+                        <div className={classes.deleteContent}>
+                            Are you sure you want to delete{' '}
+                                <Tooltip title={record.name} arrow>
+                                    <Box className={classes.deleteContent}>
+                                        <Typography variant="body2">
+                                            {record.name}
+                                        </Typography>
+                                    </Box>
+                                </Tooltip>
+                            ?
+                        </div>
+                    </DialogComponent>)}
                 </CardContent>
             </Card >
         </>
