@@ -176,6 +176,7 @@ const GridBase = memo(({
     onCellDoubleClickOverride,
     onAddOverride,
     dynamicColumns,
+    readOnly = false,
     ...props
 }) => {
 
@@ -208,7 +209,7 @@ const GridBase = memo(({
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
     const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, nestedGrid = false, selectionApi = {} } = model;
-    const isReadOnly = model.readOnly === true;
+    const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.doubleClicked === false;
     const dataRef = useRef(data);
     const showAddIcon = model.showAddIcon === true;
@@ -275,10 +276,10 @@ const GridBase = memo(({
         }
 
     };
-    
+
 
     const customCheckBox = (params) => {
-        
+
         return (
             <Checkbox
                 onClick={() => handleSelectRow(params)}
@@ -472,11 +473,10 @@ const GridBase = memo(({
                 );
             }
         }
-
+        const actions = [];
         if (!forAssignment && !isReadOnly) {
-            const actions = [];
             if (canEdit) {
-                actions.push(<GridActionsCellItem icon={<Tooltip title="Edit">   <EditIcon /></Tooltip>} data-action={actionTypes.Edit} label="Edit" color="primary" />);
+                actions.push(<GridActionsCellItem icon={<Tooltip title="Edit"><EditIcon /></Tooltip>} data-action={actionTypes.Edit} label="Edit" color="primary" />);
             }
             if (effectivePermissions.copy) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="Copy"><CopyIcon /> </Tooltip>} data-action={actionTypes.Copy} label="Copy" color="primary" />);
@@ -487,43 +487,43 @@ const GridBase = memo(({
             if (showHistory) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
             }
-            if (documentField.length) {
-                actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
-            }
             if (navigateToRelation.length > 0) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label="" />);
             }
-            if (actions.length > 0) {
-                finalColumns.push({
-                    field: 'actions',
-                    type: 'actions',
-                    label: '',
-                    width: actions.length * 50,
-                    hideable: false,
-                    getActions: (params) => {
-                        const rowActions = [...actions];
-                        const isDisabled = params.row.canEdit === false;
-                        if(canEdit) {
-                            rowActions[0] = (
-                                <GridActionsCellItem
-                                    icon={
-                                        <Tooltip title="Edit">
-                                            <EditIcon />
-                                        </Tooltip>
-                                    }
-                                    data-action={actionTypes.Edit}
-                                    label="Edit"
-                                    color="primary"
-                                    disabled={isDisabled}
-                                />
-                            );
-                        }
-                        return rowActions;
-                    },
-                });
-            }
-            pinnedColumns.right.push('actions');
         }
+        if (documentField.length) {
+            actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
+        }
+        if (actions.length > 0) {
+            finalColumns.push({
+                field: 'actions',
+                type: 'actions',
+                label: '',
+                width: actions.length * 50,
+                hideable: false,
+                getActions: (params) => {
+                    const rowActions = [...actions];
+                    const isDisabled = params.row.canEdit === false;
+                    if (canEdit && !isReadOnly) {
+                        rowActions[0] = (
+                            <GridActionsCellItem
+                                icon={
+                                    <Tooltip title="Edit">
+                                        <EditIcon />
+                                    </Tooltip>
+                                }
+                                data-action={actionTypes.Edit}
+                                label="Edit"
+                                color="primary"
+                                disabled={isDisabled}
+                            />
+                        );
+                    }
+                    return rowActions;
+                },
+            });
+        }
+        pinnedColumns.right.push('actions');
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
     }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
@@ -621,21 +621,21 @@ const GridBase = memo(({
             if (!response.ok) {
                 throw new Error(`Failed to fetch the file: ${response.statusText}`);
             }
-    
+
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
-            
+
             const link = document.createElement("a");
             link.href = url;
-            
+
             // Derive a file name from the URL or fall back to default
             const fileNameFromLink = documentLink.split("/").pop() || `downloaded-file.${blob.type.split("/")[1] || "txt"}`;
             link.download = fileName || fileNameFromLink;
-    
+
             // Append the link to the DOM and trigger a click
             document.body.appendChild(link);
             link.click();
-    
+
             // Cleanup after the download
             document.body.removeChild(link);
             window.open(documentLink);
@@ -646,6 +646,17 @@ const GridBase = memo(({
         }
     };
     const onCellClickHandler = async (cellParams, event, details) => {
+        let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
+        if (!action && cellParams.field === 'actions') {
+            action = details?.action;
+            if (!action) {
+                const el = event.target.closest('button');
+                if (el) {
+                    action = el.dataset.action;
+                }
+            }
+        }
+        const { row: record } = cellParams;
         if (!isReadOnly) {
             if (onCellClick) {
                 const result = await onCellClick({ cellParams, event, details });
@@ -653,23 +664,12 @@ const GridBase = memo(({
                     return;
                 }
             }
-            const { row: record } = cellParams;
             const columnConfig = lookupMap[cellParams.field] || {};
             if (columnConfig.linkTo) {
                 navigate({
                     pathname: template.replaceTags(columnConfig.linkTo, record)
                 });
                 return;
-            }
-            let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
-            if (!action && cellParams.field === 'actions') {
-                action = details?.action;
-                if (!action) {
-                    const el = event.target.closest('button');
-                    if (el) {
-                        action = el.dataset.action;
-                    }
-                }
             }
             if (action === actionTypes.Edit) {
                 return openForm({ id: record[idProperty], record });
@@ -684,12 +684,12 @@ const GridBase = memo(({
             if (action === actionTypes.History) {
                 return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
-            if (action === actionTypes.Download) {
-                handleDownload({ documentLink: record[documentField], fileName: record.FileName });
-            }
             if (action === actionTypes.NavigateToRelation) {
                 return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
             }
+        }
+        if (action === actionTypes.Download) {
+            handleDownload({ documentLink: record[documentField], fileName: record.FileName });
         }
         if (isReadOnly && toLink) {
             if (model?.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
@@ -742,7 +742,7 @@ const GridBase = memo(({
             return;
         }
 
-        if(event.row.canEdit === false) {
+        if (event.row.canEdit === false) {
             return;
         }
 
@@ -777,7 +777,7 @@ const GridBase = memo(({
         if (selectionApi.length > 0) {
             const url = stateData?.gridSettings?.permissions?.Url;
             let gridApi = `${url}${selectionApi || api}/updateMany`;
-            if(selectedSet.current.size < 1) {
+            if (selectedSet.current.size < 1) {
                 snackbar.showError(
                     "Please select atleast one record to proceed"
                 );
@@ -887,7 +887,11 @@ const GridBase = memo(({
         const columns = {};
         const isPivotExport = e.target.dataset.isPivotExport === 'true';
         const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-        const visibleColumns = orderedFields.filter(ele => !hiddenColumns?.includes(ele) && ele !== '__check__' && ele !== 'actions');
+        const nonExportColumns = new Set();
+        gridColumns.forEach(({ exportable, field }) => {
+            if (exportable === false) nonExportColumns.add(field);
+        })
+        const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !hiddenColumns?.includes(ele) && ele !== '__check__' && ele !== 'actions');
         if (visibleColumns?.length === 0) {
             snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
             return;
@@ -896,7 +900,6 @@ const GridBase = memo(({
         visibleColumns.forEach(ele => {
             columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable };
         })
-
         fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     };
     useEffect(() => {
@@ -951,7 +954,7 @@ const GridBase = memo(({
             const isNumber = column?.type === filterFieldDataTypes.Number;
 
             if (isNumber && value < 0) {
-                return {...item, value: null};
+                return { ...item, value: null };
             }
 
             if (field === OrderSuggestionHistoryFields.OrderStatus) {
@@ -1013,7 +1016,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} breadcrumbColor={breadcrumbColor}/>
+                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
@@ -1103,9 +1106,9 @@ const GridBase = memo(({
                     {errorMessage && (<DialogComponent open={!!errorMessage} onConfirm={clearError} onCancel={clearError} title="Info" hideCancelButton={true} > {errorMessage}</DialogComponent>)
                     }
                     {isDeleting && !errorMessage && (
-                    <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete">
-                        <div className={classes.deleteContent}>
-                            Are you sure you want to delete{' '}
+                        <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete">
+                            <div className={classes.deleteContent}>
+                                Are you sure you want to delete{' '}
                                 <Tooltip title={record.name} arrow>
                                     <Box className={classes.deleteContent}>
                                         <Typography variant="body2">
@@ -1113,9 +1116,9 @@ const GridBase = memo(({
                                         </Typography>
                                     </Box>
                                 </Tooltip>
-                            ?
-                        </div>
-                    </DialogComponent>)}
+                                ?
+                            </div>
+                        </DialogComponent>)}
                 </CardContent>
             </Card >
         </>

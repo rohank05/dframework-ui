@@ -222,7 +222,6 @@ export default function App() {
 | `groupable`           | `boolean`        | Indicates if the column can be grouped.                              |                          |
 | `width`               | `number`         | Specifies the width of the column in pixels.                         |                          |
 | `resizable`           | `boolean`        | Indicates if the column width can be resized by the user.            |                          |
-| `exportable`          | `boolean`        | Indicates if the column should be included in exported data.         |                          |
 | `readOnly`            | `boolean`        | Marks the column as read-only.                                       |                          |
 | `shouldDisableDate`   | `function`       | A function to disable specific dates in the `DatePicker`.            |                          |
 | `showErrorText`       | `boolean`        | Indicates if error text should be displayed when validation fails.   |                          |

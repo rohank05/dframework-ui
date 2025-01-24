@@ -164,7 +164,7 @@ const Form = ({
         .finally(() => setIsLoading(false));
     }
   });
-  
+
   const { dirty } = formik;
 
   const handleDiscardChanges = () => {
@@ -196,7 +196,7 @@ const Form = ({
     }
 
     model.columns.map((item) => {
-      if(item.skipCopy && isCopy){
+      if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
     })
@@ -286,6 +286,8 @@ const Form = ({
   ];
   const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
+  const recordEditable = !("canEdit" in data) || data.canEdit;
+  const readOnlyRelations = !recordEditable || data.readOnlyRelations;
   return (
     <>
       <PageTitle
@@ -303,7 +305,7 @@ const Form = ({
               justifyContent="flex-end"
               mb={1}
             >
-              {canEdit && !showSaveButton && (
+              {canEdit && recordEditable && !showSaveButton && (
                 <Button
                   variant="contained"
                   type="submit"
@@ -373,6 +375,7 @@ const Form = ({
             }?`}</DialogComponent>
           {showRelations ? (
             <Relations
+              readOnly={readOnlyRelations}
               models={models}
               relationFilters={relationFilters}
               relations={relations}

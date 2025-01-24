@@ -18,7 +18,7 @@ import { UiModel } from "../Grid/ui-models";
  * @param {Object} params.where - Conditions for the grid
  * @param {Array} params.models - List of available models
  */
-const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
+const ChildGrid = memo(({ relation, parentFilters, parent, where, models, readOnly }) => {
   const modelConfigOfChildGrid = models.find(
     (model) => model.name === relation
   );
@@ -29,6 +29,7 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
 
   return (
     <ChildModel.ChildGrid
+      readOnly={readOnly}
       parentFilters={parentFilters}
       parent={parent}
       model={config}
@@ -38,7 +39,7 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models }) => {
   );
 });
 
-const Relations = ({ relations, parent, where, models, relationFilters }) => {
+const Relations = ({ relations, parent, where, models, relationFilters, readOnly }) => {
   const [activeTab, setActiveTab] = useState(relations[0]);
 
   const handleChange = (event, newValue) => {
@@ -72,6 +73,7 @@ const Relations = ({ relations, parent, where, models, relationFilters }) => {
           key={relation}
         >
           <ChildGrid
+            readOnly={readOnly}
             relation={relation}
             key={relation}
             models={models}
