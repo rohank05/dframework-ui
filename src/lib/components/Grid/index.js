@@ -632,7 +632,7 @@ const GridBase = memo(({
     
             // Cleanup after the download
             document.body.removeChild(link);
-            window.open(documentLink);
+            window.URL.revokeObjectURL(url);
         } catch (error) {
             window.open(documentLink);
             console.error("Error downloading the file:", error);
@@ -678,7 +678,7 @@ const GridBase = memo(({
                 return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
             }
             if (action === actionTypes.Download) {
-                handleDownload({ documentLink: record[documentField], fileName: record.FileName });
+                return handleDownload({ documentLink: record[documentField], fileName: record.FileName });
             }
             if (action === actionTypes.NavigateToRelation) {
                 return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);

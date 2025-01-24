@@ -878,7 +878,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
 
       // Cleanup after the download
       document.body.removeChild(link);
-      window.open(documentLink);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       window.open(documentLink);
       console.error("Error downloading the file:", error);
@@ -939,7 +939,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
       }
       if (action === actionTypes.Download) {
-        handleDownload({
+        return handleDownload({
           documentLink: record[documentField],
           fileName: record.FileName
         });
