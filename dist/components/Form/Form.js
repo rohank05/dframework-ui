@@ -64,7 +64,8 @@ const Form = _ref => {
     },
     Layout = _fieldMapper.default,
     baseSaveData = {},
-    sx
+    sx,
+    readOnly
   } = _ref;
   const formTitle = model.formTitle || model.title;
   const {
@@ -360,7 +361,7 @@ const Form = _ref => {
     spacing: 2,
     justifyContent: "flex-end",
     mb: 1
-  }, canEdit && recordEditable && !showSaveButton && /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, canEdit && recordEditable && !showSaveButton && !readOnly && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     type: "submit",
     color: "success",

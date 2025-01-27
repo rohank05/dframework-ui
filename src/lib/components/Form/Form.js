@@ -35,7 +35,8 @@ const Form = ({
   },
   Layout = FormLayout,
   baseSaveData = {},
-  sx
+  sx,
+  readOnly
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
@@ -305,7 +306,7 @@ const Form = ({
               justifyContent="flex-end"
               mb={1}
             >
-              {canEdit && recordEditable && !showSaveButton && (
+              {canEdit && recordEditable && !showSaveButton && !readOnly && (
                 <Button
                   variant="contained"
                   type="submit"

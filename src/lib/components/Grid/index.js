@@ -1088,6 +1088,7 @@ const GridBase = memo(({
                             filterValueTrue: 'Yes',
                             filterValueFalse: 'No'
                         }}
+
                     />
                     {isOrderDetailModalOpen && selectedOrder && model.OrderModal && (
                         <model.OrderModal

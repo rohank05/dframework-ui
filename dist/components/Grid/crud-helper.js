@@ -423,9 +423,9 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
-      const {
-        data = {}
-      } = response.data;
+      const data = response.data;
+      // const { data = {} } = response.data;
+      console.log('crudHelper', data);
       if (data.success) {
         return data;
       }
