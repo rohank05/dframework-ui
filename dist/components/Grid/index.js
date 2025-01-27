@@ -1057,8 +1057,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         setError: snackbar.showError
       }).then(success => {
         if (success) {
-          sessionStorage.setItem("recordAdded", "true");
-          window.location.reload();
+          fetchData();
+          snackbar.showMessage("Record Added Successfully.");
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
@@ -1073,12 +1073,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       });
     }
   };
-  (0, _react.useEffect)(() => {
-    if (sessionStorage.getItem("recordAdded") === "true") {
-      snackbar.showMessage("Record Added Successfully.");
-      sessionStorage.removeItem("recordAdded"); // Clear the flag
-    }
-  }, []);
   const clearFilters = () => {
     var _filterModel$items;
     if ((filterModel === null || filterModel === void 0 || (_filterModel$items = filterModel.items) === null || _filterModel$items === void 0 ? void 0 : _filterModel$items.length) > 0) {

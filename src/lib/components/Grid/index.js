@@ -785,8 +785,8 @@ const GridBase = memo(({
             }
             saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
-                    sessionStorage.setItem("recordAdded", "true");
-                    window.location.reload();
+                    fetchData();
+                    snackbar.showMessage("Record Added Successfully.");
                 }
             })
                 .catch((err) => {
@@ -804,13 +804,6 @@ const GridBase = memo(({
             openForm({ id: 0 });
         }
     }
-
-    useEffect(() => {
-        if (sessionStorage.getItem("recordAdded") === "true") {
-            snackbar.showMessage("Record Added Successfully.");
-            sessionStorage.removeItem("recordAdded"); // Clear the flag
-        }
-    }, []);
 
     const clearFilters = () => {
         if (filterModel?.items?.length > 0) {
