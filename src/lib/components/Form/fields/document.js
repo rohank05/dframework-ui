@@ -40,10 +40,6 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
         }
     };
 
-    function extractStatusCode(message) {
-         // Return the status code if found, otherwise null
-    }
-
     const handleFileUpload = async () => {
         if (!formState.selectedFile) return;
         try {
