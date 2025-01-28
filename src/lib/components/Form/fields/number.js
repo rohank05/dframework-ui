@@ -29,12 +29,7 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
         }, 400),
         [resolvedMin, resolvedMax, formik.values]
     );
-    // Set the default value to the minimum value if `min` is defined
-    React.useEffect(() => {
-        if (resolvedMin !== undefined && formik.values[field] === undefined) {
-            formik.setFieldValue(field, resolvedMin);
-        }
-    }, [resolvedMin, formik, field]);
+    
     otherProps = {
         InputProps: {
             inputProps: {

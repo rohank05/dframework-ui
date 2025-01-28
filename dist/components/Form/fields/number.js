@@ -74,12 +74,6 @@ const Field = _ref2 => {
       formik.setFieldValue(field, value);
     }
   }, 400), [resolvedMin, resolvedMax, formik.values]);
-  // Set the default value to the minimum value if `min` is defined
-  _react.default.useEffect(() => {
-    if (resolvedMin !== undefined && formik.values[field] === undefined) {
-      formik.setFieldValue(field, resolvedMin);
-    }
-  }, [resolvedMin, formik, field]);
   otherProps = _objectSpread(_objectSpread({
     InputProps: {
       inputProps: {
