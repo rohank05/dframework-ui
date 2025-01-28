@@ -50,7 +50,7 @@ const Field = ({ field, formik }) => {
                         marginBottom: '0.5rem',
                     }}
                 >
-                    <Typography variant="body1" sx={{ width: "150px", marginRight: 2 }}>
+                    <Typography variant="body1" sx={{ width: "180px", marginRight: 2 }}>
                         {key} :
                     </Typography>
                     <Input

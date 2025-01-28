@@ -71,7 +71,7 @@ const Field = _ref => {
   }, /*#__PURE__*/React.createElement(_Typography.default, {
     variant: "body1",
     sx: {
-      width: "150px",
+      width: "180px",
       marginRight: 2
     }
   }, key, " :"), /*#__PURE__*/React.createElement(_Input.default, {

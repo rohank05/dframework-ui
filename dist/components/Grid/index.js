@@ -1479,15 +1479,21 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     onConfirm: handleDelete,
     onCancel: () => setIsDeleting(false),
     title: "Confirm Delete"
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("span", {
     className: classes.deleteContent
-  }, "Are you sure you want to delete", ' ', /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+  }, "Are you sure you want to delete", record.name && /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+    style: {
+      display: "inline"
+    },
     title: record.name,
     arrow: true
   }, /*#__PURE__*/_react.default.createElement(_material.Box, {
+    style: {
+      display: "inline"
+    },
     className: classes.deleteContent
   }, /*#__PURE__*/_react.default.createElement(_Typography.default, {
     variant: "body2"
-  }, record.name))), "?")))));
+  }, "\xA0", record.name))), "\xA0?")))));
 }, areEqual);
 var _default = exports.default = GridBase;

@@ -1107,17 +1107,17 @@ const GridBase = memo(({
                     }
                     {isDeleting && !errorMessage && (
                         <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete">
-                            <div className={classes.deleteContent}>
-                                Are you sure you want to delete{' '}
-                                <Tooltip title={record.name} arrow>
-                                    <Box className={classes.deleteContent}>
+                            <span className={classes.deleteContent}>
+                                Are you sure you want to delete
+                                {record.name && <Tooltip style={{ display: "inline" }} title={record.name} arrow>
+                                    <Box style={{ display: "inline" }} className={classes.deleteContent}>
                                         <Typography variant="body2">
-                                            {record.name}
+                                            &nbsp;{record.name}
                                         </Typography>
                                     </Box>
-                                </Tooltip>
-                                ?
-                            </div>
+                                </Tooltip>}
+                                &nbsp;?
+                            </span>
                         </DialogComponent>)}
                 </CardContent>
             </Card >
