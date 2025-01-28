@@ -785,8 +785,8 @@ const GridBase = memo(({
             }
             saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
+                    fetchData();
                     snackbar.showMessage("Record Added Successfully.");
-                    window.location.reload();
                 }
             })
                 .catch((err) => {
