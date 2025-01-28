@@ -1057,8 +1057,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         setError: snackbar.showError
       }).then(success => {
         if (success) {
+          fetchData();
           snackbar.showMessage("Record Added Successfully.");
-          window.location.reload();
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
