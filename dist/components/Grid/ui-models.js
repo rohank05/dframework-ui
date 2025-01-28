@@ -234,7 +234,7 @@ class UiModel {
           config = yup.string().trim().label(formLabel);
           break;
         default:
-          config = yup.mixed().label(formLabel);
+          config = yup.mixed().nullable().label(formLabel);
           break;
       }
       if (required && type !== "number") {
