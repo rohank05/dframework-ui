@@ -959,7 +959,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         fileName: record.FileName
       });
     }
-    console.log(toLink);
     if (toLink.length) {
       if (model !== null && model !== void 0 && model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
         onCellClick(cellParams.row);

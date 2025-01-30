@@ -146,7 +146,7 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     )
 }
 
-const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, getRecordAndLookups = () => { } }) => {
+const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, getRecordAndLookups = () => { }, isAdd }) => {
     const classes = useStyles();
     if (!formElements?.length) {
         return null;
@@ -167,7 +167,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                                 : null
                             }
                             <Grid item xs={isGridComponent ? 12 : 9} className={classes.childStyles}>
-                                <Component model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} getRecordAndLookups={getRecordAndLookups} {...otherProps} />
+                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} getRecordAndLookups={getRecordAndLookups} {...otherProps} />
                             </Grid>
                         </Grid >
                     )
@@ -217,7 +217,7 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
     }, [model]);
     return (
         <div>
-            <RenderColumns getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
+            <RenderColumns isAdd={displayId == 0} getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
             <div className={classes.renderSteps}>
                 <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} />
             </div>

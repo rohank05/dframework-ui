@@ -269,7 +269,8 @@ const RenderColumns = _ref3 => {
     lookups,
     fieldConfigs,
     mode,
-    getRecordAndLookups = () => {}
+    getRecordAndLookups = () => {},
+    isAdd
   } = _ref3;
   const classes = useStyles();
   if (!(formElements !== null && formElements !== void 0 && formElements.length)) {
@@ -306,6 +307,7 @@ const RenderColumns = _ref3 => {
       xs: isGridComponent ? 12 : 9,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
+      isAdd: isAdd,
       model: model,
       fieldConfigs: fieldConfigs[field],
       mode: mode,
@@ -417,6 +419,7 @@ const FormLayout = _ref6 => {
     };
   }, [model]);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
+    isAdd: displayId == 0,
     getRecordAndLookups: getRecordAndLookups,
     formElements: formElements,
     model: model,

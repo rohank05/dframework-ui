@@ -28,6 +28,7 @@ function _extends() { return _extends = Object.assign ? Object.assign.bind() : f
 const Field = _ref => {
   var _formik$values$field;
   let {
+    isAdd,
     column,
     field,
     fieldLabel,
@@ -44,15 +45,18 @@ const Field = _ref => {
   if (mode !== 'copy') {
     isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
   }
+  console.log(isAdd);
   const handleAutoCompleteChange = (event, newValue) => {
+    var _lastElement;
+    console.log(newValue);
     let lastElement = newValue.pop();
-    lastElement = lastElement.trim();
+    lastElement = (_lastElement = lastElement) === null || _lastElement === void 0 ? void 0 : _lastElement.trim();
     if (!newValue.includes(lastElement)) {
       newValue.push(lastElement);
     }
     formik.setFieldValue(field, (newValue === null || newValue === void 0 ? void 0 : newValue.join(', ')) || '');
   };
-  const fixedOptions = column.hasDefault ? inputValue[0] : '';
+  const fixedOptions = column.hasDefault && !isAdd ? inputValue[0] : '';
   return /*#__PURE__*/React.createElement(_FormControl.default, {
     fullWidth: true,
     key: field,
