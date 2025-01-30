@@ -290,7 +290,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   }
   const [filterModel, setFilterModel] = (0, _react.useState)(_objectSpread({}, initialFilterModel));
-  const [selectState, setSelectState] = (0, _react.useState)([]);
   const {
     navigate,
     getParams,
@@ -318,7 +317,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const isDoubleClicked = model.doubleClicked === false;
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
-  const toLink = model.columns.map(item => item.link);
+  const toLink = model.columns.filter(_ref3 => {
+    let {
+      link
+    } = _ref3;
+    return Boolean(link);
+  }).map(item => item.link);
   const [isGridPreferenceFetched, setIsGridPreferenceFetched] = (0, _react.useState)(false);
   const classes = useStyles();
   const {
@@ -507,13 +511,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   }, [customFilters]);
-  const lookupOptions = _ref3 => {
+  const lookupOptions = _ref4 => {
     let {
         row,
         field,
         id
-      } = _ref3,
-      others = _objectWithoutProperties(_ref3, _excluded2);
+      } = _ref4,
+      others = _objectWithoutProperties(_ref4, _excluded2);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -817,12 +821,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       model: model
     });
   };
-  const openForm = _ref4 => {
+  const openForm = _ref5 => {
     let {
       id,
       record = {},
       mode
-    } = _ref4;
+    } = _ref5;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -859,11 +863,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref5 => {
+  const handleDownload = async _ref6 => {
     let {
       documentLink,
       fileName
-    } = _ref5;
+    } = _ref6;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -955,7 +959,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         fileName: record.FileName
       });
     }
-    if (isReadOnly && toLink) {
+    console.log(toLink);
+    if (toLink.length) {
       if (model !== null && model !== void 0 && model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
         onCellClick(cellParams.row);
         return;
@@ -1083,11 +1088,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref6 => {
+  const updateAssignment = _ref7 => {
     let {
       unassign,
       assign
-    } = _ref6;
+    } = _ref7;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1207,11 +1212,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref7 => {
+    gridColumns.forEach(_ref8 => {
       let {
         exportable,
         field
-      } = _ref7;
+      } = _ref8;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
@@ -1481,19 +1486,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     title: "Confirm Delete"
   }, /*#__PURE__*/_react.default.createElement("span", {
     className: classes.deleteContent
-  }, "Are you sure you want to delete", record.name && /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+  }, "Are you sure you want to delete ", record.name && /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
     style: {
       display: "inline"
     },
     title: record.name,
     arrow: true
-  }, /*#__PURE__*/_react.default.createElement(_material.Box, {
-    style: {
-      display: "inline"
-    },
-    className: classes.deleteContent
-  }, /*#__PURE__*/_react.default.createElement(_Typography.default, {
-    variant: "body2"
-  }, "\xA0", record.name))), "\xA0?")))));
+  }, record.name.length > 30 ? "".concat(record.name.slice(0, 30), "...") : record.name), " ?")))));
 }, areEqual);
 var _default = exports.default = GridBase;

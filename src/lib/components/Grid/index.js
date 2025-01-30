@@ -203,7 +203,6 @@ const GridBase = memo(({
         })
     }
     const [filterModel, setFilterModel] = useState({ ...initialFilterModel });
-    const [selectState, setSelectState] = useState([]);
     const { navigate, getParams, useParams, pathname } = useRouter();
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
@@ -213,7 +212,7 @@ const GridBase = memo(({
     const isDoubleClicked = model.doubleClicked === false;
     const dataRef = useRef(data);
     const showAddIcon = model.showAddIcon === true;
-    const toLink = model.columns.map(item => item.link);
+    const toLink = model.columns.filter(({ link }) => Boolean(link)).map(item => item.link);
     const [isGridPreferenceFetched, setIsGridPreferenceFetched] = useState(false);
     const classes = useStyles();
     const { stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
@@ -690,7 +689,7 @@ const GridBase = memo(({
         if (action === actionTypes.Download) {
             handleDownload({ documentLink: record[documentField], fileName: record.FileName });
         }
-        if (isReadOnly && toLink) {
+        if (toLink.length) {
             if (model?.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
                 onCellClick(cellParams.row);
                 return;
@@ -748,7 +747,6 @@ const GridBase = memo(({
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm({ id: record[idProperty], record });
         }
-
         if (isReadOnly && model.rowRedirectLink) {
             let historyObject = {
                 pathname: template.replaceTags(model.rowRedirectLink, record),
@@ -1108,15 +1106,9 @@ const GridBase = memo(({
                     {isDeleting && !errorMessage && (
                         <DialogComponent open={isDeleting} onConfirm={handleDelete} onCancel={() => setIsDeleting(false)} title="Confirm Delete">
                             <span className={classes.deleteContent}>
-                                Are you sure you want to delete
-                                {record.name && <Tooltip style={{ display: "inline" }} title={record.name} arrow>
-                                    <Box style={{ display: "inline" }} className={classes.deleteContent}>
-                                        <Typography variant="body2">
-                                            &nbsp;{record.name}
-                                        </Typography>
-                                    </Box>
-                                </Tooltip>}
-                                &nbsp;?
+                                Are you sure you want to delete {record.name && <Tooltip style={{ display: "inline" }} title={record.name} arrow>
+                                    {record.name.length > 30 ? `${record.name.slice(0, 30)}...` : record.name}
+                                </Tooltip>} ?
                             </span>
                         </DialogComponent>)}
                 </CardContent>
