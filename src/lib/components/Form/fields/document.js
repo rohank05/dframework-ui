@@ -3,6 +3,9 @@ import { Box, RadioGroup, FormControlLabel, Radio, TextField, Button, Typography
 import { useRouter, useStateContext } from "../../useRouter/StateProvider";
 import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
+import utils from "../../utils";
+
+const { errorMapping } = utils;
 
 function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
     let inputValue = formik.values[field] || "";
@@ -59,7 +62,9 @@ function Document({ column, field, fieldLabel, formik, lookups, data, otherProps
             const fileUrl = mediaApi + '/' + data.filePath;
             formik.setFieldValue(field, fileUrl);
         } catch (error) {
-            console.error("Error uploading file:", error);
+            const statusCode = (error.message.match(/status code (\d{3})/) || [])[1];
+            snackbar.showError(errorMapping[statusCode]);
+            console.error("Error uploading file: ",error);
         }
     };
 
