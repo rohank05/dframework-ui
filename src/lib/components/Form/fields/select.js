@@ -97,7 +97,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
                 }}
             >
                 {Array.isArray(options) && options.map(option => (
-                    <MenuItem key={option.value} value={option.value}>
+                    <MenuItem key={option.value} value={option.value} disabled={option?.isDisabled || false}>
                         {option.label}
                     </MenuItem>
                 ))}
