@@ -45,7 +45,8 @@ const SelectField = _ref => {
     if (filter) {
       return filter({
         options,
-        currentValue: formik.values[field]
+        currentValue: formik.values[field],
+        state: formik.values
       });
     }
     return options;

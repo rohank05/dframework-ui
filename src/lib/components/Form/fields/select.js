@@ -7,17 +7,16 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
-    const [userSelected, setUserSelected] = React.useState(false); 
+    const [userSelected, setUserSelected] = React.useState(false);
     const { filter } = column;
 
     const initialOptions = useMemo(() => {
         let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
         if (filter) {
-            return filter({ options, currentValue: formik.values[field] });
+            return filter({ options, currentValue: formik.values[field], state: formik.values });
         }
         return options;
     }, [column.lookup, filter, lookups, field, formik.values]);
-
     const [options, setOptions] = React.useState(initialOptions);
 
     useEffect(() => {
@@ -41,7 +40,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         getRecordAndLookups({
             scopeId: formik.values[valueField],
             lookups: column.lookup,
-            customSetIsLoading: () => {},
+            customSetIsLoading: () => { },
             customSetActiveRecord: setActiveRecord
         });
     };
@@ -73,7 +72,6 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         formik.handleChange(event); // Update formik's state
         setUserSelected(true); // Set the flag to true when the user makes a selection
     };
-
     return (
         <FormControl
             fullWidth
