@@ -123,7 +123,7 @@ const SelectField = _ref => {
   }), Array.isArray(options) && options.map(option => /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     key: option.value,
     value: option.value,
-    disabled: !!(option !== null && option !== void 0 && option.isDisabled)
+    disabled: option.isDisabled
   }, option.label))), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = SelectField;
