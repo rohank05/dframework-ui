@@ -28,11 +28,7 @@ const Form = ({
   api,
   models,
   relationFilters = {},
-  permissions = {
-    edit: model.permissions.edit,
-    export: model.permissions.export,
-    delete: model.permissions.allowFormDelete || false
-  },
+  permissions = {},
   Layout = FormLayout,
   baseSaveData = {},
   sx,
@@ -73,9 +69,11 @@ const Form = ({
   const { mode } = stateData.dataForm;
   const userData = stateData.getUserData || {};
   const userDefinedPermissions = {
-    edit: permissions.edit || false,
-    delete: permissions.delete || false,
-    add: permissions.add || false
+    add: true,
+    edit: true,
+    delete: true,
+    ...model.permissions,
+    ...permissions
   };
   const { canEdit, canDelete = false } = getPermissions({
     userData,

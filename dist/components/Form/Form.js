@@ -57,11 +57,7 @@ const Form = _ref => {
     api,
     models,
     relationFilters = {},
-    permissions = {
-      edit: model.permissions.edit,
-      export: model.permissions.export,
-      delete: model.permissions.allowFormDelete || false
-    },
+    permissions = {},
     Layout = _fieldMapper.default,
     baseSaveData = {},
     sx,
@@ -116,11 +112,11 @@ const Form = _ref => {
     mode
   } = stateData.dataForm;
   const userData = stateData.getUserData || {};
-  const userDefinedPermissions = {
-    edit: permissions.edit || false,
-    delete: permissions.delete || false,
-    add: permissions.add || false
-  };
+  const userDefinedPermissions = _objectSpread(_objectSpread({
+    add: true,
+    edit: true,
+    delete: true
+  }, model.permissions), permissions);
   const {
     canEdit,
     canDelete = false
