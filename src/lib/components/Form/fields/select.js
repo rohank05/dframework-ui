@@ -76,6 +76,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
         <FormControl
             fullWidth
             key={field}
+            error={formik.touched[field] && formik.errors[field]}
             variant="standard">
             <InputLabel>{fieldLabel}</InputLabel>
             <Select

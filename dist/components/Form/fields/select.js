@@ -104,6 +104,7 @@ const SelectField = _ref => {
   return /*#__PURE__*/_react.default.createElement(_FormControl.default, {
     fullWidth: true,
     key: field,
+    error: formik.touched[field] && formik.errors[field],
     variant: "standard"
   }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
