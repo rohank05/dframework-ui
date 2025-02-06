@@ -24,7 +24,6 @@ function PageTitle(props) {
     RightComponent = null,
     mobileRightComponent,
     title = "",
-    titleDescription = "",
     titleClass = "text-theme-blue text-max-width",
     showTitleInfo,
     showBreadcrumbs,
@@ -113,7 +112,7 @@ function PageTitle(props) {
                 </h1>
               </div>
             ) : (
-              <div className={`${titleDescription ? "mt-2" : ""}`}>
+              <div>
                 <div style={{ display: isMobile ? 'block' : "flex", alignItems: "center" }}>
                   <div style={{ flex: "1 0 auto" }}>
                     {showTitleInfo ? (
@@ -124,14 +123,6 @@ function PageTitle(props) {
                         variant="p"
                         text={titleHeading}
                         name={name}
-                      />
-                    )}
-                    {titleDescription && (
-                      <MuiTypography
-                        className={`${titleClass} page-text-description`}
-                        variant="p"
-                        component="p"
-                        text={titleDescription}
                       />
                     )}
                   </div>

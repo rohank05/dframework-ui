@@ -77,7 +77,6 @@ export default function App() {
     title: "Questionnaires",
     defaultSort: "SurveyTypeName ASC",
     linkColumn: "SurveyTypeName",
-    titleDescription: "Build flexible questionnaire for use in Surveys",
     api: "SurveyType",
     idProperty: "id",
     columns: [
@@ -116,7 +115,6 @@ export default function App() {
     title: "Questionnaires",
     defaultSort: "SurveyTypeName ASC",
     linkColumn: "SurveyTypeName",
-    titleDescription: "Build flexible questionnaire for use in Surveys",
     api: "SurveyType",
     idProperty: "id",
     columns: [
@@ -155,7 +153,6 @@ export default function App() {
 | `formTitle`             | `string`   | Title used in the form layout.                                   |                                            |                              |
 | `gridTitle`             | `string`   | Title used in the grid layout.                                   |                                            |                              |
 | `gridSubTitle`          | `string`   | Subtitle displayed below the grid title.                         |                                            |                              |
-| `titleDescription`      | `string`   | A description displayed as the subtitle for the grid.            |                                            |                              |
 | `api`                   | `string`   | The API endpoint to fetch grid data.                             | `"title"`                                  |                              |
 | `idProperty`            | `string`   | Specifies the unique identifier for grid rows.                   | `"api, title"`                             |                              |
 | `standard`              | `string`   | Checks whether it is a standard table.                           |                                            |                              |
