@@ -191,7 +191,8 @@ const Form = _ref => {
         api: gridApi,
         values,
         setIsLoading,
-        setError: snackbar.showError
+        setError: snackbar.showError,
+        resetForm
       }).then(success => {
         if (success) {
           if (model.reloadOnSave) {

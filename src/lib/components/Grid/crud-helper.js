@@ -293,7 +293,7 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
     return result;
 };
 
-const saveRecord = async function ({ id, api, values, setIsLoading, setError }) {
+const saveRecord = async function ({ id, api, values, setIsLoading, setError, resetForm }) {
     let url, method;
 
     if (id !== 0) {
@@ -317,14 +317,16 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const data = response.data;
+            const data = response.data  ;
             if (data.success) {
                 return data;
             }
             setError('Save failed', data.err || data.message);
-            return;
         } else {
             setError('Save failed', response.body);
+        }
+        if (typeof resetForm === "function") {
+            resetForm();
         }
     } catch (error) {
         if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
@@ -333,6 +335,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
                 window.location.href = '/';
             }, 2000);
         } else {
+
             setError('Could not save record', error.message || error.toString());
         }
     } finally {

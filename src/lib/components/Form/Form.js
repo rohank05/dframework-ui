@@ -143,7 +143,8 @@ const Form = ({
         api: gridApi,
         values,
         setIsLoading,
-        setError: snackbar.showError
+        setError: snackbar.showError,
+        resetForm
       })
         .then((success) => {
           if (success) {

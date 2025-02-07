@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
-    const [userSelected, setUserSelected] = React.useState(false);
+    const userSelected = React.useRef(false);
     const { filter } = column;
 
     const initialOptions = useMemo(() => {
@@ -20,15 +20,15 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
     const [options, setOptions] = React.useState(initialOptions);
 
     useEffect(() => {
-        if (!userSelected) {
+        if (!userSelected.current) {
             setOptions(initialOptions);
         }
-    }, [initialOptions, userSelected]);
+    }, [initialOptions, userSelected.current]);
 
     const setActiveRecord = (lookups) => {
         const { State } = lookups;
         if (!State) return;
-        if (!userSelected) {
+        if (!userSelected.current) {
             setOptions(State);
         }
     };
@@ -70,7 +70,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
 
     const handleChange = (event) => {
         formik.handleChange(event); // Update formik's state
-        setUserSelected(true); // Set the flag to true when the user makes a selection
+        userSelected.current = true;
     };
     return (
         <FormControl
