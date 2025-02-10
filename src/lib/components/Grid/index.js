@@ -531,7 +531,7 @@ const GridBase = memo(({
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
-            gridApi = `${withControllersUrl}${model?.pivotAPI}`;
+            gridApi = `${withControllersUrl}${model?.pivotApi}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
