@@ -167,13 +167,14 @@ export default function App() {
 | `doubleClicked`         | `boolean`  | Controls if double-clicking is enabled for rows.                 |                                            | Not needed                   |
 | `permissions`           | `object`   | Permissions for grid actions like add, edit, delete, and export. |                                            |                              |
 | `joinColumn`            | `string`   | Specifies the column used for joining data with a parent grid.   |                                            |                              |
+| `standard`              | `boolean`  | Specified explicitly as false to hide the **createdOn**, **addCreatedByColumn**, **addModifiedOnColumn** and **addModifiedByColumn** columns.    |                                            |                              |
 | `addCreatedOnColumn`    | `boolean`  | Specified explicitly as false to hide the createdOn columns.     |                                            |                              |
 | `addCreatedByColumn`    | `boolean`  | Specified explicitly as false to hide the createdBy columns.     |                                            |                              |
 | `addModifiedOnColumn`   | `boolean`  | Specified explicitly as false to hide the modifiedOn columns.    |                                            |                              |
 | `addModifiedByColumn`   | `boolean`  | Specified explicitly as false to hide the modifiedBy columns.    |                                            |                              |
 | `controllerType`        | `string`   | Specifies the type of controller (`cs` for client/server).       |                                            |                              |
 | `template`              | `string`   | Template configuration for exporting.                            |                                            | Seems project specific CoolR |
-| `pivotAPI`              | `string`   | API endpoint for pivot-specific data.                            |                                            |                              |
+| `pivotApi`              | `string`   | API endpoint for pivot-specific data.                            |                                            |                              |
 | `showPivotExportBtn`    | `boolean`  | Displays the button for exporting pivot data.                    |                                            | Should not be needed         |
 | `preferenceId`          | `string`   | Identifier for saved grid preferences.                           |                                            |                              |
 | `tablePreferenceEnums`  | `object`   | Enumerations for specific table preferences.                     |                                            |                              |
