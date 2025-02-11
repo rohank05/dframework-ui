@@ -285,7 +285,7 @@ const Form = ({
     { text: formTitle },
     { text: id === "0" ? "New" : "Update" }
   ];
-  const showRelations = (id >= 0) && Boolean(relations.length);
+  const showRelations = (id > 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
