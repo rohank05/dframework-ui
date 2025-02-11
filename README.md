@@ -86,7 +86,7 @@ export default function App() {
         flex: 1,
         headerName: "User Id",
         fieldLabel: null,
-        pinned: true
+        pinned: "right"
       },
       { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
       {
@@ -124,7 +124,7 @@ export default function App() {
         flex: 1,
         headerName: "User Id",
         fieldLabel: null,
-        pinned: true
+        pinned: "right"
       },
       { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
       {
@@ -204,7 +204,7 @@ export default function App() {
 | `headerName`          | `string`         | The label displayed as the column header in grid.                    |                          |
 | `type`                | `string`         | Specifies the type of data in the column (e.g., `number`, `string`). |                          |
 | `flex`                | `number`         | Defines the column's flexibility in width compared to others.        |                          |
-| `pinned`              | `boolean`        | Determines if the column is pinned to the left.                      |                          |
+| `pinned`              | `string`        | Determines if the column is pinned to the right.                      | left|
 | `sortable`            | `boolean`        | Specifies if the column can be sorted.                               |                          |
 | `filterable`          | `boolean`        | Specifies if the column can be filtered.                             |                          |
 | `editable`            | `boolean`        | Indicates if the cells in the column are editable.                   |                          |
