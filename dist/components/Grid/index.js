@@ -83,8 +83,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
-function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (e.includes(n)) continue; t[n] = r[n]; } return t; }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -381,7 +381,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
-  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
+  const {
+    preferenceApi,
+    preferenceId
+  } = (stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.permissions) || {};
+  const preferenceName = preferenceId || model.preferenceId;
   const searchParams = new URLSearchParams(window.location.search);
   let baseSaveData = {};
   const selectedSet = (0, _react.useRef)(new Set());
@@ -757,7 +761,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url || "").concat(model.api || api);
     let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
     if (isPivotExport) {
-      gridApi = "".concat(withControllersUrl).concat(model === null || model === void 0 ? void 0 : model.pivotAPI);
+      gridApi = "".concat(withControllersUrl).concat(model === null || model === void 0 ? void 0 : model.pivotApi);
       controllerType = 'cs';
     }
     if (assigned || available) {
@@ -1107,12 +1111,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     });
   };
   (0, _react.useEffect)(() => {
-    if (model.preferenceId && preferenceApi) {
+    if (preferenceName && preferenceApi) {
       removeCurrentPreferenceName({
         dispatchData
       });
       getAllSavedPreferences({
-        preferenceName: model.preferenceId,
+        preferenceName,
         history: navigate,
         dispatchData,
         Username,
@@ -1120,7 +1124,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         tablePreferenceEnums
       });
       applyDefaultPreferenceIfExists({
-        preferenceName: model.preferenceId,
+        preferenceName,
         history: navigate,
         dispatchData,
         Username,
@@ -1161,7 +1165,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", !canAdd || isReadOnly ? "" : model.title), !forAssignment && canAdd && !isReadOnly && !showAddIcon && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, " ", !canAdd || isReadOnly ? "" : model.title), !forAssignment && canAdd && !isReadOnly && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAdd,
       size: "medium",
@@ -1187,8 +1191,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       handleExport: handleExport,
       showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
       showOnlyExcelExport: model.showOnlyExcelExport
-    }), model.preferenceId && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
-      preferenceName: model.preferenceId,
+    }), preferenceName && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
+      preferenceName: preferenceName,
       gridRef: apiRef,
       columns: gridColumns,
       setIsGridPreferenceFetched: setIsGridPreferenceFetched
@@ -1253,7 +1257,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       payload: {
         icon: "",
         titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
-        titleDescription: model === null || model === void 0 ? void 0 : model.titleDescription,
         title: model === null || model === void 0 ? void 0 : model.title
       }
     });

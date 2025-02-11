@@ -8,12 +8,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.ActiveStepContext = void 0;
-require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
-require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
@@ -71,10 +69,9 @@ const Form = _ref => {
     pathname
   } = (0, _StateProvider.useRouter)();
   const {
-    relations = [],
-    hideRelationsInAdd = false
+    relations = []
   } = model;
-  const navigateBack = model.navigateBack || pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
+  const navigateBack = window.history && window.history.length > 1 ? () => window.history.back() : () => pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
   const {
     dispatchData,
     stateData
@@ -159,7 +156,7 @@ const Form = _ref => {
       }
     } catch (error) {
       snackbar.showError("An error occured, please try after some time.", error);
-      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+      navigate(navigateBack());
     }
   };
   (0, _react.useEffect)(() => {
@@ -199,7 +196,7 @@ const Form = _ref => {
             return window.location.reload();
           }
           snackbar.showMessage("Record Updated Successfully.");
-          navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+          navigate(navigateBack());
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
@@ -212,7 +209,7 @@ const Form = _ref => {
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+    navigate(navigateBack());
   };
   const warnUnsavedChanges = () => {
     if (dirty) {
@@ -221,7 +218,7 @@ const Form = _ref => {
   };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+    navigate(navigateBack());
   };
   const setActiveRecord = function setActiveRecord(_ref4) {
     let {
@@ -267,7 +264,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+      navigate(navigateBack());
       event.preventDefault();
     }
   };
@@ -283,7 +280,7 @@ const Form = _ref => {
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateBack.includes("window.history") ? window.history.back() : navigateBack);
+        navigate(navigateBack());
       }
     } catch (error) {
       snackbar === null || snackbar === void 0 || snackbar.showError("An error occured, please try after some time.");
@@ -335,7 +332,7 @@ const Form = _ref => {
   }, {
     text: id === "0" ? "New" : "Update"
   }];
-  const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
+  const showRelations = id > 0 && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;

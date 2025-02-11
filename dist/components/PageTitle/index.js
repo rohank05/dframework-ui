@@ -34,7 +34,6 @@ function PageTitle(props) {
     RightComponent = null,
     mobileRightComponent,
     title = "",
-    titleDescription = "",
     titleClass = "text-theme-blue text-max-width",
     showTitleInfo,
     showBreadcrumbs,
@@ -167,9 +166,7 @@ function PageTitle(props) {
     className: "app-page-title--heading-media ".concat(isMobile ? "small-text pl-2" : "")
   }, /*#__PURE__*/_react.default.createElement("h1", {
     className: "".concat(titleClass, "  ").concat(isMobile ? "display-4 pl-2" : "", " ")
-  }, titleHeading)) : /*#__PURE__*/_react.default.createElement("div", {
-    className: "".concat(titleDescription ? "mt-2" : "")
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  }, titleHeading)) : /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: isMobile ? 'block' : "flex",
       alignItems: "center"
@@ -183,11 +180,6 @@ function PageTitle(props) {
     variant: "p",
     text: titleHeading,
     name: name
-  }), titleDescription && /*#__PURE__*/_react.default.createElement(_Typography.default, {
-    className: "".concat(titleClass, " page-text-description"),
-    variant: "p",
-    component: "p",
-    text: titleDescription
   })), showImage && /*#__PURE__*/_react.default.createElement(_Tooltip.default, {
     title: "Help",
     open: showTooltip,

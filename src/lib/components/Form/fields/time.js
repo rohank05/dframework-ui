@@ -2,7 +2,7 @@ import React from 'react';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 
-const field = ({ column, field, fieldLabel, formik, otherProps, classes }) => {
+const field = ({ column, field, formik, otherProps, classes }) => {
     let inputValue = formik.values[field];
     if (column.isUtc) {
         inputValue = dayjs.utc(inputValue).utcOffset(dayjs().utcOffset(), true).format();

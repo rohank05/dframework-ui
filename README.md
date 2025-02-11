@@ -85,7 +85,7 @@ export default function App() {
         type: "number",
         flex: 1,
         headerName: "User Id",
-        fieldLabel: null,
+        label: null,
         pinned: "right"
       },
       { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
@@ -123,7 +123,7 @@ export default function App() {
         type: "number",
         flex: 1,
         headerName: "User Id",
-        fieldLabel: null,
+        label: null,
         pinned: "right"
       },
       { field: "title", type: "string", headerName: "User Post Id", flex: 1 },
@@ -199,12 +199,11 @@ export default function App() {
 | **Property**          | **Type**         | **Description**                                                      | **Can be extended from** |
 | --------------------- | ---------------- | -------------------------------------------------------------------- | ------------------------ |
 | `field`               | `string`         | The name of the field displayed in the column.                       |                          |
-| `fieldLabel`          | `string`         | Optional label for the column field to be shown as override in form. |                          |
 | `label`               | `string`         | Label text to display for available and assigned values.             |                          |
-| `headerName`          | `string`         | The label displayed as the column header in grid.                    |                          |
+| `headerName`          | `string`         | The label displayed as the column header in grid.                    |   label                  |
 | `type`                | `string`         | Specifies the type of data in the column (e.g., `number`, `string`). |                          |
 | `flex`                | `number`         | Defines the column's flexibility in width compared to others.        |                          |
-| `pinned`              | `string`        | Determines if the column is pinned to the right.                      | left|
+| `pinned`              | `string`         | Determines if the column is pinned to the right.                     | left					 |
 | `sortable`            | `boolean`        | Specifies if the column can be sorted.                               |                          |
 | `filterable`          | `boolean`        | Specifies if the column can be filtered.                             |                          |
 | `editable`            | `boolean`        | Indicates if the cells in the column are editable.                   |                          |

@@ -59,7 +59,6 @@ const buildTree = function buildTree() {
  * @param {Object} props - The properties passed to the component.
  * @param {Object} props.column - The column metadata, including lookup information.
  * @param {string} props.field - The name of the field in the form to bind.
- * @param {string} props.fieldLabel - The label for the field.
  * @param {Object} props.formik - The Formik instance for managing form state.
  * @param {Object} props.lookups - The lookup data for populating tree items.
  * @param {Array<Object>} props.data - Additional data for the tree.
@@ -74,7 +73,6 @@ function treeCheckBox(_ref) {
   let {
     column,
     field,
-    fieldLabel,
     formik,
     lookups,
     data,

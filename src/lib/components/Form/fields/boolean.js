@@ -3,7 +3,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { FormHelperText } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 
-const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChange }) => {
+const field = ({ column, field, label, formik, otherProps, classes, onChange }) => {
     const handleChange = (event) => {
         formik.setFieldValue(field, event.target.checked);
     }
@@ -19,7 +19,7 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, onChang
                     onBlur={formik.handleBlur}
                 />
             }
-            label={fieldLabel}
+            label={label}
         />
         <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
     </div>

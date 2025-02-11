@@ -44,7 +44,6 @@ function Document(_ref) {
   let {
     column,
     field,
-    fieldLabel,
     formik,
     lookups,
     data,

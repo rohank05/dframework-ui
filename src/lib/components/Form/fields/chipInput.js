@@ -5,7 +5,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 
-const Field = ({ isAdd, column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
+const Field = ({ isAdd, column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
     let inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];
     let isDisabled;
     if (mode !== 'copy') {

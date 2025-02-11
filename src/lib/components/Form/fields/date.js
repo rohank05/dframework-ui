@@ -2,7 +2,7 @@ import React from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useStateContext } from '../../useRouter/StateProvider';
-const field = ({ column, field, fieldLabel, formik, otherProps, classes, fieldConfigs, model, mode }) => {
+const field = ({ column, field, formik, otherProps, classes, fieldConfigs, model, mode }) => {
     let isDisabled;
     const { systemDateTimeFormat, stateData } = useStateContext(); //provider
     if (mode !== 'copy') {

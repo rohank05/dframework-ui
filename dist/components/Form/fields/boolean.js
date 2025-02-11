@@ -19,7 +19,7 @@ const field = _ref => {
   let {
     column,
     field,
-    fieldLabel,
+    label,
     formik,
     otherProps,
     classes,
@@ -38,7 +38,7 @@ const field = _ref => {
       onChange: handleChange,
       onBlur: formik.handleBlur
     })),
-    label: fieldLabel
+    label: label
   }), /*#__PURE__*/React.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = field;

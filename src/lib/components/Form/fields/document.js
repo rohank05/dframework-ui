@@ -7,7 +7,7 @@ import utils from "../../utils";
 
 const { errorMapping } = utils;
 
-function Document({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
+function Document({ column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
     let inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
     const { maxSize } = column;
