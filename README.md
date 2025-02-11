@@ -179,7 +179,7 @@ export default function App() {
 | `preferenceId`          | `string`   | Identifier for saved grid preferences.                           |                                            |                              |
 | `tablePreferenceEnums`  | `object`   | Enumerations for specific table preferences.                     |                                            |                              |
 | `rowRedirectLink`       | `string`   | URL to redirect when a row is clicked.                           |                                            |                              |
-| `showAddIcon`           | `boolean`  | Indicates if the "Add" button icon should be displayed.          |                                            | Not needed                   |
+| `showAddIcon`           | `boolean`  | Indicates if the Add, Assign and Remove button icon should be displayed.          |                                            | Not needed                   |
 | `pageTitle`             | `string`   | Sets the title for the page.                                     |                                            | Not needed                   |
 | `addUrlParamKey`        | `string`   | Key for additional URL parameters when navigating to forms.      |                                            |                              |
 | `searchParamKey`        | `string`   | Key for fetching parameters from the URL.                        |                                            | Duplicate as addUrlParamKey  |
