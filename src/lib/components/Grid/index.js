@@ -219,9 +219,11 @@ const GridBase = memo(({
     const { timeZone } = stateData;
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
-    const { url, withControllersUrl, tablePreferenceEnums, preferenceApi, preferenceId, routesWithNoChildRoute = [] } = stateData?.gridSettings?.permissions ?? {};
-    const preferenceName = preferenceId || model?.preferenceId;
+    const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
+    const url = stateData?.gridSettings?.permissions?.Url;
+    const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
+    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
@@ -238,6 +240,9 @@ const GridBase = memo(({
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
+    const { preferenceApi, preferenceId } = stateData?.gridSettings?.permissions || {};
+    const preferenceName = preferenceId || model.preferenceId;
+    
     const searchParams = new URLSearchParams(window.location.search);
 
     let baseSaveData = {};
@@ -769,6 +774,7 @@ const GridBase = memo(({
 
     const onAdd = () => {
         if (selectionApi.length > 0) {
+            const url = stateData?.gridSettings?.permissions?.Url;
             let gridApi = `${url}${selectionApi || api}/updateMany`;
             if (selectedSet.current.size < 1) {
                 snackbar.showError(
