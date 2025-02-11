@@ -219,11 +219,9 @@ const GridBase = memo(({
     const { timeZone } = stateData;
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
-    const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    const url = stateData?.gridSettings?.permissions?.Url;
-    const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
+    const { url, withControllersUrl, tablePreferenceEnums, preferenceApi, preferenceId, routesWithNoChildRoute = [] } = stateData?.gridSettings?.permissions ?? {};
+    const preferenceName = preferenceId || model?.preferenceId;
     const currentPreference = stateData?.currentPreference;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
@@ -240,7 +238,6 @@ const GridBase = memo(({
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
-    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const searchParams = new URLSearchParams(window.location.search);
 
     let baseSaveData = {};
@@ -772,7 +769,6 @@ const GridBase = memo(({
 
     const onAdd = () => {
         if (selectionApi.length > 0) {
-            const url = stateData?.gridSettings?.permissions?.Url;
             let gridApi = `${url}${selectionApi || api}/updateMany`;
             if (selectedSet.current.size < 1) {
                 snackbar.showError(
@@ -827,10 +823,10 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (model.preferenceId && preferenceApi) {
+        if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
         }
     }, [preferenceApi])
 
@@ -863,8 +859,8 @@ const GridBase = memo(({
                     {effectivePermissions.export && (
                         <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
-                    {model.preferenceId &&
-                        <GridPreferences preferenceName={model.preferenceId} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
+                    {preferenceName &&
+                        <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
                     }
                 </GridToolbarContainer>
             </div >
