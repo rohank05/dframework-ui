@@ -238,4 +238,5 @@ export default function App() {
 | `multiline`           | `boolean`        | Indicates if the text field should support multiple lines.           |                          |
 | `rows`                | `number`         | Number of rows to display in a multiline text field.                 |                          |
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                |                          |
-| `preferenceId`        | `string`         | Identifier for saved grid preferences.                               | modal preference id                                           |                              |
+| `preferenceId`        | `string`         | Identifier for saved grid preferences.                               | modal preference id      |
+| `shouldDisableDate`   | `function`       | A function that takes a date and formik as arguments and returns a boolean. |                   |
