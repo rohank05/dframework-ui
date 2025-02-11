@@ -58,6 +58,9 @@ function Document(_ref) {
     stateData
   } = (0, _StateProvider.useStateContext)();
   const {
+    maxSize
+  } = column;
+  const {
     uploadApi,
     mediaApi,
     Url
@@ -66,6 +69,7 @@ function Document(_ref) {
     isExternal: "no",
     selectedFile: null
   });
+  const [loading, setLoading] = (0, _react.useState)(false); // Add loading state
   const snackbar = (0, _SnackBar.useSnackbar)();
   const {
     getParams,
@@ -89,6 +93,10 @@ function Document(_ref) {
   const handleFileChange = event => {
     const file = event.target.files[0];
     if (file) {
+      if (maxSize && file.size > maxSize * 1024 * 1024) {
+        snackbar.showError("File size exceeds the maximum limit of ".concat(maxSize, " MB."));
+        return;
+      }
       setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
         selectedFile: file
       }));
@@ -96,6 +104,7 @@ function Document(_ref) {
   };
   const handleFileUpload = async () => {
     if (!formState.selectedFile) return;
+    setLoading(true); // Start loading
     try {
       const formData = new FormData();
       formData.append("file", formState.selectedFile);
@@ -121,6 +130,8 @@ function Document(_ref) {
       const statusCode = (error.message.match(/status code (\d{3})/) || [])[1];
       snackbar.showError(errorMapping[statusCode]);
       console.error("Error uploading file: ", error);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
   const host = new URL(Url).hostname;
@@ -181,13 +192,13 @@ function Document(_ref) {
     sx: {
       "& .MuiOutlinedInput-root": {
         "& fieldset": {
-          borderColor: colorScheme // Default border color
+          borderColor: colorScheme
         },
         "&.Mui-focused fieldset": {
-          borderColor: colorScheme // Focused state
+          borderColor: colorScheme
         },
         "&:hover fieldset": {
-          borderColor: colorScheme // Hover state
+          borderColor: colorScheme
         }
       }
     },
@@ -212,18 +223,25 @@ function Document(_ref) {
     }
   }, /*#__PURE__*/_react.default.createElement(_material.Button, {
     variant: "outlined",
-    component: "label"
+    component: "label",
+    disabled: loading // Disable while loading
   }, "Choose File", /*#__PURE__*/_react.default.createElement("input", {
     type: "file",
     hidden: true,
     onChange: handleFileChange
-  })), formState.selectedFile && /*#__PURE__*/_react.default.createElement(_material.Typography, {
+  })), formState.selectedFile && /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+    title: formState.selectedFile.name,
+    arrow: true
+  }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "body2"
-  }, formState.selectedFile.name), /*#__PURE__*/_react.default.createElement(_material.Button, {
+  }, formState.selectedFile.name.length > 20 ? "".concat(formState.selectedFile.name.substring(0, 20), "...") : formState.selectedFile.name)), /*#__PURE__*/_react.default.createElement(_material.Button, {
     variant: "contained",
     color: "primary",
     onClick: handleFileUpload,
-    disabled: !formState.selectedFile
-  }, "Upload File")));
+    disabled: !formState.selectedFile || loading // Disable while loading
+  }, loading ? /*#__PURE__*/_react.default.createElement(_material.CircularProgress, {
+    size: 24,
+    color: "inherit"
+  }) : "Upload File")));
 }
 var _default = exports.default = Document;

@@ -203,7 +203,7 @@ class UiModel {
           if (required) {
             config = yup.string().trim().label(formLabel).required("Select at least one ".concat(formLabel));
           } else {
-            config = yup.string();
+            config = yup.string().nullable();
           }
           break;
         case 'password':

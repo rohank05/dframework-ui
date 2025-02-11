@@ -401,7 +401,8 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
     api,
     values,
     setIsLoading,
-    setError
+    setError,
+    resetForm
   } = _ref5;
   let url, method;
   if (id !== 0) {
@@ -428,9 +429,11 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
         return data;
       }
       setError('Save failed', data.err || data.message);
-      return;
     } else {
       setError('Save failed', response.body);
+    }
+    if (typeof resetForm === "function") {
+      resetForm();
     }
   } catch (error) {
     if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {

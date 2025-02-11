@@ -36,7 +36,7 @@ const SelectField = _ref => {
     onChange,
     getRecordAndLookups
   } = _ref;
-  const [userSelected, setUserSelected] = _react.default.useState(false);
+  const userSelected = _react.default.useRef(false);
   const {
     filter
   } = column;
@@ -53,16 +53,16 @@ const SelectField = _ref => {
   }, [column.lookup, filter, lookups, field, formik.values]);
   const [options, setOptions] = _react.default.useState(initialOptions);
   (0, _react.useEffect)(() => {
-    if (!userSelected) {
+    if (!userSelected.current) {
       setOptions(initialOptions);
     }
-  }, [initialOptions, userSelected]);
+  }, [initialOptions, userSelected.current]);
   const setActiveRecord = lookups => {
     const {
       State
     } = lookups;
     if (!State) return;
-    if (!userSelected) {
+    if (!userSelected.current) {
       setOptions(State);
     }
   };
@@ -99,11 +99,12 @@ const SelectField = _ref => {
   }
   const handleChange = event => {
     formik.handleChange(event); // Update formik's state
-    setUserSelected(true); // Set the flag to true when the user makes a selection
+    userSelected.current = true;
   };
   return /*#__PURE__*/_react.default.createElement(_FormControl.default, {
     fullWidth: true,
     key: field,
+    error: formik.touched[field] && formik.errors[field],
     variant: "standard"
   }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
