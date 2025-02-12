@@ -224,7 +224,6 @@ export default function App() {
 | `helperText`          | `string`         | Text to display as helper information below the field.               |                          |
 | `disablePast`         | `boolean`        | Disables selection of past dates in the `DatePicker`.                |                          |
 | `disableFuture`       | `boolean`        | Disables selection of future dates in the `DatePicker`.              |                          |
-| `classes`             | `object`         | CSS classes to apply custom styles to the field.                     |                          |
 | `multiSelect`         | `boolean`        | Enables multiple selections in a `Select` field.                     |                          |
 | `parentComboField`    | `string`         | Field name used to fetch dependent data for a `Select` field.        |                          |
 | `lookup`              | `string`/`array` | Defines the lookup source for dropdown values in the column.         |                          |
