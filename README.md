@@ -208,7 +208,6 @@ export default function App() {
 | `filterable`          | `boolean`        | Specifies if the column can be filtered.                             |                          |
 | `editable`            | `boolean`        | Indicates if the cells in the column are editable.                   |                          |
 | `tab`                 | `string`         | Specifies the tab associated with this column in a tabbed layout.    |                          |
-| `defaultSort`         | `string`         | Sets the default sort order for this column (e.g., `asc`, `desc`).   |                          |
 | `required`            | `boolean`        | Indicates if this column is required in the form.                    |                          |
 | `validation`          | `function`       | Custom validation function for the column's data.                    |                          |
 | `hidden`              | `boolean`        | Hides the column from the grid.                                      |                          |
