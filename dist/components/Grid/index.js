@@ -310,7 +310,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideTopFilters = true,
     updatePageTitle = true,
     isElasticScreen = false,
-    nestedGrid = false,
+    enableGoBack = false,
     selectionApi = {}
   } = model;
   const isReadOnly = model.readOnly === true || readOnly;
@@ -1385,7 +1385,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
-    nestedGrid: nestedGrid,
+    enableGoBack: enableGoBack,
     breadcrumbColor: breadcrumbColor
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

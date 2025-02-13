@@ -35,7 +35,8 @@ const field = _ref => {
     onChange: value => formik.setFieldValue(field, value),
     onBlur: formik.handleBlur,
     helperText: formik.touched[field] && formik.errors[field],
-    disablePast: column === null || column === void 0 ? void 0 : column.disablePast,
+    minDateTime: column === null || column === void 0 ? void 0 : column.minDateTime,
+    maxDateTime: column === null || column === void 0 ? void 0 : column.maxDateTime,
     slotProps: {
       textField: {
         fullWidth: true,

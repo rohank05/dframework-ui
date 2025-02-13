@@ -38,7 +38,7 @@ function PageTitle(props) {
     showTitleInfo,
     showBreadcrumbs,
     breadcrumbs = [],
-    nestedGrid = false,
+    enableGoBack = false,
     breadcrumbColor
   } = props;
   const [showTooltip, setShowTooltip] = (0, _react.useState)(false);
@@ -134,7 +134,7 @@ function PageTitle(props) {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text)))), (breadcrumbs.length > 1 || nestedGrid) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableGoBack) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     sx: {
       display: 'flex',

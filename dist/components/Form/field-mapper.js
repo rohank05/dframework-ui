@@ -121,7 +121,6 @@ const fieldMappers = exports.fieldMappers = {
   "date": _date.default,
   "dateTime": _dateTime.default,
   "time": _time.default,
-  "grid-transfer": _gridTransfer.default,
   "oneToMany": _gridTransfer.default,
   "radio": _radio.default,
   "autocomplete": _autocomplete.default,
