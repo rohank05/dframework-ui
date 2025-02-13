@@ -222,8 +222,10 @@ export default function App() {
 | `shouldDisableDate`   | `function`       | A function to disable specific dates in the `DatePicker`.            |                          |
 | `showErrorText`       | `boolean`        | Indicates if error text should be displayed when validation fails.   |                          |
 | `helperText`          | `string`         | Text to display as helper information below the field.               |                          |
-| `disablePast`         | `boolean`        | Disables selection of past dates in the `DatePicker`.                |                          |
-| `disableFuture`       | `boolean`        | Disables selection of future dates in the `DatePicker`.              |                          |
+| `minDateTime`         | `object`         | Minimal selectable moment of time with binding to date, to set min time in each day use minTime.`.                |                          |
+| `minDate`         	| `object`         | Minimal selectable date..                |                          |
+| `maxDate`       		| `object`         | Maximal selectable date.            |                          |
+| `maxDateTime`         | `object`         | Maximal selectable moment of time with binding to date, to set max time in each day use maxTime.              |                          |
 | `multiSelect`         | `boolean`        | Enables multiple selections in a `Select` field.                     |                          |
 | `parentComboField`    | `string`         | Field name used to fetch dependent data for a `Select` field.        |                          |
 | `lookup`              | `string`/`array` | Defines the lookup source for dropdown values in the column.         |                          |

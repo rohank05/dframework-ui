@@ -17,7 +17,8 @@ const field = ({ column, field, formik, otherProps, classes }) => {
         onChange={(value) => formik.setFieldValue(field, value)}
         onBlur={formik.handleBlur}
         helperText={formik.touched[field] && formik.errors[field]}
-        disablePast={column?.disablePast}
+        minDateTime={column?.minDateTime}
+        maxDateTime={column?.maxDateTime}
         slotProps={{ textField: { fullWidth: true, helperText: formik.errors[field], variant: "standard" } }}
     />
 
