@@ -35,7 +35,6 @@ const fieldMappers = {
     "date": DateField,
     "dateTime": DateTimeField,
     "time": TimeField,
-    "grid-transfer": GridTransfer,
     "oneToMany": GridTransfer,
     "radio": RadioField,
     "autocomplete": AutocompleteField,

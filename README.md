@@ -239,3 +239,115 @@ export default function App() {
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                |                          |
 | `preferenceId`        | `string`         | Identifier for saved grid preferences.                               | modal preference id      |
 | `shouldDisableDate`   | `function`       | A function that takes a date and formik as arguments and returns a boolean. |                   |
+
+# **Field Components Properties Table**
+
+You can use these components by defining the type in the **Properties** column.
+
+## **List of Types**
+
+### 1. **Type: `boolean`**
+Represents a **Checkbox** component.
+
+- **`disabled`** (boolean): Determines whether the checkbox is interactive.  
+  - When `disabled` is set to `true`, users cannot change the checkbox value.
+
+---
+
+### 2. **Type: `select`**
+Represents a **Select** component.
+
+---
+
+### 3. **Type: `string | number`**
+Represents a **TextField** component.
+
+- **`autoComplete`** (string):  
+  - Helps users complete forms faster, particularly on mobile devices.  
+  - Acts more as an autofill feature rather than traditional autocomplete.
+
+---
+
+### 4. **Type: `password`**
+Represents a **TextField** component with a hide/show password feature.
+
+---
+
+### 5. **Type: `date`**
+Represents a **DatePicker** component.
+
+- This component is used for selecting a date.  
+
+---
+
+### 6. **Type: `dateTime`**
+Represents a **DateTimePicker** component.
+
+- This component is used for selecting both **date** and **time**.
+
+---
+
+### 7. **Type: `time`**
+Represents a **TimePicker** component.
+
+- This component is used for selecting **time**.
+
+---
+
+### 8. **Type: `oneToMany`**
+Represents a **GridTransfer** component.
+
+- This component is used to transfer columns between grids.
+
+---
+
+### 9. **Type: `radio`**
+Represents a **RadioField** component.
+
+---
+
+### 10. **Type: `autocomplete`**
+Represents an **AutocompleteField** component.
+
+- The **`Autocomplete`** component enhances text input by providing a dropdown list of suggested options while allowing free text entry. It is useful for search fields, selection lists, and filtering.
+
+---
+
+### 11. **Type: `dayRadio`**
+Represents a **DaySelection** component.
+
+- The **DaySelection** component allows users to choose days in two ways:  
+  🔹 **Predefined options** – **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri).**  
+  🔹 **Custom selection** – Users manually pick specific days.
+
+---
+
+### 12. **Type: `email`**
+Represents a **TextField** component used for email input.
+
+- Supports validation, read-only states, multiline input, and custom styling.  
+- Ideal for dynamic forms where column settings define input behavior.
+
+---
+
+### 13. **Type: `treeCheckbox`**
+Represents a **SimpleTreeView** component.
+
+- A simplified version of the Tree View component that receives its items as array. This version is recommended for use with hardcoded items.
+
+---
+
+### 14. **Type: `document`**
+Represents a **file upload document** component.
+
+- Users can either enter an external document link or upload a file.  
+- Dynamically switches between these options based on user selection.
+
+---
+
+### 15. **Type: `json`**
+Represents a **JSON Field** component.
+
+- This component dynamically generates input fields based on a JSON object stored in a Formik field. It allows users to edit key-value pairs within the JSON structure and automatically updates the Formik state with a debounced delay.
+
+---
