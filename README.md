@@ -183,7 +183,7 @@ export default function App() {
 | `pageTitle`             | `string`   | Sets the title for the page.                                     |                                            | Not needed                   |
 | `addUrlParamKey`        | `string`   | Key for additional URL parameters when navigating to forms.      |                                            |                              |
 | `searchParamKey`        | `string`   | Key for fetching parameters from the URL.                        |                                            | Duplicate as addUrlParamKey  |
-| `nestedGrid`            | `boolean`  | Indicates if the grid is nested within ather grid.               |                                            | Should not be needed         |
+| `enableGoBack`          | `boolean`  |  Property determines whether to show the back button on the Title.|	false     							   |        					  |
 | `showOnlyExcelExport`   | `boolean`  | Limits export options to only Excel formats.                     |                                            |                              |
 | `initialValues`         | `object`   | Initial values for form fields.                                  |                                            |                              |
 | `hideRelationsInAdd`    | `boolean`  | Hides relations section in add mode.                             |                                            |                              |
