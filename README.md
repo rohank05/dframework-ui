@@ -239,7 +239,6 @@ export default function App() {
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                |                          |
 | `preferenceId`        | `string`         | Identifier for saved grid preferences.                               | modal preference id      |
 | `shouldDisableDate`   | `function`       | A function that takes a date and formik as arguments and returns a boolean. |                   |
-
 # **Field Components Properties Table**
 
 You can use these components by defining the type in the **Properties** column.
@@ -249,13 +248,17 @@ You can use these components by defining the type in the **Properties** column.
 ### 1. **Type: `boolean`**
 Represents a **Checkbox** component.
 
+- Allows true, false values.
 - **`disabled`** (boolean): Determines whether the checkbox is interactive.  
   - When `disabled` is set to `true`, users cannot change the checkbox value.
+- Example: ``` { "type": "boolean", "required": true | false } ```
 
 ---
 
 ### 2. **Type: `select`**
 Represents a **Select** component.
+- Defines the lookup source for dropdown values in the column.
+- Example: ``` { "type": "select", "required": true | false, lookup: 'scopetype' } ```
 
 ---
 
@@ -265,51 +268,65 @@ Represents a **TextField** component.
 - **`autoComplete`** (string):  
   - Helps users complete forms faster, particularly on mobile devices.  
   - Acts more as an autofill feature rather than traditional autocomplete.
+- Minimum (min) and maximum (max) length constraints.
+- Example: ``` { "type": "string | number", "min": 3, "max": 20, "required": true | false } ```
 
 ---
 
 ### 4. **Type: `password`**
 Represents a **TextField** component with a hide/show password feature.
 
+- Allows a default masked value (******).
+- Requires at least 8 characters.
+- Must include uppercase, lowercase, numbers, and special characters.
+- Example: ``` { "type": "password", "required": true } ```
+
 ---
 
 ### 5. **Type: `date`**
 Represents a **DatePicker** component.
-
-- This component is used for selecting a date.  
+- Accepts date values.
+- Converts empty or null values to null.
+- Requires a valid date format.
+- This component is used for selecting a date only.
+- Example: ``` { "type": "date", "required": true } ```
 
 ---
 
 ### 6. **Type: `dateTime`**
 Represents a **DateTimePicker** component.
-
-- This component is used for selecting both **date** and **time**.
+- Similar to date, but this component is used for selecting both **date** and **time**.
+- Example: ``` { "type": "dateTime", "required": true } ```
 
 ---
 
 ### 7. **Type: `time`**
 Represents a **TimePicker** component.
-
 - This component is used for selecting **time**.
+- Example: ``` { "type": "time", "required": true } ```
 
 ---
 
 ### 8. **Type: `oneToMany`**
 Represents a **GridTransfer** component.
-
 - This component is used to transfer columns between grids.
+- The `relation` property is used to establish a connection between the parent entity and its associated child records. 
+- Example: ``` { "type": "oneToMany", "relation": 'child grid' } ```
 
 ---
 
 ### 9. **Type: `radio`**
 Represents a **RadioField** component.
+- Defines the lookup source for dropdown values in the column.
+- Example: ``` { "type": "radio", "lookup": 'Region' } ```
 
 ---
 
 ### 10. **Type: `autocomplete`**
 Represents an **AutocompleteField** component.
-
+- Defines the lookup source for dropdown values in the column.
 - The **`Autocomplete`** component enhances text input by providing a dropdown list of suggested options while allowing free text entry. It is useful for search fields, selection lists, and filtering.
+- Example: ``` { "type": "Autocomplete", "lookup": 'Region' } ```
 
 ---
 
@@ -317,37 +334,37 @@ Represents an **AutocompleteField** component.
 Represents a **DaySelection** component.
 
 - The **DaySelection** component allows users to choose days in two ways:  
-  🔹 **Predefined options** – **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri).**  
+  🔹 **Predefined options** – **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
   🔹 **Custom selection** – Users manually pick specific days.
+- Example: ``` { "type": "dayRadio" } ```
 
 ---
 
 ### 12. **Type: `email`**
 Represents a **TextField** component used for email input.
-
-- Supports validation, read-only states, multiline input, and custom styling.  
-- Ideal for dynamic forms where column settings define input behavior.
+- Must follow a valid email format.
+- Example: ``` { "type": "email", "required": true | false } ```
 
 ---
 
 ### 13. **Type: `treeCheckbox`**
 Represents a **SimpleTreeView** component.
-
-- A simplified version of the Tree View component that receives its items as array. This version is recommended for use with hardcoded items.
+- A simplified version of the Tree View component that receives its items as an array. This version is recommended for use with hardcoded items.
+- Example: ``` { "type": "treeCheckbox" } ```
 
 ---
 
 ### 14. **Type: `document`**
 Represents a **file upload document** component.
-
 - Users can either enter an external document link or upload a file.  
 - Dynamically switches between these options based on user selection.
+- Example: ``` { "type": "document" } ```
 
 ---
 
 ### 15. **Type: `json`**
 Represents a **JSON Field** component.
-
 - This component dynamically generates input fields based on a JSON object stored in a Formik field. It allows users to edit key-value pairs within the JSON structure and automatically updates the Formik state with a debounced delay.
+- Example: ``` { "type": "json" } ```
 
 ---
