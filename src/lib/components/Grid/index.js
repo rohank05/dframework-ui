@@ -240,8 +240,8 @@ const GridBase = memo(({
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
     }
-    const { preferenceApi, preferenceId } = stateData?.gridSettings?.permissions || {};
-    const preferenceName = preferenceId || model.preferenceId;
+    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
+    const preferenceName =  model.preferenceId || model.module?.preferenceId;
     
     const searchParams = new URLSearchParams(window.location.search);
 

@@ -1,7 +1,8 @@
 import TextField from '@mui/material/TextField';
 import React from 'react';
 
-const field = ({ column, field, formik, otherProps, classes, onChange }) => {
+const field = ({ column, field, formik, otherProps }) => {
+    const rows = column.rows || (column.multiline ? 5 : ""); // Default to column.rows or 5 rows if multiline
     return <TextField
         type="text"
         variant={column.variant || "standard"}
@@ -14,7 +15,7 @@ const field = ({ column, field, formik, otherProps, classes, onChange }) => {
         key={field}
         required={column?.required}
         multiline={column.multiline}
-        rows={column.rows}
+        rows={rows}
         fullWidth
         name={field}
         value={formik.values[field]}

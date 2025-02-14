@@ -147,7 +147,7 @@ export default function App() {
 
 ## UiModel Configuration Properties
 
-| **Property**            | **Type**   | **Description**                                                  | **Can be extended from**                   | **Required**                 |
+| **Property**            | **Type**   | **Description**                                                  | **Defaults to**                   | **Required**                 |
 | ----------------------- | ---------- | ---------------------------------------------------------------- | ------------------------------------------ | ---------------------------- |
 | `title`                 | `string`   | The title of the grid.                                           |                                            |                              |
 | `formTitle`             | `string`   | Title used in the form layout.                                   |                                            |                              |
@@ -196,7 +196,7 @@ export default function App() {
 
 ## Column Properties Table
 
-| **Property**          | **Type**         | **Description**                                                      | **Can be extended from** |
+| **Property**          | **Type**         | **Description**                                                      | **Defaults to** |
 | --------------------- | ---------------- | -------------------------------------------------------------------- | ------------------------ |
 | `field`               | `string`         | The name of the field displayed in the column.                       |                          |
 | `label`               | `string`         | Label text to display for available and assigned values.             |                          |
@@ -222,10 +222,8 @@ export default function App() {
 | `shouldDisableDate`   | `function`       | A function to disable specific dates in the `DatePicker`.            |                          |
 | `showErrorText`       | `boolean`        | Indicates if error text should be displayed when validation fails.   |                          |
 | `helperText`          | `string`         | Text to display as helper information below the field.               |                          |
-| `minDateTime`         | `object`         | Minimal selectable moment of time with binding to date, to set min time in each day use minTime.`.                |                          |
-| `minDate`         	| `object`         | Minimal selectable date..                |                          |
-| `maxDate`       		| `object`         | Maximal selectable date.            |                          |
-| `maxDateTime`         | `object`         | Maximal selectable moment of time with binding to date, to set max time in each day use maxTime.              |                          |
+| `minDate`         	| `object`         | Minimal selectable date..                							  |                          |
+| `maxDate`       		| `object`         | Maximal selectable date.            								  |                          |
 | `multiSelect`         | `boolean`        | Enables multiple selections in a `Select` field.                     |                          |
 | `parentComboField`    | `string`         | Field name used to fetch dependent data for a `Select` field.        |                          |
 | `lookup`              | `string`/`array` | Defines the lookup source for dropdown values in the column.         |                          |
@@ -233,9 +231,9 @@ export default function App() {
 | `onAssignChange`      | `function`       | Callback triggered when assigned values are modified.                | Coolr specific           |
 | `disableCellRedirect` | `boolean`        | Disables cell click redirection for the column.                      |                          |
 | `useLinkColumn`       | `boolean`        | Specifies if the column uses a link for navigation.                  |                          |
-| `variant`             | `string`         | Specifies the variant for fields (e.g., `standard`, `filled`).       |                          |
+| `variant`             | `string`         | Specifies the variant for fields (e.g., `standard`, `filled`).       |   `standard`             |
 | `multiline`           | `boolean`        | Indicates if the text field should support multiple lines.           |                          |
-| `rows`                | `number`         | Number of rows to display in a multiline text field.                 |                          |
+| `rows`                | `number` 		   | Number of rows to display in a multiline text field.              |			                 |
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                |                          |
 | `preferenceId`        | `string`         | Identifier for saved grid preferences.                               | modal preference id      |
 | `shouldDisableDate`   | `function`       | A function that takes a date and formik as arguments and returns a boolean. |                   |

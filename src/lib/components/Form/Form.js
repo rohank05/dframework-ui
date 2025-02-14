@@ -37,8 +37,8 @@ const Form = ({
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
   const { relations = [] } = model;
-  const navigateBack = (window.history && window.history.length > 1) ? ()=> window.history.back() 
-  : ()=> pathname.substring(0, pathname.lastIndexOf("/"));   // removes the last segment
+  const navigateBack = (window.history && window.history?.length > 1) ? () => window.history.back()
+    : () => pathname.substring(0, pathname.lastIndexOf("/"));  // removes the last segment
   const { dispatchData, stateData } = useStateContext();
   const { id: idWithOptions } = useParams() || getParams;
   const id = idWithOptions?.split("-")[0];
