@@ -148,7 +148,7 @@ class UiModel {
 					if (required) {
 						config = yup.number().label(formLabel).required(`${formLabel} is required.`);
 					} else {
-						config = yup.number()
+						config = yup.number().nullable()
 					}
 					if (min) {
 						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
