@@ -1361,11 +1361,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   };
   const updateSort = e => {
     const sort = e.map(ele => {
-      var _gridColumns$filter$2;
-      const isKeywordField = isElasticScreen && ((_gridColumns$filter$2 = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (ele === null || ele === void 0 ? void 0 : ele.field))[0]) === null || _gridColumns$filter$2 === void 0 ? void 0 : _gridColumns$filter$2.isKeywordField);
-      return _objectSpread(_objectSpread({}, ele), {}, {
+      const field = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (ele === null || ele === void 0 ? void 0 : ele.field))[0] || {};
+      const isKeywordField = isElasticScreen && field.isKeywordField;
+      const obj = _objectSpread(_objectSpread({}, ele), {}, {
         filterField: isKeywordField ? "".concat(ele.field, ".keyword") : ele.field
       });
+      if (field.dataIndex) {
+        obj.field = field.dataIndex;
+        obj.filterField = field.dataIndex;
+      }
+      return obj;
     });
     setSortModel(sort);
   };
