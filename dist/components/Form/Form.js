@@ -49,7 +49,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
 const Form = _ref => {
-  var _stateData$gridSettin;
+  var _window$history, _stateData$gridSettin;
   let {
     model,
     api,
@@ -71,7 +71,7 @@ const Form = _ref => {
   const {
     relations = []
   } = model;
-  const navigateBack = window.history && window.history.length > 1 ? () => window.history.back() : () => pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
+  const navigateBack = window.history && ((_window$history = window.history) === null || _window$history === void 0 ? void 0 : _window$history.length) > 1 ? () => window.history.back() : () => pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
   const {
     dispatchData,
     stateData

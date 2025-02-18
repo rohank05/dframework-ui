@@ -212,7 +212,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5, _model$module;
   let {
       showGrid = true,
       useLinkColumn = true,
@@ -381,11 +381,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
-  const {
-    preferenceApi,
-    preferenceId
-  } = (stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.permissions) || {};
-  const preferenceName = preferenceId || model.preferenceId;
+  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
+  const preferenceName = model.preferenceId || ((_model$module = model.module) === null || _model$module === void 0 ? void 0 : _model$module.preferenceId);
   const searchParams = new URLSearchParams(window.location.search);
   let baseSaveData = {};
   const selectedSet = (0, _react.useRef)(new Set());
