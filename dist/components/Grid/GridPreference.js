@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.string.trim.js");
@@ -106,7 +105,6 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
-const defaultPrefName = "default";
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
   let {
@@ -144,7 +142,7 @@ const GridPreferences = _ref => {
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
     let schema = yup.object({
-      prefName: yup.string().required('Preference Name is Required').max(20, 'Maximum Length is 20'),
+      prefName: yup.string().trim(true).required('Preference Name is Required').max(20, 'Maximum Length is 20'),
       prefDesc: yup.string().max(100, "Description maximum length is 100")
     });
     return schema;
@@ -163,7 +161,8 @@ const GridPreferences = _ref => {
     validationSchema: validationSchema,
     onSubmit: async values => {
       await savePreference(values);
-    }
+    },
+    mode: "onBlur"
   });
   const handleOpen = event => {
     setMenuAnchorEl(event === null || event === void 0 ? void 0 : event.currentTarget);
@@ -204,16 +203,12 @@ const GridPreferences = _ref => {
     }
     await applyPreference(prefId);
   };
-  function isNotDefault() {
-    let prefName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    return [defaultPrefName].includes(prefName.trim().toLowerCase());
-  }
   const savePreference = async values => {
     var _filterModel$items;
     const presetName = values.prefName.trim();
     const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
-    const isNotDefaultName = isNotDefault(presetName);
-    if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotDefaultName) {
+    // if any default preferences maintain them inside the preferences array.
+    if (preferenceAlreadyExists > -1 && (formType === formTypes.Add || preferences[preferenceAlreadyExists].prefId !== values.prefId)) {
       setOpenPreferenceExistsModal(true);
       return;
     }
@@ -500,12 +495,15 @@ const GridPreferences = _ref => {
     variant: "outlined",
     size: "small",
     margin: "dense",
-    label: "Preference Name",
+    label: /*#__PURE__*/_react.default.createElement("span", null, "Preference Name ", /*#__PURE__*/_react.default.createElement("span", {
+      style: {
+        color: 'red'
+      }
+    }, "*")),
     name: 'prefName',
     onChange: formik.handleChange,
     error: !!formik.errors.prefName,
     helperText: formik.errors.prefName,
-    required: true,
     fullWidth: true,
     inputRef: focusUsernameInputField
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
