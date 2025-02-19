@@ -1371,7 +1371,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
       return obj;
     });
-    console.log(sort);
     setSortModel(sort);
   };
   let breadCrumbs;
