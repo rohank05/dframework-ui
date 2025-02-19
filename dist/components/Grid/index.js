@@ -1367,11 +1367,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         filterField: isKeywordField ? "".concat(ele.field, ".keyword") : ele.field
       });
       if (field.dataIndex) {
-        obj.field = field.dataIndex;
         obj.filterField = field.dataIndex;
       }
       return obj;
     });
+    console.log(sort);
     setSortModel(sort);
   };
   let breadCrumbs;

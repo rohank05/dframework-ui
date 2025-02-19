@@ -998,7 +998,6 @@ const GridBase = memo(({
             const isKeywordField = isElasticScreen && field.isKeywordField;
             const obj = { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
             if(field.dataIndex){
-                obj.field = field.dataIndex;
                 obj.filterField = field.dataIndex;
             }
             return obj;
