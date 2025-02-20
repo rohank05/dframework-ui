@@ -593,8 +593,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       if (column.link) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
+      const headerName = column.headerName || column.label;
       finalColumns.push(_objectSpread(_objectSpread({
-        headerName: column.headerName || column.label
+        headerName,
+        description: headerName
       }, column), overrides));
       if (column.pinned) {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
