@@ -267,8 +267,9 @@ const GridPreferences = _ref => {
       history: navigate,
       dispatchData
     });
-    if (response === true) {
-      snackbar.showMessage('Preference Saved Successfully.');
+    const action = formType === formTypes.Add ? "Added" : "Saved";
+    if (response === true || (response === null || response === void 0 ? void 0 : response.success) === true) {
+      snackbar.showMessage("Preference ".concat(action, " Successfully."));
     }
     getAllSavedPreferences({
       preferenceName,

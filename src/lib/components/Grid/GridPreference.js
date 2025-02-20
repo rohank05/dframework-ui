@@ -162,8 +162,9 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             params["prefId"] = values.prefId;
         }
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
-        if (response === true) {
-            snackbar.showMessage('Preference Saved Successfully.');
+        const action = formType === formTypes.Add ? "Added" : "Saved";
+        if (response === true || response?.success === true) {
+            snackbar.showMessage(`Preference ${action} Successfully.`);
         }
         getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
     }
