@@ -151,7 +151,8 @@ const Form = ({
             if (model.reloadOnSave) {
               return window.location.reload();
             }
-            snackbar.showMessage("Record Updated Successfully.");
+            const operation = id == 0 ? "Added" : "Updated";
+            snackbar.showMessage(`Record ${operation} Successfully.`);
             navigate(navigateBack());
           }
         })

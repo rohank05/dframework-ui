@@ -41,7 +41,6 @@ const initialValues = {
     isDefault: false
 };
 
-const defaultPrefName = "default";
 const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
     const { stateData, dispatchData, removeCurrentPreferenceName, getAllSavedPreferences } = useStateContext();
     const { navigate } = useRouter();
@@ -66,6 +65,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         let schema = yup.object({
             prefName: yup
                 .string()
+                .trim(true)
                 .required('Preference Name is Required')
                 .max(20, 'Maximum Length is 20'),
             prefDesc: yup.string().max(100, `Description maximum length is 100`)
@@ -88,7 +88,8 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             await savePreference(values);
-        }
+        },
+        mode: "onBlur"
     });
 
     const handleOpen = (event) => {
@@ -127,15 +128,11 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         }
         await applyPreference(prefId);
     }
-
-    function isNotDefault(prefName = '') {
-        return [defaultPrefName].includes(prefName.trim().toLowerCase());
-    }
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
         const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
-        const isNotDefaultName = isNotDefault(presetName)
-        if (preferenceAlreadyExists > -1 && formType === formTypes.Add || isNotDefaultName) {
+        // if any default preferences maintain them inside the preferences array.
+        if (preferenceAlreadyExists > -1 && (formType === formTypes.Add || preferences[preferenceAlreadyExists].prefId !== values.prefId)) {
             setOpenPreferenceExistsModal(true);
             return;
         }
@@ -165,8 +162,9 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
             params["prefId"] = values.prefId;
         }
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
-        if (response === true) {
-            snackbar.showMessage('Preference Saved Successfully.');
+        const action = formType === formTypes.Add ? "Added" : "Saved";
+        if (response === true || response?.success === true) {
+            snackbar.showMessage(`Preference ${action} Successfully.`);
         }
         getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
     }
@@ -358,12 +356,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
                                     variant="outlined"
                                     size="small"
                                     margin="dense"
-                                    label='Preference Name'
+                                    label={
+                                        <span>
+                                            Preference Name <span style={{ color: 'red' }}>*</span>
+                                        </span>
+                                    }
                                     name={'prefName'}
                                     onChange={formik.handleChange}
                                     error={!!formik.errors.prefName}
                                     helperText={formik.errors.prefName}
-                                    required
                                     fullWidth
                                     inputRef={focusUsernameInputField}
                                 />

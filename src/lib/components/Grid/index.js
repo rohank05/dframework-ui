@@ -437,7 +437,8 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            finalColumns.push({ headerName: column.headerName || column.label, ...column, ...overrides });
+            const headerName = column.headerName || column.label;
+            finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
@@ -996,9 +997,14 @@ const GridBase = memo(({
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {
-            const isKeywordField = isElasticScreen && gridColumns.filter(element => element?.field === ele?.field)[0]?.isKeywordField
-            return { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
-        })
+            const field = gridColumns.filter(element => element?.field === ele?.field)[0] || {};
+            const isKeywordField = isElasticScreen && field.isKeywordField;
+            const obj = { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
+            if (field.dataIndex) {
+                obj.filterField = field.dataIndex;
+            }
+            return obj;
+        });
         setSortModel(sort);
     }
 

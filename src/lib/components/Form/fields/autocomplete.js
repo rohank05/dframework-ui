@@ -33,6 +33,7 @@ const Field = ({ column, field, formik, lookups, data, otherProps, model, fieldC
                 {...otherProps}
                 multiple
                 id={field}
+                limitTags={5}
                 options={options || []}
                 getOptionLabel={(option) => option.label || ''}
                 defaultValue={filteredCombos}
