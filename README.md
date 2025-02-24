@@ -228,6 +228,7 @@ export default function App() {
 | `isUtc`               | `boolean`        | Indicates if the field value is stored in UTC format.                                                                         |                     |
 | `preferenceId`        | `string`         | Identifier for saved grid preferences.                                                                                        | modal preference id |
 | `shouldDisableDate`   | `function`       | A function that takes a date and formik as arguments and returns a boolean.                                                   | --                  |
+| `placeHolder`   | `string`       | To Show `placeHolder` only for type `select` | --                  |
 
 # **Field Components Properties Table**
 

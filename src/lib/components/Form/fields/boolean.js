@@ -19,7 +19,7 @@ const field = ({ column, field, label, formik, otherProps, classes, onChange }) 
                     onBlur={formik.handleBlur}
                 />
             }
-            label={label}
+            // label={label} commenting this code due to showing two label on ui 
         />
         <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
     </div>
