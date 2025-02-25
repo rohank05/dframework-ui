@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
 import { useStateContext } from '../useRouter/StateProvider';
-const Footer = ({ pagination, apiRef, tTranslate }) => {
+const Footer = ({ pagination, apiRef, tTranslate = (key) => key }) => {
     const page = apiRef.current.state.pagination.paginationModel.page;
     const rowsPerPage = apiRef.current.state.pagination.paginationModel.pageSize;
     const totalRows = apiRef.current.state.rows.totalRowCount;

@@ -214,6 +214,7 @@ const GridBase = memo(({
         String: 'string',
         Boolean: 'boolean'
     };
+    const tTranslate = model.tTranslate ?? ((key) => key);
 
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -354,7 +355,7 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            finalColumns.push({ headerName: model?.tTranslate(column.headerName || column.label, tOpts), ...column, ...overrides });
+            finalColumns.push({ headerName: tTranslate(column.headerName || column.label, tOpts), ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
@@ -633,8 +634,8 @@ const GridBase = memo(({
                     justifyContent: 'space-between'
                 }}
             >
-                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {model?.tTranslate(model.gridSubTitle, tOpts)}</Typography>}
-                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >{model?.tTranslate('Applied Preference', tOpts)} - {currentPreference}</Typography>}
+                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {tTranslate(model.gridSubTitle, tOpts)}</Typography>}
+                {currentPreference && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >{tTranslate('Applied Preference', tOpts)} - {currentPreference}</Typography>}
                 {(isReadOnly || (!effectivePermissions.add && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {isReadOnly ? "" : model.title}</Typography>}
                 {!forAssignment && effectivePermissions.add && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{model?.customAddTextTitle ? model.customAddTextTitle : ` ${!showAddIcon ? "" : `${"Add"}`} ${model.title}`}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
@@ -643,12 +644,12 @@ const GridBase = memo(({
                 <GridToolbarContainer {...props}>
                     <GridToolbarColumnsButton />
                     <GridToolbarFilterButton />
-                    <Button startIcon={<FilterListOffIcon />} onClick={clearFilters} size="small">{model?.tTranslate("CLEAR FILTER", tOpts)}</Button>
+                    <Button startIcon={<FilterListOffIcon />} onClick={clearFilters} size="small">{tTranslate("CLEAR FILTER", tOpts)}</Button>
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
+                        <CustomExportButton tTranslate={tTranslate} tOpts={tOpts} handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
                     {model.preferenceId &&
-                        <GridPreferences tTranslate={model?.tTranslate} preferenceName={model.preferenceId} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
+                        <GridPreferences tTranslate={tTranslate} preferenceName={model.preferenceId} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
                     }
                 </GridToolbarContainer>
             </div >
@@ -820,7 +821,7 @@ const GridBase = memo(({
                     footer: {
                         pagination: true,
                         apiRef,
-                        tTranslate: model?.tTranslate
+                        tTranslate: tTranslate
                     },
                     panel: {
                         placement: "bottom-end"

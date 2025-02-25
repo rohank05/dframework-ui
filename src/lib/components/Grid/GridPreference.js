@@ -42,7 +42,7 @@ const initialValues = {
 };
 
 const defaultCoolRPrefName= "coolr default"
-const GridPreferences = ({ tTranslate, preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
+const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
     const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
     const { pathname, navigate } = useRouter();
     const apiRef = useGridApiRef();
