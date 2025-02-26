@@ -84,7 +84,7 @@ const convertDefaultSort = (defaultSort) => {
     }
     return orderBy;
 };
-const ExportMenuItem = ({tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
+const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
     return (
         <MenuItem
             onClick={handleExport}

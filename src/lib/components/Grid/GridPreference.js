@@ -47,7 +47,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     const { pathname, navigate } = useRouter();
     const apiRef = useGridApiRef();
     const snackbar = useSnackbar();
-    const { t: translate, i18n } = useTranslation()
+    const { t: translate, i18n } = useTranslation();
     const tOpts = { t: translate, i18n };
     const [openDialog, setOpenDialog] = useState(false);
     const [openForm, setOpenForm] = useState(false);
