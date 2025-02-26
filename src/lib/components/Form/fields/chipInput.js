@@ -11,13 +11,14 @@ const Field = ({ isAdd, column, field, fieldLabel, formik, lookups, data, otherP
     if (mode !== 'copy') {
         isDisabled = fieldConfigs?.disabled;
     }
-    console.log(isAdd);
-    const handleAutoCompleteChange = (event, newValue) => {
-        console.log(newValue);
+    const handleAutoCompleteChange = (e, newValue, action, item) => {
         let lastElement = newValue.pop();
         lastElement = lastElement?.trim();
         if (!newValue.includes(lastElement)) {
             newValue.push(lastElement);
+        }
+        if(fixedOptions.includes(item.option) && action === "removeOption"){
+            newValue = [item.option];
         }
         formik.setFieldValue(field, newValue?.join(', ') || '');
     }
@@ -35,14 +36,10 @@ const Field = ({ isAdd, column, field, fieldLabel, formik, lookups, data, otherP
                 multiple
                 id={field}
                 freeSolo={true}
-                // onChange={(event, newValue) => {
-                //     setValue(newValue);
-                // }}
                 value={inputValue}
                 options={[]}
                 renderInput={(params) => <TextField {...params} variant="standard" />}
                 onChange={handleAutoCompleteChange}
-                // value={filteredCombos}
                 size="small"
                 renderTags={(tagValue, getTagProps) =>
                     tagValue.map((option, index) => {
