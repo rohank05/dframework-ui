@@ -14,20 +14,30 @@ var _Box = _interopRequireDefault(require("@mui/material/Box"));
 var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
 var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
+var _reactI18next = require("react-i18next");
 var _react = _interopRequireWildcard(require("react"));
 var _StateProvider = require("../useRouter/StateProvider");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 const Footer = _ref => {
   let {
     pagination,
-    apiRef
+    apiRef,
+    tTranslate = key => key
   } = _ref;
   const page = apiRef.current.state.pagination.paginationModel.page;
   const rowsPerPage = apiRef.current.state.pagination.paginationModel.pageSize;
   const totalRows = apiRef.current.state.rows.totalRowCount;
   const totalPages = Math.ceil(totalRows / rowsPerPage);
+  const {
+    t: translate,
+    i18n
+  } = (0, _reactI18next.useTranslation)();
+  const tOpts = {
+    t: translate,
+    i18n
+  };
   const [pageNumber, setPageNumber] = (0, _react.useState)(page + 1);
   const {
     useLocalization
@@ -70,10 +80,16 @@ const Footer = _ref => {
     }
   }, pagination && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_Typography.default, {
     variant: "p"
-  }, getLocalizedString('Jumptopage'), ":"), /*#__PURE__*/_react.default.createElement(_TextField.default, {
+  }, tTranslate('Jump to page', tOpts), ":"), /*#__PURE__*/_react.default.createElement(_TextField.default, {
     sx: {
       width: 70,
-      pl: 1
+      pl: 1,
+      '& input[type=number]::-webkit-inner-spin-button': {
+        cursor: 'pointer'
+      },
+      '& input[type=number]::-webkit-outer-spin-button': {
+        cursor: 'pointer'
+      }
     },
     variant: "standard",
     type: "number",
@@ -86,6 +102,6 @@ const Footer = _ref => {
     disabled: !totalRows,
     size: "small",
     onClick: onPageChange
-  }, getLocalizedString('Go')))), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridFooter, null));
+  }, tTranslate('Go', tOpts)))), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridFooter, null));
 };
 exports.Footer = Footer;

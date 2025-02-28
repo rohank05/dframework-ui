@@ -59,7 +59,16 @@ const Footer = ({ pagination, apiRef, tTranslate = (key) => key }) => {
                     <>
                         <Typography variant="p">{tTranslate('Jump to page', tOpts)}:</Typography>
                         <TextField
-                            sx={{ width: 70, pl: 1 }}
+                            sx={{
+                                width: 70,
+                                pl: 1,
+                                '& input[type=number]::-webkit-inner-spin-button': {
+                                    cursor: 'pointer'
+                                },
+                                '& input[type=number]::-webkit-outer-spin-button': {
+                                    cursor: 'pointer'
+                                }
+                            }}
                             variant="standard"
                             type='number'
                             min={1}
