@@ -17,6 +17,11 @@ require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.trim.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _react = _interopRequireWildcard(require("react"));
@@ -45,19 +50,20 @@ var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
+var _reactI18next = require("react-i18next");
 const _excluded = ["row", "field", "id"],
   _excluded2 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
-function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } } return target; }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -121,6 +127,8 @@ const convertDefaultSort = defaultSort => {
 };
 const ExportMenuItem = _ref => {
   let {
+    tTranslate,
+    tOpts,
     handleExport,
     contentType,
     type,
@@ -131,7 +139,7 @@ const ExportMenuItem = _ref => {
     "data-type": type,
     "data-content-type": contentType,
     "data-is-pivot-export": isPivotExport
-  }, "Export", " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+  }, tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
 };
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
@@ -183,7 +191,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _stateData$gridSettin5;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$tTranslate, _stateData$gridSettin5;
   let {
     useLinkColumn = true,
     model,
@@ -239,6 +247,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const [record, setRecord] = (0, _react.useState)(null);
   const snackbar = (0, _index.useSnackbar)();
+  const {
+    t: translate,
+    i18n
+  } = (0, _reactI18next.useTranslation)();
+  const tOpts = {
+    t: translate,
+    i18n
+  };
   const isClient = model.isClient === true ? 'client' : 'server';
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
   const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
@@ -305,6 +321,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     String: 'string',
     Boolean: 'boolean'
   };
+  const tTranslate = (_model$tTranslate = model.tTranslate) !== null && _model$tTranslate !== void 0 ? _model$tTranslate : key => key;
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
@@ -470,7 +487,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
       finalColumns.push(_objectSpread(_objectSpread({
-        headerName: column.headerName || column.label
+        headerName: tTranslate(column.headerName || column.label, tOpts)
       }, column), overrides));
       if (column.pinned) {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -526,7 +543,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     if (!forAssignment && !isReadOnly) {
       const actions = [];
       if (effectivePermissions !== null && effectivePermissions !== void 0 && effectivePermissions.edit) {
-        actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Edit"
           }, "   ", /*#__PURE__*/_react.default.createElement(_Edit.default, null)),
@@ -536,7 +553,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         }));
       }
       if (effectivePermissions.add) {
-        actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Copy"
           }, /*#__PURE__*/_react.default.createElement(_FileCopy.default, null), " "),
@@ -546,7 +563,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         }));
       }
       if (effectivePermissions.delete) {
-        actions.push( /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
           icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
             title: "Delete"
           }, /*#__PURE__*/_react.default.createElement(_Delete.default, null), " "),
@@ -859,7 +876,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, " ", t(model.gridSubTitle, tOpts)), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, " ", tTranslate(model.gridSubTitle, tOpts)), currentPreference && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       className: "preference-name-text",
       variant: "h6",
       component: "h6",
@@ -867,7 +884,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       sx: {
         ml: 1
       }
-    }, "Applied Preference - ", currentPreference), (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, tTranslate('Applied Preference', tOpts), " - ", currentPreference), (isReadOnly || !effectivePermissions.add && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
@@ -896,11 +913,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"
-    }, "CLEAR FILTER"), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
+    }, tTranslate("CLEAR FILTER", tOpts)), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
+      tTranslate: tTranslate,
+      tOpts: tOpts,
       handleExport: handleExport,
       showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
       showOnlyExcelExport: model.showOnlyExcelExport
     }), model.preferenceId && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
+      tTranslate: tTranslate,
       preferenceName: model.preferenceId,
       gridRef: apiRef,
       columns: gridColumns,
@@ -1108,7 +1128,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     slotProps: {
       footer: {
         pagination: true,
-        apiRef
+        apiRef,
+        tTranslate: tTranslate
       },
       panel: {
         placement: "bottom-end"
