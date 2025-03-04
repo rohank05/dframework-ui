@@ -144,7 +144,6 @@ const Form = ({
         values,
         setIsLoading,
         setError: snackbar.showError,
-        resetForm
       })
         .then((success) => {
           if (success) {
@@ -161,6 +160,9 @@ const Form = ({
             "An error occured, please try after some time.second",
             err
           );
+          if(model.reloadOnSave) {
+            resetForm();
+          }
         })
         .finally(() => setIsLoading(false));
     }
