@@ -293,7 +293,7 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
     return result;
 };
 
-const saveRecord = async function ({ id, api, values, setIsLoading, setError, resetForm }) {
+const saveRecord = async function ({ id, api, values, setIsLoading, setError }) {
     let url, method;
 
     if (id !== 0) {
@@ -324,9 +324,6 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError, re
             setError('Save failed', data.err || data.message);
         } else {
             setError('Save failed', response.body);
-        }
-        if (typeof resetForm === "function") {
-            resetForm();
         }
     } catch (error) {
         if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
