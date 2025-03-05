@@ -3,6 +3,7 @@ import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 import request from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
+const lookupDataTypes = ['singleSelect']
 
 const exportRecordSize = 10000;
 
@@ -22,7 +23,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         if (!lookup) {
             return;
         }
-        if (!lookups.includes(lookup)) {
+        if (!lookups.includes(lookup) && lookupDataTypes.includes(type)) {
             lookups.push(lookup);
         }
     });
