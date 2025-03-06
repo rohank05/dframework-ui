@@ -563,7 +563,7 @@ const GridBase = memo(({
         if (additionalFilters) {
             finalFilters.items = [...finalFilters.items, ...additionalFilters];
         }
-        const isValidFilters = finalFilters.items.length === 0 || finalFilters.items.every(item => 'value' in item && item.value !== undefined);
+        const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
         if(!isValidFilters) {
             return;
         }
