@@ -794,7 +794,10 @@ const GridBase = memo(({
                         err
                     );
                 })
-                .finally(() => setIsLoading(false));
+                .finally(() => {
+                    selectedSet.current.clear();
+                    setIsLoading(false)
+                });
             return;
         }
         if (typeof onAddOverride === 'function') {
