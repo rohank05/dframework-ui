@@ -389,3 +389,18 @@ applyFieldConfig: function ({ data }) {
 }
 
 ```
+
+### 3. **joinColumn** column property.
+
+```js
+
+const exampleConfig = {
+    title: "Document",
+    api: "/Document",
+    name: "Document",
+    idProperty: "DocumentId",
+    module: "Equipment",
+    joinColumn: "AssociationId",
+    standard: true,
+}
+```
