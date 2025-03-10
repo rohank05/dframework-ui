@@ -68,8 +68,8 @@ const field = _ref => {
     },
     onBlur: formik.handleBlur,
     helperText: formik.touched[field] && formik.errors[field],
-    minDate: column !== null && column !== void 0 && column.minDate ? (0, _dayjs.default)(column === null || column === void 0 ? void 0 : column.minDate) : null,
-    maxDate: column !== null && column !== void 0 && column.maxDate ? (0, _dayjs.default)(column === null || column === void 0 ? void 0 : column.maxDate) : null,
+    minDate: column !== null && column !== void 0 && column.min ? (0, _dayjs.default)(column === null || column === void 0 ? void 0 : column.min) : null,
+    maxDate: column !== null && column !== void 0 && column.max ? (0, _dayjs.default)(column === null || column === void 0 ? void 0 : column.max) : null,
     disabled: isDisabled,
     shouldDisableDate: date => _shouldDisableDate ? _shouldDisableDate(date, formik) : false,
     slotProps: {
