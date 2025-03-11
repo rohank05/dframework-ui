@@ -191,8 +191,7 @@ const Form = _ref => {
         api: gridApi,
         values,
         setIsLoading,
-        setError: snackbar.showError,
-        resetForm
+        setError: snackbar.showError
       }).then(success => {
         if (success) {
           if (model.reloadOnSave) {
@@ -204,6 +203,9 @@ const Form = _ref => {
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
+        if (model.reloadOnSave) {
+          resetForm();
+        }
       }).finally(() => setIsLoading(false));
     }
   });

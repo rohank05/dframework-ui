@@ -21,6 +21,7 @@ require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.every.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
@@ -587,6 +588,25 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           })) : undefined
         }));
       }
+      if (column.type === 'boolean') {
+        const booleanOperators = (0, _xDataGridPremium.getGridBooleanOperators)();
+        overrides.filterOperators = booleanOperators.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
+          InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
+            column: _objectSpread(_objectSpread({}, column), {}, {
+              customLookup: [{
+                value: true,
+                label: 'Yes'
+              }, {
+                value: false,
+                label: 'No'
+              }],
+              dataRef
+            })
+          }, params, {
+            autoHighlight: true
+          })) : undefined
+        }));
+      }
       if (column.linkTo) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
@@ -795,6 +815,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     if (additionalFilters) {
       finalFilters.items = [...finalFilters.items, ...additionalFilters];
+    }
+    const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
+    if (!isValidFilters) {
+      return;
     }
     (0, _crudHelper.getList)({
       action,
@@ -1068,7 +1092,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
-      }).finally(() => setIsLoading(false));
+      }).finally(() => {
+        selectedSet.current.clear();
+        setIsLoading(false);
+      });
       return;
     }
     if (typeof onAddOverride === 'function') {
@@ -1240,7 +1267,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
-    if (url) {
+    if (url && isGridPreferenceFetched) {
       fetchData();
     }
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
@@ -1327,6 +1354,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         if (isKeywordField) {
           item.filterField = "".concat(item.field, ".keyword");
         }
+        item.value = ['isEmpty', 'isNotEmpty'].includes(operator) ? null : value;
         return _objectSpread(_objectSpread({}, item), {}, {
           type: column.type
         });
