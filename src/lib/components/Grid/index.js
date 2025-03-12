@@ -208,7 +208,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, nestedGrid = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.doubleClicked === false;
     const dataRef = useRef(data);
@@ -242,6 +242,8 @@ const GridBase = memo(({
         OrderStatus: 'OrderStatusId'
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
+    const preferenceName =  model.preferenceId || model.module?.preferenceId;
+    
     const searchParams = new URLSearchParams(window.location.search);
 
     let baseSaveData = {};
@@ -553,7 +555,7 @@ const GridBase = memo(({
 
         let controllerType = model?.controllerType;
         if (isPivotExport) {
-            gridApi = `${withControllersUrl}${model?.pivotAPI}`;
+            gridApi = `${withControllersUrl}${model?.pivotApi}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
@@ -856,10 +858,10 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (model.preferenceId && preferenceApi) {
+        if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName: model.preferenceId, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
         }
     }, [preferenceApi])
 
@@ -876,7 +878,7 @@ const GridBase = memo(({
                 {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
                 {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                 {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && canAdd && !isReadOnly && !showAddIcon && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
+                {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
                 {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                 {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
 
@@ -892,8 +894,8 @@ const GridBase = memo(({
                     {effectivePermissions.export && (
                         <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
-                    {model.preferenceId &&
-                        <GridPreferences preferenceName={model.preferenceId} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
+                    {preferenceName &&
+                        <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
                     }
                 </GridToolbarContainer>
             </div >
@@ -929,7 +931,7 @@ const GridBase = memo(({
         fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     };
     useEffect(() => {
-        if (url && isGridPreferenceFetched) {
+        if (url) {
             fetchData();
         }
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url])
@@ -941,7 +943,7 @@ const GridBase = memo(({
         if (forAssignment || !updatePageTitle) {
             return;
         }
-        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, titleDescription: model?.titleDescription, title: model?.title } })
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, title: model?.title } })
         return () => {
             dispatchData({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
@@ -1048,7 +1050,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} nestedGrid={nestedGrid} breadcrumbColor={breadcrumbColor} />
+                breadcrumbs={breadCrumbs} enableGoBack={enableGoBack} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
