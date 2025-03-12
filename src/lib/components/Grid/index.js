@@ -276,20 +276,34 @@ const GridBase = memo(({
             // Add the object if it is not selected
             selectedSet.current.add(mergedRow);
         }
-
     };
 
 
-    const customCheckBox = (params) => {
+    const CustomCheckBox = (params) => {
+        const [isCheckedLocal, setIsCheckedLocal] = useState(false);
+
+        useEffect(() => {
+            const isSelected = Array.from(selectedSet.current).some(
+                (item) => item[idProperty] === params.row[idProperty]
+            );
+            setIsCheckedLocal(isSelected);
+        }, [params.row, selectedSet.current.size]);
+
+        const handleCheckboxClick = (event) => {
+            event.stopPropagation();
+            setIsCheckedLocal(!isCheckedLocal);
+            handleSelectRow(params);
+        };
 
         return (
             <Checkbox
-                onClick={() => handleSelectRow(params)}
+                onClick={handleCheckboxClick}
+                checked={isCheckedLocal}
                 color="primary"
                 inputProps={{ 'aria-label': 'checkbox' }}
             />
-        )
-    }
+        );
+    };
 
     const gridColumnTypes = {
         "radio": {
@@ -322,7 +336,7 @@ const GridBase = memo(({
             "valueOptions": "lookup"
         },
         "selection": {
-            renderCell: customCheckBox
+            renderCell: (params) => <CustomCheckBox {...params} />
         }
     }
 
