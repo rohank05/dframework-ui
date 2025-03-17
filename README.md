@@ -323,8 +323,8 @@ Represents an **AutocompleteField** component.
 Represents a **DaySelection** component.
 
 - The **DaySelection** component allows users to choose days in two ways:  
-  🔹 **Predefined options** – **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
-  🔹 **Custom selection** – Users manually pick specific days.
+  ?? **Predefined options** � **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
+  ?? **Custom selection** � Users manually pick specific days.
 - Example: ``` { "type": "dayRadio" } ```
 
 ---

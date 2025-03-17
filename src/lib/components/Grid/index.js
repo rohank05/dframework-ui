@@ -9,6 +9,7 @@ import {
     getGridDateOperators,
     GRID_CHECKBOX_SELECTION_COL_DEF,
     getGridStringOperators,
+    getGridBooleanOperators
 } from '@mui/x-data-grid-premium';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CopyIcon from '@mui/icons-material/FileCopy';
@@ -275,20 +276,34 @@ const GridBase = memo(({
             // Add the object if it is not selected
             selectedSet.current.add(mergedRow);
         }
-
     };
 
 
-    const customCheckBox = (params) => {
+    const CustomCheckBox = (params) => {
+        const [isCheckedLocal, setIsCheckedLocal] = useState(false);
+
+        useEffect(() => {
+            const isSelected = Array.from(selectedSet.current).some(
+                (item) => item[idProperty] === params.row[idProperty]
+            );
+            setIsCheckedLocal(isSelected);
+        }, [params.row, selectedSet.current.size]);
+
+        const handleCheckboxClick = (event) => {
+            event.stopPropagation();
+            setIsCheckedLocal(!isCheckedLocal);
+            handleSelectRow(params);
+        };
 
         return (
             <Checkbox
-                onClick={() => handleSelectRow(params)}
+                onClick={handleCheckboxClick}
+                checked={isCheckedLocal}
                 color="primary"
                 inputProps={{ 'aria-label': 'checkbox' }}
             />
-        )
-    }
+        );
+    };
 
     const gridColumnTypes = {
         "radio": {
@@ -321,7 +336,7 @@ const GridBase = memo(({
             "valueOptions": "lookup"
         },
         "selection": {
-            renderCell: customCheckBox
+            renderCell: (params) => <CustomCheckBox {...params} />
         }
     }
 
@@ -427,6 +442,26 @@ const GridBase = memo(({
                             }}
                             {...params}
                             autoHighlight
+                        />
+                    ) : undefined
+                }));
+            }
+            if(column.type === 'boolean') {
+                const booleanOperators = getGridBooleanOperators();
+                overrides.filterOperators = booleanOperators.map((operator) => ({
+                    ...operator,
+                    InputComponent: operator.InputComponent ? (params) => (
+                        <CustomDropdownmenu 
+                        column={{
+                            ...column,
+                            customLookup: [
+                                { value: true, label: 'Yes' },
+                                { value: false, label: 'No' },
+                            ],
+                            dataRef
+                        }}
+                        {...params}
+                        autoHighlight
                         />
                     ) : undefined
                 }));
@@ -564,6 +599,10 @@ const GridBase = memo(({
         }
         if (additionalFilters) {
             finalFilters.items = [...finalFilters.items, ...additionalFilters];
+        }
+        const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
+        if(!isValidFilters) {
+            return;
         }
         getList({
             action,
@@ -796,7 +835,10 @@ const GridBase = memo(({
                         err
                     );
                 })
-                .finally(() => setIsLoading(false));
+                .finally(() => {
+                    selectedSet.current.clear();
+                    setIsLoading(false)
+                });
             return;
         }
         if (typeof onAddOverride === 'function') {
@@ -967,6 +1009,7 @@ const GridBase = memo(({
                 if (isKeywordField) {
                     item.filterField = `${item.field}.keyword`;
                 }
+                item.value = ['isEmpty', 'isNotEmpty'].includes(operator) ? null : value;
                 return { ...item, type: column.type };
             }
             const updatedValue = isNumber ? null : value;

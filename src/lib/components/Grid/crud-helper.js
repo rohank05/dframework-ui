@@ -3,6 +3,7 @@ import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 import request from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
+const lookupDataTypes = ['singleSelect']
 
 const exportRecordSize = 10000;
 
@@ -15,14 +16,14 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
 
     const lookups = [];
     const dateColumns = [];
-    gridColumns.forEach(({ lookup, type, field, keepLocal = false, keepLocalDate }) => {
+    gridColumns.forEach(({ lookup, type, field, keepLocal = false, keepLocalDate, filterable = true }) => {
         if (dateDataTypes.includes(type)) {
             dateColumns.push({ field, keepLocal, keepLocalDate });
         }
         if (!lookup) {
             return;
         }
-        if (!lookups.includes(lookup)) {
+        if (!lookups.includes(lookup) && lookupDataTypes.includes(type) && filterable) {
             lookups.push(lookup);
         }
     });
@@ -119,6 +120,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         return;
     }
     try {
+        setIsLoading(true);
         let params = {
             url,
             method: 'POST',
@@ -293,7 +295,7 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
     return result;
 };
 
-const saveRecord = async function ({ id, api, values, setIsLoading, setError, resetForm }) {
+const saveRecord = async function ({ id, api, values, setIsLoading, setError }) {
     let url, method;
 
     if (id !== 0) {
@@ -324,9 +326,6 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError, re
             setError('Save failed', data.err || data.message);
         } else {
             setError('Save failed', response.body);
-        }
-        if (typeof resetForm === "function") {
-            resetForm();
         }
     } catch (error) {
         if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {

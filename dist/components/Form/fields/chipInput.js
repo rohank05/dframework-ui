@@ -44,16 +44,17 @@ const Field = _ref => {
   if (mode !== 'copy') {
     isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
   }
-  console.log(isAdd);
-  const handleAutoCompleteChange = (event, newValue) => {
-    var _lastElement;
-    console.log(newValue);
+  const handleAutoCompleteChange = (e, newValue, action, item) => {
+    var _lastElement, _newValue;
     let lastElement = newValue.pop();
     lastElement = (_lastElement = lastElement) === null || _lastElement === void 0 ? void 0 : _lastElement.trim();
     if (!newValue.includes(lastElement)) {
       newValue.push(lastElement);
     }
-    formik.setFieldValue(field, (newValue === null || newValue === void 0 ? void 0 : newValue.join(', ')) || '');
+    if (fixedOptions.includes(item.option) && action === "removeOption") {
+      newValue = [item.option];
+    }
+    formik.setFieldValue(field, ((_newValue = newValue) === null || _newValue === void 0 ? void 0 : _newValue.join(', ')) || '');
   };
   const fixedOptions = column.hasDefault && !isAdd ? inputValue[0] : '';
   return /*#__PURE__*/React.createElement(_FormControl.default, {
@@ -64,19 +65,13 @@ const Field = _ref => {
   }, /*#__PURE__*/React.createElement(_Autocomplete.default, _extends({}, otherProps, {
     multiple: true,
     id: field,
-    freeSolo: true
-    // onChange={(event, newValue) => {
-    //     setValue(newValue);
-    // }}
-    ,
+    freeSolo: true,
     value: inputValue,
     options: [],
     renderInput: params => /*#__PURE__*/React.createElement(_TextField.default, _extends({}, params, {
       variant: "standard"
     })),
-    onChange: handleAutoCompleteChange
-    // value={filteredCombos}
-    ,
+    onChange: handleAutoCompleteChange,
     size: "small",
     renderTags: (tagValue, getTagProps) => tagValue.map((option, index) => {
       const _getTagProps = getTagProps({

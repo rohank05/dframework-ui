@@ -33,6 +33,7 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
+const lookupDataTypes = ['singleSelect'];
 const exportRecordSize = 10000;
 const getList = async _ref => {
   var _filterModel$items;
@@ -78,7 +79,8 @@ const getList = async _ref => {
       type,
       field,
       keepLocal = false,
-      keepLocalDate
+      keepLocalDate,
+      filterable = true
     } = _ref2;
     if (dateDataTypes.includes(type)) {
       dateColumns.push({
@@ -90,7 +92,7 @@ const getList = async _ref => {
     if (!lookup) {
       return;
     }
-    if (!lookups.includes(lookup)) {
+    if (!lookups.includes(lookup) && lookupDataTypes.includes(type) && filterable) {
       lookups.push(lookup);
     }
   });
@@ -188,6 +190,7 @@ const getList = async _ref => {
     return;
   }
   try {
+    setIsLoading(true);
     let params = {
       url,
       method: 'POST',
@@ -401,8 +404,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
     api,
     values,
     setIsLoading,
-    setError,
-    resetForm
+    setError
   } = _ref5;
   let url, method;
   if (id !== 0) {
@@ -431,9 +433,6 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       setError('Save failed', data.err || data.message);
     } else {
       setError('Save failed', response.body);
-    }
-    if (typeof resetForm === "function") {
-      resetForm();
     }
   } catch (error) {
     if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
