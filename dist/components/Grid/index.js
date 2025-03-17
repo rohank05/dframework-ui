@@ -10,6 +10,7 @@ require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.object.assign.js");
+require("core-js/modules/es.object.from-entries.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
@@ -84,8 +85,8 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
-function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (e.includes(n)) continue; t[n] = r[n]; } return t; }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -395,25 +396,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }
   const handleSelectRow = params => {
-    const mergedRow = _objectSpread(_objectSpread({}, baseSaveData), params.row);
-    const isAlreadySelected = Array.from(selectedSet.current).some(item => item[idProperty] === mergedRow[idProperty]);
+    const isAlreadySelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
     if (isAlreadySelected) {
       // Remove the object if it is already selected
-      for (let item of selectedSet.current) {
-        if (item[idProperty] === mergedRow[idProperty]) {
-          selectedSet.current.delete(item);
-          break;
-        }
-      }
+      selectedSet.current.delete(params.row[idProperty]);
     } else {
       // Add the object if it is not selected
-      selectedSet.current.add(mergedRow);
+      selectedSet.current.add(params.row[idProperty]);
     }
   };
   const CustomCheckBox = params => {
     const [isCheckedLocal, setIsCheckedLocal] = (0, _react.useState)(false);
     (0, _react.useEffect)(() => {
-      const isSelected = Array.from(selectedSet.current).some(item => item[idProperty] === params.row[idProperty]);
+      const isSelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
       setIsCheckedLocal(isSelected);
     }, [params.row, selectedSet.current.size]);
     const handleCheckboxClick = event => {
@@ -1089,11 +1084,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         setIsLoading(false);
         return;
       }
+      const selectedIds = Array.from(selectedSet.current);
+      let selectedRecords = selectedIds.map(id => _objectSpread(_objectSpread({}, baseSaveData), data.records.find(record => record[idProperty] === id)));
+      if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+        selectedRecords = selectedRecords.map(item => Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]])));
+      }
       (0, _crudHelper.saveRecord)({
         id: 0,
         api: gridApi,
         values: {
-          items: Array.from(selectedSet.current)
+          items: Array.from(selectedRecords)
         },
         setIsLoading,
         setError: snackbar.showError
@@ -1147,6 +1147,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       unassign: selection
     });
   };
+  const selectAll = () => {
+    if (selectedSet.current.size === data.records.length) {
+      // If all records are selected, deselect all
+      selectedSet.current.clear();
+      setSelection([]);
+    } else {
+      // Select all records
+      data.records.forEach(record => {
+        selectedSet.current.add(record[idProperty]);
+      });
+      setSelection(data.records.map(record => record[idProperty]));
+    }
+  };
   (0, _react.useEffect)(() => {
     if (preferenceName && preferenceApi) {
       removeCurrentPreferenceName({
@@ -1180,7 +1193,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         justifyContent: 'space-between',
         padding: '10px'
       }
-    }, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, /*#__PURE__*/_react.default.createElement("div", null, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
@@ -1208,19 +1221,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, addtext), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), selectionApi.length > 0 && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_Button.default, {
+      onClick: selectAll,
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, selectedSet.current.size === data.records.length ? "Deselect All" : "Select All")), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, "Assign"), assigned && /*#__PURE__*/_react.default.createElement(_Button.default, {
-      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Remove.default, null),
-      onClick: onUnassign,
-      size: "medium",
-      variant: "contained",
-      className: classes.buttons
-    }, "Remove"), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, "Assign")), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"

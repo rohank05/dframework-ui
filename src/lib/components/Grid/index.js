@@ -259,22 +259,16 @@ const GridBase = memo(({
     }
 
     const handleSelectRow = (params) => {
-        const mergedRow = { ...baseSaveData, ...params.row };
         const isAlreadySelected = Array.from(selectedSet.current).some(
-            (item) => item[idProperty] === mergedRow[idProperty]
+            (item) => item === params.row[idProperty]
         );
 
         if (isAlreadySelected) {
             // Remove the object if it is already selected
-            for (let item of selectedSet.current) {
-                if (item[idProperty] === mergedRow[idProperty]) {
-                    selectedSet.current.delete(item);
-                    break;
-                }
-            }
+            selectedSet.current.delete(params.row[idProperty]);
         } else {
             // Add the object if it is not selected
-            selectedSet.current.add(mergedRow);
+            selectedSet.current.add(params.row[idProperty]);
         }
     };
 
@@ -284,7 +278,7 @@ const GridBase = memo(({
 
         useEffect(() => {
             const isSelected = Array.from(selectedSet.current).some(
-                (item) => item[idProperty] === params.row[idProperty]
+                (item) => item === params.row[idProperty]
             );
             setIsCheckedLocal(isSelected);
         }, [params.row, selectedSet.current.size]);
@@ -823,7 +817,15 @@ const GridBase = memo(({
                 setIsLoading(false);
                 return;
             }
-            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
+            const selectedIds = Array.from(selectedSet.current);
+            let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...data.records.find(record => record[idProperty] === id) }));
+
+            if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+                selectedRecords = selectedRecords.map(item => 
+                    Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
+                );
+            }
+            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedRecords) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
                     fetchData();
                     snackbar.showMessage("Record Added Successfully.");
@@ -871,6 +873,20 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
+    const selectAll = () => {
+        if (selectedSet.current.size === data.records.length) {
+            // If all records are selected, deselect all
+            selectedSet.current.clear();
+            setSelection([]);
+        } else {
+            // Select all records
+            data.records.forEach(record => {
+                selectedSet.current.add(record[idProperty]);
+            });
+            setSelection(data.records.map(record => record[idProperty]));
+        }
+    }
+
     useEffect(() => {
         if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
@@ -889,13 +905,25 @@ const GridBase = memo(({
                     padding: '10px'
                 }}
             >
-                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
-                {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
-                {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
-                {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
-                {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
-
+                <div>
+                    {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
+                    {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
+                    {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
+                    {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
+                    {selectionApi.length > 0 && (
+                        <>
+                            <Button
+                                onClick={selectAll}
+                                size="medium"
+                                variant="contained"
+                                className={classes.buttons}
+                            >
+                                {selectedSet.current.size === data.records.length ? "Deselect All" : "Select All"}
+                            </Button>
+                        </>
+                    )}
+                    {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
+                </div>
                 <GridToolbarContainer {...props}>
                     {effectivePermissions.showColumnsOrder && (
                         <GridToolbarColumnsButton />
