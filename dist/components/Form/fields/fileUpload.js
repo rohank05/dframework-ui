@@ -39,18 +39,12 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const {
   errorMapping
 } = _utils.default;
-function Document(_ref) {
+function fileUpload(_ref) {
   var _stateData$gridSettin, _formik$values$field;
   let {
     column,
     field,
-    formik,
-    lookups,
-    data,
-    otherProps,
-    model,
-    fieldConfigs,
-    mode
+    formik
   } = _ref;
   let inputValue = formik.values[field] || "";
   const {
@@ -243,4 +237,4 @@ function Document(_ref) {
     color: "inherit"
   }) : "Upload File")));
 }
-var _default = exports.default = Document;
+var _default = exports.default = fileUpload;

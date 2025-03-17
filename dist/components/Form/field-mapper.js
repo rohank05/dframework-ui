@@ -99,7 +99,7 @@ var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
 var _chipInput = _interopRequireDefault(require("./fields/chipInput"));
 var _treeCheckBox = _interopRequireDefault(require("./fields/treeCheckBox"));
-var _document = _interopRequireDefault(require("./fields/document"));
+var _fileUpload = _interopRequireDefault(require("./fields/fileUpload"));
 var _jsonInput = _interopRequireDefault(require("./fields/jsonInput"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -128,7 +128,7 @@ const fieldMappers = exports.fieldMappers = {
   "email": _string.default,
   "chipInput": _chipInput.default,
   "treeCheckbox": _treeCheckBox.default,
-  "document": _document.default,
+  "fileUpload": _fileUpload.default,
   "json": _jsonInput.default
 };
 const useStyles = (0, _core.makeStyles)({

@@ -23,7 +23,7 @@ import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
 import TreeCheckbox from './fields/treeCheckBox';
-import Document from './fields/document';
+import fileUpload from './fields/fileUpload';
 import JSONInput from './fields/jsonInput';
 
 const fieldMappers = {
@@ -42,7 +42,7 @@ const fieldMappers = {
     "email": StringField,
     "chipInput": ChipInput,
     "treeCheckbox": TreeCheckbox,
-    "document": Document,
+    "fileUpload": fileUpload,
     "json": JSONInput
 };
 

@@ -17,7 +17,6 @@ const field = _ref => {
     formik,
     otherProps
   } = _ref;
-  const rows = column.rows || (column.multiline ? 5 : ""); // Default to column.rows or 5 rows if multiline
   return /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({
     type: "text",
     variant: column.variant || "standard",
@@ -31,7 +30,7 @@ const field = _ref => {
     key: field,
     required: column === null || column === void 0 ? void 0 : column.required,
     multiline: column.multiline,
-    rows: rows,
+    rows: column.rows || 5,
     fullWidth: true,
     name: field,
     value: formik.values[field],

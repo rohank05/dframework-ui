@@ -35,10 +35,11 @@ const Form = ({
   readOnly
 }) => {
   const formTitle = model.formTitle || model.title;
-  const { navigate, getParams, useParams, pathname } = useRouter();
+  const { navigate, getParams, useParams, pathname, router } = useRouter();
   const { relations = [] } = model;
-  const navigateBack = (window.history && window.history?.length > 1) ? () => window.history.back()
+  const navigateBack = (window.history && window.history.length > 1) ? () => router.back()
     : () => pathname.substring(0, pathname.lastIndexOf("/"));  // removes the last segment
+
   const { dispatchData, stateData } = useStateContext();
   const { id: idWithOptions } = useParams() || getParams;
   const id = idWithOptions?.split("-")[0];
@@ -287,7 +288,7 @@ const Form = ({
     { text: formTitle },
     { text: id === "0" ? "New" : "Update" }
   ];
-  const showRelations = (id > 0) && Boolean(relations.length);
+  const showRelations = (id === 0) && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
