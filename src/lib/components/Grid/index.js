@@ -823,7 +823,17 @@ const GridBase = memo(({
                 setIsLoading(false);
                 return;
             }
-            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
+            let items = Array.from(selectedSet.current);
+            if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length > 0) {
+                items = items.map(item => {
+                    const updatedItem = {};
+                    model.selectionUpdateKeys.forEach(key => {
+                        updatedItem[key] = item[key];
+                    });
+                    return updatedItem;
+                });
+            }
+            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(items) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
                     fetchData();
                     snackbar.showMessage("Record Added Successfully.");
