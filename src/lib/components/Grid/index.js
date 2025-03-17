@@ -259,22 +259,16 @@ const GridBase = memo(({
     }
 
     const handleSelectRow = (params) => {
-        const mergedRow = { ...baseSaveData, ...params.row };
         const isAlreadySelected = Array.from(selectedSet.current).some(
-            (item) => item[idProperty] === mergedRow[idProperty]
+            (item) => item === params.row[idProperty]
         );
 
         if (isAlreadySelected) {
             // Remove the object if it is already selected
-            for (let item of selectedSet.current) {
-                if (item[idProperty] === mergedRow[idProperty]) {
-                    selectedSet.current.delete(item);
-                    break;
-                }
-            }
+            selectedSet.current.delete(params.row[idProperty]);
         } else {
             // Add the object if it is not selected
-            selectedSet.current.add(mergedRow);
+            selectedSet.current.add(params.row[idProperty]);
         }
     };
 
@@ -284,7 +278,7 @@ const GridBase = memo(({
 
         useEffect(() => {
             const isSelected = Array.from(selectedSet.current).some(
-                (item) => item[idProperty] === params.row[idProperty]
+                (item) => item === params.row[idProperty]
             );
             setIsCheckedLocal(isSelected);
         }, [params.row, selectedSet.current.size]);
@@ -823,17 +817,15 @@ const GridBase = memo(({
                 setIsLoading(false);
                 return;
             }
-            let items = Array.from(selectedSet.current);
-            if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length > 0) {
-                items = items.map(item => {
-                    const updatedItem = {};
-                    model.selectionUpdateKeys.forEach(key => {
-                        updatedItem[key] = item[key];
-                    });
-                    return updatedItem;
-                });
+            const selectedIds = Array.from(selectedSet.current);
+            let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...data.records.find(record => record[idProperty] === id) }));
+
+            if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+                selectedRecords = selectedRecords.map(item => 
+                    Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
+                );
             }
-            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(items) }, setIsLoading, setError: snackbar.showError }).then((success) => {
+            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedRecords) }, setIsLoading, setError: snackbar.showError }).then((success) => {
                 if (success) {
                     fetchData();
                     snackbar.showMessage("Record Added Successfully.");
@@ -889,7 +881,7 @@ const GridBase = memo(({
         } else {
             // Select all records
             data.records.forEach(record => {
-                selectedSet.current.add({ ...baseSaveData, ...record });
+                selectedSet.current.add(record[idProperty]);
             });
             setSelection(data.records.map(record => record[idProperty]));
         }
