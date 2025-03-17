@@ -33,8 +33,8 @@ const field = ({ column, field, formik, otherProps, classes, fieldConfigs, model
         }}
         onBlur={formik.handleBlur}
         helperText={formik.touched[field] && formik.errors[field]}
-        minDate={column.min}
-        maxDate={column.max}
+        minDate={(column.min ? dayjs(column.min) : null)}
+        maxDate={(column.max ? dayjs(column.max) : null)}
         disabled={isDisabled}
         shouldDisableDate={date => shouldDisableDate ? shouldDisableDate(date, formik) : false}
         slotProps={{ textField: { fullWidth: true, helperText, ...props } }}
