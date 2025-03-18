@@ -807,7 +807,6 @@ const GridBase = memo(({
     };
 
     const handleAddRecords = () => {
-        const url = stateData?.gridSettings?.permissions?.Url;
         let gridApi = `${url}${selectionApi || api}/updateMany`;
         
         if (selectedSet.current.size < 1) {
@@ -818,14 +817,15 @@ const GridBase = memo(({
             return;
         }
         const selectedIds = Array.from(selectedSet.current);
-        let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...data.records.find(record => record[idProperty] === id) }));
+        const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
+        let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
 
         if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
             selectedRecords = selectedRecords.map(item => 
                 Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
             );
         }
-        saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedRecords) }, setIsLoading, setError: snackbar.showError }).then((success) => {
+        saveRecord({ id: 0, api: gridApi, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
             if (success) {
                 fetchData();
                 snackbar.showMessage("Record Added Successfully.");

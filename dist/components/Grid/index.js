@@ -1076,8 +1076,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     fetchData();
   };
   const handleAddRecords = () => {
-    var _stateData$gridSettin6;
-    const url = stateData === null || stateData === void 0 || (_stateData$gridSettin6 = stateData.gridSettings) === null || _stateData$gridSettin6 === void 0 || (_stateData$gridSettin6 = _stateData$gridSettin6.permissions) === null || _stateData$gridSettin6 === void 0 ? void 0 : _stateData$gridSettin6.Url;
     let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
     if (selectedSet.current.size < 1) {
       snackbar.showError("Please select atleast one record to proceed");
@@ -1085,7 +1083,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       return;
     }
     const selectedIds = Array.from(selectedSet.current);
-    let selectedRecords = selectedIds.map(id => _objectSpread(_objectSpread({}, baseSaveData), data.records.find(record => record[idProperty] === id)));
+    const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
+    let selectedRecords = selectedIds.map(id => _objectSpread(_objectSpread({}, baseSaveData), recordMap.get(id)));
     if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
       selectedRecords = selectedRecords.map(item => Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]])));
     }
@@ -1093,7 +1092,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       id: 0,
       api: gridApi,
       values: {
-        items: Array.from(selectedRecords)
+        items: selectedRecords
       },
       setIsLoading,
       setError: snackbar.showError
