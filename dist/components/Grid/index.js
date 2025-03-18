@@ -401,9 +401,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     if (isAlreadySelected) {
       // Remove the object if it is already selected
       selectedSet.current.delete(params.row[idProperty]);
+      setSelection(Array.from(selectedSet.current));
     } else {
       // Add the object if it is not selected
       selectedSet.current.add(params.row[idProperty]);
+      setSelection(Array.from(selectedSet.current));
     }
   };
   const CustomCheckBox = params => {
