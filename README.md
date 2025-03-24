@@ -150,8 +150,7 @@ export default function App() {
 | **Property**            | **Type**          | **Description**                                                                                                                                                                                                                                                                   | **Defaults to**                             | **Required** |
 | ----------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------ |
 | `title`                 | `string`          | The title of the grid.                                                                                                                                                                                                                                                            |                                             | Yes          |
-| `formTitle`             | `string`          | Title used in the form layout.                                                                                                                                                                                                                                                    | `title`                                     | No           |
-| `gridTitle`             | `string`          | Title used in the grid layout.                                                                                                                                                                                                                                                    | `title`                                     | No           |
+| `formTitle`             | `string`          | Title used in the form layout.                                                                                                                                                                                                                                                    | `title`                                     | No           |                                                                                                                                                                                                                                     | `title`                                     | No           |
 | `gridSubTitle`          | `string`          | Subtitle displayed below the grid title.                                                                                                                                                                                                                                          | -                                           | No           |
 | `api`                   | `string`          | The API endpoint to fetch grid data.                                                                                                                                                                                                                                              | `title`                                     | No           |
 | `idProperty`            | `string`          | Specifies the unique identifier for grid rows.                                                                                                                                                                                                                                    | `api \|\| title`                            | No           |
@@ -172,7 +171,7 @@ export default function App() {
 | `addModifiedOnColumn`   | `boolean`         | Specified explicitly as false to hide the modifiedOn columns.                                                                                                                                                                                                                     | false                                       | No           |
 | `addModifiedByColumn`   | `boolean`         | Specified explicitly as false to hide the modifiedBy columns.                                                                                                                                                                                                                     | false                                       | No           |
 | `controllerType`        | `cs \| null`      | Appends .ashx to the api URL if controllerType is 'cs' (for C# backend controllers), otherwise leaves api unchanged (for simple Node.js).                                                                                                                                         | null                                        | No           |
-| `template`              | `string \| array` | Template configuration for exporting. <br> Example:     `template: 'missed-opportunity-outlet-pivot'`                                                                                                                                                                             | -                                           | No           |
+| `template`              | `string \| array` | Template configuration for exporting. <br> Example: `template: 'missed-opportunity-outlet-pivot'`                                                                                                                                                                                 | -                                           | No           |
 | `pivotApi`              | `string`          | API endpoint for pivot-specific data.                                                                                                                                                                                                                                             | -                                           | No           |
 | `showPivotExportBtn`    | `boolean`         | Displays the button for exporting pivot data.                                                                                                                                                                                                                                     | false                                       | No           |
 | `tablePreferenceEnums`  | `object`          | Enumerations for specific table preferences.                                                                                                                                                                                                                                      | -                                           | No           |
@@ -191,39 +190,39 @@ export default function App() {
 
 ## Column Properties Table
 
-| **Property**          | **Type**                   | **Description**                                                                                                                                                                  | **Defaults to** |
-| --------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `field`               | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data. | -               |
-| `label`               | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                 | `field`         |
-| `headerName`          | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                         | label           |
-| `type`                | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                             | -               |
-| `pinned`              | `string`                   | Determines if the column is pinned to the right.                                                                                                                                 | `left`          |
-| `sortable`            | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                             | `true`          |
-| `filterable`          | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                           | `true`          |
-| `editable`            | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                               | `false`         |
-| `tab`                 | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                | ----            |
-| `required`            | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                | `false`         |
-| `hidden`              | `boolean`                  | Hides the column from the grid.                                                                                                                                                  | `false`         |
-| `renderCell`          | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                    | ---             |
-| `align`               | `string`                   | Specifies text alignment for the column (`left`, `center`, `right`).                                                                                                             | `left`          |
-| `tooltip`             | `string`                   | Tooltip to display on hover over the column header.                                                                                                                              | --              |
-| `width`               | `number`                   | Specifies the width of the column in pixels.                                                                                                                                     | ---             |
-| `resizable`           | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                        | `true`          |
-| `readOnly`            | `boolean`                  | Marks the column as read-only.                                                                                                                                                   | `false`         |
-| `showErrorText`       | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                               | `false`         |
-| `helperText`          | `string`                   | Text to display as helper information below the field.                                                                                                                           |                 |
-| `min`                 | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                 | -               |
-| `max`                 | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                 | -               |
-| `multiSelect`         | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                 | `false`         |
-| `parentComboField`    | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                    | --              |
-| `lookup`              | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                     | ---             |
-| `useLinkColumn`       | `boolean`                  | If useLinkColumn is false, clicking on the `linkColumn` will not automatically trigger the Edit action.                                                                          | `true`          |
-| `variant`             | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                   | `standard`      |
-| `multiline`           | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                       |                 |
-| `rows`                | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                    | -               |
-| `isUtc`               | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            |                 |
-| `shouldDisableDate`   | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                     | --              |
-| `placeHolder`         | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | --              |
+| **Property**        | **Type**                   | **Description**                                                                                                                                                                  | **Defaults to** |
+| ------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `field`             | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data. | -               |
+| `label`             | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                 | `field`         |
+| `headerName`        | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                         | label           |
+| `type`              | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                             | -               |
+| `pinned`            | `string`                   | Determines if the column is pinned to the right.                                                                                                                                 | `left`          |
+| `sortable`          | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                             | `true`          |
+| `filterable`        | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                           | `true`          |
+| `editable`          | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                               | `false`         |
+| `tab`               | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                | ----            |
+| `required`          | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                | `false`         |
+| `hidden`            | `boolean`                  | Hides the column from the grid.                                                                                                                                                  | `false`         |
+| `renderCell`        | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                    | ---             |
+| `align`             | `string`                   | Specifies text alignment for the column (`left`, `center`, `right`).                                                                                                             | `left`          |
+| `tooltip`           | `string`                   | Tooltip to display on hover over the column header.                                                                                                                              | --              |
+| `width`             | `number`                   | Specifies the width of the column in pixels.                                                                                                                                     | ---             |
+| `resizable`         | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                        | `true`          |
+| `readOnly`          | `boolean`                  | Marks the column as read-only.                                                                                                                                                   | `false`         |
+| `showErrorText`     | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                               | `false`         |
+| `helperText`        | `string`                   | Text to display as helper information below the field.                                                                                                                           |                 |
+| `min`               | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                 | -               |
+| `max`               | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                 | -               |
+| `multiSelect`       | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                 | `false`         |
+| `parentComboField`  | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                    | --              |
+| `lookup`            | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                     | ---             |
+| `useLinkColumn`     | `boolean`                  | If useLinkColumn is false, clicking on the `linkColumn` will not automatically trigger the Edit action.                                                                          | `true`          |
+| `variant`           | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                   | `standard`      |
+| `multiline`         | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                       |                 |
+| `rows`              | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                    | -               |
+| `isUtc`             | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            |                 |
+| `shouldDisableDate` | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                     | --              |
+| `placeHolder`       | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | --              |
 
 # **Field Components Properties Table**
 
@@ -232,130 +231,156 @@ You can use these components by defining the type in the **Properties** column.
 ## **Field Types**
 
 ### 1. **Type: `boolean`**
+
 Represents a **Checkbox** component.
 
 - Allows true, false values.
-- **`disabled`** (boolean): Determines whether the checkbox is interactive.  
+- **`disabled`** (boolean): Determines whether the checkbox is interactive.
   - When `disabled` is set to `true`, users cannot change the checkbox value.
-- Example: ``` { "type": "boolean", "required": true | false } ```
+- Example: `{ "type": "boolean", "required": true | false }`
 
 ---
 
 ### 2. **Type: `select`**
+
 Represents a **Select** component.
+
 - Defines the lookup source for dropdown values in the column.
-- Example: ``` { "type": "select", "required": true | false, lookup: 'scopetype' } ```
+- Example: `{ "type": "select", "required": true | false, lookup: 'scopetype' }`
 
 ---
 
 ### 3. **Type: `string | number`**
+
 Represents a **TextField** component.
 
-- **`autoComplete`** (string):  
-  - Helps users complete forms faster, particularly on mobile devices.  
+- **`autoComplete`** (string):
+  - Helps users complete forms faster, particularly on mobile devices.
   - Acts more as an autofill feature rather than traditional autocomplete.
 - Minimum (min) and maximum (max) length constraints.
 - The `variant` (string) property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: ``` { "type": "string | number", "min": 3, "max": 20, "required": true | false } ```
+- Example: `{ "type": "string | number", "min": 3, "max": 20, "required": true | false }`
 
 ---
 
 ### 4. **Type: `password`**
+
 Represents a **TextField** component with a hide/show password feature.
 
-- Allows a default masked value (******).
+- Allows a default masked value (**\*\***).
 - Requires at least 8 characters.
 - Must include uppercase, lowercase, numbers, and special characters.
 - The `variant` (string)property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: ``` { "type": "password", "required": true } ```
+- Example: `{ "type": "password", "required": true }`
 
 ---
 
 ### 5. **Type: `date`**
+
 Represents a **DatePicker** component.
+
 - Accepts date values.
 - Converts empty or null values to null.
 - Requires a valid date format.
 - This component is used for selecting a date only.
 - Supports min and max date restrictions.
-- Example: ``` { "type": "date", "required": true,  "min": "2023-01-01", "max": "2024-12-31" } ```
+- Example: `{ "type": "date", "required": true,  "min": "2023-01-01", "max": "2024-12-31" }`
 
 ---
 
 ### 6. **Type: `dateTime`**
+
 Represents a **DateTimePicker** component.
+
 - Similar to date, but this component is used for selecting both **date** and **time**.
-- Example: ``` { "type": "dateTime", "required": true, "min": "2023-01-01", "max": "2024-12-31" } ```
+- Example: `{ "type": "dateTime", "required": true, "min": "2023-01-01", "max": "2024-12-31" }`
 
 ---
 
 ### 7. **Type: `time`**
+
 Represents a **TimePicker** component.
+
 - This component is used for selecting **time**.
-- Example: ``` { "type": "time", "required": true } ```
+- Example: `{ "type": "time", "required": true }`
 
 ---
 
 ### 8. **Type: `oneToMany`**
+
 Represents a **GridTransfer** component.
+
 - This component is used to transfer columns between grids.
-- The `relation` property is used to establish a connection between the parent entity and its associated child records. 
-- Example: ``` { "type": "oneToMany", "relation": 'child grid' } ```
+- The `relation` property is used to establish a connection between the parent entity and its associated child records.
+- Example: `{ "type": "oneToMany", "relation": 'child grid' }`
 
 ---
 
 ### 9. **Type: `radio`**
+
 Represents a **RadioField** component.
+
 - Defines the lookup source for dropdown values in the column.
-- Example: ``` { "type": "radio", "lookup": 'Region' } ```
+- Example: `{ "type": "radio", "lookup": 'Region' }`
 
 ---
 
 ### 10. **Type: `autocomplete`**
+
 Represents an **AutocompleteField** component.
+
 - Defines the lookup source for dropdown values in the column.
 - The **`Autocomplete`** component enhances text input by providing a dropdown list of suggested options while allowing free text entry. It is useful for search fields, selection lists, and filtering.
-- Example: ``` { "type": "Autocomplete", "lookup": 'Region' } ```
+- Example: `{ "type": "Autocomplete", "lookup": 'Region' }`
 
 ---
 
 ### 11. **Type: `dayRadio`**
+
 Represents a **DaySelection** component.
 
 - The **DaySelection** component allows users to choose days in two ways:  
-  ?? **Predefined options** – **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
-  ?? **Custom selection** – Users manually pick specific days.
-- Example: ``` { "type": "dayRadio" } ```
+  ?? **Predefined options** ï¿½ **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
+  ?? **Custom selection** ï¿½ Users manually pick specific days.
+- Example: `{ "type": "dayRadio" }`
 
 ---
 
 ### 12. **Type: `email`**
+
 Represents a **TextField** component used for email input.
+
 - Must follow a valid email format.
 - The `variant` (string)property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: ``` { "type": "email", "required": true | false } ```
+- Example: `{ "type": "email", "required": true | false }`
 
 ---
 
 ### 13. **Type: `treeCheckbox`**
+
 Represents a **SimpleTreeView** component.
+
 - A simplified version of the Tree View component that receives its items as an array. This version is recommended for use with hardcoded items.
-- Example: ``` { "type": "treeCheckbox" } ```
+- Example: `{ "type": "treeCheckbox" }`
 
 ---
 
 ### 14. **Type: `document`**
+
 Represents a **file upload document** component.
-- Users can either enter an external document link or upload a file.  
+
+- Users can either enter an external document link or upload a file.
 - Dynamically switches between these options based on user selection.
-- Example: ``` { "type": "document" } ```
+- Example: `{ "type": "document" }`
 
 ---
 
 ### 15. **Type: `json`**
+
 Represents a **JSON Field** component.
+
 - This component dynamically generates input fields based on a JSON object stored in a Formik field. It allows users to edit key-value pairs within the JSON structure and automatically updates the Formik state with a debounced delay.
-- Example: ``` { "type": "json" } ```
+- Example: `{ "type": "json" }`
 
 ---
 
@@ -364,13 +389,11 @@ Represents a **JSON Field** component.
 ### 1. **shouldDisableDate** column property.
 
 ```js
-
 const shouldDisableDate = (date, formik) => {
   // Disable weekends (Saturday and Sunday)
   const day = date.getDay();
   return day === 0 || day === 6;
-}
-
+};
 ```
 
 ### 2. **applyFieldConfig** column property.
@@ -393,14 +416,13 @@ applyFieldConfig: function ({ data }) {
 ### 3. **joinColumn** column property.
 
 ```js
-
 const exampleConfig = {
-    title: "Document",
-    api: "/Document",
-    name: "Document",
-    idProperty: "DocumentId",
-    module: "Equipment",
-    joinColumn: "AssociationId",
-    standard: true,
-}
+  title: "Document",
+  api: "/Document",
+  name: "Document",
+  idProperty: "DocumentId",
+  module: "Equipment",
+  joinColumn: "AssociationId",
+  standard: true
+};
 ```
