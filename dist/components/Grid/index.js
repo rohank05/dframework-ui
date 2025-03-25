@@ -1233,7 +1233,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, addtext), selectionApi.length > 0 && data.records.length > 0 && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), selectionApi.length && data.records.length && /*#__PURE__*/_react.default.createElement(_Button.default, {
       onClick: selectAll,
       size: "medium",
       variant: "contained",
