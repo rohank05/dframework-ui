@@ -80,13 +80,21 @@ const Form = ({
     userDefinedPermissions
   });
   const { hideBreadcrumb = false, navigateBack } = model;
+  
+  const handleNavigation = () => {
+    let navigatPath;
 
-  const navigateTo = useMemo(() => {
     if (typeof navigateBack === "function") {
-      return navigateBack({ params, data });
+      navigatPath = navigateBack({ params, searchParams, data });
+    } else {
+      navigatPath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
     }
-    return navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
-  });
+
+    if(navigatPath.includes("window.history")) {
+      window.history.back();
+    }
+    navigate(navigatPath);
+  }
 
   const getRecordAndLookups = ({
     lookups,
@@ -123,7 +131,7 @@ const Form = ({
         "An error occured, please try after some time.",
         error
       );
-      navigate(navigateTo);
+      handleNavigation();
     }
   };
   useEffect(() => {
@@ -158,7 +166,7 @@ const Form = ({
             }
             const operation = id == 0 ? "Added" : "Updated";
             snackbar.showMessage(`Record ${operation} Successfully.`);
-            navigate(navigateTo);
+            handleNavigation();
           }
         })
         .catch((err) => {
@@ -179,7 +187,7 @@ const Form = ({
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateTo);
+    handleNavigation();
   };
 
   const warnUnsavedChanges = () => {
@@ -190,7 +198,7 @@ const Form = ({
 
   const errorOnLoad = function (title, error) {
     snackbar.showError(title, error);
-    navigate(navigateTo);
+    handleNavigation();
   };
 
   const setActiveRecord = function ({ id, title, record, lookups }) {
@@ -229,7 +237,7 @@ const Form = ({
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateTo);
+      handleNavigation();
       event.preventDefault();
     }
   };
@@ -245,7 +253,7 @@ const Form = ({
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateTo);
+        handleNavigation();
       }
     } catch (error) {
       snackbar?.showError("An error occured, please try after some time.");
