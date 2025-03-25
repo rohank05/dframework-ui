@@ -82,18 +82,18 @@ const Form = ({
   const { hideBreadcrumb = false, navigateBack } = model;
   
   const handleNavigation = () => {
-    let navigatPath;
+    let navigatePath;
 
     if (typeof navigateBack === "function") {
-      navigatPath = navigateBack({ params, searchParams, data });
+      navigatePath = navigateBack({ params, searchParams, data });
     } else {
-      navigatPath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
     }
 
-    if(navigatPath.includes("window.history")) {
+    if(navigatePath.includes("window.history")) {
       window.history.back();
     }
-    navigate(navigatPath);
+    navigate(navigatePath);
   }
 
   const getRecordAndLookups = ({
