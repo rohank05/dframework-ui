@@ -1233,12 +1233,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, addtext), selectionApi.length > 0 && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), selectionApi.length > 0 && data.records.length > 0 && /*#__PURE__*/_react.default.createElement(_Button.default, {
       onClick: selectAll,
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, selectedSet.current.size === data.records.length ? "Deselect All" : "Select All")), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, selectedSet.current.size === data.records.length ? "Deselect All" : "Select All"), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
