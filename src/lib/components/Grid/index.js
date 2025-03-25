@@ -926,7 +926,7 @@ const GridBase = memo(({
                     {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                     {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
                     {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
-                    {(selectionApi.length > 0 && data.records.length > 0) && (
+                    {selectionApi.length && data.records.length && (
                         <Button
                             onClick={selectAll}
                             size="medium"
