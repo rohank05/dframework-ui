@@ -926,17 +926,15 @@ const GridBase = memo(({
                     {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
                     {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
                     {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
-                    {selectionApi.length > 0 && (
-                        <>
-                            <Button
-                                onClick={selectAll}
-                                size="medium"
-                                variant="contained"
-                                className={classes.buttons}
-                            >
-                                {selectedSet.current.size === data.records.length ? "Deselect All" : "Select All"}
-                            </Button>
-                        </>
+                    {(selectionApi.length > 0 && data.records.length > 0) && (
+                        <Button
+                            onClick={selectAll}
+                            size="medium"
+                            variant="contained"
+                            className={classes.buttons}
+                        >
+                            {selectedSet.current.size === data.records.length ? "Deselect All" : "Select All"}
+                        </Button>
                     )}
                     {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                 </div>
