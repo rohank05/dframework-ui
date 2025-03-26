@@ -187,9 +187,11 @@ const Form = _ref => {
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url]);
+  const initialValues = id === "0" ? // for new records need to override baseSaveData with Data
+  _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
-    initialValues: _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data),
+    initialValues,
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, _ref3) => {

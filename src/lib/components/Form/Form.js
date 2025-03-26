@@ -140,9 +140,14 @@ const Form = ({
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url]);
+
+  const initialValues = id === "0" ? // for new records need to override baseSaveData with Data
+  { ...model.initialValues, ...data,...baseSaveData } 
+  : { ...baseSaveData, ...model.initialValues, ...data };
+
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: { ...baseSaveData, ...model.initialValues, ...data },
+    initialValues,
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
