@@ -189,7 +189,7 @@ export default function App() {
 | `showOnlyExcelExport`   | `boolean`  | Limits export options to only Excel formats.                     |                                            |                              |
 | `initialValues`         | `object`   | Initial values for form fields.                                  |                                            |                              |
 | `hideRelationsInAdd`    | `boolean`  | Hides relations section in add mode.                             |                                            |                              |
-| `navigateBack`          | `string`   | Specifies the route for navigation on cancel or save.            |                                            |                              |
+| `navigateBack`          | `string\|function`   | Returns or specifies the route for navigation on cancel or save. To return to a previous route pass 'window.back'.           |                                            |                              |
 | `applyFieldConfig`      | `function` | A function to apply custom field configurations.                 |                                            |                              |
 | `getValidationSchema`   | `function` | Function to return the validation schema for the form.           |                                            |                              |
 | `relations`             | `array`    | Defines the relationship configurations for related grids.       |                                            |                              |
