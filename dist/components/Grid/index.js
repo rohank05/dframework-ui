@@ -277,7 +277,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   const [record, setRecord] = (0, _react.useState)(null);
   const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
-  const isClient = model.isClient === true ? 'client' : 'server';
+  const paginationMode = model.paginationMode === 'server' ? 'server' : 'client';
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
   const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
   const initialFilterModel = {
@@ -1488,9 +1488,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     rowCount: data.recordCount,
     rows: data.records,
     sortModel: sortModel,
-    paginationMode: isClient,
-    sortingMode: isClient,
-    filterMode: isClient,
+    paginationMode: paginationMode,
+    sortingMode: paginationMode,
+    filterMode: paginationMode,
     processRowUpdate: processRowUpdate,
     keepNonExistentRowsSelected: true,
     onSortModelChange: updateSort,

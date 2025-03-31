@@ -8,10 +8,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.ActiveStepContext = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
@@ -66,21 +68,20 @@ const Form = _ref => {
     navigate,
     getParams,
     useParams,
-    pathname,
-    router
+    pathname
   } = (0, _StateProvider.useRouter)();
   const {
-    relations = []
+    relations = [],
+    hideRelationsInAdd = false
   } = model;
-  const navigateBack = window.history && window.history.length > 1 ? () => router.back() : () => pathname.substring(0, pathname.lastIndexOf("/")); // removes the last segment
-
   const {
     dispatchData,
     stateData
   } = (0, _StateProvider.useStateContext)();
+  const params = useParams() || getParams;
   const {
     id: idWithOptions
-  } = useParams() || getParams;
+  } = params;
   const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-")[0];
   const searchParams = new URLSearchParams(window.location.search);
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
@@ -117,16 +118,32 @@ const Form = _ref => {
     delete: true
   }, model.permissions), permissions);
   const {
-    canEdit,
-    canDelete = false
+    canEdit
   } = (0, _utils.getPermissions)({
     userData,
     model,
     userDefinedPermissions
   });
   const {
-    hideBreadcrumb = false
+    hideBreadcrumb = false,
+    navigateBack
   } = model;
+  const handleNavigation = () => {
+    let navigatePath;
+    if (typeof navigateBack === "function") {
+      navigatePath = navigateBack({
+        params,
+        searchParams,
+        data
+      });
+    } else {
+      navigatePath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
+    }
+    if (navigatePath.includes("window.history")) {
+      window.history.back();
+    }
+    navigate(navigatePath);
+  };
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
@@ -158,7 +175,7 @@ const Form = _ref => {
       }
     } catch (error) {
       snackbar.showError("An error occured, please try after some time.", error);
-      navigate(navigateBack());
+      handleNavigation();
     }
   };
   (0, _react.useEffect)(() => {
@@ -170,9 +187,11 @@ const Form = _ref => {
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url]);
+  const initialValues = id === "0" ? // for new records need to override baseSaveData with Data
+  _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
-    initialValues: _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData),
+    initialValues,
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, _ref3) => {
@@ -198,7 +217,7 @@ const Form = _ref => {
           }
           const operation = id == 0 ? "Added" : "Updated";
           snackbar.showMessage("Record ".concat(operation, " Successfully."));
-          navigate(navigateBack());
+          handleNavigation();
         }
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
@@ -214,7 +233,7 @@ const Form = _ref => {
   const handleDiscardChanges = () => {
     formik.resetForm();
     setIsDiscardDialogOpen(false);
-    navigate(navigateBack());
+    handleNavigation();
   };
   const warnUnsavedChanges = () => {
     if (dirty) {
@@ -223,7 +242,7 @@ const Form = _ref => {
   };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
-    navigate(navigateBack());
+    handleNavigation();
   };
   const setActiveRecord = function setActiveRecord(_ref4) {
     let {
@@ -269,7 +288,7 @@ const Form = _ref => {
       warnUnsavedChanges();
       event.preventDefault();
     } else {
-      navigate(navigateBack());
+      handleNavigation();
       event.preventDefault();
     }
   };
@@ -285,7 +304,7 @@ const Form = _ref => {
       });
       if (response === true) {
         snackbar.showMessage("Record Deleted Successfully.");
-        navigate(navigateBack());
+        handleNavigation();
       }
     } catch (error) {
       snackbar === null || snackbar === void 0 || snackbar.showError("An error occured, please try after some time.");

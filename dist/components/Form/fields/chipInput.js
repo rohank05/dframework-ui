@@ -10,7 +10,6 @@ require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.trim.js");
-require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var React = _interopRequireWildcard(require("react"));

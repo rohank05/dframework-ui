@@ -194,7 +194,7 @@ const GridBase = memo(({
     const [record, setRecord] = useState(null);
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
-    const isClient = model.isClient === true ? 'client' : 'server';
+    const paginationMode = model.paginationMode === 'server' ? 'server' : 'client';
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
@@ -1136,9 +1136,9 @@ const GridBase = memo(({
                         rowCount={data.recordCount}
                         rows={data.records}
                         sortModel={sortModel}
-                        paginationMode={isClient}
-                        sortingMode={isClient}
-                        filterMode={isClient}
+                        paginationMode={paginationMode}
+                        sortingMode={paginationMode}
+                        filterMode={paginationMode}
                         processRowUpdate={processRowUpdate}
                         keepNonExistentRowsSelected
                         onSortModelChange={updateSort}
