@@ -10,6 +10,7 @@ require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.object.assign.js");
+require("core-js/modules/es.object.from-entries.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
@@ -274,6 +275,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   }, model === null || model === void 0 ? void 0 : model.columnVisibilityModel));
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const [record, setRecord] = (0, _react.useState)(null);
+  const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
   const isClient = model.isClient === true ? 'client' : 'server';
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
@@ -395,25 +397,21 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   }
   const handleSelectRow = params => {
-    const mergedRow = _objectSpread(_objectSpread({}, baseSaveData), params.row);
-    const isAlreadySelected = Array.from(selectedSet.current).some(item => item[idProperty] === mergedRow[idProperty]);
+    const isAlreadySelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
     if (isAlreadySelected) {
       // Remove the object if it is already selected
-      for (let item of selectedSet.current) {
-        if (item[idProperty] === mergedRow[idProperty]) {
-          selectedSet.current.delete(item);
-          break;
-        }
-      }
+      selectedSet.current.delete(params.row[idProperty]);
+      setSelection(Array.from(selectedSet.current));
     } else {
       // Add the object if it is not selected
-      selectedSet.current.add(mergedRow);
+      selectedSet.current.add(params.row[idProperty]);
+      setSelection(Array.from(selectedSet.current));
     }
   };
   const CustomCheckBox = params => {
     const [isCheckedLocal, setIsCheckedLocal] = (0, _react.useState)(false);
     (0, _react.useEffect)(() => {
-      const isSelected = Array.from(selectedSet.current).some(item => item[idProperty] === params.row[idProperty]);
+      const isSelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
       setIsCheckedLocal(isSelected);
     }, [params.row, selectedSet.current.size]);
     const handleCheckboxClick = event => {
@@ -1079,35 +1077,49 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     setSelectedOrder(null);
     fetchData();
   };
+  const handleAddRecords = () => {
+    let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
+    if (selectedSet.current.size < 1) {
+      snackbar.showError("Please select atleast one record to proceed");
+      setIsLoading(false);
+      return;
+    }
+    const selectedIds = Array.from(selectedSet.current);
+    const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
+    let selectedRecords = selectedIds.map(id => _objectSpread(_objectSpread({}, baseSaveData), recordMap.get(id)));
+    if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+      selectedRecords = selectedRecords.map(item => Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]])));
+    }
+    (0, _crudHelper.saveRecord)({
+      id: 0,
+      api: gridApi,
+      values: {
+        items: selectedRecords
+      },
+      setIsLoading,
+      setError: snackbar.showError
+    }).then(success => {
+      if (success) {
+        fetchData();
+        snackbar.showMessage("Record Added Successfully.");
+      }
+    }).catch(err => {
+      snackbar.showError("An error occured, please try after some time.second", err);
+    }).finally(() => {
+      selectedSet.current.clear();
+      setIsLoading(false);
+      setShowAddConfirmation(false);
+    });
+  };
   const onAdd = () => {
     if (selectionApi.length > 0) {
-      var _stateData$gridSettin6;
-      const url = stateData === null || stateData === void 0 || (_stateData$gridSettin6 = stateData.gridSettings) === null || _stateData$gridSettin6 === void 0 || (_stateData$gridSettin6 = _stateData$gridSettin6.permissions) === null || _stateData$gridSettin6 === void 0 ? void 0 : _stateData$gridSettin6.Url;
-      let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
-      if (selectedSet.current.size < 1) {
+      const selectedCount = selectedSet.current.size;
+      if (selectedCount < 1) {
         snackbar.showError("Please select atleast one record to proceed");
         setIsLoading(false);
         return;
       }
-      (0, _crudHelper.saveRecord)({
-        id: 0,
-        api: gridApi,
-        values: {
-          items: Array.from(selectedSet.current)
-        },
-        setIsLoading,
-        setError: snackbar.showError
-      }).then(success => {
-        if (success) {
-          fetchData();
-          snackbar.showMessage("Record Added Successfully.");
-        }
-      }).catch(err => {
-        snackbar.showError("An error occured, please try after some time.second", err);
-      }).finally(() => {
-        selectedSet.current.clear();
-        setIsLoading(false);
-      });
+      setShowAddConfirmation(true);
       return;
     }
     if (typeof onAddOverride === 'function') {
@@ -1147,6 +1159,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       unassign: selection
     });
   };
+  const selectAll = () => {
+    if (selectedSet.current.size === data.records.length) {
+      // If all records are selected, deselect all
+      selectedSet.current.clear();
+      setSelection([]);
+    } else {
+      // Select all records
+      data.records.forEach(record => {
+        selectedSet.current.add(record[idProperty]);
+      });
+      setSelection(data.records.map(record => record[idProperty]));
+    }
+  };
   (0, _react.useEffect)(() => {
     if (preferenceName && preferenceApi) {
       removeCurrentPreferenceName({
@@ -1180,7 +1205,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         justifyContent: 'space-between',
         padding: '10px'
       }
-    }, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, /*#__PURE__*/_react.default.createElement("div", null, model.gridSubTitle && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
@@ -1208,19 +1233,18 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, addtext), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addtext), selectionApi.length && data.records.length ? /*#__PURE__*/_react.default.createElement(_Button.default, {
+      onClick: selectAll,
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, selectedSet.current.size === data.records.length ? "Deselect All" : "Select All") : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null), available && /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Add.default, null),
       onClick: onAssign,
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, "Assign"), assigned && /*#__PURE__*/_react.default.createElement(_Button.default, {
-      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Remove.default, null),
-      onClick: onUnassign,
-      size: "medium",
-      variant: "contained",
-      className: classes.buttons
-    }, "Remove"), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, "Assign")), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"
@@ -1537,6 +1561,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     },
     title: record.name,
     arrow: true
-  }, record.name.length > 30 ? "".concat(record.name.slice(0, 30), "...") : record.name), " ?")))));
+  }, record.name.length > 30 ? "".concat(record.name.slice(0, 30), "...") : record.name), " ?")), showAddConfirmation && /*#__PURE__*/_react.default.createElement(_index2.DialogComponent, {
+    open: showAddConfirmation,
+    onConfirm: handleAddRecords,
+    onCancel: () => setShowAddConfirmation(false),
+    title: "Confirm Add"
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    className: classes.deleteContent
+  }, "Are you sure you want to add ", selectedSet.current.size, " records?")))));
 }, areEqual);
 var _default = exports.default = GridBase;

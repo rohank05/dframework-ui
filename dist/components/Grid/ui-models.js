@@ -221,10 +221,10 @@ class UiModel {
           } else {
             config = yup.number().nullable();
           }
-          if (min) {
+          if (min !== undefined && min !== '') {
             config = config.min(Number(min), "".concat(formLabel, " must be greater than or equal to ").concat(min));
           }
-          if (max) {
+          if (max !== undefined && max !== '') {
             config = config.max(Number(max), "".concat(formLabel, " must be less than or equal to ").concat(max));
           }
           break;

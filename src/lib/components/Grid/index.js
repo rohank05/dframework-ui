@@ -192,6 +192,7 @@ const GridBase = memo(({
     const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
     const [isDeleting, setIsDeleting] = useState(false);
     const [record, setRecord] = useState(null);
+    const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const isClient = model.isClient === true ? 'client' : 'server';
     const [errorMessage, setErrorMessage] = useState('');
@@ -259,22 +260,18 @@ const GridBase = memo(({
     }
 
     const handleSelectRow = (params) => {
-        const mergedRow = { ...baseSaveData, ...params.row };
         const isAlreadySelected = Array.from(selectedSet.current).some(
-            (item) => item[idProperty] === mergedRow[idProperty]
+            (item) => item === params.row[idProperty]
         );
 
         if (isAlreadySelected) {
             // Remove the object if it is already selected
-            for (let item of selectedSet.current) {
-                if (item[idProperty] === mergedRow[idProperty]) {
-                    selectedSet.current.delete(item);
-                    break;
-                }
-            }
+            selectedSet.current.delete(params.row[idProperty]);
+            setSelection(Array.from(selectedSet.current));
         } else {
             // Add the object if it is not selected
-            selectedSet.current.add(mergedRow);
+            selectedSet.current.add(params.row[idProperty]);
+            setSelection(Array.from(selectedSet.current));
         }
     };
 
@@ -284,7 +281,7 @@ const GridBase = memo(({
 
         useEffect(() => {
             const isSelected = Array.from(selectedSet.current).some(
-                (item) => item[idProperty] === params.row[idProperty]
+                (item) => item === params.row[idProperty]
             );
             setIsCheckedLocal(isSelected);
         }, [params.row, selectedSet.current.size]);
@@ -811,34 +808,55 @@ const GridBase = memo(({
         fetchData();
     };
 
+    const handleAddRecords = () => {
+        let gridApi = `${url}${selectionApi || api}/updateMany`;
+        
+        if (selectedSet.current.size < 1) {
+            snackbar.showError(
+                "Please select atleast one record to proceed"
+            );
+            setIsLoading(false);
+            return;
+        }
+        const selectedIds = Array.from(selectedSet.current);
+        const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
+        let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
+
+        if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+            selectedRecords = selectedRecords.map(item => 
+                Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
+            );
+        }
+        saveRecord({ id: 0, api: gridApi, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
+            if (success) {
+                fetchData();
+                snackbar.showMessage("Record Added Successfully.");
+            }
+        })
+            .catch((err) => {
+                snackbar.showError(
+                    "An error occured, please try after some time.second",
+                    err
+                );
+            })
+            .finally(() => {
+                selectedSet.current.clear();
+                setIsLoading(false);
+                setShowAddConfirmation(false);
+            });
+    }
 
     const onAdd = () => {
         if (selectionApi.length > 0) {
-            const url = stateData?.gridSettings?.permissions?.Url;
-            let gridApi = `${url}${selectionApi || api}/updateMany`;
-            if (selectedSet.current.size < 1) {
+            const selectedCount = selectedSet.current.size;
+            if (selectedCount < 1) {
                 snackbar.showError(
                     "Please select atleast one record to proceed"
                 );
                 setIsLoading(false);
                 return;
             }
-            saveRecord({ id: 0, api: gridApi, values: { items: Array.from(selectedSet.current) }, setIsLoading, setError: snackbar.showError }).then((success) => {
-                if (success) {
-                    fetchData();
-                    snackbar.showMessage("Record Added Successfully.");
-                }
-            })
-                .catch((err) => {
-                    snackbar.showError(
-                        "An error occured, please try after some time.second",
-                        err
-                    );
-                })
-                .finally(() => {
-                    selectedSet.current.clear();
-                    setIsLoading(false)
-                });
+            setShowAddConfirmation(true);
             return;
         }
         if (typeof onAddOverride === 'function') {
@@ -871,6 +889,20 @@ const GridBase = memo(({
         updateAssignment({ unassign: selection });
     }
 
+    const selectAll = () => {
+        if (selectedSet.current.size === data.records.length) {
+            // If all records are selected, deselect all
+            selectedSet.current.clear();
+            setSelection([]);
+        } else {
+            // Select all records
+            data.records.forEach(record => {
+                selectedSet.current.add(record[idProperty]);
+            });
+            setSelection(data.records.map(record => record[idProperty]));
+        }
+    }
+
     useEffect(() => {
         if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
@@ -889,13 +921,24 @@ const GridBase = memo(({
                     padding: '10px'
                 }}
             >
-                {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
-                {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
-                {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
-                {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
-                {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
-
+                <div>
+                    {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
+                    {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
+                    {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
+                    {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
+                    {(selectionApi.length && data.records.length) ? (
+                        <Button
+                            onClick={selectAll}
+                            size="medium"
+                            variant="contained"
+                            className={classes.buttons}
+                        >
+                            {selectedSet.current.size === data.records.length ? "Deselect All" : "Select All"}
+                        </Button>) :
+                        <></>
+                    }
+                    {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
+                </div>
                 <GridToolbarContainer {...props}>
                     {effectivePermissions.showColumnsOrder && (
                         <GridToolbarColumnsButton />
@@ -1162,6 +1205,18 @@ const GridBase = memo(({
                                 </Tooltip>} ?
                             </span>
                         </DialogComponent>)}
+                    {showAddConfirmation && (
+                        <DialogComponent 
+                            open={showAddConfirmation} 
+                            onConfirm={handleAddRecords} 
+                            onCancel={() => setShowAddConfirmation(false)} 
+                            title="Confirm Add"
+                        >
+                            <span className={classes.deleteContent}>
+                                Are you sure you want to add {selectedSet.current.size} records?
+                            </span>
+                        </DialogComponent>
+                    )}
                 </CardContent>
             </Card >
         </>

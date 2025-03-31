@@ -150,10 +150,10 @@ class UiModel {
 					} else {
 						config = yup.number().nullable()
 					}
-					if (min) {
+					if (min !== undefined && min !== '') {
 						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
 					}
-					if (max) {
+					if (max !== undefined && max !== '') {
 						config = config.max(Number(max), `${formLabel} must be less than or equal to ${max}`);
 					}
 					break;
