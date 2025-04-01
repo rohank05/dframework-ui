@@ -143,7 +143,6 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
 }
 const GridBase = memo(({
     showGrid = true,
-    useLinkColumn = true,
     model,
     columns,
     api,
@@ -683,7 +682,7 @@ const GridBase = memo(({
         }
     };
     const onCellClickHandler = async (cellParams, event, details) => {
-        let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
+        let action = cellParams.field === model.linkColumn ? actionTypes.Edit : null;
         if (!action && cellParams.field === 'actions') {
             action = details?.action;
             if (!action) {
@@ -1103,7 +1102,6 @@ const GridBase = memo(({
     else {
         breadCrumbs = [{ text: title || model.gridTitle || model.title }];
     }
-
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}

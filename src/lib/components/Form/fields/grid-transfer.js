@@ -20,9 +20,9 @@ const TransferField = ({ component, name, formik, field, type, column, ...props 
     return (
         <div>
             <div className={`${classes.divSpacing} `}>{`${"Available"} ${column.label}`}</div>
-            <Component selected={value} available={true} onAssignChange={onAssignChange} disableCellRedirect={column.disableCellRedirect} useLinkColumn={column.useLinkColumn} readOnly={column.readOnly} />
+            <Component selected={value} available={true} onAssignChange={onAssignChange} disableCellRedirect={column.disableCellRedirect} readOnly={column.readOnly} />
             <div className={`${classes.divSpacing} `}>{`${"Assigned"} ${column.label}`}</div>
-            <Component selected={value} assigned={true} onAssignChange={onAssignChange} disableCellRedirect={column.disableCellRedirect} useLinkColumn={column.useLinkColumn} readOnly={column.readOnly} />
+            <Component selected={value} assigned={true} onAssignChange={onAssignChange} disableCellRedirect={column.disableCellRedirect} readOnly={column.readOnly} />
         </div>
     );
 }

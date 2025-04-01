@@ -932,6 +932,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   const onCellClickHandler = async (cellParams, event, details) => {
+    debugger;
     let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
     if (!action && cellParams.field === 'actions') {
       action = details === null || details === void 0 ? void 0 : details.action;
