@@ -155,15 +155,11 @@ export default function App() {
 | `api`                   | `string`          | The API endpoint to fetch grid data.                                                                                                                                                                                                                                              | `title`                                     | No           |
 | `idProperty`            | `string`          | Specifies the unique identifier for grid rows.                                                                                                                                                                                                                                    | `api \|\| title`                            | No           |
 | `defaultSort`           | `string`          | Specifies the default sort order for the grid data. <br> Example:- `defaultSort`: CreatedOn Desc for sorting by CreatedOn in descending order.                                                                                                                                    | ModifiedOn DESC                             | No           |
-| `linkColumn`            | `string`          | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                                                | -                                           | No           |
 | `columns`               | `array`           | The list of column definitions for the grid.                                                                                                                                                                                                                                      | See the **Column Properties Table** below.  | Yes          |
-| `columnVisibilityModel` | `object`          | Specifies which columns are visible in the grid. <br> Example:- `columnVisibilityModel`: { "CreatedOn": false, "CreatedByUser": false } hides the CreatedOn and CreatedByUser columns.                                                                                            | not defined columns are visible by default. | No           |
 | `paginationMode`        | `server \| client`| Determines the pagination mode for the grid. When set to `client`, all data is loaded at once, and pagination happens on the client side. When set to `server`, data is fetched page by page from the server.                                                             		  | `client`                                    | No           |
 | `defaultFilters`        | `array`           | Sets the default filters applied to the grid. <br> Example: `defaultFilters: [{ "field": "StatusDate", "operator": "after", "value": "2024-09-01" }]`                                                                                                                             | -                                           | No           |
 | `showHeaderFilters`     | `boolean`         | Displays header filters on grid columns.                                                                                                                                                                                                                                          | true                                        | No           |
 | `readOnly`              | `boolean`         | When `readOnly` is enabled, users won’t be able to open the edit form by double-clicking on the grid, and the action button will be hidden.																																		  | false 										| No           |
-| `doubleClicked`         | `boolean`         | Controls if double-clicking is enabled for rows.                                                                                                                                                                                                                                  | true                                        | No           |
-| `permissions`           | `object`          | Permissions for grid actions, including adding, editing, deleting, and exporting data. <br> Example: `permissions: { add: false, edit: true, delete: false, export: true }`.                                                                                                      | -                                           | Yes          |
 | `joinColumn`            | `string`          | Specifies the column used for joining data with a parent grid.                                                                                                                                                                                                                    | -                                           | No           |
 | `standard`              | `boolean`         | Specified explicitly as false to hide the **createdOn**, **addCreatedByColumn**, **addModifiedOnColumn** and **addModifiedByColumn** columns.                                                                                                                                     | false                                       | No           |
 | `addCreatedOnColumn`    | `boolean`         | Specified explicitly as false to hide the createdOn columns.                                                                                                                                                                                                                      | false                                       | No           |
@@ -219,13 +215,20 @@ export default function App() {
 | `multiSelect`         | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                 | `false`         |
 | `parentComboField`    | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                    | --              |
 | `lookup`              | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                     | ---             |
-| `useLinkColumn`       | `boolean`                  | If useLinkColumn is false, clicking on the `linkColumn` will not automatically trigger the Edit action.                                                                          | `true`          |
 | `variant`             | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                   | `standard`      |
 | `multiline`           | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                       |                 |
 | `rows`                | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                    | -               |
 | `isUtc`               | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            |                 |
 | `shouldDisableDate`   | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                     | --              |
 | `placeHolder`         | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | --              |
+
+## Navigation Properties
+| **Property**          | **Type**                   | **Description**                                                                                                                                                                  | **Defaults to** |
+| ------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `linkColumn`            | `string`          | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                                                | -                                           | No           |
+| `doubleClicked`         | `boolean`         | Controls if double-clicking is enabled for rows.                                                                                                                                                                                                                                  | true                                        | No           |
+| `permissions`           | `object`          | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details.| true | `true` |
+| `showHistory`         | `boolean`         | Controls whether the history icon is displayed in the action column. When `true`, the history icon is shown; when `false`, it is hidden. |  `true` |
 
 # **Field Components Properties Table**
 
@@ -429,3 +432,24 @@ const exampleConfig = {
   standard: true
 };
 ```
+### Permissions
+
+The `permissions` object controls grid actions, including adding, editing, deleting, and exporting data. All properties are `true` by default.
+
+#### Example:
+```json
+    permissions: { add: false, edit: false, delete: true, export: false, showColumnsOrder: false, filter: false },
+```
+
+    permissions: { add: false, edit: true, delete: true, export: false, showColumnsOrder: false, filter: false },
+
+
+## Actions Table
+| **Action**              | **Description**                                      | **Default** | **UI Representation**              |
+|-------------------------|--------------------------------------------------|------------|----------------------------------|
+| `add`               | Allows users to add a new record                  | `true`     | Button to add a new record      |
+| `edit`               | Allows users to edit an existing record           | `true`     | Edit icon for modifying records |
+| `delete`          | Allows users to delete a record                   | `true`     | Delete icon for removing records |
+| `export`           | Allows users to export data                       | `false`    | Export button                   |
+| `showColumnsOrder` | Allows users to reorder table columns            | `false`    | Drag-and-drop column ordering   |
+| `Filter`            | Allows users to apply filters to the data         | `false`    | Filter options in UI            |
