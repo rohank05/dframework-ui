@@ -165,10 +165,9 @@ export default function App() {
 | `controllerType`        | `string`   | Specifies the type of controller (`cs` for client/server).       |                                            |                              |
 | `template`              | `string`   | Template configuration for exporting.                            |                                            | Seems project specific CoolR |
 | `pivotAPI`              | `string`   | API endpoint for pivot-specific data.                            |                                            |                              |
-| `showPivotExportBtn`    | `boolean`  | Displays the button for exporting pivot data.                    |                                            | Should not be needed         |
 | `preferenceId`          | `string`   | Identifier for saved grid preferences.                           |                                            |                              |
-| `tablePreferenceEnums`  | `object`   | Enumerations for specific table preferences.                     |                                            |                              |
-| `rowRedirectLink`       | `string`   | URL to redirect when a row is clicked.                           |                                            |                              |
+| `tablePreferenceEnums`  | `object`   | Enumerations for specific table preferences. [Table Preference Enums Example](#table-preference-enums-description )                     |                                            |                              |
+| `rowRedirectLink`       | `string`   | URL to redirect when a row is clicked.                           |                                    |                              |
 | `showAddIcon`           | `boolean`  | Indicates if the "Add" button icon should be displayed.          |                                            | Not needed                   |
 | `pageTitle`             | `string`   | Sets the title for the page.                                     |                                            | Not needed                   |
 | `addUrlParamKey`        | `string`   | Key for additional URL parameters when navigating to forms.      |                                            |                              |
@@ -469,3 +468,187 @@ standard: { addCreatedOnColumn: true, addCreatedByColumn: false, addModifiedOnCo
 | `addModifiedOnColumn` | boolean | Enables the "Modified On" column                 | `false` |
 | `addModifiedByColumn` | boolean | Enables the "Modified By" column                 | `false` |
 
+## Table Preference Enums Description   
+
+### Overview
+
+The `tablePreferenceEnums` object is used to store grid preferences based on the `preferenceId` as the key. It serves as a mapping between a user's saved grid settings and their respective configurations. This allows for customized sorting, filtering, visibility, column positioning, and other grid-related settings to be persisted and reused.
+
+**Structure of tablePreferenceEnums Example**
+
+``` js
+   const = Example : {
+      "sortModel": [
+         {
+            "field": "Installation",
+            "sort": "desc"
+         }
+      ],
+      "filterModel": {
+         "items": [
+
+         ],
+         "logicOperator": "and",
+         "quickFilterValues": [
+
+         ],
+         "quickFilterLogicOperator": "and"
+      },
+      "columnVisibilityModel": {
+         "CreatedOn": false,
+         "CreatedByUser": false,
+         "AssetId": false,
+         "Street": false,
+         "City": false,
+         "State": false,
+         "PostalCode": false,
+         "PrimaryRepName": false,
+         "PrimarySalesRep": false,
+         "SecondaryRepName": false,
+         "LocationRoute": false,
+         "PlanogramName": false
+      },
+      "gridColumn": [
+         {
+            "headerName": "Asset Serial #",
+            "field": "SerialNumber",
+            "type": "string",
+            "label": "Asset Serial #",
+            "required": true,
+            "width": 160,
+            "pinned": true
+         },
+         {
+            "headerName": "Installed At",
+            "field": "Installation",
+            "type": "date",
+            "label": "Installed At",
+            "required": false,
+            "width": 120,
+            "keepUTC": true,
+            "filterOperators": [
+               {
+                  "value": "is",
+                  "InputComponentProps": {
+                     "type": "date"
+                  }
+               }
+            ]
+         }
+      ],
+      "pinnedColumns": {
+         "left": [
+            "__check__",
+            "SerialNumber",
+            "AssetType",
+            "IsSmart"
+         ],
+         "right": [
+
+         ]
+      }
+   }
+```
+## Properties
+
+### 1. Sorting Configuration (`sortModel`)  
+
+Defines the sorting behavior of the grid.  
+
+| Field  | Type   | Description                               |
+|--------|--------|-------------------------------------------|
+| field  | string | The column field to sort by.             |
+| sort   | string | Sorting order (`asc` for ascending, `desc` for descending). |
+
+- In this case, sorting is applied to the `Installation` field in descending order.
+
+---
+
+### 2. Filtering Configuration (`filterModel`)  
+
+Defines the filter settings for the grid.  
+
+| Field                      | Type    | Description                              |
+|----------------------------|---------|------------------------------------------|
+| items                      | array   | Holds the individual filter conditions (currently empty). |
+| logicOperator              | string  | Defines the logical relationship between filters (`and` or `or`). |
+| quickFilterValues          | array   | Holds quick filter values (currently empty). |
+| quickFilterLogicOperator   | string  | Defines the logical relationship between quick filters (`and` or `or`). |
+
+- Currently, no filters are applied.
+
+---
+
+### 3. Column Visibility Settings (`columnVisibilityModel`)  
+
+Defines which columns are visible in the grid.  
+
+| Column Name         | Visibility (`false` = hidden) |
+|---------------------|-----------------------------|
+| CreatedOn          | false  |
+| CreatedByUser      | false  |
+| AssetId           | false  |
+| Street            | false  |
+| City              | false  |
+| State             | false  |
+| PostalCode        | false  |
+| PrimaryRepName    | false  |
+| PrimarySalesRep   | false  |
+| SecondaryRepName  | false  |
+| LocationRoute     | false  |
+| PlanogramName     | false  |
+
+- These columns are hidden in the grid.
+
+---
+
+### 4. Grid Columns Configuration (`gridColumn`)  
+
+Defines the structure and properties of the grid columns.
+
+| Property         | Type    | Description                                          |
+|-----------------|--------|------------------------------------------------------|
+| headerName      | string  | The name displayed in the grid header.              |
+| field          | string  | The key representing the column's data field.       |
+| type          | string  | The data type of the column (`string`, `date`, etc.). |
+| label         | string  | Alternative label for the column.                    |
+| required      | boolean | Specifies if the column is required.                |
+| width         | number  | Defines the column width in pixels.                 |
+| pinned        | boolean | Determines if the column is pinned to the left side of the grid. |
+| keepUTC       | boolean | Ensures date values remain in UTC format (for date fields). |
+| filterOperators | array   | Defines filtering options for the column.           |
+
+### Example Columns:  
+#### **1. Asset Serial Number Column**  
+
+| Property    | Value    |
+|------------|---------|
+| field      | SerialNumber  |
+| type       | string  |
+| width      | 160px  |
+| pinned     | true  |
+
+#### **2. Installation Date Column**  
+
+| Property    | Value    |
+|------------|---------|
+| field      | Installation  |
+| type       | date  |
+| width      | 120px  |
+| keepUTC    | true  |
+| filterOperators | `{ "value": "is", "InputComponentProps": { "type": "date" } }` |
+
+---
+
+### 5. Pinned Columns Configuration (`pinnedColumns`)  
+
+Defines which columns remain fixed on the left or right side of the grid.
+
+| Side  | Columns |
+|-------|---------|
+| Left  | `__check__`, `SerialNumber`, `AssetType`, `IsSmart` |
+| Right | *(None)* |
+
+- The left side includes a checkbox column, asset serial number, asset type, and a smart asset indicator.
+
+---
