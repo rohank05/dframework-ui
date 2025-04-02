@@ -944,7 +944,7 @@ const GridBase = memo(({
                     </>)}
 
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
+                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} showOnlyExcelExport={model.showOnlyExcelExport} />
                     )}
                     {preferenceName &&
                         <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
