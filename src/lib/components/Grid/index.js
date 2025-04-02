@@ -210,7 +210,7 @@ const GridBase = memo(({
     const apiRef = useGridApiRef();
     const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
-    const isDoubleClicked = model.doubleClicked === false;
+    const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
     const showAddIcon = model.showAddIcon === true;
     const toLink = model.columns.filter(({ link }) => Boolean(link)).map(item => item.link);
