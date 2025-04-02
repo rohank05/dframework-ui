@@ -48,7 +48,6 @@ const TransferField = _ref => {
     available: true,
     onAssignChange: onAssignChange,
     disableCellRedirect: column.disableCellRedirect,
-    useLinkColumn: column.useLinkColumn,
     readOnly: column.readOnly
   }), /*#__PURE__*/_react.default.createElement("div", {
     className: "".concat(classes.divSpacing, " ")
@@ -57,7 +56,6 @@ const TransferField = _ref => {
     assigned: true,
     onAssignChange: onAssignChange,
     disableCellRedirect: column.disableCellRedirect,
-    useLinkColumn: column.useLinkColumn,
     readOnly: column.readOnly
   }));
 };

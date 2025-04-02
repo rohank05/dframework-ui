@@ -477,35 +477,31 @@ const GridBase = memo(({
             column.label = column?.label
         }
 
-        const auditColumns = model.standard === true;
+        const auditColumns = model?.standard ?? {};
+        
+        if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
+            const columnDefinitions = [
+                { key: "addCreatedOnColumn", field: "CreatedOn", type: "dateTime", header: "Created On" },
+                { key: "addCreatedByColumn", field: "CreatedByUser", type: "string", header: "Created By" },
+                { key: "addModifiedOnColumn", field: "ModifiedOn", type: "dateTime", header: "Modified On" },
+                { key: "addModifiedByColumn", field: "ModifiedByUser", type: "string", header: "Modified By" }
+            ];
 
-        if (auditColumns && model?.addCreatedModifiedColumns !== false) {
-            if (model?.addCreatedOnColumn !== false) {
-                finalColumns.push(
-                    {
-                        field: "CreatedOn", type: "dateTime", headerName: "Created On", width: 200, filterOperators: LocalizedDatePicker({ columnType: "date" }), valueFormatter: gridColumnTypes.dateTime.valueFormatter, keepLocal: true
-                    }
-                );
-            }
-            if (model?.addCreatedByColumn !== false) {
-                finalColumns.push(
-                    { field: "CreatedByUser", type: "string", headerName: "Created By", width: 200 },
-                );
-            }
-            if (model?.addModifiedOnColumn !== false) {
-                finalColumns.push(
-                    {
-                        field: "ModifiedOn", type: "dateTime", headerName: "Modified On", width: 200, filterOperators: LocalizedDatePicker({ columnType: "date" }), valueFormatter: gridColumnTypes.dateTime.valueFormatter, keepLocal: true
+            columnDefinitions.forEach(({ key, field, type, header }) => {
+                if (auditColumns[key] === true) {  // Ensure the value is explicitly true
+                    const column = { field, type, headerName: header, width: 200 };
 
+                    if (type === "dateTime") {
+                        column.filterOperators = LocalizedDatePicker({ columnType: "date" });
+                        column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
+                        column.keepLocal = true;
                     }
-                );
-            }
-            if (model?.addModifiedByColumn !== false) {
-                finalColumns.push(
-                    { field: "ModifiedByUser", type: "string", headerName: "Modified By", width: 200 }
-                );
-            }
+
+                    finalColumns.push(column);
+                }
+            });
         }
+
         const actions = [];
         if (!forAssignment && !isReadOnly) {
             if (canEdit) {

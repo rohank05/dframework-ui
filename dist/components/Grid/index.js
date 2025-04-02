@@ -74,7 +74,7 @@ var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
-const _excluded = ["showGrid", "useLinkColumn", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
+const _excluded = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
   _excluded2 = ["row", "field", "id"],
   _excluded3 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
@@ -217,7 +217,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5, _model$module;
   let {
       showGrid = true,
-      useLinkColumn = true,
       model,
       columns,
       api,
@@ -557,6 +556,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     pinnedColumns,
     lookupMap
   } = (0, _react.useMemo)(() => {
+    var _model$standard;
     let baseColumnList = columns || (model === null || model === void 0 ? void 0 : model.gridColumns) || (model === null || model === void 0 ? void 0 : model.columns);
     if (dynamicColumns) {
       baseColumnList = [...dynamicColumns, ...baseColumnList];
@@ -634,50 +634,54 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       lookupMap[column.field] = column;
       column.label = column === null || column === void 0 ? void 0 : column.label;
     }
-    const auditColumns = model.standard === true;
-    if (auditColumns && (model === null || model === void 0 ? void 0 : model.addCreatedModifiedColumns) !== false) {
-      if ((model === null || model === void 0 ? void 0 : model.addCreatedOnColumn) !== false) {
-        finalColumns.push({
-          field: "CreatedOn",
-          type: "dateTime",
-          headerName: "Created On",
-          width: 200,
-          filterOperators: (0, _LocalizedDatePicker.default)({
-            columnType: "date"
-          }),
-          valueFormatter: gridColumnTypes.dateTime.valueFormatter,
-          keepLocal: true
-        });
-      }
-      if ((model === null || model === void 0 ? void 0 : model.addCreatedByColumn) !== false) {
-        finalColumns.push({
-          field: "CreatedByUser",
-          type: "string",
-          headerName: "Created By",
-          width: 200
-        });
-      }
-      if ((model === null || model === void 0 ? void 0 : model.addModifiedOnColumn) !== false) {
-        finalColumns.push({
-          field: "ModifiedOn",
-          type: "dateTime",
-          headerName: "Modified On",
-          width: 200,
-          filterOperators: (0, _LocalizedDatePicker.default)({
-            columnType: "date"
-          }),
-          valueFormatter: gridColumnTypes.dateTime.valueFormatter,
-          keepLocal: true
-        });
-      }
-      if ((model === null || model === void 0 ? void 0 : model.addModifiedByColumn) !== false) {
-        finalColumns.push({
-          field: "ModifiedByUser",
-          type: "string",
-          headerName: "Modified By",
-          width: 200
-        });
-      }
+    const auditColumns = (_model$standard = model === null || model === void 0 ? void 0 : model.standard) !== null && _model$standard !== void 0 ? _model$standard : {};
+    if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
+      const columnDefinitions = [{
+        key: "addCreatedOnColumn",
+        field: "CreatedOn",
+        type: "dateTime",
+        header: "Created On"
+      }, {
+        key: "addCreatedByColumn",
+        field: "CreatedByUser",
+        type: "string",
+        header: "Created By"
+      }, {
+        key: "addModifiedOnColumn",
+        field: "ModifiedOn",
+        type: "dateTime",
+        header: "Modified On"
+      }, {
+        key: "addModifiedByColumn",
+        field: "ModifiedByUser",
+        type: "string",
+        header: "Modified By"
+      }];
+      columnDefinitions.forEach(_ref5 => {
+        let {
+          key,
+          field,
+          type,
+          header
+        } = _ref5;
+        if (auditColumns[key] === true) {
+          // Ensure the value is explicitly true
+          const column = {
+            field,
+            type,
+            headerName: header,
+            width: 200
+          };
+          if (type === "dateTime") {
+            column.filterOperators = (0, _LocalizedDatePicker.default)({
+              columnType: "date"
+            });
+            column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
+            column.keepLocal = true;
+          }
+          finalColumns.push(column);
+        }
+      });
     }
     const actions = [];
     if (!forAssignment && !isReadOnly) {
@@ -857,12 +861,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       model: model
     });
   };
-  const openForm = _ref5 => {
+  const openForm = _ref6 => {
     let {
       id,
       record = {},
       mode
-    } = _ref5;
+    } = _ref6;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -899,11 +903,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref6 => {
+  const handleDownload = async _ref7 => {
     let {
       documentLink,
       fileName
-    } = _ref6;
+    } = _ref7;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -932,8 +936,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
   };
   const onCellClickHandler = async (cellParams, event, details) => {
-    debugger;
-    let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
+    let action = cellParams.field === model.linkColumn ? actionTypes.Edit : null;
     if (!action && cellParams.field === 'actions') {
       action = details === null || details === void 0 ? void 0 : details.action;
       if (!action) {
@@ -1141,11 +1144,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref7 => {
+  const updateAssignment = _ref8 => {
     let {
       unassign,
       assign
-    } = _ref7;
+    } = _ref8;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1277,11 +1280,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref8 => {
+    gridColumns.forEach(_ref9 => {
       let {
         exportable,
         field
-      } = _ref8;
+      } = _ref9;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
