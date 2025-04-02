@@ -161,12 +161,7 @@ export default function App() {
 | `showHeaderFilters`     | `boolean`         | Displays header filters on grid columns.                                                                                                                                                                                                                                          | true                                        | No           |
 | `readOnly`              | `boolean`         | When `readOnly` is enabled, users won’t be able to open the edit form by double-clicking on the grid, and the action button will be hidden.																																		  | false 										| No           |
 | `joinColumn`            | `string`          | Specifies the column used for joining data with a parent grid.                                                                                                                                                                                                                    | -                                           | No           |
-| `standard`              | `boolean`         | Specified explicitly as false to hide the **createdOn**, **addCreatedByColumn**, **addModifiedOnColumn** and **addModifiedByColumn** columns.                                                                                                                                     | false                                       | No           |
-| `addCreatedOnColumn`    | `boolean`         | Specified explicitly as false to hide the createdOn columns.                                                                                                                                                                                                                      | false                                       | No           |
-| `addCreatedOnColumn`    | `boolean`  | Specified explicitly as false to hide the createdOn columns.     |                                            |                              |
-| `addCreatedByColumn`    | `boolean`  | Specified explicitly as false to hide the createdBy columns.     |                                            |                              |
-| `addModifiedOnColumn`   | `boolean`  | Specified explicitly as false to hide the modifiedOn columns.    |                                            |                              |
-| `addModifiedByColumn`   | `boolean`  | Specified explicitly as false to hide the modifiedBy columns.    |                                            |                              |
+| `standard`              | `object`          | The standard property defines which audit columns appear in the grid. Each key represents a column, enabled when set to true and hidden when false. See the [Standard Property Columns Table](#standard-property-columns-table ) for details.  									  | false                           			| No           								|
 | `controllerType`        | `string`   | Specifies the type of controller (`cs` for client/server).       |                                            |                              |
 | `template`              | `string`   | Template configuration for exporting.                            |                                            | Seems project specific CoolR |
 | `pivotAPI`              | `string`   | API endpoint for pivot-specific data.                            |                                            |                              |
@@ -428,8 +423,7 @@ const exampleConfig = {
     name: "Document",
     idProperty: "DocumentId",
     module: "Equipment",
-    joinColumn: "AssociationId",
-  standard: true
+    joinColumn: "AssociationId"
 };
 ```
 ### Permissions
@@ -453,3 +447,25 @@ The `permissions` object controls grid actions, including adding, editing, delet
 | `export`           | Allows users to export data                       | `false`    | Export button                   |
 | `showColumnsOrder` | Allows users to reorder table columns            | `false`    | Drag-and-drop column ordering   |
 | `Filter`            | Allows users to apply filters to the data         | `false`    | Filter options in UI            |
+
+
+### `standard` Property
+The `standard` property is an object that determines which audit columns should be displayed in grid. Each key within this object represents a specific column, and setting its value to `true` enables that column, while setting it to `false` hides it.  
+
+### Example  
+
+Here’s an example of how the `standard` object can be structured:  
+
+```js
+standard: { addCreatedOnColumn: true, addCreatedByColumn: false, addModifiedOnColumn: true, addModifiedByColumn: true }
+```
+
+## Standard Property Columns Table  
+
+| Property              | Type    | Description                                      | Default |
+|----------------------|---------|--------------------------------------------------|---------|
+| `addCreatedOnColumn`  | boolean | Enables the "Created On" column                  | `false` |
+| `addCreatedByColumn`  | boolean | Enables the "Created By" column                  | `false` |
+| `addModifiedOnColumn` | boolean | Enables the "Modified On" column                 | `false` |
+| `addModifiedByColumn` | boolean | Enables the "Modified By" column                 | `false` |
+
