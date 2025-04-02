@@ -74,9 +74,10 @@ var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
-const _excluded = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
-  _excluded2 = ["row", "field", "id"],
-  _excluded3 = ["filterField"];
+const _excluded = ["exportFormats"],
+  _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
+  _excluded3 = ["row", "field", "id"],
+  _excluded4 = ["filterField"];
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -85,9 +86,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -177,26 +178,32 @@ const ExportMenuItem = _ref => {
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
 };
-const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "csv",
-  contentType: "text/csv"
-})), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "excel",
-  contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-})), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "excel With Pivot",
-  contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  isPivotExport: true
-})), (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "xml",
-  contentType: "text/xml"
-})), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "html",
-  contentType: "text/html"
-})), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-  type: "json",
-  contentType: "application/json"
-}))));
+const CustomExportButton = _ref2 => {
+  let {
+      exportFormats
+    } = _ref2,
+    props = _objectWithoutProperties(_ref2, _excluded);
+  return /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, exportFormats.csv !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "csv",
+    contentType: "text/csv"
+  })), exportFormats.excel !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "excel",
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  })), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "excel With Pivot",
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    isPivotExport: true
+  })), exportFormats.xml !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "xml",
+    contentType: "text/xml"
+  })), exportFormats.html !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "html",
+    contentType: "text/html"
+  })), exportFormats.json !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+    type: "json",
+    contentType: "application/json"
+  })));
+};
 const areEqual = function areEqual() {
   let prevProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   let nextProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -213,7 +220,7 @@ const areEqual = function areEqual() {
   }
   return equal;
 };
-const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
+const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5, _model$module;
   let {
       showGrid = true,
@@ -251,8 +258,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       onAddOverride,
       dynamicColumns,
       readOnly = false
-    } = _ref2,
-    props = _objectWithoutProperties(_ref2, _excluded);
+    } = _ref3,
+    props = _objectWithoutProperties(_ref3, _excluded2);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
     pageSize: defaultPageSize,
     page: 0
@@ -312,17 +319,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     hideTopFilters = true,
     updatePageTitle = true,
     isElasticScreen = false,
-    enableGoBack = false,
+    enableGoBackButton = false,
     selectionApi = {}
   } = model;
   const isReadOnly = model.readOnly === true || readOnly;
-  const isDoubleClicked = model.doubleClicked === false;
+  const isDoubleClicked = model.allowDoubleClick === false;
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
-  const toLink = model.columns.filter(_ref3 => {
+  const toLink = model.columns.filter(_ref4 => {
     let {
       link
-    } = _ref3;
+    } = _ref4;
     return Boolean(link);
   }).map(item => item.link);
   const [isGridPreferenceFetched, setIsGridPreferenceFetched] = (0, _react.useState)(false);
@@ -521,13 +528,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   }, [customFilters]);
-  const lookupOptions = _ref4 => {
+  const lookupOptions = _ref5 => {
     let {
         row,
         field,
         id
-      } = _ref4,
-      others = _objectWithoutProperties(_ref4, _excluded2);
+      } = _ref5,
+      others = _objectWithoutProperties(_ref5, _excluded3);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -657,13 +664,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         type: "string",
         header: "Modified By"
       }];
-      columnDefinitions.forEach(_ref5 => {
+      columnDefinitions.forEach(_ref6 => {
         let {
           key,
           field,
           type,
           header
-        } = _ref5;
+        } = _ref6;
         if (auditColumns[key] === true) {
           // Ensure the value is explicitly true
           const column = {
@@ -861,12 +868,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       model: model
     });
   };
-  const openForm = _ref6 => {
+  const openForm = _ref7 => {
     let {
       id,
       record = {},
       mode
-    } = _ref6;
+    } = _ref7;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -903,11 +910,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref7 => {
+  const handleDownload = async _ref8 => {
     let {
       documentLink,
       fileName
-    } = _ref7;
+    } = _ref8;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -1144,11 +1151,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       }
     }
   };
-  const updateAssignment = _ref8 => {
+  const updateAssignment = _ref9 => {
     let {
       unassign,
       assign
-    } = _ref8;
+    } = _ref9;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1254,8 +1261,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       size: "small"
     }, "CLEAR FILTER")), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
       handleExport: handleExport,
-      showPivotExportBtn: model === null || model === void 0 ? void 0 : model.showPivotExportBtn,
-      showOnlyExcelExport: model.showOnlyExcelExport
+      showPivotExportBtn: model === null || model === void 0 ? void 0 : model.pivotApi,
+      exportFormats: model.exportFormats || {}
     }), preferenceName && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
       preferenceName: preferenceName,
       gridRef: apiRef,
@@ -1280,11 +1287,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref9 => {
+    gridColumns.forEach(_ref10 => {
       let {
         exportable,
         field
-      } = _ref9;
+      } = _ref10;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
@@ -1384,7 +1391,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
         const {
             filterField
           } = item,
-          newItem = _objectWithoutProperties(item, _excluded3);
+          newItem = _objectWithoutProperties(item, _excluded4);
         return newItem;
       }
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
@@ -1456,7 +1463,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
-    enableGoBack: enableGoBack,
+    enableGoBackButton: enableGoBackButton,
     breadcrumbColor: breadcrumbColor
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

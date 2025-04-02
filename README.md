@@ -147,82 +147,83 @@ export default function App() {
 
 ## UiModel Configuration Properties
 
-| **Property**            | **Type**          | **Description**                                                                                                                                                                                                                                                                   | **Defaults to**                             | **Required** |
-| ----------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ------------ |
-| `title`                 | `string`          | The title of the grid.                                                                                                                                                                                                                                                            |                                             | Yes          |
-| `formTitle`             | `string`          | Title used in the form layout.                                                                                                                                                                                                                                                    | `title`                                     | No           |                                                                                                                                                                                                                                     | `title`                                     | No           |
-| `gridSubTitle`          | `string`          | Subtitle displayed below the grid title.                                                                                                                                                                                                                                          | -                                           | No           |
-| `api`                   | `string`          | The API endpoint to fetch grid data.                                                                                                                                                                                                                                              | `title`                                     | No           |
-| `idProperty`            | `string`          | Specifies the unique identifier for grid rows.                                                                                                                                                                                                                                    | `api \|\| title`                            | No           |
-| `defaultSort`           | `string`          | Specifies the default sort order for the grid data. <br> Example:- `defaultSort`: CreatedOn Desc for sorting by CreatedOn in descending order.                                                                                                                                    | ModifiedOn DESC                             | No           |
-| `columns`               | `array`           | The list of column definitions for the grid.                                                                                                                                                                                                                                      | See the **Column Properties Table** below.  | Yes          |
-| `paginationMode`        | `server \| client`| Determines the pagination mode for the grid. When set to `client`, all data is loaded at once, and pagination happens on the client side. When set to `server`, data is fetched page by page from the server.                                                             		  | `client`                                    | No           |
-| `defaultFilters`        | `array`           | Sets the default filters applied to the grid. <br> Example: `defaultFilters: [{ "field": "StatusDate", "operator": "after", "value": "2024-09-01" }]`                                                                                                                             | -                                           | No           |
-| `showHeaderFilters`     | `boolean`         | Displays header filters on grid columns.                                                                                                                                                                                                                                          | true                                        | No           |
-| `readOnly`              | `boolean`         | When `readOnly` is enabled, users won’t be able to open the edit form by double-clicking on the grid, and the action button will be hidden.																																		  | false 										| No           |
-| `joinColumn`            | `string`          | Specifies the column used for joining data with a parent grid.                                                                                                                                                                                                                    | -                                           | No           |
-| `standard`              | `object`          | The standard property defines which audit columns appear in the grid. Each key represents a column, enabled when set to true and hidden when false. See the [Standard Property Columns Table](#standard-property-columns-table ) for details.  									  | false                           			| No           								|
-| `controllerType`        | `string`   | Specifies the type of controller (`cs` for client/server).       |                                            |                              |
-| `template`              | `string`   | Template configuration for exporting.                            |                                            | Seems project specific CoolR |
-| `pivotAPI`              | `string`   | API endpoint for pivot-specific data.                            |                                            |                              |
-| `preferenceId`          | `string`   | Identifier for saved grid preferences.                           |                                            |                              |
-| `tablePreferenceEnums`  | `object`   | Enumerations for specific table preferences. [Table Preference Enums Example](#table-preference-enums-description )                     |                                            |                              |
-| `rowRedirectLink`       | `string`   | URL to redirect when a row is clicked.                           |                                    |                              |
-| `showAddIcon`           | `boolean`  | Indicates if the "Add" button icon should be displayed.          |                                            | Not needed                   |
-| `pageTitle`             | `string`   | Sets the title for the page.                                     |                                            | Not needed                   |
-| `addUrlParamKey`        | `string`   | Key for additional URL parameters when navigating to forms.      |                                            |                              |
-| `searchParamKey`        | `string`   | Key for fetching parameters from the URL.                        |                                            | Duplicate as addUrlParamKey  |
-| `nestedGrid`            | `boolean`  | Indicates if the grid is nested within ather grid.               |                                            | Should not be needed         |
-| `showOnlyExcelExport`   | `boolean`  | Limits export options to only Excel formats.                     |                                            |                              |
-| `initialValues`         | `object`   | Initial values for form fields.                                  |                                            |                              |
-| `hideRelationsInAdd`    | `boolean`  | Hides relations section in add mode.                             |                                            |                              |
-| `navigateBack`          | `string\|function`   | Returns or specifies the route for navigation on cancel or save. To return to a previous route pass 'window.back'.           |                                            |                              |
-| `applyFieldConfig`      | `function` | A function to apply custom field configurations.                 |                                            |                              |
-| `getValidationSchema`   | `function` | Function to return the validation schema for the form.           |                                            |                              |
-| `relations`             | `array`    | Defines the relationship configurations for related grids.       |                                            |                              |
+| **Property**           | **Type**           | **Description**                                                                                                                                                                                                                                             | **Defaults to**                            | **Required**                 |
+| ---------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------- |
+| `title`                | `string`           | The title of the grid.                                                                                                                                                                                                                                      |                                            | Yes                          |
+| `formTitle`            | `string`           | Title used in the form layout.                                                                                                                                                                                                                              | `title`                                    | No                           |  | `title` | No |
+| `gridSubTitle`         | `string`           | Subtitle displayed below the grid title.                                                                                                                                                                                                                    | -                                          | No                           |
+| `api`                  | `string`           | The API endpoint to fetch grid data.                                                                                                                                                                                                                        | `title`                                    | No                           |
+| `idProperty`           | `string`           | Specifies the unique identifier for grid rows.                                                                                                                                                                                                              | `api \|\| title`                           | No                           |
+| `defaultSort`          | `string`           | Specifies the default sort order for the grid data. <br> Example:- `defaultSort`: CreatedOn Desc for sorting by CreatedOn in descending order.                                                                                                              | ModifiedOn DESC                            | No                           |
+| `columns`              | `array`            | The list of column definitions for the grid.                                                                                                                                                                                                                | See the **Column Properties Table** below. | Yes                          |
+| `paginationMode`       | `server \| client` | Determines the pagination mode for the grid. When set to `client`, all data is loaded at once, and pagination happens on the client side. When set to `server`, data is fetched page by page from the server.                                               | `client`                                   | No                           |
+| `defaultFilters`       | `array`            | Sets the default filters applied to the grid. <br> Example: `defaultFilters: [{ "field": "StatusDate", "operator": "after", "value": "2024-09-01" }]`                                                                                                       | -                                          | No                           |
+| `showHeaderFilters`    | `boolean`          | Displays header filters on grid columns.                                                                                                                                                                                                                    | true                                       | No                           |
+| `readOnly`             | `boolean`          | When `readOnly` is enabled, users won’t be able to open the edit form by double-clicking on the grid, and the action button will be hidden.                                                                                                                 | false                                      | No                           |
+| `joinColumn`           | `string`           | Specifies the column used for joining data with a parent grid.                                                                                                                                                                                              | -                                          | No                           |
+| `standard`             | `object`           | The standard property defines which audit columns appear in the grid. Each key represents a column, enabled when set to true and hidden when false. See the [Standard Property Columns Table](#standard-property-columns-table ) for details.               | false                                      | No                           |
+| `controllerType`       | `string`           | Specifies the type of controller (`cs` for client/server).                                                                                                                                                                                                  |                                            |                              |
+| `template`             | `string`           | Template configuration for exporting.                                                                                                                                                                                                                       |                                            | Seems project specific CoolR |
+| `pivotAPI`             | `string`           | API endpoint for pivot-specific data.                                                                                                                                                                                                                       |                                            |                              |
+| `preferenceId`         | `string`           | Identifier for saved grid preferences.                                                                                                                                                                                                                      |                                            |                              |
+| `tablePreferenceEnums` | `object`           | Enumerations for specific table preferences. [Table Preference Enums Example](#table-preference-enums-description )                                                                                                                                         |                                            |                              |
+| `rowRedirectLink`      | `string`           | URL to redirect when a row is clicked.                                                                                                                                                                                                                      |                                            |                              |
+| `showAddIcon`          | `boolean`          | Indicates if the "Add" button icon should be displayed.                                                                                                                                                                                                     |                                            | Not needed                   |
+| `pageTitle`            | `string`           | Sets the title for the page.                                                                                                                                                                                                                                |                                            | Not needed                   |
+| `addUrlParamKey`       | `string`           | Key for additional URL parameters when navigating to forms.                                                                                                                                                                                                 |                                            |                              |
+| `searchParamKey`       | `string`           | Key for fetching parameters from the URL.                                                                                                                                                                                                                   |                                            | Duplicate as addUrlParamKey  |
+| `nestedGrid`           | `boolean`          | Indicates if the grid is nested within ather grid.                                                                                                                                                                                                          |                                            | Should not be needed         |
+| `initialValues`        | `object`           | Initial values for form fields.                                                                                                                                                                                                                             |                                            |                              |
+| `hideRelationsInAdd`   | `boolean`          | Hides relations section in add mode.                                                                                                                                                                                                                        |                                            |                              |
+| `navigateBack`         | `string\|function` | Returns or specifies the route for navigation on cancel or save. To return to a previous route pass 'window.back'.                                                                                                                                          |                                            |                              |
+| `applyFieldConfig`     | `function`         | A function to apply custom field configurations.                                                                                                                                                                                                            |                                            |                              |
+| `getValidationSchema`  | `function`         | Function to return the validation schema for the form.                                                                                                                                                                                                      |                                            |                              |
+| `relations`            | `array`            | Defines the relationship configurations for related grids.                                                                                                                                                                                                  |                                            |                              |
+| `enableGoBackButton`   | `boolean`          | This property controls the visibility of the back button on the Form.                                                                                                                                                                                       | false                                      | No                           |
+| `exportFormats`        | `object`           | The `exportFormats` object controls the visibility of different export formats in the UI. Each key in `exportFormats` represents a file format (CSV, Excel, XML, HTML, or JSON), and its value determines whether the corresponding export option is available. [example](#exportFormats) | `true`                                     |
 
 ## Column Properties Table
 
-| **Property**          | **Type**                   | **Description**                                                                                                                                                                  | **Defaults to** |
-| ------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `field`               | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data. | -               |
-| `label`               | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                 | `field`         |
-| `headerName`          | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                         | label           |
-| `type`                | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                             | -               |
-| `pinned`              | `string`                   | Determines if the column is pinned to the right.                                                                                                                                 | `left`          |
-| `sortable`            | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                             | `true`          |
-| `filterable`          | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                           | `true`          |
-| `editable`            | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                               | `false`         |
-| `tab`                 | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                | ----            |
-| `required`            | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                | `false`         |
-| `hide`              | `boolean`                  | Hides the column from the grid.                                                                                                                                                  | `false`         |
-| `renderCell`          | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                    | ---             |
-| `align`               | `string`                   | Specifies text alignment for the column (`left`, `center`, `right`).                                                                                                             | `left`          |
-| `tooltip`             | `string`                   | Tooltip to display on hover over the column header.                                                                                                                              | --              |
-| `width`               | `number`                   | Specifies the width of the column in pixels.                                                                                                                                     | ---             |
-| `resizable`           | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                        | `true`          |
-| `readOnly`            | `boolean`                  | Marks the column as read-only. When true, all form fields are disabled, including input fields, date pickers, and other interactive elements, preventing the user from typing or adding any data.                                                                                                                                                   | `false`         |
-| `showErrorText`       | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                               | `false`         |
-| `helperText`          | `string`                   | Text to display as helper information below the field.                                                                                                                           |                 |
-| `min`                 | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                 | -               |
-| `max`                 | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                 | -               |
-| `multiSelect`         | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                 | `false`         |
-| `parentComboField`    | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                    | --              |
-| `lookup`              | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                     | ---             |
-| `variant`             | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                   | `standard`      |
-| `multiline`           | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                       |                 |
-| `rows`                | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                    | -               |
-| `isUtc`               | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            |                 |
-| `shouldDisableDate`   | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                     | --              |
-| `placeHolder`         | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | --              |
+| **Property**        | **Type**                   | **Description**                                                                                                                                                                                   | **Defaults to** |
+| ------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `field`             | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data.                  | -               |
+| `label`             | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                                  | `field`         |
+| `headerName`        | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                                          | label           |
+| `type`              | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                                              | -               |
+| `pinned`            | `string`                   | Determines if the column is pinned to the right.                                                                                                                                                  | `left`          |
+| `sortable`          | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                                              | `true`          |
+| `filterable`        | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                                            | `true`          |
+| `editable`          | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                                                | `false`         |
+| `tab`               | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                                 | ----            |
+| `required`          | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                                 | `false`         |
+| `hide`              | `boolean`                  | Hides the column from the grid.                                                                                                                                                                   | `false`         |
+| `renderCell`        | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                                     | ---             |
+| `align`             | `string`                   | Specifies text alignment for the column (`left`, `center`, `right`).                                                                                                                              | `left`          |
+| `tooltip`           | `string`                   | Tooltip to display on hover over the column header.                                                                                                                                               | --              |
+| `width`             | `number`                   | Specifies the width of the column in pixels.                                                                                                                                                      | ---             |
+| `resizable`         | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                                         | `true`          |
+| `readOnly`          | `boolean`                  | Marks the column as read-only. When true, all form fields are disabled, including input fields, date pickers, and other interactive elements, preventing the user from typing or adding any data. | `false`         |
+| `showErrorText`     | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                                                | `false`         |
+| `helperText`        | `string`                   | Text to display as helper information below the field.                                                                                                                                            |                 |
+| `min`               | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                                  | -               |
+| `max`               | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                                  | -               |
+| `multiSelect`       | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                                  | `false`         |
+| `parentComboField`  | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                                     | --              |
+| `lookup`            | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                                      | ---             |
+| `variant`           | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                                    | `standard`      |
+| `multiline`         | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                                        |                 |
+| `rows`              | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                                     | -               |
+| `isUtc`             | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                                             |                 |
+| `shouldDisableDate` | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                                      | --              |
+| `placeHolder`       | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                                      | --              |
 
 ## Navigation Properties
-| **Property**          | **Type**                   | **Description**                                                                                                                                                                  | **Defaults to** |
-| ------------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `linkColumn`            | `string`          | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                                                | -                                           | -           |
-| `allowDoubleClick`         | `boolean`         | Controls whether double-clicking on rows is enabled. When set to `true`, users can double-click a row to trigger an action, such as opening a detailed view or editing the row. If `false`, double-clicking will have no effect. | `true`           |
-| `permissions`           | `object`          | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details.| true | `true` |
-| `showHistory`         | `boolean`         | Controls whether the history icon is displayed in the action column. When `true`, the history icon is shown; when `false`, it is hidden. |  `true` |
+| **Property**       | **Type**  | **Description**                                                                                                                                                                                                                                                | **Defaults to** |
+| ------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `linkColumn`       | `string`  | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                             | -               | -      |
+| `allowDoubleClick` | `boolean` | Controls whether double-clicking on rows is enabled. When set to `true`, users can double-click a row to trigger an action, such as opening a detailed view or editing the row. If `false`, double-clicking will have no effect.                               | `true`          |
+| `permissions`      | `object`  | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details. | true            | `true` |
+| `showHistory`      | `boolean` | Controls whether the history icon is displayed in the action column. When `true`, the history icon is shown; when `false`, it is hidden.                                                                                                                       | `true`          |
 
 # **Field Components Properties Table**
 
@@ -438,14 +439,14 @@ The `permissions` object controls grid actions, including adding, editing, delet
 
 
 ## Actions Table
-| **Action**              | **Description**                                      | **Default** | **UI Representation**              |
-|-------------------------|--------------------------------------------------|------------|----------------------------------|
-| `add`               | Allows users to add a new record                  | `true`     | Button to add a new record      |
-| `edit`               | Allows users to edit an existing record           | `true`     | Edit icon for modifying records |
-| `delete`          | Allows users to delete a record                   | `true`     | Delete icon for removing records |
-| `export`           | Allows users to export data                       | `false`    | Export button                   |
-| `showColumnsOrder` | Allows users to reorder table columns            | `false`    | Drag-and-drop column ordering   |
-| `Filter`            | Allows users to apply filters to the data         | `false`    | Filter options in UI            |
+| **Action**         | **Description**                           | **Default** | **UI Representation**            |
+| ------------------ | ----------------------------------------- | ----------- | -------------------------------- |
+| `add`              | Allows users to add a new record          | `true`      | Button to add a new record       |
+| `edit`             | Allows users to edit an existing record   | `true`      | Edit icon for modifying records  |
+| `delete`           | Allows users to delete a record           | `true`      | Delete icon for removing records |
+| `export`           | Allows users to export data               | `false`     | Export button                    |
+| `showColumnsOrder` | Allows users to reorder table columns     | `false`     | Drag-and-drop column ordering    |
+| `Filter`           | Allows users to apply filters to the data | `false`     | Filter options in UI             |
 
 
 ### `standard` Property
@@ -461,12 +462,12 @@ standard: { addCreatedOnColumn: true, addCreatedByColumn: false, addModifiedOnCo
 
 ## Standard Property Columns Table  
 
-| Property              | Type    | Description                                      | Default |
-|----------------------|---------|--------------------------------------------------|---------|
-| `addCreatedOnColumn`  | boolean | Enables the "Created On" column                  | `false` |
-| `addCreatedByColumn`  | boolean | Enables the "Created By" column                  | `false` |
-| `addModifiedOnColumn` | boolean | Enables the "Modified On" column                 | `false` |
-| `addModifiedByColumn` | boolean | Enables the "Modified By" column                 | `false` |
+| Property              | Type    | Description                      | Default |
+| --------------------- | ------- | -------------------------------- | ------- |
+| `addCreatedOnColumn`  | boolean | Enables the "Created On" column  | `false` |
+| `addCreatedByColumn`  | boolean | Enables the "Created By" column  | `false` |
+| `addModifiedOnColumn` | boolean | Enables the "Modified On" column | `false` |
+| `addModifiedByColumn` | boolean | Enables the "Modified By" column | `false` |
 
 ## Table Preference Enums Description   
 
@@ -555,10 +556,10 @@ The `tablePreferenceEnums` object is used to store grid preferences based on the
 
 Defines the sorting behavior of the grid.  
 
-| Field  | Type   | Description                               |
-|--------|--------|-------------------------------------------|
-| field  | string | The column field to sort by.             |
-| sort   | string | Sorting order (`asc` for ascending, `desc` for descending). |
+| Field | Type   | Description                                                 |
+| ----- | ------ | ----------------------------------------------------------- |
+| field | string | The column field to sort by.                                |
+| sort  | string | Sorting order (`asc` for ascending, `desc` for descending). |
 
 - In this case, sorting is applied to the `Installation` field in descending order.
 
@@ -568,12 +569,12 @@ Defines the sorting behavior of the grid.
 
 Defines the filter settings for the grid.  
 
-| Field                      | Type    | Description                              |
-|----------------------------|---------|------------------------------------------|
-| items                      | array   | Holds the individual filter conditions (currently empty). |
-| logicOperator              | string  | Defines the logical relationship between filters (`and` or `or`). |
-| quickFilterValues          | array   | Holds quick filter values (currently empty). |
-| quickFilterLogicOperator   | string  | Defines the logical relationship between quick filters (`and` or `or`). |
+| Field                    | Type   | Description                                                             |
+| ------------------------ | ------ | ----------------------------------------------------------------------- |
+| items                    | array  | Holds the individual filter conditions (currently empty).               |
+| logicOperator            | string | Defines the logical relationship between filters (`and` or `or`).       |
+| quickFilterValues        | array  | Holds quick filter values (currently empty).                            |
+| quickFilterLogicOperator | string | Defines the logical relationship between quick filters (`and` or `or`). |
 
 - Currently, no filters are applied.
 
@@ -583,20 +584,20 @@ Defines the filter settings for the grid.
 
 Defines which columns are visible in the grid.  
 
-| Column Name         | Visibility (`false` = hidden) |
-|---------------------|-----------------------------|
-| CreatedOn          | false  |
-| CreatedByUser      | false  |
-| AssetId           | false  |
-| Street            | false  |
-| City              | false  |
-| State             | false  |
-| PostalCode        | false  |
-| PrimaryRepName    | false  |
-| PrimarySalesRep   | false  |
-| SecondaryRepName  | false  |
-| LocationRoute     | false  |
-| PlanogramName     | false  |
+| Column Name      | Visibility (`false` = hidden) |
+| ---------------- | ----------------------------- |
+| CreatedOn        | false                         |
+| CreatedByUser    | false                         |
+| AssetId          | false                         |
+| Street           | false                         |
+| City             | false                         |
+| State            | false                         |
+| PostalCode       | false                         |
+| PrimaryRepName   | false                         |
+| PrimarySalesRep  | false                         |
+| SecondaryRepName | false                         |
+| LocationRoute    | false                         |
+| PlanogramName    | false                         |
 
 - These columns are hidden in the grid.
 
@@ -606,36 +607,36 @@ Defines which columns are visible in the grid.
 
 Defines the structure and properties of the grid columns.
 
-| Property         | Type    | Description                                          |
-|-----------------|--------|------------------------------------------------------|
-| headerName      | string  | The name displayed in the grid header.              |
-| field          | string  | The key representing the column's data field.       |
-| type          | string  | The data type of the column (`string`, `date`, etc.). |
-| label         | string  | Alternative label for the column.                    |
-| required      | boolean | Specifies if the column is required.                |
-| width         | number  | Defines the column width in pixels.                 |
-| pinned        | boolean | Determines if the column is pinned to the left side of the grid. |
-| keepUTC       | boolean | Ensures date values remain in UTC format (for date fields). |
-| filterOperators | array   | Defines filtering options for the column.           |
+| Property        | Type    | Description                                                      |
+| --------------- | ------- | ---------------------------------------------------------------- |
+| headerName      | string  | The name displayed in the grid header.                           |
+| field           | string  | The key representing the column's data field.                    |
+| type            | string  | The data type of the column (`string`, `date`, etc.).            |
+| label           | string  | Alternative label for the column.                                |
+| required        | boolean | Specifies if the column is required.                             |
+| width           | number  | Defines the column width in pixels.                              |
+| pinned          | boolean | Determines if the column is pinned to the left side of the grid. |
+| keepUTC         | boolean | Ensures date values remain in UTC format (for date fields).      |
+| filterOperators | array   | Defines filtering options for the column.                        |
 
 ### Example Columns:  
 #### **1. Asset Serial Number Column**  
 
-| Property    | Value    |
-|------------|---------|
-| field      | SerialNumber  |
-| type       | string  |
-| width      | 160px  |
-| pinned     | true  |
+| Property | Value        |
+| -------- | ------------ |
+| field    | SerialNumber |
+| type     | string       |
+| width    | 160px        |
+| pinned   | true         |
 
 #### **2. Installation Date Column**  
 
-| Property    | Value    |
-|------------|---------|
-| field      | Installation  |
-| type       | date  |
-| width      | 120px  |
-| keepUTC    | true  |
+| Property        | Value                                                          |
+| --------------- | -------------------------------------------------------------- |
+| field           | Installation                                                   |
+| type            | date                                                           |
+| width           | 120px                                                          |
+| keepUTC         | true                                                           |
 | filterOperators | `{ "value": "is", "InputComponentProps": { "type": "date" } }` |
 
 ---
@@ -644,11 +645,27 @@ Defines the structure and properties of the grid columns.
 
 Defines which columns remain fixed on the left or right side of the grid.
 
-| Side  | Columns |
-|-------|---------|
+| Side  | Columns                                             |
+| ----- | --------------------------------------------------- |
 | Left  | `__check__`, `SerialNumber`, `AssetType`, `IsSmart` |
-| Right | *(None)* |
+| Right | *(None)*                                            |
 
 - The left side includes a checkbox column, asset serial number, asset type, and a smart asset indicator.
 
 ---
+
+## `exportFormats` 
+
+#### Example
+
+```js
+  exportFormats: { excel: true,  csv: false, xml: false, html: false, json: false}
+```
+
+| Property | Type    | Description                                        | Defaults to |
+| -------- | ------- | -------------------------------------------------- | ----------- |
+| excel    | boolean | enables/disables CSV export in the grid options.   | `true`      |
+| csv      | boolean | enables/disables Excel export in the grid options. | `true`      |
+| xml      | boolean | enables/disables XML export in the grid options.   | `true`      |
+| html     | boolean | enables/disables HTML export in the grid options.  | `true`      |
+| json     | boolean | enables/disables JSON export in the grid options.  | `true`      |

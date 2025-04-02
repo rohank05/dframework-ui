@@ -19,7 +19,7 @@ function PageTitle(props) {
     titleClass = "text-theme-blue text-max-width",
     showBreadcrumbs,
     breadcrumbs = [],
-    enableGoBack = false,
+    enableGoBackButton = false,
     breadcrumbColor,
   } = props;
   const isMobile = useMobile(true);
@@ -50,7 +50,7 @@ function PageTitle(props) {
                 </Typography>)}
               </Breadcrumbs>
             </Grid>
-            {(breadcrumbs.length > 1 || enableGoBack) && <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+            {(breadcrumbs.length > 1 || enableGoBackButton) && <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
               <Button variant="contained" onClick={handleBack}>Back</Button>
             </Grid>}
             <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>

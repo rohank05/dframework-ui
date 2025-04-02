@@ -114,16 +114,14 @@ ExportMenuItem.propTypes = {
     hideMenu: PropTypes.func
 };
 
-const CustomExportButton = (props) => (
+const CustomExportButton = ({ exportFormats, ...props }) => (
     <GridToolbarExportContainer {...props}>
-        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} type="csv" contentType="text/csv" />}
-        <ExportMenuItem {...props} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        {exportFormats.csv !== false && <ExportMenuItem {...props} type="csv" contentType="text/csv" />}
+        {exportFormats.excel !== false && <ExportMenuItem {...props} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />}
         {props.showPivotExportBtn && <ExportMenuItem {...props} type="excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
-        {props?.showOnlyExcelExport !== true && <>
-            <ExportMenuItem {...props} type="xml" contentType="text/xml" />
-            <ExportMenuItem {...props} type="html" contentType="text/html" />
-            <ExportMenuItem {...props} type="json" contentType="application/json" />
-        </>}
+        {exportFormats.xml !== false && <ExportMenuItem {...props} type="xml" contentType="text/xml" />}
+        {exportFormats.html !== false && <ExportMenuItem {...props} type="html" contentType="text/html" />}
+        {exportFormats.json !== false && <ExportMenuItem {...props} type="json" contentType="application/json" />}
     </GridToolbarExportContainer>
 );
 
@@ -208,7 +206,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBack = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBackButton = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
@@ -242,7 +240,7 @@ const GridBase = memo(({
         OrderStatus: 'OrderStatusId'
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
-    const preferenceName =  model.preferenceId || model.module?.preferenceId;
+    const preferenceName = model.preferenceId || model.module?.preferenceId;
     
     const searchParams = new URLSearchParams(window.location.search);
 
@@ -944,7 +942,7 @@ const GridBase = memo(({
                     </>)}
 
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} showOnlyExcelExport={model.showOnlyExcelExport} />
+                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} exportFormats={model.exportFormats || {}} />
                     )}
                     {preferenceName &&
                         <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
@@ -1101,7 +1099,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} enableGoBack={enableGoBack} breadcrumbColor={breadcrumbColor} />
+                breadcrumbs={breadCrumbs} enableGoBackButton={enableGoBackButton} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
