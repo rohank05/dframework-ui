@@ -206,7 +206,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBackButton = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableBackButton = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
@@ -1099,7 +1099,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} enableGoBackButton={enableGoBackButton} breadcrumbColor={breadcrumbColor} />
+                breadcrumbs={breadCrumbs} enableBackButton={enableBackButton} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium

@@ -25,7 +25,7 @@ function PageTitle(props) {
     titleClass = "text-theme-blue text-max-width",
     showBreadcrumbs,
     breadcrumbs = [],
-    enableGoBackButton = false,
+    enableBackButton = false,
     breadcrumbColor
   } = props;
   const isMobile = (0, _useMobile.default)(true);
@@ -72,7 +72,7 @@ function PageTitle(props) {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableGoBackButton) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableBackButton) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     sx: {
       display: 'flex',

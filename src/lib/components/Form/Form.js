@@ -36,7 +36,7 @@ const Form = ({
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
-  const { relations = [], hideRelationsInAdd = false } = model;
+  const { relations = [] } = model;
   const { dispatchData, stateData } = useStateContext();
   const params = useParams() || getParams;
   const { id: idWithOptions } = params;
@@ -306,7 +306,7 @@ const Form = ({
     { text: formTitle },
     { text: id === "0" ? "New" : "Update" }
   ];
-  const showRelations = (id === 0) && Boolean(relations.length);
+  const showRelations = Number(id) !== 0 && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;

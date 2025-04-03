@@ -319,7 +319,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     hideTopFilters = true,
     updatePageTitle = true,
     isElasticScreen = false,
-    enableGoBackButton = false,
+    enableBackButton = false,
     selectionApi = {}
   } = model;
   const isReadOnly = model.readOnly === true || readOnly;
@@ -1329,7 +1329,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       type: _actions.default.PAGE_TITLE_DETAILS,
       payload: {
         icon: "",
-        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
+        titleHeading: "sdjnskjndjndjk",
         title: model === null || model === void 0 ? void 0 : model.title
       }
     });
@@ -1463,7 +1463,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
-    enableGoBackButton: enableGoBackButton,
+    enableBackButton: enableBackButton,
     breadcrumbColor: breadcrumbColor
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

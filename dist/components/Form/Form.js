@@ -71,8 +71,7 @@ const Form = _ref => {
     pathname
   } = (0, _StateProvider.useRouter)();
   const {
-    relations = [],
-    hideRelationsInAdd = false
+    relations = []
   } = model;
   const {
     dispatchData,
@@ -356,7 +355,7 @@ const Form = _ref => {
   }, {
     text: id === "0" ? "New" : "Update"
   }];
-  const showRelations = id === 0 && Boolean(relations.length);
+  const showRelations = Number(id) !== 0 && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
