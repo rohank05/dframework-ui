@@ -1329,7 +1329,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       type: _actions.default.PAGE_TITLE_DETAILS,
       payload: {
         icon: "",
-        titleHeading: "sdjnskjndjndjk",
+        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
         title: model === null || model === void 0 ? void 0 : model.title
       }
     });

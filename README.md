@@ -169,8 +169,8 @@ export default function App() {
 | `tablePreferenceEnums` | `object`           | Enumerations for specific table preferences. [Table Preference Enums Example](#table-preference-enums-description )                                                                                                                                                                            |                                            |                              |
 | `rowRedirectLink`      | `string`           | URL to redirect when a row is clicked.                                                                                                                                                                                                                                                         |                                            |                              |
 | `showAddIcon`          | `boolean`          | Indicates if the "Add" button icon should be displayed.                                                                                                                                                                                                                                        |                                            | Not needed                   |
-| `addUrlParamKey`       | `string`           | Key for additional URL parameters when navigating to forms.                                                                                                                                                                                                                                    |                                            |                              |
-| `searchParamKey`       | `string`           | Key for fetching parameters from the URL.                                                                                                                                                                                                                                                      |                                            | Duplicate as addUrlParamKey  |
+| `addUrlParamKey`       | `string`           | Key for additional URL parameters when navigating to forms and add name to the page title                                                                                                                                                                                                      |                                            |                              |
+| `searchParamKey`       | `string`           | Key for fetching parameters from the URL and show name on the page title                                                                                                                                                                                                                       |                                            |                              |
 | `nestedGrid`           | `boolean`          | Indicates if the grid is nested within ather grid.                                                                                                                                                                                                                                             |                                            | Should not be needed         |
 | `initialValues`        | `object`           | Initial values for form fields.                                                                                                                                                                                                                                                                |                                            |                              |
 | `navigateBack`         | `string\|function` | Returns or specifies the route for navigation on cancel or save. To return to a previous route pass 'window.back'.                                                                                                                                                                             |                                            |                              |
@@ -682,7 +682,7 @@ When enableBackButton is set to true, the back button appears in two places: the
 <img src="src/lib/assets/images/enableBack2.png" alt="Form View - Enable Back Button" width="49%"> 
 </p>
 
-## Relations example
+## Relations Example
 
 This property displays a child grid based on the defined relation property in the array. In edit mode, it automatically adds the child grid to the UI.
 
@@ -694,3 +694,57 @@ const Example = new UiModel({
 });
 ```
 <img src="src/lib/assets/images/Relations.png" alt="Form View - Enable Back Button" width="100%"> 
+
+# `addUrlParamKey` and `searchParamKey` Example  
+
+Both properties, `addUrlParamKey` and `searchParamKey`, are interconnected. Below is an example demonstrating their functionality.  
+
+## `addUrlParamKey`  
+
+In this example, `addUrlParamKey` is set to `"LookupType"` in a lookup table configuration:  
+
+```js
+const LookupType = new CommonUiModel({
+    title: "LookupType",
+    gridTitle: "Lookups-sd",
+    formTitle: "Lookups",
+    permissions: { add: false, edit: false, delete: false },
+    addUrlParamKey: "LookupType",
+    module: "Lookups",
+    showHistory: true,
+    columns: [
+        {
+            field: "LookupType",
+            label: "Name",
+            max: 64,
+            width: 150
+        },
+        {
+            field: "Description",
+            label: "Description",
+            multiline: true
+        }
+    ],
+});
+```
+
+When a user clicks on DocumentType in the first image, the pageTitle updates to DocumentType in the second image. This behavior is controlled by the addUrlParamKey property, which appends a query parameter to the URL in the format: - breadcrumbs=addUrlParamKey
+
+
+<p align="center"> <img src="src/lib/assets/images/addUrlParamKey1.png" alt="Grid View - addUrlParamKey" width="49%" style="margin-right: 5px;"> <img src="src/lib/assets/images/addUrlParamKey2.png" alt="Grid View - addUrlParamKey document grid" width="49%"> </p>
+
+## searchParamKey
+
+Following the same logic, searchParamKey is used in the DocumentGroup grid UI component. Here, searchParamKey is set to "LookupType":
+
+```js
+const Lookup = new CommonUiModel({
+    title: "Lookup",
+    linkColumn: "DisplayValue",
+    permissions: { add: false, edit: false, delete: false },
+    searchParamKey: 'LookupType',
+    columns: [...]
+});
+```
+When a user clicks the history icon in the grid, they are redirected to the history of the DocumentGroup grid. The searchParamKey property ensures that the corresponding lookup type is retained, updating the pageTitle accordingly.
+
