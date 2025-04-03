@@ -202,22 +202,20 @@ export default function App() {
 | `resizable`         | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                                         | `true`          |
 | `readOnly`          | `boolean`                  | Marks the column as read-only. When true, all form fields are disabled, including input fields, date pickers, and other interactive elements, preventing the user from typing or adding any data. | `false`         |
 | `showErrorText`     | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                                                | `false`         |
-| `helperText`        | `string`                   | Text to display as helper information below the field.                                                                                                                                            |                 |
 | `min`               | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                                  | -               |
 | `max`               | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                                  | -               |
 | `multiSelect`       | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                                  | `false`         |
 | `parentComboField`  | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                                     | --              |
 | `lookup`            | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                                      | ---             |
 | `variant`           | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                                    | `standard`      |
-| `multiline`         | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                                        |                 |
-| `rows`              | `number`                   | Number of rows to display in a multiline text field. When multiline is true, the text field should display 5 rows by default.                                                                     | -               |
-| `isUtc`             | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                                             |                 |
-| `shouldDisableDate` | `function`                 | Function to determine if a date should be disabled. Takes (date, formik) as arguments and returns true to disable the date, false otherwise.                                                      | --              |
-| `placeHolder`       | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                                      | --              |
+| `multiline`         | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                                        | `false` |
+| `rows`              | `number`                   | Number of rows to display in a multiline text field                                                                    | 5              |
+| `isUtc`             | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                                             |`false`|
+| `placeHolder`       | `string` | To Show `placeHolder` only for type `select`                                                                                                                                                      | --              |
 
 ## Navigation Properties
-| **Property**       | **Type**  | **Description**                                                                                                                                                                                                                                                | **Defaults to** |
-| ------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| **Property**       | **Type**  | **Description**| **Defaults to** |
+| ------------------ | --------- | -------------- | --------------- |
 | `linkColumn`       | `string`  | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                             | -               | -      |
 | `allowDoubleClick` | `boolean` | Controls whether double-clicking on rows is enabled. When set to `true`, users can double-click a row to trigger an action, such as opening a detailed view or editing the row. If `false`, double-clicking will have no effect.                               | `true`          |
 | `permissions`      | `object`  | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details. | true            | `true` |
@@ -385,22 +383,11 @@ Represents a **JSON Field** component.
 
 ## **Examples**
 
-### 1. **shouldDisableDate** column property.
-
-```js
-const shouldDisableDate = (date, formik) => {
-  // Disable weekends (Saturday and Sunday)
-  const day = date.getDay();
-  return day === 0 || day === 6;
-};
-```
-
-## 2. **applyFieldConfig** column property.
+## 1. **applyFieldConfig** column property.
 
 ### Example
 
 ```js
-
 applyFieldConfig: function ({ data }) {
         const today = new Date();
         const startDate = new Date(data?.StartDate);
@@ -411,10 +398,9 @@ applyFieldConfig: function ({ data }) {
             SurveyTypeId: { disabled: disabled }
       }
 }
-
 ```
 
-### 3. **joinColumn** column property.
+### 2. **joinColumn** column property.
 
 ```js
 const exampleConfig = {
@@ -515,23 +501,6 @@ The `tablePreferenceEnums` object is used to store grid preferences based on the
             "required": true,
             "width": 160,
             "pinned": true
-         },
-         {
-            "headerName": "Installed At",
-            "field": "Installation",
-            "type": "date",
-            "label": "Installed At",
-            "required": false,
-            "width": 120,
-            "keepUTC": true,
-            "filterOperators": [
-               {
-                  "value": "is",
-                  "InputComponentProps": {
-                     "type": "date"
-                  }
-               }
-            ]
          }
       ],
       "pinnedColumns": {
@@ -748,3 +717,54 @@ const Lookup = new CommonUiModel({
 ```
 When a user clicks the history icon in the grid, they are redirected to the history of the DocumentGroup grid. The searchParamKey property ensures that the corresponding lookup type is retained, updating the pageTitle accordingly.
 
+
+## Hiding Columns in a Grid and Form
+### There are multiple ways to hide a column in the grid:
+
+1. Using `columnVisibilityModel` from `tablePreferenceEnums` [view Example](#table-preference-enums-description  )
+2. Setting the `hide` Property to true
+   1. You can hide a column by setting the hide property to true in the column configuration:
+```js
+const example = new UiModel({
+    title: "tableName",
+    columns: [
+        { field: 'field name', label: 'label name', type: 'number', hide: true },
+    ],
+});
+```
+3. Setting `headerName` to `null`
+   1. Another approach is to set the headerName property to null, effectively hiding the column:
+```js
+const example = new UiModel({
+    title: "tableName",
+    columns: [
+        { field: 'field name', label: 'label name', type: 'number', headerName: null },
+    ],
+});
+``` 
+### Hiding a Column in a Form
+To hide a column in a form, set its `label` property to `null`:
+```js
+const example = new UiModel({
+    title: "tableName",
+    columns: [
+        { field: 'field name', label: null, type: 'number'}
+    ]
+});
+``` 
+
+## Min and Max Property
+The `min` and `max` properties define the valid range of values for different field types, ensuring data integrity and validation. These properties apply to the following field types:
+
+1. `date` – Restricts the date selection within a specific range. [view example](#5-type-date)
+2. `dateTime` – Limits both date and time values. [view example](#6-type-dateTime)
+3. `string` – Defines the minimum and maximum character length for text inputs. See the example below::
+4. `number` –  Ensures numeric inputs fall within the allowed range. See the example below:
+```js
+const example = new UiModel({
+    title: "tableName",
+    columns: [
+        { "type": "number | string", "min": 3, "max": 20, "required": true }
+    ]
+});
+```
