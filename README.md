@@ -182,40 +182,40 @@ export default function App() {
 
 ## Column Properties Table
 
-| **Property**        | **Type**                   | **Description**                                                                                                                                                                                   | **Defaults to** |
-| ------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `field`             | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data.                  | -               |
-| `label`             | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                                  | `field`         |
-| `headerName`        | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                                          | label           |
-| `type`              | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                                              | -               |
-| `pinned`            | `string`                   | Determines if the column is pinned to the right.                                                                                                                                                  | `left`          |
-| `sortable`          | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                                              | `true`          |
-| `filterable`        | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                                            | `true`          |
-| `editable`          | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                                                | `false`         |
-| `tab`               | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                                 | ----            |
-| `required`          | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                                 | `false`         |
-| `hide`              | `boolean`                  | Hides the column from the grid.                                                                                                                                                                   | `false`         |
-| `renderCell`        | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                                     | ---             |
-| `align`             | `string`                   | Specifies text alignment for the column (`left`, `center`, `right`).                                                                                                                              | `left`          |
-| `tooltip`           | `string`                   | Tooltip to display on hover over the column header.                                                                                                                                               | --              |
-| `width`             | `number`                   | Specifies the width of the column in pixels.                                                                                                                                                      | ---             |
-| `resizable`         | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                                         | `true`          |
-| `readOnly`          | `boolean`                  | Marks the column as read-only. When true, all form fields are disabled, including input fields, date pickers, and other interactive elements, preventing the user from typing or adding any data. | `false`         |
-| `showErrorText`     | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                                                | `false`         |
-| `min`               | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                                  | -               |
-| `max`               | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                                  | -               |
-| `multiSelect`       | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                                  | `false`         |
-| `parentComboField`  | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                                     | --              |
-| `lookup`            | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                                      | ---             |
-| `variant`           | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                                    | `standard`      |
-| `multiline`         | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                                        | `false` |
-| `rows`              | `number`                   | Number of rows to display in a multiline text field                                                                    | 5              |
-| `isUtc`             | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                                             |`false`|
-| `placeHolder`       | `string` | To Show `placeHolder` only for type `select`                                                                                                                                                      | --              |
+| **Property**       | **Type**                   | **Description**                                                                                                                                                                                   | **Defaults to** |
+| ------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `field`            | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data.                  | -               |
+| `label`            | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                                  | `field`         |
+| `headerName`       | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                                          | label           |
+| `type`             | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                                              | -               |
+| `pinned`           | `string`                   | Determines if the column is pinned to the right.                                                                                                                                                  | `left`          |
+| `sortable`         | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                                              | `true`          |
+| `filterable`       | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                                            | `true`          |
+| `editable`         | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                                                | `false`         |
+| `tab`              | `string`                   | Specifies the tab associated with this column in a tabbed layout.                                                                                                                                 | ----            |
+| `required`         | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                                 | `false`         |
+| `hide`             | `boolean`                  | Hides the column from the grid.                                                                                                                                                                   | `false`         |
+| `renderCell`       | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                                     | ---             |
+| `align`            | `string`                   | Specifies text alignment for the column of grid (`left`, `center`, `right`).                                                                                                                      | `left`          |
+| `tooltip`          | `string`                   | Tooltip to display on hover over the column header.                                                                                                                                               | --              |
+| `width`            | `number`                   | Specifies the width of the column in pixels.                                                                                                                                                      | ---             |
+| `resizable`        | `boolean`                  | Indicates if the column width can be resized by the user.                                                                                                                                         | `true`          |
+| `readOnly`         | `boolean`                  | Marks the column as read-only. When true, all form fields are disabled, including input fields, date pickers, and other interactive elements, preventing the user from typing or adding any data. | `false`         |
+| `showErrorText`    | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                                                | `false`         |
+| `min`              | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                                  | -               |
+| `max`              | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                                  | -               |
+| `multiSelect`      | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                                  | `false`         |
+| `parentComboField` | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                                     | --              |
+| `lookup`           | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                                      | ---             |
+| `variant`          | `string`                   | Specifies the variant for fields (e.g., `standard`, `filled`).                                                                                                                                    | `standard`      |
+| `multiline`        | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                                        | `false`         |
+| `rows`             | `number`                   | Number of rows to display in a multiline text field                                                                                                                                               | 5               |
+| `isUtc`            | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                                             | `false`         |
+| `placeHolder`      | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                                      | --              |
 
 ## Navigation Properties
-| **Property**       | **Type**  | **Description**| **Defaults to** |
-| ------------------ | --------- | -------------- | --------------- |
+| **Property**       | **Type**  | **Description**                                                                                                                                                                                                                                                | **Defaults to** |
+| ------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | `linkColumn`       | `string`  | The linkColumn makes a specific DataGrid column clickable, triggering actions like navigation, edit, or delete. For delete actions, it sets the record's name (from the `linkColumn`) and ID, preparing for deletion confirmation.                             | -               | -      |
 | `allowDoubleClick` | `boolean` | Controls whether double-clicking on rows is enabled. When set to `true`, users can double-click a row to trigger an action, such as opening a detailed view or editing the row. If `false`, double-clicking will have no effect.                               | `true`          |
 | `permissions`      | `object`  | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details. | true            | `true` |
@@ -307,9 +307,48 @@ Represents a **TimePicker** component.
 
 Represents a **GridTransfer** component.
 
-- This component is used to transfer columns between grids.
-- The `relation` property is used to establish a connection between the parent entity and its associated child records.
-- Example: `{ "type": "oneToMany", "relation": 'child grid' }`
+## Overview
+The `oneToMany` component in the UI model allows transferring columns between grids, where a parent record can have multiple associated child records. It establishes a relationship between the parent and child grids, enabling seamless interaction for managing linked data.
+
+## Key Points
+
+### Purpose
+- The `oneToMany` component enables transferring or linking columns between grids. This represents a relationship where one parent record can have many associated child records.
+
+### Relation Property
+- The `relation` property defines the connection between the parent entity and its associated child records. The child grid records are linked via this property.
+
+### Basic Structure
+```js { "type": "oneToMany", "relation": 'child grid' } ```
+The type specifies that it's a one-to-many relationship, and relation defines the child grid's model to be associated.
+
+### Example Use Case
+
+In a typical scenario, a parent grid (e.g., "Outlet Group") contains a oneToMany column that links to a child grid (e.g., Location.ChildGrid).
+
+```js
+const outletGroupModel = new UiModel({
+    title: "Create Group",
+    columns: [
+        { field: "LocationGroupId", type: 'number', hide: true, width: 80, label: "Group ID", fieldLabel: null },
+        { field: "GroupName", type: "string", label: "Group Name", pinned: true, width: 240, required: true, min: 5, max: 50, requiredIfNew: true, link: true },
+        { field: "Description", type: "string", label: "Description", width: 300, max: 200 },
+        { field: "IsActive", type: "boolean", label: "Active", width: 80, tab: "schedule", defaultValue: true },
+        { field: "LocationGroupMembers", type: "oneToMany", label: "Outlets", relation: Location.ChildGrid, filterable: false, sortable: false }
+    ]
+});
+```
+1. The LocationGroupMembers column in the parent grid is of type oneToMany, and its relation is set to Location.ChildGrid.
+
+2. The child grid records (from Location.ChildGrid) are displayed as selectable entries under the parent grid's "Outlets" column.
+
+3. When a user selects and assigns an outlet, it will appear in the assigned outlets grid.
+    
+<img src="src/lib/assets/images/OutletsFrom.png" alt="Grid View - Enable Back Button" width="100%"> 
+
+Now, the count will be displayed in the column of the grid. In this example, 5 records are shown.
+
+<img src="src/lib/assets/images/OutletsGrid.png" alt="Grid View - Enable Back Button" width="100%"> 
 
 ---
 
