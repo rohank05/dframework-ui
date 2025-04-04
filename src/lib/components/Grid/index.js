@@ -475,8 +475,11 @@ const GridBase = memo(({
             column.label = column?.label
         }
 
-        const auditColumns = model?.standard ?? {};
-        
+        let auditColumns = model.standard;
+        if (typeof auditColumns === 'boolean' && auditColumns) {
+            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true }
+        }
+
         if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
             const columnDefinitions = [
                 { key: "addCreatedOnColumn", field: "CreatedOn", type: "dateTime", header: "Created On" },

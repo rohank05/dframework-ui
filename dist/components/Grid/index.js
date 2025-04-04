@@ -563,7 +563,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     pinnedColumns,
     lookupMap
   } = (0, _react.useMemo)(() => {
-    var _model$standard;
     let baseColumnList = columns || (model === null || model === void 0 ? void 0 : model.gridColumns) || (model === null || model === void 0 ? void 0 : model.columns);
     if (dynamicColumns) {
       baseColumnList = [...dynamicColumns, ...baseColumnList];
@@ -641,7 +640,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       lookupMap[column.field] = column;
       column.label = column === null || column === void 0 ? void 0 : column.label;
     }
-    const auditColumns = (_model$standard = model === null || model === void 0 ? void 0 : model.standard) !== null && _model$standard !== void 0 ? _model$standard : {};
+    let auditColumns = model.standard;
+    if (typeof auditColumns === 'boolean' && auditColumns) {
+      auditColumns = {
+        addCreatedOnColumn: true,
+        addCreatedByColumn: true,
+        addModifiedOnColumn: true,
+        addModifiedByColumn: true
+      };
+    }
     if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
       const columnDefinitions = [{
         key: "addCreatedOnColumn",
