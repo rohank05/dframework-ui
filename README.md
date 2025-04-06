@@ -1,6 +1,6 @@
-# how we will use the durlabh/dframework-ui
+# How we will use the durlabh/dframework-ui
 
-**:** In Dframework we have create Multple Component for our Use
+In Dframework we have create Multple Component for our Use
 
 **1:** SnackBar
 **2:** Dialog
@@ -154,7 +154,7 @@ export default function App() {
 | `gridSubTitle`         | `string`            | Subtitle displayed below the grid title.                                                                                                                                                                                                                                                                                                                                                                                                                                           | -                 | No           |
 | `api`                  | `string`            | The API endpoint to fetch grid data.                                                                                                                                                                                                                                                                                                                                                                                                                                               | `title`           | No           |
 | `idProperty`           | `string`            | Specifies the unique identifier for grid rows.                                                                                                                                                                                                                                                                                                                                                                                                                                     | `api\|\|title`    | No           |
-| `defaultSort`          | `string`            | Specifies the default sort order for the grid data. <br> `Example:- defaultSort: CreatedOn Desc ` for sorting by CreatedOn in descending order.                                                                                                                                                                                                                                                                                                                                    | `ModifiedOn DESC` | No           |
+| `defaultSort`          | `string`            | Specifies the default sort order for the grid data. <br> `Example:- defaultSort: "CreatedOn Desc" ` for sorting by CreatedOn in descending order.                                                                                                                                                                                                                                                                                                                                    | `ModifiedOn DESC` | No           |
 | `columns`              | `array`             | The list of column definitions for the grid.  [Column Properties Table](#column-properties-table)                                                                                                                                                                                                                                                                                                                                                                                  | -                 | Yes          |
 | `paginationMode`       | `server \| client`  | Determines the pagination mode for the grid. When set to `client`, all data is loaded at once, and pagination happens on the client side. When set to `server`, data is fetched page by page from the server.                                                                                                                                                                                                                                                                      | `client`          | No           |
 | `defaultFilters`       | `array`             | Sets the default filters applied to the grid. <br> Example: `defaultFilters: [{ "field": "StatusDate", "operator": "after", "value": "2024-09-01" }]`                                                                                                                                                                                                                                                                                                                              | -                 | No           |
@@ -176,7 +176,7 @@ export default function App() {
 | `getValidationSchema`  | `function`          | Function to return the validation schema for the form.                                                                                                                                                                                                                                                                                                                                                                                                                             | -                 | No           |
 | `relations`            | `array`             | Defines the relationship configurations for related grids. </br>[View Example](#relations-example)                                                                                                                                                                                                                                                                                                                                                                                 | -                 | No           |
 | `enableBackButton`     | `boolean`           | This property controls the visibility of the back button on the Form and Grid. [View Example](#enablebackbutton-example)\| false                                                                                                                                                                                                                                                                                                                                                   | No                |
-| `exportFormats`        | `object`            | The `exportFormats` object controls the visibility of different export formats in the UI. Each key in `exportFormats` represents a file format (CSV, Excel, XML, HTML, or JSON), and its value determines whether the corresponding export option is available. [View Example](#exportFormats)                                                                                                                                                                                     | `true`            | No           |
+| `exportFormats`        | `object`            | The `exportFormats` object controls the visibility of different export formats in the UI. Each key in `exportFormats` represents a file format (CSV, Excel, XML, HTML, or JSON), and its value determines whether the corresponding export option is available. [View Example](#exportformats)                                                                                                                                                                                     | `{ excel: true,  csv: false, xml: false, html: false, json: false}`            | No           |
 
 ## Column Properties Table
 
@@ -190,7 +190,7 @@ export default function App() {
 | `sortable`         | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                             | `true`          |
 | `filterable`       | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                           | `true`          |
 | `editable`         | `boolean`                  | Indicates if the cells in the column are editable.                                                                                                                               | `false`         |
-| `tab`              | `string`                   | Specifies the tab associated with this column in a tabbed layout. [full description](#tabbed-stepper-form)                                                                       | -               |
+| `tab`              | `string`                   | Specifies the tab associated with this column in a tabbed layout. [Details](#tabbed-stepper-form)                                                                       | -               |
 | `required`         | `boolean`                  | Indicates if this column is required in the form.                                                                                                                                | `false`         |
 | `hide`             | `boolean`                  | Hides the column from the grid.                                                                                                                                                  | `false`         |
 | `renderCell`       | `function`                 | Custom function to render cell content in a MUI Data Grid. Receives { row, value, field } as arguments and returns a React element for custom cell rendering.                    | -               |
@@ -202,12 +202,12 @@ export default function App() {
 | `showErrorText`    | `boolean`                  | Indicates if error text should be displayed when validation fails.                                                                                                               | `false`         |
 | `min`              | `string \| number \| date` | Sets the minimum value. For strings and numbers, it acts as a `min` limit. For dates, it functions as `minDate`.                                                                 | -               |
 | `max`              | `string \| number \| date` | Sets the maximum value. For strings and numbers, it acts as a `max` limit. For dates, it functions as `maxDate`.                                                                 | -               |
-| `multiSelect`      | `boolean`                  | Enables multiple selections in a `Select` field.                                                                                                                                 | `false`         |
+| `multiSelect`      | `boolean`                  | Enables multiple selections. Specific to type [select](#2-type-select)                                                                                                                                 | `false`         |
 | `parentComboField` | `string`                   | Field name used to fetch dependent data for a `Select` field.                                                                                                                    | -               |
-| `lookup`           | `string`/`array`           | Defines the lookup source for dropdown values in the column.                                                                                                                     | -               |
+| `lookup`           | `string`/`array`           | Defines the lookup source for dropdown values in the column. Specific to type [select](#2-type-select)                                                                           | -               |
 | `variant`          | `string`                   | Specifies the variant for fields (e.g., standard, filled). These are MUI variants.                                                                                               | `standard`      |
-| `multiline`        | `boolean`                  | Indicates if the text field should support multiple lines.                                                                                                                       | `false`         |
-| `rows`             | `number`                   | Number of rows to display in a multiline text field                                                                                                                              | 5               |
+| `multiline`        | `boolean`                  | Indicates if the text field should support multiple lines. Specific to type [string](#3-type-string--password)                                                                   | `false`         |
+| `rows`             | `number`                   | Number of rows to display in a multiline text field. Specific to type [string](#3-type-string--password)                                                                         | 5               |
 | `isUtc`            | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            | `false`         |
 | `placeHolder`      | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | -               |
 
@@ -219,7 +219,6 @@ export default function App() {
 | `permissions`      | `object`  | Permissions for grid actions, including adding, editing, deleting, and exporting data all property is true by default. <br> Example: `permissions: { add: false, edit: false, delete: false }`. <br> See the [Actions Table](#actions-table) for more details. | `{ add: true, edit: true, delete: true }` |
 | `showHistory`      | `boolean` | Controls whether the history icon is displayed in the action column. When `true`, the history icon is shown; when `false`, it is hidden.                                                                                                                       | `true`                                    |
 | `rowRedirectLink`  | `string`  | URL to redirect to when a row is clicked. If empty, nothing happens when the user clicks on the row.                                                                                                                                                           | ""                                        |
-
 
 # **Field Components Properties Table**
 
@@ -243,32 +242,41 @@ Represents a **Checkbox** component.
 Represents a **Select** component.
 
 - Defines the lookup source for dropdown values in the column.
-- Example: `{ "type": "select", "required": true | false, lookup: 'scopetype' }`
+- Example: `{ "type": "select", "required": true, lookup: 'scopetype' }`,
+  `{ "type": "select", lookup: [{value: 1, label: "Apple"}, {value: 2, label: "Mango"}] }`,
+    `{ "type": "select", lookup: "Students", multiSelect: true }`
+---
+
+### 3. **Type: `string | password `**
+
+Represents a **TextField** component, with different behaviors depending on the specified `type`:
+
+#### Common Features
+
+- The `variant` (string) property defines the input style:
+  - `standard` (default): underline only
+  - `filled`: solid background
+  - `outlined`: bordered
 
 ---
 
-### 3. **Type: `string | number`**
+#### `string` specific
 
-Represents a **TextField** component.
+- **`autoComplete`** (string):  
+  Helps users complete forms faster, especially on mobile devices.  
+  Acts more as an autofill feature rather than traditional autocomplete.
+- Minimum (`min`) and maximum (`max`) length constraints.
+- Example:
+  ```json
+  { "type": "string", "min": 3, "max": 20, "required": true }
+  ```
 
-- **`autoComplete`** (string):
-  - Helps users complete forms faster, particularly on mobile devices.
-  - Acts more as an autofill feature rather than traditional autocomplete.
-- Minimum (min) and maximum (max) length constraints.
+### 4. **Type: `number`**
+
+Represents a **TextField** with number type input component.
+
+- Minimum (min) and maximum (max) value constraints.
 - The `variant` (string) property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: `{ "type": "string | number", "min": 3, "max": 20, "required": true | false }`
-
----
-
-### 4. **Type: `password`**
-
-Represents a **TextField** component with a hide/show password feature.
-
-- Allows a default masked value (**\*\***).
-- Requires at least 8 characters.
-- Must include uppercase, lowercase, numbers, and special characters.
-- The `variant` (string)property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: `{ "type": "password", "required": true }`
 
 ---
 
@@ -308,36 +316,28 @@ Represents a **TimePicker** component.
 Represents a **GridTransfer** component.
 
 ## Overview
+
 The `oneToMany` component in the UI model allows transferring columns between grids, where a parent record can have multiple associated child records. It establishes a relationship between the parent and child grids, enabling seamless interaction for managing linked data.
 
 ## Key Points
 
 ### Purpose
+
 - The `oneToMany` component enables transferring or linking columns between grids. This represents a relationship where one parent record can have many associated child records.
 
 ### Relation Property
+
 - The `relation` property defines the connection between the parent entity and its associated child records. The child grid records are linked via this property.
 
 ### Basic Structure
-```js { "type": "oneToMany", "relation": 'child grid' } ```
+
+`js { "type": "oneToMany", "relation": 'child grid' } `
 The type specifies that it's a one-to-many relationship, and relation defines the child grid's model to be associated.
 
 ### Example Use Case
 
 In a typical scenario, a parent grid (e.g., "Outlet Group") contains a oneToMany column that links to a child grid (e.g., Location.ChildGrid).
 
-```js
-const outletGroupModel = new UiModel({
-    title: "Create Group",
-    columns: [
-        { field: "LocationGroupId", type: 'number', hide: true, width: 80, label: "Group ID", fieldLabel: null },
-        { field: "GroupName", type: "string", label: "Group Name", pinned: true, width: 240, required: true, min: 5, max: 50, requiredIfNew: true, link: true },
-        { field: "Description", type: "string", label: "Description", width: 300, max: 200 },
-        { field: "IsActive", type: "boolean", label: "Active", width: 80, tab: "schedule", defaultValue: true },
-        { field: "LocationGroupMembers", type: "oneToMany", label: "Outlets", relation: Location.ChildGrid, filterable: false, sortable: false }
-    ]
-});
-```
 1. The LocationGroupMembers column in the parent grid is of type oneToMany, and its relation is set to Location.ChildGrid.
 
 2. The child grid records (from Location.ChildGrid) are displayed as selectable entries under the parent grid's "Outlets" column.
@@ -350,7 +350,56 @@ Now, the count will be displayed in the column of the grid. In this example, 5 r
 
 <img src="src/lib/assets/images/OutletsGrid.png" alt="Grid View - Enable Back Button" width="100%"> 
 
----
+```js
+const outletGroupModel = new UiModel({
+  title: "Create Group",
+  columns: [
+    {
+      field: "LocationGroupId",
+      type: "number",
+      hide: true,
+      width: 80,
+      label: "Group ID",
+      fieldLabel: null
+    },
+    {
+      field: "GroupName",
+      type: "string",
+      label: "Group Name",
+      pinned: true,
+      width: 240,
+      required: true,
+      min: 5,
+      max: 50,
+      requiredIfNew: true,
+      link: true
+    },
+    {
+      field: "Description",
+      type: "string",
+      label: "Description",
+      width: 300,
+      max: 200
+    },
+    {
+      field: "IsActive",
+      type: "boolean",
+      label: "Active",
+      width: 80,
+      tab: "schedule",
+      defaultValue: true
+    },
+    {
+      field: "LocationGroupMembers",
+      type: "oneToMany",
+      label: "Outlets",
+      relation: Location.ChildGrid,
+      filterable: false,
+      sortable: false
+    }
+  ]
+});
+```
 
 ### 9. **Type: `radio`**
 
@@ -451,27 +500,30 @@ const exampleConfig = {
     joinColumn: "AssociationId"
 };
 ```
+
 ### Permissions
 
 The `permissions` object controls grid actions, including adding, editing, deleting, and exporting data. All properties are `true` by default.
 
 #### Example:
+
 ```json
     permissions: { add: false, edit: false, delete: true, export: false, showColumnsOrder: false, filter: false },
 ```
 
 ## Actions Table
+
 | **Action**         | **Description**                           | **Default** | **UI Representation**            |
 | ------------------ | ----------------------------------------- | ----------- | -------------------------------- |
 | `add`              | Allows users to add a new record          | `true`      | Button to add a new record       |
 | `edit`             | Allows users to edit an existing record   | `true`      | Edit icon for modifying records  |
 | `delete`           | Allows users to delete a record           | `true`      | Delete icon for removing records |
-| `export`           | Allows users to export data               | `false`     | Export button                    |
-| `showColumnsOrder` | Allows users to reorder table columns     | `false`     | Drag-and-drop column ordering    |
-| `Filter`           | Allows users to apply filters to the data | `false`     | Filter options in UI             |
-
+| `export`           | Allows users to export data               | `true`     | Export button                    |
+| `showColumnsOrder` | Allows users to reorder table columns     | `true`     | Drag-and-drop column ordering    |
+| `filter`           | Allows users to apply filters to the data | `true`     | Filter options in UI             |
 
 ### `standard` Property
+
 The `standard` property is an object that determines which audit columns should be displayed in grid. Each key within this object represents a specific column, and setting its value to `true` enables that column, while setting it to `false` hides it.  
 
 ### Example  
@@ -499,7 +551,7 @@ The `tablePreferenceEnums` object is used to store grid preferences based on the
 
 **Structure of tablePreferenceEnums Example**
 
-``` js
+```js
    const = Example : {
       "sortModel": [
          {
@@ -555,6 +607,7 @@ The `tablePreferenceEnums` object is used to store grid preferences based on the
       }
    }
 ```
+
 ## Properties
 
 ### 1. Sorting Configuration (`sortModel`)  
@@ -625,6 +678,7 @@ Defines the structure and properties of the grid columns.
 | filterOperators | array   | Defines filtering options for the column.                        |
 
 ### Example Columns:  
+
 #### **1. Asset Serial Number Column**  
 
 | Property | Value        |
@@ -653,7 +707,7 @@ Defines which columns remain fixed on the left or right side of the grid.
 | Side  | Columns                                             |
 | ----- | --------------------------------------------------- |
 | Left  | `__check__`, `SerialNumber`, `AssetType`, `IsSmart` |
-| Right | *(None)*                                            |
+| Right | _(None)_                                            |
 
 - The left side includes a checkbox column, asset serial number, asset type, and a smart asset indicator.
 
@@ -677,12 +731,13 @@ Defines which columns remain fixed on the left or right side of the grid.
 
 ## enableBackButton Example
 
-``` js
+```js
 const example = new UiModel({
     title: "Users",
-    enableBackButton: true,
+  enableBackButton: true
 });
 ```
+
 When enableBackButton is set to true, the back button appears in two places: the grid view and the form view. See the example below:
 
 <p align="center"> 
@@ -701,6 +756,7 @@ const Example = new UiModel({
   columns: [...]
 });
 ```
+
 <img src="src/lib/assets/images/Relations.png" alt="Form View - Enable Back Button" width="100%"> 
 
 # `addUrlParamKey` and `searchParamKey` example  
@@ -732,12 +788,11 @@ const LookupType = new CommonUiModel({
             label: "Description",
             multiline: true
         }
-    ],
+  ]
 });
 ```
 
 When a user clicks on DocumentType in the first image, the pageTitle updates to DocumentType in the second image. This behavior is controlled by the addUrlParamKey property, which appends a query parameter to the URL in the format: - breadcrumbs=addUrlParamKey
-
 
 <p align="center"> <img src="src/lib/assets/images/addUrlParamKey1.png" alt="Grid View - addUrlParamKey" width="49%" style="margin-right: 5px;"> <img src="src/lib/assets/images/addUrlParamKey2.png" alt="Grid View - addUrlParamKey document grid" width="49%"> </p>
 
@@ -754,60 +809,69 @@ const Lookup = new CommonUiModel({
     columns: [...]
 });
 ```
+
 When a user clicks the history icon in the grid, they are redirected to the history of the DocumentGroup grid. The searchParamKey property ensures that the corresponding lookup type is retained, updating the pageTitle accordingly.
 
-
 ## Hiding Columns in a Grid and Form
+
 ##### There are multiple ways to hide a column in the grid:
 
-1. Using `columnVisibilityModel` from `tablePreferenceEnums` [view Example](#table-preference-enums-description  )
+1. Using `columnVisibilityModel` from `tablePreferenceEnums` [view Example](#table-preference-enums-description)
 2. Setting the `hide` Property to true
    1. You can hide a column by setting the hide property to true in the column configuration:
+
 ```js
 const example = new UiModel({
     title: "tableName",
     columns: [
-        { field: 'field name', label: 'label name', type: 'number', hide: true },
-    ],
+    { field: "field name", label: "label name", type: "number", hide: true }
+  ]
 });
 ```
+
 3. Setting `headerName` to `null`
    1. Another approach is to set the headerName property to null, effectively hiding the column:
+
 ```js
 const example = new UiModel({
     title: "tableName",
     columns: [
-        { field: 'field name', label: 'label name', type: 'number', headerName: null },
-    ],
+    {
+      field: "field name",
+      label: "label name",
+      type: "number",
+      headerName: null
+    }
+  ]
 });
 ``` 
+
 ### Hiding a Column in a Form
+
 To hide a column in a form, set its `label` property to `null`:
+
 ```js
 const example = new UiModel({
     title: "tableName",
-    columns: [
-        { field: 'field name', label: null, type: 'number'}
-    ]
+  columns: [{ field: "field name", label: null, type: "number" }]
 });
 ``` 
 
 ## Min and Max Property
+
 The `min` and `max` properties define the valid range of values for different field types, ensuring data integrity and validation. These properties apply to the following field types:
 
 1. `date` – Restricts the date selection within a specific range. [view example](#5-type-date)
 2. `dateTime` – Limits both date and time values. [view example](#6-type-dateTime)
 3. `string` – Defines the minimum and maximum character length for text inputs. See the example below::
-4. `number` –  Ensures numeric inputs fall within the allowed range. See the example below:
+4. `number` – Ensures numeric inputs fall within the allowed range. See the example below:
+
 ```js
 const example = new UiModel({
     title: "tableName",
-    columns: [
-        { "type": "number | string", "min": 3, "max": 20, "required": true }
-    ]
+  columns: [{ type: "number | string", min: 3, max: 20, required: true }]
 });
 ```
-
 
 # Tabbed Stepper Form
 
@@ -829,25 +893,60 @@ Below is an example of how to configure the Tabbed Stepper Form using UiModel:
 ```js
 const surveyModel = new UiModel({
     title: "Surveys",
-    defaultSort: 'SurveyName ASC',
-    api: 'SurveyMaster',
+  defaultSort: "SurveyName ASC",
+  api: "SurveyMaster",
     tabs: {
-        "schedule": "Schedule Survey",
-        "outlets": "Assign Outlets",
-        "users": "Assign Users",
-
+    schedule: "Schedule Survey",
+    outlets: "Assign Outlets",
+    users: "Assign Users"
     },
     formConfig: {
         showTabbed: true
     },
     columns: [
-        { field: "SurveyMasterId", type: 'number', hide: true, width: 80, label: "Survey Id", fieldLabel: null },
-        { field: "SurveyName", type: "string", label: "Name", width: 240, pinned: true, tab: "schedule", required: true, min: 5, max: 50, requiredIfNew: true, link: true },
-        { field: "LocationGroupMembers", type: "oneToMany", label: "Outlet Groups", width: 120, relation: LocationGroup.ChildGrid, countInList: true, tab: "outlets" },
-        { field: "UserMembers", type: "oneToMany", label: "Users", width: 80, relation: User.ChildGrid, countInList: true, tab: "users"},
+    {
+      field: "SurveyMasterId",
+      type: "number",
+      hide: true,
+      width: 80,
+      label: "Survey Id",
+      fieldLabel: null
+    },
+    {
+      field: "SurveyName",
+      type: "string",
+      label: "Name",
+      width: 240,
+      pinned: true,
+      tab: "schedule",
+      required: true,
+      min: 5,
+      max: 50,
+      requiredIfNew: true,
+      link: true
+    },
+    {
+      field: "LocationGroupMembers",
+      type: "oneToMany",
+      label: "Outlet Groups",
+      width: 120,
+      relation: LocationGroup.ChildGrid,
+      countInList: true,
+      tab: "outlets"
+    },
+    {
+      field: "UserMembers",
+      type: "oneToMany",
+      label: "Users",
+      width: 80,
+      relation: User.ChildGrid,
+      countInList: true,
+      tab: "users"
+    }
     ]
 });
 ```
+
 #### UI Representation
 
 After enabling the showTabbed property within formConfig, the navigation bar will be visible in the UI. Below is an example representation of the tabbed stepper:
