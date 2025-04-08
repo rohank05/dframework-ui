@@ -163,19 +163,18 @@ export default function App() {
 | `joinColumn`           | `string`            | Specifies the column used for joining data with a parent grid.                                                                                                                                                                                                                                                                                                                                                                                                                     | -                 | No           |
 | `standard`             | `object \| boolean` | The standard property defines which audit columns appear in the grid. If set to true, all sub-properties will be true; if set to false, all sub-properties will be false. If the user wishes to customize this behavior by enabling or disabling certain columns, they can pass an object. Each key represents a column, which is enabled when set to true and hidden when set to false. See the [Standard Property Columns Table](#standard-property-columns-table ) for details. | `true`            | No           |
 | `controllerType`       | `string`            | Specifies the type of controller. Use "cs" for a .NET API. If no value is provided, it defaults to a Node.js API.                                                                                                                                                                                                                                                                                                                                                                  | Node.js API       | No           |
-| `template`             | `string`            | Template configuration for exporting.                                                                                                                                                                                                                                                                                                                                                                                                                                              | -                 | No           |
+| `template`             | `string`            | Template configuration name for exporting, templates are stored inside `emailTemplates` directory at root of the project. eg. `template: "alert-notification"`                                                                                                                                                                                                                                                                                                                                                                                                                                            | -                 | No           |
 | `pivotApi`             | `string`            | API endpoint for pivot-specific data.                                                                                                                                                                                                                                                                                                                                                                                                                                              | -                 | No           |
 | `preferenceId`         | `string`            | Identifier for saved grid preferences.                                                                                                                                                                                                                                                                                                                                                                                                                                             | -                 | No           |
 | `tablePreferenceEnums` | `object`            | Enumerations for specific table preferences. [Table Preference Enums Example](#table-preference-enums-description )                                                                                                                                                                                                                                                                                                                                                                | -                 | No           |
 | `showAddIcon`          | `boolean`           | Indicates if the "Add" button icon should be displayed.                                                                                                                                                                                                                                                                                                                                                                                                                            | `false            | No           |
 | `addUrlParamKey`       | `string`            | Key for additional URL parameters when navigating to forms. [View Example](#addurlparamkey-and-searchparamkey-example)                                                                                                                                                                                                                                                                                                                                                             | -                 | No           |
 | `searchParamKey`       | `string`            | Key to be used from the URL parameters of the current route, which should be shown as the page title for the next route. [View Example](#addurlparamkey-and-searchparamkey-example)                                                                                                                                                                                                                                                                                                | -                 | No           |
-| `initialValues`        | `object`            | Initial values for form fields.                                                                                                                                                                                                                                                                                                                                                                                                                                                    | -                 | No           |
+| `initialValues`        | `object`            | Initial values for form fields. eg. `{ StudentName: 1 }`                                                                                                                                                                                                                                                                                                                                                                                                                                                   | {}                 | No           |
 | `navigateBack`         | `string\|function`  | Returns or specifies the route for navigation on cancel or save. To return to a previous route pass 'window.back'.                                                                                                                                                                                                                                                                                                                                                                 | -                 | No           |
-| `applyFieldConfig`     | `function`          | A function used to apply custom field configurations, such as disabling a date field. [View Example](#2-applyfieldconfig-column-property)                                                                                                                                                                                                                                                                                                                                          | -                 | No           |
-| `getValidationSchema`  | `function`          | Function to return the validation schema for the form.                                                                                                                                                                                                                                                                                                                                                                                                                             | -                 | No           |
+| `applyFieldConfig`     | `function`          | A function used to apply custom field configurations, such as disabling a date field. [View Example](#1-applyfieldconfig-column-property)                                                                                                                                                                                                                                                                                                                                        | -                 | No           |
 | `relations`            | `array`             | Defines the relationship configurations for related grids. </br>[View Example](#relations-example)                                                                                                                                                                                                                                                                                                                                                                                 | -                 | No           |
-| `enableBackButton`     | `boolean`           | This property controls the visibility of the back button on the Form and Grid. [View Example](#enablebackbutton-example)\| false                                                                                                                                                                                                                                                                                                                                                   | No                |
+| `enableBackButton`     | `boolean`           | This property controls the visibility of the back button on the Form and Grid. [View Example](#enablebackbutton-example)\| false                                                                                                                                                                                                                                                                                                                                                   | true                |
 | `exportFormats`        | `object`            | The `exportFormats` object controls the visibility of different export formats in the UI. Each key in `exportFormats` represents a file format (CSV, Excel, XML, HTML, or JSON), and its value determines whether the corresponding export option is available. [View Example](#exportformats)                                                                                                                                                                                     | `{ excel: true,  csv: false, xml: false, html: false, json: false}`            | No           |
 
 ## Column Properties Table
@@ -185,7 +184,7 @@ export default function App() {
 | `field`            | `string`                   | Specifies the name of the field displayed in the column. This property is used to map the column to the corresponding data field, enabling the grid to display the correct data. | -               |
 | `label`            | `string \| null`           | Displays the column name in both the form and the grid. If set to null, the column will be hidden from the form.                                                                 | `field`         |
 | `headerName`       | `string \| null`           | "The label displayed as the column header in the grid, or set to null to hide the column from the grid."                                                                         | `label`         |
-| `type`             | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer Field Types section                                                                             | -               |
+| `type`             | `string`                   | Specifies the type of data in the column (e.g., `number`, `string`) please refer [Field Component properties table](#field-components-properties-table)                                                                             | -               |
 | `pinned`           | `string`                   | Determines if the column is pinned to the right.                                                                                                                                 | `left`          |
 | `sortable`         | `boolean`                  | Specifies if the column can be sorted. This is Mui DataGrid property                                                                                                             | `true`          |
 | `filterable`       | `boolean`                  | Specifies if the column can be filtered. This is Mui DataGrid property                                                                                                           | `true`          |
@@ -209,7 +208,7 @@ export default function App() {
 | `multiline`        | `boolean`                  | Indicates if the text field should support multiple lines. Specific to type [string](#3-type-string--password)                                                                   | `false`         |
 | `rows`             | `number`                   | Number of rows to display in a multiline text field. Specific to type [string](#3-type-string--password)                                                                         | 5               |
 | `isUtc`            | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            | `false`         |
-| `placeHolder`      | `string`                   | To Show `placeHolder` only for type `select`                                                                                                                                     | -               |
+| `placeHolder`      | `string`                   | To Show `placeHolder` only for type [select](#2-type-select)                                                                                                                                     | -               |
 
 ## Navigation Properties
 | **Property**       | **Type**  | **Description**                                                                                                                                                                                                                                                | **Defaults to**                           |
@@ -233,7 +232,7 @@ Represents a **Checkbox** component.
 - Allows true, false values.
 - **`disabled`** (boolean): Determines whether the checkbox is interactive.
   - When `disabled` is set to `true`, users cannot change the checkbox value.
-- Example: `{ "type": "boolean", "required": true | false }`
+- Example: `{ "type": "boolean", "required": true | false, "field": "IsActive", "label": "Active ?" }`
 
 ---
 
@@ -242,12 +241,12 @@ Represents a **Checkbox** component.
 Represents a **Select** component.
 
 - Defines the lookup source for dropdown values in the column.
-- Example: `{ "type": "select", "required": true, lookup: 'scopetype' }`,
-  `{ "type": "select", lookup: [{value: 1, label: "Apple"}, {value: 2, label: "Mango"}] }`,
-    `{ "type": "select", lookup: "Students", multiSelect: true }`
+- Example: `{ "type": "select", "required": true, lookup: 'scopetype' }`, // load select data from 'scopetype' lookup.
+  `{ "type": "select", lookup: [{value: 1, label: "Apple"}, {value: 2, label: "Mango"}] }`, // loads data from static array of values
+    `{ "type": "select", lookup: "students", multiSelect: true }` //implements a multi-select
 ---
 
-### 3. **Type: `string | password `**
+### 3. **Type: `string | password | email`**
 
 Represents a **TextField** component, with different behaviors depending on the specified `type`:
 
@@ -260,24 +259,27 @@ Represents a **TextField** component, with different behaviors depending on the 
 
 ---
 
-#### `string` specific
+#### `string` specific features
 
 - **`autoComplete`** (string):  
   Helps users complete forms faster, especially on mobile devices.  
   Acts more as an autofill feature rather than traditional autocomplete.
-- Minimum (`min`) and maximum (`max`) length constraints.
+- `min` (Minimum) and `max` (Maximum) length constraints.
 - Example:
-  ```json
-  { "type": "string", "min": 3, "max": 20, "required": true }
-  ```
+  `
+  { "type": "string", "min": 3, "max": 20, "required": true, "field": "Name" }
+  `
 
 ### 4. **Type: `number`**
 
 Represents a **TextField** with number type input component.
 
-- Minimum (min) and maximum (max) value constraints.
+- `min` (Minimum) and `max` (Maximum) value constraints.
 - The `variant` (string) property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-
+ Example:
+  `
+  { "type": "number", "min": 3, "max": 20, "required": true, "field": "RollNo", "label": "Roll number" }
+  `
 ---
 
 ### 5. **Type: `date`**
@@ -289,7 +291,11 @@ Represents a **DatePicker** component.
 - Requires a valid date format.
 - This component is used for selecting a date only.
 - Supports min and max date restrictions.
-- Example: `{ "type": "date", "required": true,  "min": "2023-01-01", "max": "2024-12-31" }`
+- The value inside min and max can be either of the following
+  - Date objects
+  - Timestamp 
+  - Date strings
+- Example: `{  "type": "date", "required": true,  "min": "2023-01-01", "max": "2024-12-31", "field": "ScheduledOn"  }`
 
 ---
 
@@ -298,7 +304,7 @@ Represents a **DatePicker** component.
 Represents a **DateTimePicker** component.
 
 - Similar to date, but this component is used for selecting both **date** and **time**.
-- Example: `{ "type": "dateTime", "required": true, "min": "2023-01-01", "max": "2024-12-31" }`
+- Example: `{ "type": "dateTime", "required": true, "min": "2023-01-01", "max": "2024-12-31", "field": "ScheduledOn" }`
 
 ---
 
@@ -307,7 +313,7 @@ Represents a **DateTimePicker** component.
 Represents a **TimePicker** component.
 
 - This component is used for selecting **time**.
-- Example: `{ "type": "time", "required": true }`
+- Example: `{ "type": "time", "required": true, "field": "ScheduledOn" }`
 
 ---
 
@@ -315,26 +321,26 @@ Represents a **TimePicker** component.
 
 Represents a **GridTransfer** component.
 
-## Overview
+#### Overview
 
 The `oneToMany` component in the UI model allows transferring columns between grids, where a parent record can have multiple associated child records. It establishes a relationship between the parent and child grids, enabling seamless interaction for managing linked data.
 
-## Key Points
+#### Key Points
 
-### Purpose
+##### Purpose
 
 - The `oneToMany` component enables transferring or linking columns between grids. This represents a relationship where one parent record can have many associated child records.
 
-### Relation Property
+##### Relation Property
 
 - The `relation` property defines the connection between the parent entity and its associated child records. The child grid records are linked via this property.
 
-### Basic Structure
+##### Basic Structure
 
-`js { "type": "oneToMany", "relation": 'child grid' } `
+`{ "type": "oneToMany", "relation": 'child grid' }`
 The type specifies that it's a one-to-many relationship, and relation defines the child grid's model to be associated.
 
-### Example Use Case
+##### Example Use Case
 
 In a typical scenario, a parent grid (e.g., "Outlet Group") contains a oneToMany column that links to a child grid (e.g., Location.ChildGrid).
 
@@ -416,7 +422,7 @@ Represents an **AutocompleteField** component.
 
 - Defines the lookup source for dropdown values in the column.
 - The **`Autocomplete`** component enhances text input by providing a dropdown list of suggested options while allowing free text entry. It is useful for search fields, selection lists, and filtering.
-- Example: `{ "type": "Autocomplete", "lookup": 'Region' }`
+- Example: `{ field: "RegionIds", label: "Regions",  "type": "Autocomplete", "lookup": 'Region' }`
 
 ---
 
@@ -427,53 +433,43 @@ Represents a **DaySelection** component.
 - The **DaySelection** component allows users to choose days in two ways:  
   ?? **Predefined options** � **Weekends (Sat-Sun)** or **Weekdays (Mon-Fri)**.  
   ?? **Custom selection** � Users manually pick specific days.
-- Example: `{ "type": "dayRadio" }`
+- Example: `{ field: "ScheduledOn", label: "Scheduled Day", "type": "dayRadio" }`
 
 ---
 
-### 12. **Type: `email`**
-
-Represents a **TextField** component used for email input.
-
-- Must follow a valid email format.
-- The `variant` (string)property defines the input style: `standard` (default) with an underline, `filled` with a solid background, and `outlined` with a border.
-- Example: `{ "type": "email", "required": true | false }`
-
----
-
-### 13. **Type: `treeCheckbox`**
+### 12. **Type: `treeCheckbox`**
 
 Represents a **SimpleTreeView** component.
 
-- A simplified version of the Tree View component that receives its items as an array. This version is recommended for use with hardcoded items.
-- Example: `{ "type": "treeCheckbox" }`
+- A tree view component that represents checkboxes in tree view.
+- Example: `{ field: "RegionId", label: "Region Name", "type": "treeCheckbox", lookup:"Regions" }`  //fetches the data using `Regions` lookup and renders a tree view of checkboxes for selection.
 
 ---
 
-### 14. **Type: `document`**
+### 13. **Type: `document`**
 
 Represents a **file upload document** component.
 
 - Users can either enter an external document link or upload a file.
 - Dynamically switches between these options based on user selection.
-- Example: `{ "type": "document" }`
+- Example: `{ field: "DocId", label: "Document",  "type": "document" }`
 
 ---
 
-### 15. **Type: `json`**
+### 14. **Type: `json`**
 
 Represents a **JSON Field** component.
 
 - This component dynamically generates input fields based on a JSON object stored in a Formik field. It allows users to edit key-value pairs within the JSON structure and automatically updates the Formik state with a debounced delay.
-- Example: `{ "type": "json" }`
+- Example: `{ field: "Hookups", "type": "json" }`
 
 ---
 
 ## **Examples**
 
-## 1. **applyFieldConfig** column property.
+### 1. `applyFieldConfig` column property.
 
-### Example
+#### Example
 
 ```js
 applyFieldConfig: function ({ data }) {
@@ -488,7 +484,7 @@ applyFieldConfig: function ({ data }) {
 }
 ```
 
-### 2. **joinColumn** column property.
+### 2. `joinColumn` column property.
 
 ```js
 const exampleConfig = {
@@ -500,8 +496,9 @@ const exampleConfig = {
     joinColumn: "AssociationId"
 };
 ```
+---
 
-### Permissions
+## Permissions
 
 The `permissions` object controls grid actions, including adding, editing, deleting, and exporting data. All properties are `true` by default.
 
@@ -536,12 +533,21 @@ standard: { addCreatedOnColumn: true, addCreatedByColumn: false, addModifiedOnCo
 
 ## Standard Property Columns Table  
 
-| Property              | Type    | Description                      | Default |
-| --------------------- | ------- | -------------------------------- | ------- |
-| `addCreatedOnColumn`  | boolean | Enables the "Created On" column  | `false` |
-| `addCreatedByColumn`  | boolean | Enables the "Created By" column  | `false` |
-| `addModifiedOnColumn` | boolean | Enables the "Modified On" column | `false` |
-| `addModifiedByColumn` | boolean | Enables the "Modified By" column | `false` |
+`standard : true` equates to  
+```js
+{ addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true }
+```
+
+`standard : false` equates to  
+```js
+{ addCreatedOnColumn: false, addCreatedByColumn: false, addModifiedOnColumn: false, addModifiedByColumn: false }
+```
+| Property              | Type    | Description                      | Default | DB Field         |
+| ---------------------| ------- | -------------------------------- | ------- | ---------------- |
+| `addCreatedOnColumn`  | boolean | Enables the "Created On" column  | `true`  | `CreatedOn`      |
+| `addCreatedByColumn`  | boolean | Enables the "Created By" column  | `true`  | `CreatedByUserId`      |
+| `addModifiedOnColumn` | boolean | Enables the "Modified On" column | `true`  | `ModifiedOn`     |
+| `addModifiedByColumn` | boolean | Enables the "Modified By" column | `true`  | `ModifiedByUserId`     |
 
 ## Table Preference Enums Description   
 
@@ -625,13 +631,13 @@ Defines the sorting behavior of the grid.
 
 ### 2. Filtering Configuration (`filterModel`)  
 
-Defines the filter settings for the grid.  
+Defines the filter settings for the grid, as per the standard filter model of MUI.
 
 | Field                    | Type   | Description                                                             |
 | ------------------------ | ------ | ----------------------------------------------------------------------- |
-| items                    | array  | Holds the individual filter conditions (currently empty).               |
-| logicOperator            | string | Defines the logical relationship between filters (`and` or `or`).       |
-| quickFilterValues        | array  | Holds quick filter values (currently empty).                            |
+| items                    | array  | Holds the individual filter conditions. (from MUI filter model)              |
+| logicOperator            | string | Defines the logical relationship between filters (`and` or `or`).      |
+| quickFilterValues        | array  | Holds quick filter values (from MUI filter model).                            |
 | quickFilterLogicOperator | string | Defines the logical relationship between quick filters (`and` or `or`). |
 
 - Currently, no filters are applied.
@@ -641,7 +647,7 @@ Defines the filter settings for the grid.
 ### 3. Column Visibility Settings (`columnVisibilityModel`)  
 
 Defines which columns are visible in the grid.  
-
+example: 
 | Column Name      | Visibility (`false` = hidden) |
 | ---------------- | ----------------------------- |
 | CreatedOn        | false                         |
@@ -657,7 +663,7 @@ Defines which columns are visible in the grid.
 | LocationRoute    | false                         |
 | PlanogramName    | false                         |
 
-- These columns are hidden in the grid.
+These columns are hidden in the grid.
 
 ---
 
