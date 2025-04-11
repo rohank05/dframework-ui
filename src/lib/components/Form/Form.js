@@ -87,7 +87,7 @@ const Form = ({
     if (typeof navigateBack === "function") {
       navigatePath = navigateBack({ params, searchParams, data });
     } else {
-      navigatePath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = typeof navigateBack === "string" ?  navigateBack  : pathname.substring(0, pathname.lastIndexOf("/"));
     }
 
     if(navigatePath.includes("window.history")) {

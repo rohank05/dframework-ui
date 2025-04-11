@@ -136,7 +136,7 @@ const Form = _ref => {
         data
       });
     } else {
-      navigatePath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
     }
     if (navigatePath.includes("window.history")) {
       window.history.back();

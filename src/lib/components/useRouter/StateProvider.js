@@ -40,7 +40,7 @@ const StateProvider = ({ children }) => {
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
-  async function getAllSavedPreferences({ preferenceName, Username, history, dispatchData, preferenceApi, tablePreferenceEnums = {}, addDefaultPreference = false }) {
+  async function getAllSavedPreferences({ preferenceName, Username, history, dispatchData, preferenceApi, defaultPreferenceEnums = {}, addDefaultPreference = false }) {
     const params = {
       action: 'list',
       id: preferenceName,
@@ -54,7 +54,7 @@ const StateProvider = ({ children }) => {
         "prefId": 0,
         "GridId": preferenceName,
         "GridPreferenceId": 0,
-        "prefValue": tablePreferenceEnums[preferenceName],
+        "prefValue": defaultPreferenceEnums[preferenceName],
       }
       preferences = [defaultPref, ...preferences];
     }
@@ -73,7 +73,7 @@ const StateProvider = ({ children }) => {
   const filterNonExistingColumns = ({ gridRef, data }) => {
     return data.filter(ele => gridRef.current.getColumnIndex(ele.field) !== -1);
   };
-  async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums = {} }) {
+  async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums = {} }) {
     const params = {
       action: 'default',
       id: preferenceName,
@@ -81,7 +81,7 @@ const StateProvider = ({ children }) => {
     }
 
     const response = await request({ url: preferenceApi, params, history, dispatchData });
-    let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
+    let userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
       userPreferenceCharts.gridColumn = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.gridColumn });
       userPreferenceCharts.sortModel = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.sortModel });

@@ -283,7 +283,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const [record, setRecord] = (0, _react.useState)(null);
   const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
-  const paginationMode = model.paginationMode === 'server' ? 'server' : 'client';
+  const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
   const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
   const initialFilterModel = {
@@ -319,7 +319,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     hideTopFilters = true,
     updatePageTitle = true,
     isElasticScreen = false,
-    enableBackButton = false,
+    navigateBack = false,
     selectionApi = {}
   } = model;
   const isReadOnly = model.readOnly === true || readOnly;
@@ -353,7 +353,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
   const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
-  const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.tablePreferenceEnums;
+  const defaultPreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.defaultPreferenceEnums;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData || {};
   const documentField = ((_model$columns$find = model.columns.find(ele => ele.type === 'document')) === null || _model$columns$find === void 0 ? void 0 : _model$columns$find.field) || "";
@@ -575,7 +575,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const lookupMap = {};
     for (const column of baseColumnList) {
       const overrides = {};
-      if (column.headerName === null) {
+      if (column.gridLable === null) {
         continue;
       }
       if (parent && column.lookup === parent) {
@@ -629,10 +629,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       if (column.link) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
-      const headerName = column.headerName || column.label;
+      const gridLable = column.gridLable || column.label;
       finalColumns.push(_objectSpread(_objectSpread({
-        headerName,
-        description: headerName
+        gridLable,
+        description: gridLable
       }, column), overrides));
       if (column.pinned) {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -683,7 +683,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           const column = {
             field,
             type,
-            headerName: header,
+            gridLable: header,
             width: 200
           };
           if (type === "dateTime") {
@@ -865,7 +865,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       setError: snackbar.showError,
       contentType,
       columns,
-      template: isPivotExport ? model === null || model === void 0 ? void 0 : model.template : null,
+      template: isPivotExport ? model === null || model === void 0 ? void 0 : model.exportTemplate : null,
       configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null,
       dispatchData,
       showFullScreenLoader,
@@ -1201,7 +1201,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         dispatchData,
         Username,
         preferenceApi,
-        tablePreferenceEnums
+        defaultPreferenceEnums
       });
       applyDefaultPreferenceIfExists({
         preferenceName,
@@ -1211,7 +1211,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         gridRef: apiRef,
         setIsGridPreferenceFetched,
         preferenceApi,
-        tablePreferenceEnums
+        defaultPreferenceEnums
       });
     }
   }, [preferenceApi]);
@@ -1311,7 +1311,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       columns[ele] = {
         field: ele,
         width: lookup[ele].width,
-        headerName: lookup[ele].headerName || lookup[ele].field,
+        gridLable: lookup[ele].gridLable || lookup[ele].field,
         type: lookup[ele].type,
         keepLocal: lookup[ele].keepLocal === true,
         isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable,
@@ -1470,7 +1470,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
-    enableBackButton: enableBackButton,
+    enableBackButton: navigateBack,
     breadcrumbColor: breadcrumbColor
   }), /*#__PURE__*/_react.default.createElement(_material.Card, {
     style: gridStyle || customStyle,

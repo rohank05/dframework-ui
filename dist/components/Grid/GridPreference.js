@@ -52,27 +52,27 @@ const gridColumns = [{
   field: "prefName",
   type: 'string',
   width: 300,
-  headerName: "Preference Name",
+  gridLable: "Preference Name",
   sortable: false,
   filterable: false
 }, {
   field: "prefDesc",
   type: 'string',
   width: 300,
-  headerName: "Preference Description",
+  gridLable: "Preference Description",
   sortable: false,
   filterable: false
 }, {
   field: "isDefault",
   type: "boolean",
   width: 100,
-  headerName: "Default",
+  gridLable: "Default",
   sortable: false,
   filterable: false
 }, {
   field: 'editAction',
   type: 'actions',
-  headerName: '',
+  gridLable: '',
   width: 20,
   getActions: () => [/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
     key: 1,
@@ -87,7 +87,7 @@ const gridColumns = [{
 }, {
   field: 'deleteAction',
   type: 'actions',
-  headerName: '',
+  gridLable: '',
   width: 20,
   getActions: () => [/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
     key: 2,
@@ -137,7 +137,7 @@ const GridPreferences = _ref => {
   const preferences = stateData === null || stateData === void 0 ? void 0 : stateData.preferences;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
-  const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.tablePreferenceEnums;
+  const defaultPreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.defaultPreferenceEnums;
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
@@ -277,15 +277,15 @@ const GridPreferences = _ref => {
       history: navigate,
       dispatchData,
       preferenceApi,
-      tablePreferenceEnums
+      defaultPreferenceEnums
     });
   };
   const applyPreference = async prefId => {
     let userPreferenceCharts;
     let defaultPreference = 'Default';
-    // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
+    // Check if prefId is 0, if so, use defaultPreferenceEnums, otherwise fetch from API
     if (prefId === 0) {
-      userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
+      userPreferenceCharts = defaultPreferenceEnums[preferenceName] || null;
     } else {
       const params = {
         action: 'load',
@@ -368,7 +368,7 @@ const GridPreferences = _ref => {
       dispatchData,
       Username,
       preferenceApi,
-      tablePreferenceEnums
+      defaultPreferenceEnums
     });
     setOpenConfirmDeleteDialog({});
   };

@@ -28,11 +28,11 @@ const formTypes = {
 };
 
 const gridColumns = [
-    { field: "prefName", type: 'string', width: 300, headerName: "Preference Name", sortable: false, filterable: false },
-    { field: "prefDesc", type: 'string', width: 300, headerName: "Preference Description", sortable: false, filterable: false },
-    { field: "isDefault", type: "boolean", width: 100, headerName: "Default", sortable: false, filterable: false },
-    { field: 'editAction', type: 'actions', headerName: '', width: 20, getActions: () => [<GridActionsCellItem key={1} icon={<Tooltip title={actionTypes.Edit}>   <EditIcon /></Tooltip>} tabIndex={1} data-action={actionTypes.Edit} label="Edit" color="primary" />] },
-    { field: 'deleteAction', type: 'actions', headerName: '', width: 20, getActions: () => [<GridActionsCellItem key={2} icon={<Tooltip title={actionTypes.Delete}><DeleteIcon /> </Tooltip>} tabIndex={2} data-action={actionTypes.Delete} label="Delete" color="error" />] }
+    { field: "prefName", type: 'string', width: 300, gridLable: "Preference Name", sortable: false, filterable: false },
+    { field: "prefDesc", type: 'string', width: 300, gridLable: "Preference Description", sortable: false, filterable: false },
+    { field: "isDefault", type: "boolean", width: 100, gridLable: "Default", sortable: false, filterable: false },
+    { field: 'editAction', type: 'actions', gridLable: '', width: 20, getActions: () => [<GridActionsCellItem key={1} icon={<Tooltip title={actionTypes.Edit}>   <EditIcon /></Tooltip>} tabIndex={1} data-action={actionTypes.Edit} label="Edit" color="primary" />] },
+    { field: 'deleteAction', type: 'actions', gridLable: '', width: 20, getActions: () => [<GridActionsCellItem key={2} icon={<Tooltip title={actionTypes.Delete}><DeleteIcon /> </Tooltip>} tabIndex={2} data-action={actionTypes.Delete} label="Delete" color="error" />] }
 ];
 
 const initialValues = {
@@ -58,7 +58,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const preferences = stateData?.preferences;
     const currentPreference = stateData?.currentPreference;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
+    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);
     const validationSchema = useMemo(() => {
@@ -166,15 +166,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         if (response === true || response?.success === true) {
             snackbar.showMessage(`Preference ${action} Successfully.`);
         }
-        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
+        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, defaultPreferenceEnums });
     }
 
     const applyPreference = async (prefId) => {
         let userPreferenceCharts;
         let defaultPreference = 'Default';
-        // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
+        // Check if prefId is 0, if so, use defaultPreferenceEnums, otherwise fetch from API
         if (prefId === 0) {
-            userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
+            userPreferenceCharts = defaultPreferenceEnums[preferenceName] || null;
         } else {
             const params = {
                 action: 'load',
@@ -229,7 +229,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const confirmDeletePreference = async () => {
         const { prefId, preferenceName: currentPrefname } = openConfirmDeleteDialog;
         await deletePreference(prefId, currentPrefname);
-        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
         setOpenConfirmDeleteDialog({});
     }
 

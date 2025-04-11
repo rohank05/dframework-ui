@@ -191,7 +191,7 @@ const GridBase = memo(({
     const [record, setRecord] = useState(null);
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
-    const paginationMode = model.paginationMode === 'server' ? 'server' : 'client';
+    const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
@@ -206,7 +206,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableBackButton = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
@@ -222,7 +222,7 @@ const GridBase = memo(({
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
+    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
@@ -241,7 +241,6 @@ const GridBase = memo(({
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const preferenceName = model.preferenceId || model.module?.preferenceId;
-    
     const searchParams = new URLSearchParams(window.location.search);
 
     let baseSaveData = {};
@@ -406,7 +405,7 @@ const GridBase = memo(({
         const lookupMap = {};
         for (const column of baseColumnList) {
             const overrides = {};
-            if (column.headerName === null) {
+            if (column.gridLable === null) {
                 continue;
             }
             if (parent && column.lookup === parent) {
@@ -466,8 +465,8 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            const headerName = column.headerName || column.label;
-            finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
+            const gridLable = column.gridLable || column.label;
+            finalColumns.push({ gridLable, description: gridLable, ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
@@ -490,7 +489,7 @@ const GridBase = memo(({
 
             columnDefinitions.forEach(({ key, field, type, header }) => {
                 if (auditColumns[key] === true) {  // Ensure the value is explicitly true
-                    const column = { field, type, headerName: header, width: 200 };
+                    const column = { field, type, gridLable: header, width: 200 };
 
                     if (type === "dateTime") {
                         column.filterOperators = LocalizedDatePicker({ columnType: "date" });
@@ -614,7 +613,7 @@ const GridBase = memo(({
             setError: snackbar.showError,
             contentType,
             columns,
-            template: isPivotExport ? model?.template : null,
+            template: isPivotExport ? model?.exportTemplate : null,
             configFileName: isPivotExport ? model?.configFileName : null,
             dispatchData,
             showFullScreenLoader,
@@ -902,8 +901,8 @@ const GridBase = memo(({
     useEffect(() => {
         if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
         }
     }, [preferenceApi])
 
@@ -979,7 +978,7 @@ const GridBase = memo(({
         }
 
         visibleColumns.forEach(ele => {
-            columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable, lookup: lookup[ele].lookup };
+            columns[ele] = { field: ele, width: lookup[ele].width, gridLable: lookup[ele].gridLable || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable, lookup: lookup[ele].lookup };
         })
         fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     };
@@ -1102,7 +1101,7 @@ const GridBase = memo(({
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} enableBackButton={enableBackButton} breadcrumbColor={breadcrumbColor} />
+                breadcrumbs={breadCrumbs} enableBackButton={navigateBack} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
