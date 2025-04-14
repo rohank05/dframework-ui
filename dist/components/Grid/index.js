@@ -629,10 +629,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       if (column.link) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
-      const gridLabel = column.gridLabel || column.label;
+      const headerName = column.gridLabel || column.label;
       finalColumns.push(_objectSpread(_objectSpread({
-        gridLabel,
-        description: gridLabel
+        headerName,
+        description: headerName
       }, column), overrides));
       if (column.pinned) {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -683,7 +683,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           const column = {
             field,
             type,
-            gridLabel: header,
+            headerName: header,
             width: 200
           };
           if (type === "dateTime") {
@@ -1311,7 +1311,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       columns[ele] = {
         field: ele,
         width: lookup[ele].width,
-        gridLabel: lookup[ele].gridLabel || lookup[ele].field,
+        headerName: lookup[ele].headerName || lookup[ele].field,
         type: lookup[ele].type,
         keepLocal: lookup[ele].keepLocal === true,
         isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable,

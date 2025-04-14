@@ -52,27 +52,27 @@ const gridColumns = [{
   field: "prefName",
   type: 'string',
   width: 300,
-  gridLabel: "Preference Name",
+  headerName: "Preference Name",
   sortable: false,
   filterable: false
 }, {
   field: "prefDesc",
   type: 'string',
   width: 300,
-  gridLabel: "Preference Description",
+  headerName: "Preference Description",
   sortable: false,
   filterable: false
 }, {
   field: "isDefault",
   type: "boolean",
   width: 100,
-  gridLabel: "Default",
+  headerName: "Default",
   sortable: false,
   filterable: false
 }, {
   field: 'editAction',
   type: 'actions',
-  gridLabel: '',
+  headerName: '',
   width: 20,
   getActions: () => [/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
     key: 1,
@@ -87,7 +87,7 @@ const gridColumns = [{
 }, {
   field: 'deleteAction',
   type: 'actions',
-  gridLabel: '',
+  headerName: '',
   width: 20,
   getActions: () => [/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
     key: 2,

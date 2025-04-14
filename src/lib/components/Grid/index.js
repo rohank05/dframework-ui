@@ -465,8 +465,8 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            const gridLabel = column.gridLabel || column.label;
-            finalColumns.push({ gridLabel, description: gridLabel, ...column, ...overrides });
+            const headerName = column.gridLabel || column.label;
+            finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
@@ -489,7 +489,7 @@ const GridBase = memo(({
 
             columnDefinitions.forEach(({ key, field, type, header }) => {
                 if (auditColumns[key] === true) {  // Ensure the value is explicitly true
-                    const column = { field, type, gridLabel: header, width: 200 };
+                    const column = { field, type, headerName: header, width: 200 };
 
                     if (type === "dateTime") {
                         column.filterOperators = LocalizedDatePicker({ columnType: "date" });
@@ -978,7 +978,7 @@ const GridBase = memo(({
         }
 
         visibleColumns.forEach(ele => {
-            columns[ele] = { field: ele, width: lookup[ele].width, gridLabel: lookup[ele].gridLabel || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable, lookup: lookup[ele].lookup };
+            columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable, lookup: lookup[ele].lookup };
         })
         fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
     };

@@ -28,11 +28,11 @@ const formTypes = {
 };
 
 const gridColumns = [
-    { field: "prefName", type: 'string', width: 300, gridLabel: "Preference Name", sortable: false, filterable: false },
-    { field: "prefDesc", type: 'string', width: 300, gridLabel: "Preference Description", sortable: false, filterable: false },
-    { field: "isDefault", type: "boolean", width: 100, gridLabel: "Default", sortable: false, filterable: false },
-    { field: 'editAction', type: 'actions', gridLabel: '', width: 20, getActions: () => [<GridActionsCellItem key={1} icon={<Tooltip title={actionTypes.Edit}>   <EditIcon /></Tooltip>} tabIndex={1} data-action={actionTypes.Edit} label="Edit" color="primary" />] },
-    { field: 'deleteAction', type: 'actions', gridLabel: '', width: 20, getActions: () => [<GridActionsCellItem key={2} icon={<Tooltip title={actionTypes.Delete}><DeleteIcon /> </Tooltip>} tabIndex={2} data-action={actionTypes.Delete} label="Delete" color="error" />] }
+    { field: "prefName", type: 'string', width: 300, headerName: "Preference Name", sortable: false, filterable: false },
+    { field: "prefDesc", type: 'string', width: 300, headerName: "Preference Description", sortable: false, filterable: false },
+    { field: "isDefault", type: "boolean", width: 100, headerName: "Default", sortable: false, filterable: false },
+    { field: 'editAction', type: 'actions', headerName: '', width: 20, getActions: () => [<GridActionsCellItem key={1} icon={<Tooltip title={actionTypes.Edit}>   <EditIcon /></Tooltip>} tabIndex={1} data-action={actionTypes.Edit} label="Edit" color="primary" />] },
+    { field: 'deleteAction', type: 'actions', headerName: '', width: 20, getActions: () => [<GridActionsCellItem key={2} icon={<Tooltip title={actionTypes.Delete}><DeleteIcon /> </Tooltip>} tabIndex={2} data-action={actionTypes.Delete} label="Delete" color="error" />] }
 ];
 
 const initialValues = {
