@@ -575,7 +575,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const lookupMap = {};
     for (const column of baseColumnList) {
       const overrides = {};
-      if (column.gridLable === null) {
+      if (column.gridLabel === null) {
         continue;
       }
       if (parent && column.lookup === parent) {
@@ -629,10 +629,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       if (column.link) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
-      const gridLable = column.gridLable || column.label;
+      const gridLabel = column.gridLabel || column.label;
       finalColumns.push(_objectSpread(_objectSpread({
-        gridLable,
-        description: gridLable
+        gridLabel,
+        description: gridLabel
       }, column), overrides));
       if (column.pinned) {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -683,7 +683,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           const column = {
             field,
             type,
-            gridLable: header,
+            gridLabel: header,
             width: 200
           };
           if (type === "dateTime") {
@@ -1311,7 +1311,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       columns[ele] = {
         field: ele,
         width: lookup[ele].width,
-        gridLable: lookup[ele].gridLable || lookup[ele].field,
+        gridLabel: lookup[ele].gridLabel || lookup[ele].field,
         type: lookup[ele].type,
         keepLocal: lookup[ele].keepLocal === true,
         isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable,
