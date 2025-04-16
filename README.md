@@ -351,11 +351,11 @@ In a typical scenario, a parent grid (e.g., "Outlet Group") contains a oneToMany
 
 3. When a user selects and assigns an outlet, it will appear in the assigned outlets grid.
     
-<img src="src/lib/assets/images/OutletsFrom.png" alt="Grid View - Enable Back Button" width="100%"> 
+<img src="docs/images/OutletsFrom.png" alt="Grid View - Enable Back Button" width="100%"> 
 
 Now, the count will be displayed in the column of the grid. In this example, 5 records are shown.
 
-<img src="src/lib/assets/images/OutletsGrid.png" alt="Grid View - Enable Back Button" width="100%"> 
+<img src="docs/images/OutletsGrid.png" alt="Grid View - Enable Back Button" width="100%"> 
 
 ```js
 const outletGroupModel = new UiModel({
@@ -583,8 +583,8 @@ const example = new UiModel({
 When navigateBack is set to true or any string or any function, the back button appears in two places: the grid view and the form view. See the example below:
 
 <p align="center"> 
-<img src="src/lib/assets/images/enableBack1.png" alt="Grid View - Enable Back Button" width="49%" style="margin-right: 5px;"> 
-<img src="src/lib/assets/images/enableBack2.png" alt="Form View - Enable Back Button" width="49%"> 
+<img src="docs/images/enableBack1.png" alt="Grid View - Enable Back Button" width="49%" style="margin-right: 5px;"> 
+<img src="docs/images/enableBack2.png" alt="Form View - Enable Back Button" width="49%"> 
 </p>
 
 ### navigateBack type function example
@@ -610,7 +610,7 @@ const Example = new UiModel({
 });
 ```
 
-<img src="src/lib/assets/images/Relations.png" alt="Form View - Enable Back Button" width="100%"> 
+<img src="docs/images/Relations.png" alt="Form View - Enable Back Button" width="100%"> 
 
 # `addUrlParamKey` and `searchParamKey` example  
 
@@ -647,7 +647,7 @@ const LookupType = new UiModel({
 
 When a user clicks on DocumentType in the first image, the pageTitle updates to DocumentType in the second image. This behavior is controlled by the addUrlParamKey property, which appends a query parameter to the URL in the format: - breadcrumbs=addUrlParamKey
 
-<p align="center"> <img src="src/lib/assets/images/addUrlParamKey1.png" alt="Grid View - addUrlParamKey" width="49%" style="margin-right: 5px;"> <img src="src/lib/assets/images/addUrlParamKey2.png" alt="Grid View - addUrlParamKey document grid" width="49%"> </p>
+<p align="center"> <img src="docs/images/addUrlParamKey1.png" alt="Grid View - addUrlParamKey" width="49%" style="margin-right: 5px;"> <img src="docs/images/addUrlParamKey2.png" alt="Grid View - addUrlParamKey document grid" width="49%"> </p>
 
 ## searchParamKey
 
@@ -804,4 +804,4 @@ const surveyModel = new UiModel({
 
 After enabling the showTabbed property within formConfig, the navigation bar will be visible in the UI. Below is an example representation of the tabbed stepper:
 
-<img src="src/lib/assets/images/tabs.png" alt="Grid View - Enable Back Button" width="100%"> 
+<img src="docs/images/tabs.png" alt="Grid View - Enable Back Button" width="100%"> 
