@@ -26,10 +26,10 @@ var _xDataGridPremium = require("@mui/x-data-grid-premium");
 var _formik = require("formik");
 var yup = _interopRequireWildcard(require("yup"));
 var _SnackBar = require("../SnackBar");
+var _reactI18next = require("react-i18next");
 var _httpRequest = _interopRequireDefault(require("./httpRequest"));
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
-var _Add = _interopRequireDefault(require("@mui/icons-material/Add"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -37,7 +37,7 @@ function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbol
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } // import { useRouter } from '../useRouter/useRouter';
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const actionTypes = {
   Copy: "Copy",
   Edit: "Edit",
@@ -108,22 +108,35 @@ const initialValues = {
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
   let {
+    tTranslate = key => key,
     preferenceName,
     gridRef,
     columns = [],
     setIsGridPreferenceFetched
   } = _ref;
   const {
+    systemDateTimeFormat,
     stateData,
     dispatchData,
+    formatDate,
     removeCurrentPreferenceName,
-    getAllSavedPreferences
+    getAllSavedPreferences,
+    applyDefaultPreferenceIfExists
   } = (0, _StateProvider.useStateContext)();
   const {
+    pathname,
     navigate
   } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
   const snackbar = (0, _SnackBar.useSnackbar)();
+  const {
+    t: translate,
+    i18n
+  } = (0, _reactI18next.useTranslation)();
+  const tOpts = {
+    t: translate,
+    i18n
+  };
   const [openDialog, setOpenDialog] = (0, _react.useState)(false);
   const [openForm, setOpenForm] = (0, _react.useState)(false);
   const [filteredPrefs, setFilteredPrefs] = (0, _react.useState)([]);
@@ -375,7 +388,7 @@ const GridPreferences = _ref => {
   const onCellClick = async (cellParams, event, details) => {
     let action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
     if (cellParams.id === 0 && (action === actionTypes.Edit || action === actionTypes.Delete)) {
-      snackbar.showMessage('Default Preference Can Not Be' + ' ' + "".concat(action === actionTypes.Edit ? 'Edited' : 'Deleted'));
+      snackbar.showMessage("Default Preference Can Not Be ".concat(action === actionTypes.Edit ? 'Edited' : 'Deleted'));
       return;
     }
     if (action === actionTypes.Edit) {
@@ -409,9 +422,9 @@ const GridPreferences = _ref => {
     "aria-haspopup": "true",
     "aria-expanded": menuAnchorEl ? 'true' : undefined,
     onClick: handleOpen,
-    title: "Preferences",
+    title: tTranslate('Preference', tOpts),
     startIcon: /*#__PURE__*/_react.default.createElement(_Settings.default, null)
-  }, "Preferences ", currentPreference && "(".concat(currentPreference, ")")), /*#__PURE__*/_react.default.createElement(_material.Menu, {
+  }, tTranslate('Preferences', tOpts), " ", currentPreference && "(".concat(currentPreference, ")")), /*#__PURE__*/_react.default.createElement(_material.Menu, {
     id: "grid-preference-menu",
     anchorEl: menuAnchorEl,
     open: !!menuAnchorEl,
@@ -440,12 +453,12 @@ const GridPreferences = _ref => {
     component: _material.ListItemButton,
     dense: true,
     onClick: () => openModal(formTypes.Add)
-  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Add.default, null)), "Add Preference"), /*#__PURE__*/_react.default.createElement(_material.MenuItem, {
+  }, tTranslate('Add Preference', tOpts)), /*#__PURE__*/_react.default.createElement(_material.MenuItem, {
     component: _material.ListItemButton,
     dense: true,
     divider: (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0,
     onClick: () => openModal(formTypes.Manage, false)
-  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), "Manage Preferences"), preferences === null || preferences === void 0 ? void 0 : preferences.map((ele, key) => {
+  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), tTranslate('Manage Preferences', tOpts)), (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.map((ele, key) => {
     const {
       prefName,
       prefDesc,
@@ -456,12 +469,12 @@ const GridPreferences = _ref => {
       component: _material.ListItem,
       selected: currentPreference === prefName,
       key: "pref-item-".concat(key),
-      title: prefDesc,
+      title: tTranslate(prefDesc, tOpts),
       dense: true
     }, /*#__PURE__*/_react.default.createElement(_material.ListItemText, {
-      primary: prefName
+      primary: tTranslate(prefName, tOpts)
     }));
-  })), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+  }))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
     open: openDialog,
     maxWidth: isManageForm ? 'md' : 'sm',
     fullWidth: true
@@ -475,7 +488,7 @@ const GridPreferences = _ref => {
     columnGap: 2
   }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "h5"
-  }, formType, " Preference", formType === formTypes.Manage ? 's' : ''))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : '', "}"), tOpts)))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
     rowGap: 2,
@@ -492,11 +505,11 @@ const GridPreferences = _ref => {
     item: true,
     xs: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
-    defaultValue: formik.values.prefName,
+    defaultValue: tTranslate(formik.values.prefName, tOpts),
     variant: "outlined",
     size: "small",
     margin: "dense",
-    label: /*#__PURE__*/_react.default.createElement("span", null, "Preference Name ", /*#__PURE__*/_react.default.createElement("span", {
+    label: /*#__PURE__*/_react.default.createElement("span", null, tTranslate('Preference Name', tOpts), " ", /*#__PURE__*/_react.default.createElement("span", {
       style: {
         color: 'red'
       }
@@ -511,13 +524,13 @@ const GridPreferences = _ref => {
     item: true,
     xs: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
-    defaultValue: formik.values.prefDesc,
+    defaultValue: tTranslate(formik.values.prefDesc, tOpts),
     variant: "outlined",
     multiline: true,
     rows: 2,
     size: "small",
     margin: "dense",
-    label: "Preference Description",
+    label: tTranslate('Preference Description', tOpts),
     name: 'prefDesc',
     onChange: formik.handleChange,
     error: !!formik.errors.prefDesc,
@@ -532,7 +545,7 @@ const GridPreferences = _ref => {
       name: 'isDefault',
       onChange: formik.handleChange
     }),
-    label: "Default"
+    label: tTranslate('Default', tOpts)
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     xs: 12
@@ -549,7 +562,7 @@ const GridPreferences = _ref => {
     color: "primary",
     variant: "contained",
     disableElevation: true
-  }, "Save"), /*#__PURE__*/_react.default.createElement(_material.Button, {
+  }, tTranslate('Save', tOpts)), /*#__PURE__*/_react.default.createElement(_material.Button, {
     type: "button",
     startIcon: /*#__PURE__*/_react.default.createElement(_Close.default, null),
     color: "error",
@@ -557,7 +570,7 @@ const GridPreferences = _ref => {
     size: "small",
     onClick: handleDialogClose,
     disableElevation: true
-  }, "Close")))), openDialog && formType === formTypes.Manage && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, tTranslate('Close', tOpts))))), openDialog && formType === formTypes.Manage && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
@@ -598,7 +611,7 @@ const GridPreferences = _ref => {
     size: "small",
     onClick: () => closeModal(),
     disableElevation: true
-  }, "Close"))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+  }, tTranslate('Close', tOpts)))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
     open: openPreferenceExistsModal,
     maxWidth: "xs",
     fullWidth: true
@@ -606,7 +619,7 @@ const GridPreferences = _ref => {
     sx: {
       fontSize: '16px'
     }
-  }, "\"", prefName, "\" name already in use, please use another name."), /*#__PURE__*/_react.default.createElement(_material.DialogActions, {
+  }, "\"", prefName, "\" ", tTranslate('name already in use, please use another name.', tOpts)), /*#__PURE__*/_react.default.createElement(_material.DialogActions, {
     sx: {
       justifyContent: 'center',
       marginTop: '4%'
@@ -617,7 +630,7 @@ const GridPreferences = _ref => {
     size: "small",
     onClick: () => setOpenPreferenceExistsModal(false),
     disableElevation: true
-  }, "Ok"))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+  }, tTranslate('Ok', tOpts)))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
     open: openConfirmDeleteDialog.preferenceName,
     maxWidth: "sm",
     fullWidth: true

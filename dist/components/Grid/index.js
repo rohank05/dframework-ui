@@ -74,6 +74,7 @@ var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
+var _reactI18next = require("react-i18next");
 const _excluded = ["exportFormats"],
   _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
   _excluded3 = ["row", "field", "id"],
@@ -87,8 +88,8 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
-function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
+function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
+function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (e.includes(n)) continue; t[n] = r[n]; } return t; }
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
 const recordCounts = 60000;
@@ -163,6 +164,8 @@ const convertDefaultSort = defaultSort => {
 };
 const ExportMenuItem = _ref => {
   let {
+    tTranslate,
+    tOpts,
     handleExport,
     contentType,
     type,
@@ -173,7 +176,7 @@ const ExportMenuItem = _ref => {
     "data-type": type,
     "data-content-type": contentType,
     "data-is-pivot-export": isPivotExport
-  }, "Export", " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+  }, tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
 };
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
@@ -221,7 +224,7 @@ const areEqual = function areEqual() {
   return equal;
 };
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _stateData$gridSettin5, _model$module;
+  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _model$tTranslate, _stateData$gridSettin5, _model$module;
   let {
       showGrid = true,
       model,
@@ -284,6 +287,14 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
   const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
+  const {
+    t: translate,
+    i18n
+  } = (0, _reactI18next.useTranslation)();
+  const tOpts = {
+    t: translate,
+    i18n
+  };
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
   const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
   const initialFilterModel = {
@@ -376,6 +387,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     String: 'string',
     Boolean: 'boolean'
   };
+  const tTranslate = (_model$tTranslate = model.tTranslate) !== null && _model$tTranslate !== void 0 ? _model$tTranslate : key => key;
   const {
     addUrlParamKey,
     searchParamKey,
@@ -629,7 +641,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       if (column.link) {
         overrides.cellClassName = "mui-grid-linkColumn";
       }
-      const headerName = column.gridLabel || column.label;
+      const headerName = tTranslate(column.gridLabel || column.label, tOpts);
       finalColumns.push(_objectSpread(_objectSpread({
         headerName,
         description: headerName
@@ -1230,7 +1242,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       sx: {
         ml: 1
       }
-    }, " ", model.gridSubTitle), currentPreference && model.showPreferenceInHeader && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, " ", tTranslate(model.gridSubTitle, tOpts)), currentPreference && model.showPreferenceInHeader && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       className: "preference-name-text",
       variant: "h6",
       component: "h6",
@@ -1238,7 +1250,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       sx: {
         ml: 1
       }
-    }, "Applied Preference - ", currentPreference), (isReadOnly || !canAdd && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
+    }, tTranslate('Applied Preference', tOpts), " - ", currentPreference), (isReadOnly || !canAdd && !forAssignment) && /*#__PURE__*/_react.default.createElement(_Typography.default, {
       variant: "h6",
       component: "h3",
       textAlign: "center",
@@ -1262,7 +1274,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, "Assign")), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, "Assign"), assigned && /*#__PURE__*/_react.default.createElement(_Button.default, {
+      startIcon: !showAddIcon ? null : /*#__PURE__*/_react.default.createElement(_Remove.default, null),
+      onClick: onUnassign,
+      size: "medium",
+      variant: "contained",
+      className: classes.buttons
+    }, "Remove")), /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarContainer, props, effectivePermissions.showColumnsOrder && /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarColumnsButton, null), effectivePermissions.filter && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarFilterButton, null), /*#__PURE__*/_react.default.createElement(_Button.default, {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"

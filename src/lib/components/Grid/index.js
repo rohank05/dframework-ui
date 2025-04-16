@@ -45,6 +45,7 @@ import { getPermissions } from '../utils';
 import HistoryIcon from '@mui/icons-material/History';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Checkbox from '@mui/material/Checkbox';
+import { useTranslation } from 'react-i18next';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -97,7 +98,7 @@ const convertDefaultSort = (defaultSort) => {
     }
     return orderBy;
 };
-const ExportMenuItem = ({ handleExport, contentType, type, isPivotExport = false }) => {
+const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
     return (
         <MenuItem
             onClick={handleExport}
@@ -105,7 +106,7 @@ const ExportMenuItem = ({ handleExport, contentType, type, isPivotExport = false
             data-content-type={contentType}
             data-is-pivot-export={isPivotExport}
         >
-            {"Export"} {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+            {tTranslate("Export", tOpts)} {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
         </MenuItem>
     );
 };
@@ -192,6 +193,8 @@ const GridBase = memo(({
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
+    const { t: translate, i18n } = useTranslation()
+    const tOpts = { t: translate, i18n };
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
@@ -233,6 +236,7 @@ const GridBase = memo(({
         String: 'string',
         Boolean: 'boolean'
     };
+    const tTranslate = model.tTranslate ?? ((key) => key);
 
     const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [], breadcrumbColor } = model;
     const gridTitle = model.gridTitle || model.title;
@@ -465,7 +469,7 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            const headerName = column.gridLabel || column.label;
+            const headerName = tTranslate(column.gridLabel || column.label, tOpts);
             finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -917,8 +921,8 @@ const GridBase = memo(({
                 }}
             >
                 <div>
-                    {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {(model.gridSubTitle)}</Typography>}
-                    {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >Applied Preference - {currentPreference}</Typography>}
+                    {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {tTranslate(model.gridSubTitle, tOpts)}</Typography>}
+                    {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >{tTranslate('Applied Preference', tOpts)} - {currentPreference}</Typography>}
                     {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
                     {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
                     {(selectionApi.length && data.records.length) ? (
@@ -933,7 +937,8 @@ const GridBase = memo(({
                         <></>
                     }
                     {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
-                </div>
+                    {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
+                    </div>
                 <GridToolbarContainer {...props}>
                     {effectivePermissions.showColumnsOrder && (
                         <GridToolbarColumnsButton />
