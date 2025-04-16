@@ -6,9 +6,9 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
+const SelectField = ({ column, field, label, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
     const userSelected = React.useRef(false);
-    const { filter } = column;
+    const { filter, placeHolder } = column;
 
     const initialOptions = useMemo(() => {
         let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
@@ -78,7 +78,7 @@ const SelectField = ({ column, field, fieldLabel, formik, activeRecord, lookups,
             key={field}
             error={formik.touched[field] && formik.errors[field]}
             variant="standard">
-            <InputLabel>{fieldLabel}</InputLabel>
+            <InputLabel>{placeHolder ? placeHolder : ""}</InputLabel> 
             <Select
                 IconComponent={KeyboardArrowDownIcon}
                 {...otherProps}

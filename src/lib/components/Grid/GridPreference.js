@@ -58,7 +58,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const preferences = stateData?.preferences;
     const currentPreference = stateData?.currentPreference;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
+    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);
     const validationSchema = useMemo(() => {
@@ -166,15 +166,15 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
         if (response === true || response?.success === true) {
             snackbar.showMessage(`Preference ${action} Successfully.`);
         }
-        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
+        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, defaultPreferenceEnums });
     }
 
     const applyPreference = async (prefId) => {
         let userPreferenceCharts;
         let defaultPreference = 'Default';
-        // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
+        // Check if prefId is 0, if so, use defaultPreferenceEnums, otherwise fetch from API
         if (prefId === 0) {
-            userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
+            userPreferenceCharts = defaultPreferenceEnums[preferenceName] || null;
         } else {
             const params = {
                 action: 'load',
@@ -229,7 +229,7 @@ const GridPreferences = ({ preferenceName, gridRef, columns = [], setIsGridPrefe
     const confirmDeletePreference = async () => {
         const { prefId, preferenceName: currentPrefname } = openConfirmDeleteDialog;
         await deletePreference(prefId, currentPrefname);
-        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
         setOpenConfirmDeleteDialog({});
     }
 

@@ -19,7 +19,7 @@ const field = _ref => {
   let {
     column,
     field,
-    fieldLabel,
+    label,
     formik,
     otherProps,
     classes,
@@ -37,8 +37,8 @@ const field = _ref => {
       checked: formik.values[field] === true,
       onChange: handleChange,
       onBlur: formik.handleBlur
-    })),
-    label: fieldLabel
+    }))
+    // label={label} commenting this code due to showing two label on ui 
   }), /*#__PURE__*/React.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = field;

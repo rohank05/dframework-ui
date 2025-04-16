@@ -4,7 +4,7 @@ import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
+const Field = ({ column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
     let inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
     let options = lookups ? lookups[column?.lookup] : [];
     const { filter } = column;

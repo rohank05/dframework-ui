@@ -27,7 +27,7 @@ const SelectField = _ref => {
   let {
     column,
     field,
-    fieldLabel,
+    label,
     formik,
     activeRecord,
     lookups,
@@ -38,7 +38,8 @@ const SelectField = _ref => {
   } = _ref;
   const userSelected = _react.default.useRef(false);
   const {
-    filter
+    filter,
+    placeHolder
   } = column;
   const initialOptions = (0, _react.useMemo)(() => {
     let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
@@ -106,7 +107,7 @@ const SelectField = _ref => {
     key: field,
     error: formik.touched[field] && formik.errors[field],
     variant: "standard"
-  }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, fieldLabel), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
+  }, /*#__PURE__*/_react.default.createElement(_InputLabel.default, null, placeHolder ? placeHolder : ""), /*#__PURE__*/_react.default.createElement(_Select.default, _extends({
     IconComponent: _KeyboardArrowDown.default
   }, otherProps, {
     name: field,

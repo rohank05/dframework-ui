@@ -71,8 +71,7 @@ const Form = _ref => {
     pathname
   } = (0, _StateProvider.useRouter)();
   const {
-    relations = [],
-    hideRelationsInAdd = false
+    relations = []
   } = model;
   const {
     dispatchData,
@@ -137,7 +136,7 @@ const Form = _ref => {
         data
       });
     } else {
-      navigatePath = navigateBack || pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
     }
     if (navigatePath.includes("window.history")) {
       window.history.back();
@@ -356,7 +355,7 @@ const Form = _ref => {
   }, {
     text: id === "0" ? "New" : "Update"
   }];
-  const showRelations = !(hideRelationsInAdd && id == 0) && Boolean(relations.length);
+  const showRelations = Number(id) !== 0 && Boolean(relations.length);
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;

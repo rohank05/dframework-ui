@@ -23,7 +23,7 @@ import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
 import TreeCheckbox from './fields/treeCheckBox';
-import Document from './fields/document';
+import fileUpload from './fields/fileUpload';
 import JSONInput from './fields/jsonInput';
 
 const fieldMappers = {
@@ -35,7 +35,6 @@ const fieldMappers = {
     "date": DateField,
     "dateTime": DateTimeField,
     "time": TimeField,
-    "grid-transfer": GridTransfer,
     "oneToMany": GridTransfer,
     "radio": RadioField,
     "autocomplete": AutocompleteField,
@@ -43,7 +42,7 @@ const fieldMappers = {
     "email": StringField,
     "chipInput": ChipInput,
     "treeCheckbox": TreeCheckbox,
-    "document": Document,
+    "fileUpload": fileUpload,
     "json": JSONInput
 };
 
@@ -156,7 +155,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     return (
         <>
             {
-                formElements.map(({ Component, column, field, fieldLabel, otherProps }, key) => {
+                formElements.map(({ Component, column, field, label, otherProps }, key) => {
                     let isGridComponent = typeof column.relation === 'function';
                     return (
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
@@ -167,7 +166,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                                 : null
                             }
                             <Grid item xs={isGridComponent ? 12 : 9} className={classes.childStyles}>
-                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} getRecordAndLookups={getRecordAndLookups} {...otherProps} />
+                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} getRecordAndLookups={getRecordAndLookups} {...otherProps} />
                             </Grid>
                         </Grid >
                     )
@@ -184,10 +183,10 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, s
     }
     for (const column of columns) {
         let fieldType = column.type;
-        if (column.fieldLabel === null) { /* If the field should not be shown in form mode, specify fieldLabel as null */
+        if (column.label === null) { /* If the field should not be shown in form mode, specify label as null */
             continue;
         }
-        const { field, fieldLabel = column.header, tab } = column;
+        const { field, label, tab } = column;
         const otherProps = {};
         if (column.options) {
             otherProps.options = column.options;
@@ -198,7 +197,7 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, s
         }
 
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, fieldLabel, column: { ...column, readOnly: searchParams.has('showRelation') || column.readOnly }, otherProps });
+        target.push({ Component, field, label, column: { ...column, readOnly: searchParams.has('showRelation') || column.readOnly }, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {

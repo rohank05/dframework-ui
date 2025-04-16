@@ -2,21 +2,12 @@ import React from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import { useStateContext } from '../../useRouter/StateProvider';
-const field = ({ column, field, fieldLabel, formik, otherProps, classes, fieldConfigs, model, mode }) => {
+const field = ({ column, field, formik, otherProps, classes, fieldConfigs, model, mode }) => {
     let isDisabled;
     const { systemDateTimeFormat, stateData } = useStateContext(); //provider
     if (mode !== 'copy') {
         isDisabled = fieldConfigs?.disabled;
     }
-    const shouldDisableDate = column.shouldDisableDate ? column.shouldDisableDate : null;
-    let helperText;
-    if (isDisabled && column.showErrorText) {
-        helperText = model?.helperText;
-    } else if (formik.touched[field] && formik.errors[field]) {
-        helperText = formik.errors[field];
-    }
-    const showError = !!helperText;
-    const props = { variant: "standard", error: showError };
     return <DatePicker
         {...otherProps}
         variant="standard"
@@ -33,11 +24,10 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes, fieldCo
         }}
         onBlur={formik.handleBlur}
         helperText={formik.touched[field] && formik.errors[field]}
-        disablePast={column?.disablePast}
-        disableFuture={column?.disableFuture}
+        minDate={(column.min ? dayjs(column.min) : null)}
+        maxDate={(column.max ? dayjs(column.max) : null)}
         disabled={isDisabled}
-        shouldDisableDate={date => shouldDisableDate ? shouldDisableDate(date, formik) : false}
-        slotProps={{ textField: { fullWidth: true, helperText, ...props } }}
+        slotProps={{ textField: { fullWidth: true, helperText: formik.errors[field], variant: "standard" } }}
     />
 
 }

@@ -3,6 +3,7 @@
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.weak-map.js");
+require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
@@ -60,7 +61,6 @@ exports.fieldMappers = exports.default = void 0;
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.search.js");
-require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/esnext.set.difference.v2.js");
 require("core-js/modules/esnext.set.intersection.v2.js");
@@ -99,7 +99,7 @@ var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
 var _chipInput = _interopRequireDefault(require("./fields/chipInput"));
 var _treeCheckBox = _interopRequireDefault(require("./fields/treeCheckBox"));
-var _document = _interopRequireDefault(require("./fields/document"));
+var _fileUpload = _interopRequireDefault(require("./fields/fileUpload"));
 var _jsonInput = _interopRequireDefault(require("./fields/jsonInput"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -121,7 +121,6 @@ const fieldMappers = exports.fieldMappers = {
   "date": _date.default,
   "dateTime": _dateTime.default,
   "time": _time.default,
-  "grid-transfer": _gridTransfer.default,
   "oneToMany": _gridTransfer.default,
   "radio": _radio.default,
   "autocomplete": _autocomplete.default,
@@ -129,7 +128,7 @@ const fieldMappers = exports.fieldMappers = {
   "email": _string.default,
   "chipInput": _chipInput.default,
   "treeCheckbox": _treeCheckBox.default,
-  "document": _document.default,
+  "fileUpload": _fileUpload.default,
   "json": _jsonInput.default
 };
 const useStyles = (0, _core.makeStyles)({
@@ -283,7 +282,7 @@ const RenderColumns = _ref3 => {
       Component,
       column,
       field,
-      fieldLabel,
+      label,
       otherProps
     } = _ref4;
     let isGridComponent = typeof column.relation === 'function';
@@ -313,7 +312,7 @@ const RenderColumns = _ref3 => {
       mode: mode,
       column: column,
       field: field,
-      fieldLabel: fieldLabel,
+      label: label,
       formik: formik,
       data: data,
       onChange: onChange,
@@ -338,13 +337,13 @@ const getFormConfig = function getFormConfig(_ref5) {
   }
   for (const column of columns) {
     let fieldType = column.type;
-    if (column.fieldLabel === null) {
-      /* If the field should not be shown in form mode, specify fieldLabel as null */
+    if (column.label === null) {
+      /* If the field should not be shown in form mode, specify label as null */
       continue;
     }
     const {
       field,
-      fieldLabel = column.header,
+      label,
       tab
     } = column;
     const otherProps = {};
@@ -359,7 +358,7 @@ const getFormConfig = function getFormConfig(_ref5) {
     target.push({
       Component,
       field,
-      fieldLabel,
+      label,
       column: _objectSpread(_objectSpread({}, column), {}, {
         readOnly: searchParams.has('showRelation') || column.readOnly
       }),

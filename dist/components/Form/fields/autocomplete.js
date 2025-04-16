@@ -26,7 +26,6 @@ const Field = _ref => {
   let {
     column,
     field,
-    fieldLabel,
     formik,
     lookups,
     data,

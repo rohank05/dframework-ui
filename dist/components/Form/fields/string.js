@@ -14,11 +14,8 @@ const field = _ref => {
   let {
     column,
     field,
-    fieldLabel,
     formik,
-    otherProps,
-    classes,
-    onChange
+    otherProps
   } = _ref;
   return /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({
     type: "text",
@@ -33,7 +30,7 @@ const field = _ref => {
     key: field,
     required: column === null || column === void 0 ? void 0 : column.required,
     multiline: column.multiline,
-    rows: column.rows,
+    rows: column.rows || 5,
     fullWidth: true,
     name: field,
     value: formik.values[field],

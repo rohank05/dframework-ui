@@ -157,7 +157,7 @@ class UiModel {
 						config = config.max(Number(max), `${formLabel} must be less than or equal to ${max}`);
 					}
 					break;
-				case 'document':
+				case 'fileUpload':
 					config = yup.string().trim().label(formLabel);
 					break;
 				default:

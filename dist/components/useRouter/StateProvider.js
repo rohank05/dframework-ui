@@ -62,7 +62,7 @@ const StateProvider = _ref => {
       history,
       dispatchData,
       preferenceApi,
-      tablePreferenceEnums = {},
+      defaultPreferenceEnums = {},
       addDefaultPreference = false
     } = _ref2;
     const params = {
@@ -83,7 +83,7 @@ const StateProvider = _ref => {
         "prefId": 0,
         "GridId": preferenceName,
         "GridPreferenceId": 0,
-        "prefValue": tablePreferenceEnums[preferenceName]
+        "prefValue": defaultPreferenceEnums[preferenceName]
       };
       preferences = [defaultPref, ...preferences];
     }
@@ -121,7 +121,7 @@ const StateProvider = _ref => {
       preferenceName,
       setIsGridPreferenceFetched,
       preferenceApi,
-      tablePreferenceEnums = {}
+      defaultPreferenceEnums = {}
     } = _ref4;
     const params = {
       action: 'default',
@@ -134,7 +134,7 @@ const StateProvider = _ref => {
       history,
       dispatchData
     });
-    let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : tablePreferenceEnums[preferenceName];
+    let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
       userPreferenceCharts.gridColumn = filterNonExistingColumns({
         gridRef,

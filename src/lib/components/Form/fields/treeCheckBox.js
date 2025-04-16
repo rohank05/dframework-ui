@@ -41,7 +41,6 @@ const buildTree = (data = []) => {
  * @param {Object} props - The properties passed to the component.
  * @param {Object} props.column - The column metadata, including lookup information.
  * @param {string} props.field - The name of the field in the form to bind.
- * @param {string} props.fieldLabel - The label for the field.
  * @param {Object} props.formik - The Formik instance for managing form state.
  * @param {Object} props.lookups - The lookup data for populating tree items.
  * @param {Array<Object>} props.data - Additional data for the tree.
@@ -51,7 +50,7 @@ const buildTree = (data = []) => {
  * @param {string} props.mode - The mode of the form, such as 'edit' or 'copy'.
  * @returns {JSX.Element} The rendered tree view component.
  */
-export default function treeCheckBox({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
+export default function treeCheckBox({ column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
   const options = lookups ? lookups[column.lookup] : [];
   const tree = buildTree(options);
   let inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];

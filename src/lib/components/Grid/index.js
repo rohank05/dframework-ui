@@ -114,16 +114,14 @@ ExportMenuItem.propTypes = {
     hideMenu: PropTypes.func
 };
 
-const CustomExportButton = (props) => (
+const CustomExportButton = ({ exportFormats, ...props }) => (
     <GridToolbarExportContainer {...props}>
-        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} type="csv" contentType="text/csv" />}
-        <ExportMenuItem {...props} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        {exportFormats.csv !== false && <ExportMenuItem {...props} type="csv" contentType="text/csv" />}
+        {exportFormats.excel !== false && <ExportMenuItem {...props} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />}
         {props.showPivotExportBtn && <ExportMenuItem {...props} type="excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
-        {props?.showOnlyExcelExport !== true && <>
-            <ExportMenuItem {...props} type="xml" contentType="text/xml" />
-            <ExportMenuItem {...props} type="html" contentType="text/html" />
-            <ExportMenuItem {...props} type="json" contentType="application/json" />
-        </>}
+        {exportFormats.xml !== false && <ExportMenuItem {...props} type="xml" contentType="text/xml" />}
+        {exportFormats.html !== false && <ExportMenuItem {...props} type="html" contentType="text/html" />}
+        {exportFormats.json !== false && <ExportMenuItem {...props} type="json" contentType="application/json" />}
     </GridToolbarExportContainer>
 );
 
@@ -143,7 +141,6 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
 }
 const GridBase = memo(({
     showGrid = true,
-    useLinkColumn = true,
     model,
     columns,
     api,
@@ -194,7 +191,7 @@ const GridBase = memo(({
     const [record, setRecord] = useState(null);
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
-    const isClient = model.isClient === true ? 'client' : 'server';
+    const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
@@ -209,9 +206,9 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, enableGoBack = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
-    const isDoubleClicked = model.doubleClicked === false;
+    const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
     const showAddIcon = model.showAddIcon === true;
     const toLink = model.columns.filter(({ link }) => Boolean(link)).map(item => item.link);
@@ -225,10 +222,10 @@ const GridBase = memo(({
     const url = stateData?.gridSettings?.permissions?.Url;
     const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
     const currentPreference = stateData?.currentPreference;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
+    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
-    const documentField = model.columns.find(ele => ele.type === 'document')?.field || "";
+    const documentField = model.columns.find(ele => ele.type === 'fileUpload')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions({ userData, model, userDefinedPermissions });
     const filterFieldDataTypes = {
@@ -243,8 +240,7 @@ const GridBase = memo(({
         OrderStatus: 'OrderStatusId'
     }
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
-    const preferenceName =  model.preferenceId || model.module?.preferenceId;
-    
+    const preferenceName = model.preferenceId || model.module?.preferenceId;
     const searchParams = new URLSearchParams(window.location.search);
 
     let baseSaveData = {};
@@ -409,7 +405,7 @@ const GridBase = memo(({
         const lookupMap = {};
         for (const column of baseColumnList) {
             const overrides = {};
-            if (column.headerName === null) {
+            if (column.gridLabel === null) {
                 continue;
             }
             if (parent && column.lookup === parent) {
@@ -469,7 +465,7 @@ const GridBase = memo(({
             if (column.link) {
                 overrides.cellClassName = "mui-grid-linkColumn";
             }
-            const headerName = column.headerName || column.label;
+            const headerName = column.gridLabel || column.label;
             finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
             if (column.pinned) {
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
@@ -478,35 +474,34 @@ const GridBase = memo(({
             column.label = column?.label
         }
 
-        const auditColumns = model.standard === true;
-
-        if (auditColumns && model?.addCreatedModifiedColumns !== false) {
-            if (model?.addCreatedOnColumn !== false) {
-                finalColumns.push(
-                    {
-                        field: "CreatedOn", type: "dateTime", headerName: "Created On", width: 200, filterOperators: LocalizedDatePicker({ columnType: "date" }), valueFormatter: gridColumnTypes.dateTime.valueFormatter, keepLocal: true
-                    }
-                );
-            }
-            if (model?.addCreatedByColumn !== false) {
-                finalColumns.push(
-                    { field: "CreatedByUser", type: "string", headerName: "Created By", width: 200 },
-                );
-            }
-            if (model?.addModifiedOnColumn !== false) {
-                finalColumns.push(
-                    {
-                        field: "ModifiedOn", type: "dateTime", headerName: "Modified On", width: 200, filterOperators: LocalizedDatePicker({ columnType: "date" }), valueFormatter: gridColumnTypes.dateTime.valueFormatter, keepLocal: true
-
-                    }
-                );
-            }
-            if (model?.addModifiedByColumn !== false) {
-                finalColumns.push(
-                    { field: "ModifiedByUser", type: "string", headerName: "Modified By", width: 200 }
-                );
-            }
+        let auditColumns = model.standard;
+        if (typeof auditColumns === 'boolean' && auditColumns) {
+            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true }
         }
+
+        if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
+            const columnDefinitions = [
+                { key: "addCreatedOnColumn", field: "CreatedOn", type: "dateTime", header: "Created On" },
+                { key: "addCreatedByColumn", field: "CreatedByUser", type: "string", header: "Created By" },
+                { key: "addModifiedOnColumn", field: "ModifiedOn", type: "dateTime", header: "Modified On" },
+                { key: "addModifiedByColumn", field: "ModifiedByUser", type: "string", header: "Modified By" }
+            ];
+
+            columnDefinitions.forEach(({ key, field, type, header }) => {
+                if (auditColumns[key] === true) {  // Ensure the value is explicitly true
+                    const column = { field, type, headerName: header, width: 200 };
+
+                    if (type === "dateTime") {
+                        column.filterOperators = LocalizedDatePicker({ columnType: "date" });
+                        column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
+                        column.keepLocal = true;
+                    }
+
+                    finalColumns.push(column);
+                }
+            });
+        }
+
         const actions = [];
         if (!forAssignment && !isReadOnly) {
             if (canEdit) {
@@ -618,7 +613,7 @@ const GridBase = memo(({
             setError: snackbar.showError,
             contentType,
             columns,
-            template: isPivotExport ? model?.template : null,
+            template: isPivotExport ? model?.exportTemplate : null,
             configFileName: isPivotExport ? model?.configFileName : null,
             dispatchData,
             showFullScreenLoader,
@@ -683,7 +678,7 @@ const GridBase = memo(({
         }
     };
     const onCellClickHandler = async (cellParams, event, details) => {
-        let action = useLinkColumn && cellParams.field === model.linkColumn ? actionTypes.Edit : null;
+        let action = cellParams.field === model.linkColumn ? actionTypes.Edit : null;
         if (!action && cellParams.field === 'actions') {
             action = details?.action;
             if (!action) {
@@ -906,8 +901,8 @@ const GridBase = memo(({
     useEffect(() => {
         if (preferenceName && preferenceApi) {
             removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, tablePreferenceEnums });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
         }
     }, [preferenceApi])
 
@@ -949,7 +944,7 @@ const GridBase = memo(({
                     </>)}
 
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.showPivotExportBtn} showOnlyExcelExport={model.showOnlyExcelExport} />
+                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} exportFormats={model.exportFormats || {}} />
                     )}
                     {preferenceName &&
                         <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
@@ -1103,11 +1098,10 @@ const GridBase = memo(({
     else {
         breadCrumbs = [{ text: title || model.gridTitle || model.title }];
     }
-
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
-                breadcrumbs={breadCrumbs} enableGoBack={enableGoBack} breadcrumbColor={breadcrumbColor} />
+                breadcrumbs={breadCrumbs} enableBackButton={navigateBack} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>
                     <DataGridPremium
@@ -1136,9 +1130,9 @@ const GridBase = memo(({
                         rowCount={data.recordCount}
                         rows={data.records}
                         sortModel={sortModel}
-                        paginationMode={isClient}
-                        sortingMode={isClient}
-                        filterMode={isClient}
+                        paginationMode={paginationMode}
+                        sortingMode={paginationMode}
+                        filterMode={paginationMode}
                         processRowUpdate={processRowUpdate}
                         keepNonExistentRowsSelected
                         onSortModelChange={updateSort}

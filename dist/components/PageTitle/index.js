@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 var _react = _interopRequireDefault(require("react"));
 var _reactHelmetAsync = require("react-helmet-async");
@@ -23,11 +22,10 @@ function PageTitle(props) {
     RightComponent = null,
     mobileRightComponent,
     title = "",
-    titleDescription = "",
     titleClass = "text-theme-blue text-max-width",
     showBreadcrumbs,
     breadcrumbs = [],
-    enableGoBack = false,
+    enableBackButton = false,
     breadcrumbColor
   } = props;
   const isMobile = (0, _useMobile.default)(true);
@@ -74,7 +72,7 @@ function PageTitle(props) {
     key: index,
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
-  }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableGoBack) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableBackButton) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     sx: {
       display: 'flex',
@@ -99,9 +97,7 @@ function PageTitle(props) {
     fontSize: "inherit"
   })))), /*#__PURE__*/_react.default.createElement(_core.Box, {
     className: "app-page-title--first"
-  }, /*#__PURE__*/_react.default.createElement("div", {
-    className: "".concat(titleDescription ? "mt-2" : "")
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: isMobile ? 'block' : "flex",
       alignItems: "center"
@@ -115,11 +111,6 @@ function PageTitle(props) {
     variant: "p",
     text: titleHeading,
     name: name
-  }), titleDescription && /*#__PURE__*/_react.default.createElement(_Typography.default, {
-    className: "".concat(titleClass, " page-text-description"),
-    variant: "p",
-    component: "p",
-    text: titleDescription
   }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null), " "));
 }
 var _default = exports.default = (0, _reactI18next.withTranslation)()(PageTitle);
