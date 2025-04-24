@@ -1,4 +1,4 @@
-import * as locales from '@mui/x-data-grid';
+import * as locales from '@mui/x-data-grid-premium';
 export const esESGrid = {
     Jumptopage: 'Saltar a la página',
     Go: 'Ir',
