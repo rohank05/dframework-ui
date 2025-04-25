@@ -1,5 +1,5 @@
 
-import * as locales from '@mui/x-data-grid';
+import * as locales from '@mui/x-data-grid-premium';
 export const trTRGrid = {
   Jumptopage: 'Sayfaya atla',
   Go: 'Gitmek',
