@@ -179,8 +179,6 @@ const Form = _ref => {
     }
     return [...modelColumns, ...newColumns];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
-  console.log(columns);
-  console.log(initialValues);
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
