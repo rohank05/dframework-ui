@@ -161,7 +161,8 @@ const RenderSteps = _ref => {
     lookups,
     fieldConfigs,
     mode,
-    handleSubmit
+    handleSubmit,
+    columns
   } = _ref;
   const [skipped, setSkipped] = React.useState(new Set());
   const {
@@ -170,11 +171,11 @@ const RenderSteps = _ref => {
   } = React.useContext(_Form.ActiveStepContext);
   const classes = useStyles();
   let skipSteps = {};
-  for (let index = 0, len = model.columns.length; index < len; index++) {
+  for (let index = 0, len = columns.length; index < len; index++) {
     const {
       field,
       skip
-    } = model.columns[index];
+    } = columns[index];
     if (skip) {
       skipSteps[skip.step] = formik.values[field];
     }
@@ -341,6 +342,9 @@ const getFormConfig = function getFormConfig(_ref5) {
       /* If the field should not be shown in form mode, specify label as null */
       continue;
     }
+    if (column.type === 'dynamic') {
+      continue;
+    }
     const {
       field,
       label,
@@ -380,6 +384,7 @@ const getFormConfig = function getFormConfig(_ref5) {
 };
 const FormLayout = _ref6 => {
   let {
+    columns,
     model,
     formik,
     data,
@@ -405,7 +410,7 @@ const FormLayout = _ref6 => {
       formElements,
       tabColumns
     } = getFormConfig({
-      columns: model.columns,
+      columns,
       tabs: showTabs ? model.tabs : {},
       getRecordAndLookups,
       id: displayId,
@@ -441,7 +446,8 @@ const FormLayout = _ref6 => {
     lookups: lookups,
     fieldConfigs: fieldConfigs,
     mode: mode,
-    handleSubmit: handleSubmit
+    handleSubmit: handleSubmit,
+    columns: columns
   })));
 };
 var _default = exports.default = FormLayout;

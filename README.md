@@ -218,6 +218,7 @@ export default function App() {
 | `rows`             | `number`                   | Number of rows to display in a multiline text field. Specific to type [string](#3-type-string--password).                                                                        | `5`               | `No`       |
 | `isUtc`            | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            | `false`         | `No`       |
 | `placeHolder`      | `string`                   | To show `placeHolder` only for type [select](#2-type-select).                                                                                                                    | -               | `No`       |
+| `config`      | `string`                   | To Specify configuration for the dynamic columns.       | -               | Required for `dynamic` type      |
 
 
 # **Field Components Properties Table**
@@ -340,6 +341,28 @@ The `oneToMany` component in the UI model allows transferring columns between gr
 
 `{ "type": "oneToMany", "relation": 'child grid' }`
 The type specifies that it's a one-to-many relationship, and relation defines the child grid's model to be associated.
+
+### 8. **Type: `dynamic`**
+
+Populates columns based on the configuration on the fly dynamically.
+
+#### Overview
+
+The `dynamic` column populates the dynamic column on the fly while loading the form. It helpfull when loading columns with dynamic validations.
+
+#### Required props
+
+`config` field is the required prop, the config field should be the name of the field contianing the configuartion data.
+
+Ex: `config: "HookupConfigValuesValidations"`
+
+`HookupConfigValuesValidation` field containes json string as
+
+`[{ "field": "HOOKUP", "type": "number", "min": 0, "max": 50, "required": true }, { "field": "REV", "type": "string", "min": 0, "max": 50, "required": true }]`
+
+##### Purpose
+
+- The `dynamic` columns will populate the columns provided in the configuration on the fly dynamically.
 
 ##### Example Use Case
 

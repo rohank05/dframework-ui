@@ -96,6 +96,47 @@ const Form = ({
     navigate(navigatePath);
   }
 
+  const dynamicColumns = useMemo(() => {
+    return model.columns.filter(col => col.type === 'dynamic') || [];
+  }, [model]);
+
+  const initialValues = id === "0"
+      ? { ...model.initialValues, ...data, ...baseSaveData }
+      : { ...baseSaveData, ...model.initialValues, ...data };
+
+  const columns = useMemo(() => {
+    const modelColumns = [...model.columns];
+    const newColumns = [];
+    const existingFields = modelColumns.map(col => col.field);
+
+    // adding dynamic columns
+    for (const column of dynamicColumns) {
+      const { config: dynamicColumnConfig, field } = column;
+      let configValue = initialValues?.[dynamicColumnConfig] || [];
+      if (typeof configValue === 'string') {
+        configValue = JSON.parse(configValue || '{}');
+      }
+
+      const updatedConfig = configValue.map(item => ({
+        ...item,
+        field: `${field}-${item.field}`,
+        label: item.label || item.field,
+      }));
+
+      if (!updatedConfig.length) {
+        continue;
+      }
+
+      // Filter out columns that already exist in modelColumns
+      const newColumnsToAdd = updatedConfig.filter(item => !existingFields.includes(item.field));
+
+      if (newColumnsToAdd.length) {
+        newColumns.push(...newColumnsToAdd);
+      }
+    }
+    return [...modelColumns, ...newColumns];
+  }, [JSON.stringify(initialValues), model, dynamicColumns]);
+
   const getRecordAndLookups = ({
     lookups,
     scopeId,
@@ -106,7 +147,7 @@ const Form = ({
     try {
       const params = {
         api: api || gridApi,
-        modelConfig: model,
+        modelConfig: {...model, columns },
         setError: errorOnLoad
       };
       if (lookups) {
@@ -136,14 +177,13 @@ const Form = ({
   };
   useEffect(() => {
     if (url) {
-      setValidationSchema(model.getValidationSchema({ id, snackbar }));
+      setValidationSchema(
+        model.getValidationSchema.call({ ...model, columns }, { id, snackbar })
+      );
       getRecordAndLookups({});
     }
-  }, [id, idWithOptions, model, url]);
 
-  const initialValues = id === "0" ? // for new records need to override baseSaveData with Data
-  { ...model.initialValues, ...data,...baseSaveData } 
-  : { ...baseSaveData, ...model.initialValues, ...data };
+  }, [id, idWithOptions, model, url, columns]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -151,16 +191,31 @@ const Form = ({
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
+      const dynamicFieldMapper = new Map();
+      const toSave = {};
       for (const key in values) {
-        if (typeof values[key] === "string") {
-          values[key] = values[key].trim();
+        const [dynamicColumnField, field] = key.split('-');
+        if(dynamicColumnField && field) {
+          if(dynamicFieldMapper.has(dynamicColumnField)) {
+            dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
+          } else {
+            dynamicFieldMapper.set(dynamicColumnField, { [field]: values[key] });
+          }
+        } else {
+          toSave[key] = values[key];
+          if (typeof values[key] === "string") {
+            toSave[key] = values[key].trim();
+          } 
         }
+      }
+      for(const [key, value] of dynamicFieldMapper.entries()) {
+        toSave[key] = JSON.stringify(value);
       }
       setIsLoading(true);
       saveRecord({
         id,
         api: gridApi,
-        values,
+        values: toSave,
         setIsLoading,
         setError: snackbar.showError,
       })
@@ -217,7 +272,7 @@ const Form = ({
       record[model.linkColumn] = "";
     }
 
-    model.columns.map((item) => {
+    columns.forEach((item) => {
       if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
@@ -293,7 +348,7 @@ const Form = ({
     if (errorMessage) {
       snackbar.showError(errorMessage, null, "error");
     }
-    const fieldConfig = model.columns.find(
+    const fieldConfig = columns.find(
       (column) => column.field === fieldName
     );
     if (fieldConfig && fieldConfig.tab) {
@@ -361,6 +416,7 @@ const Form = ({
               handleSubmit={handleSubmit}
               mode={mode}
               getRecordAndLookups={getRecordAndLookups}
+              columns={columns}
             />
           </form>
           {errorMessage && (

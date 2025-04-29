@@ -66,15 +66,15 @@ const useStyles = makeStyles({
     }
 })
 
-const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, handleSubmit }) => {
+const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, handleSubmit, columns }) => {
     const [skipped, setSkipped] = React.useState(new Set());
 
     const { activeStep, setActiveStep } = React.useContext(ActiveStepContext);
     const classes = useStyles();
 
     let skipSteps = {};
-    for (let index = 0, len = model.columns.length; index < len; index++) {
-        const { field, skip } = model.columns[index];
+    for (let index = 0, len = columns.length; index < len; index++) {
+        const { field, skip } = columns[index];
         if (skip) {
             skipSteps[skip.step] = formik.values[field];
         }
@@ -186,6 +186,9 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, s
         if (column.label === null) { /* If the field should not be shown in form mode, specify label as null */
             continue;
         }
+        if(column.type === 'dynamic') {
+            continue;
+        }
         const { field, label, tab } = column;
         const otherProps = {};
         if (column.options) {
@@ -206,19 +209,19 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, s
     return { formElements, tabColumns: tabsData };
 }
 
-const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit, getRecordAndLookups = () => { } }) => {
+const FormLayout = ({ columns, model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit, getRecordAndLookups = () => { } }) => {
     const classes = useStyles();
     const { formElements, tabColumns, showTabs } = React.useMemo(() => {
         let showTabs = model?.formConfig?.showTabbed;
         const searchParams = new URLSearchParams(window.location.search);
-        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId, searchParams });
+        const { formElements, tabColumns } = getFormConfig({ columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId, searchParams });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
     return (
         <div>
             <RenderColumns isAdd={displayId == 0} getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
             <div className={classes.renderSteps}>
-                <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} />
+                <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} columns={columns} />
             </div>
         </div>
     )

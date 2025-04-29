@@ -2,14 +2,13 @@
 
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.weak-map.js");
-require("core-js/modules/esnext.iterator.filter.js");
-require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = exports.ActiveStepContext = void 0;
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
+require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
@@ -17,7 +16,9 @@ require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url-search-params.js");
@@ -143,6 +144,43 @@ const Form = _ref => {
     }
     navigate(navigatePath);
   };
+  const dynamicColumns = (0, _react.useMemo)(() => {
+    return model.columns.filter(col => col.type === 'dynamic') || [];
+  }, [model]);
+  const initialValues = id === "0" ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
+  const columns = (0, _react.useMemo)(() => {
+    const modelColumns = [...model.columns];
+    const newColumns = [];
+    const existingFields = modelColumns.map(col => col.field);
+
+    // adding dynamic columns
+    for (const column of dynamicColumns) {
+      const {
+        config: dynamicColumnConfig,
+        field
+      } = column;
+      let configValue = (initialValues === null || initialValues === void 0 ? void 0 : initialValues[dynamicColumnConfig]) || [];
+      if (typeof configValue === 'string') {
+        configValue = JSON.parse(configValue || '{}');
+      }
+      const updatedConfig = configValue.map(item => _objectSpread(_objectSpread({}, item), {}, {
+        field: "".concat(field, "-").concat(item.field),
+        label: item.label || item.field
+      }));
+      if (!updatedConfig.length) {
+        continue;
+      }
+
+      // Filter out columns that already exist in modelColumns
+      const newColumnsToAdd = updatedConfig.filter(item => !existingFields.includes(item.field));
+      if (newColumnsToAdd.length) {
+        newColumns.push(...newColumnsToAdd);
+      }
+    }
+    return [...modelColumns, ...newColumns];
+  }, [JSON.stringify(initialValues), model, dynamicColumns]);
+  console.log(columns);
+  console.log(initialValues);
   const getRecordAndLookups = _ref2 => {
     let {
       lookups,
@@ -154,7 +192,9 @@ const Form = _ref => {
     try {
       const params = {
         api: api || gridApi,
-        modelConfig: model,
+        modelConfig: _objectSpread(_objectSpread({}, model), {}, {
+          columns
+        }),
         setError: errorOnLoad
       };
       if (lookups) {
@@ -179,15 +219,15 @@ const Form = _ref => {
   };
   (0, _react.useEffect)(() => {
     if (url) {
-      setValidationSchema(model.getValidationSchema({
+      setValidationSchema(model.getValidationSchema.call(_objectSpread(_objectSpread({}, model), {}, {
+        columns
+      }), {
         id,
         snackbar
       }));
       getRecordAndLookups({});
     }
-  }, [id, idWithOptions, model, url]);
-  const initialValues = id === "0" ? // for new records need to override baseSaveData with Data
-  _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
+  }, [id, idWithOptions, model, url, columns]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues,
@@ -197,16 +237,33 @@ const Form = _ref => {
       let {
         resetForm
       } = _ref3;
+      const dynamicFieldMapper = new Map();
+      const toSave = {};
       for (const key in values) {
-        if (typeof values[key] === "string") {
-          values[key] = values[key].trim();
+        const [dynamicColumnField, field] = key.split('-');
+        if (dynamicColumnField && field) {
+          if (dynamicFieldMapper.has(dynamicColumnField)) {
+            dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
+          } else {
+            dynamicFieldMapper.set(dynamicColumnField, {
+              [field]: values[key]
+            });
+          }
+        } else {
+          toSave[key] = values[key];
+          if (typeof values[key] === "string") {
+            toSave[key] = values[key].trim();
+          }
         }
+      }
+      for (const [key, value] of dynamicFieldMapper.entries()) {
+        toSave[key] = JSON.stringify(value);
       }
       setIsLoading(true);
       (0, _crudHelper.saveRecord)({
         id,
         api: gridApi,
-        values,
+        values: toSave,
         setIsLoading,
         setError: snackbar.showError
       }).then(success => {
@@ -262,7 +319,7 @@ const Form = _ref => {
     if (isCopy) {
       record[model.linkColumn] = "";
     }
-    model.columns.map(item => {
+    columns.forEach(item => {
       if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
@@ -344,7 +401,7 @@ const Form = _ref => {
     if (errorMessage) {
       snackbar.showError(errorMessage, null, "error");
     }
-    const fieldConfig = model.columns.find(column => column.field === fieldName);
+    const fieldConfig = columns.find(column => column.field === fieldName);
     if (fieldConfig && fieldConfig.tab) {
       const tabKeys = Object.keys(model.tabs);
       setActiveStep(tabKeys.indexOf(fieldConfig.tab));
@@ -403,7 +460,8 @@ const Form = _ref => {
     id: id,
     handleSubmit: handleSubmit,
     mode: mode,
-    getRecordAndLookups: getRecordAndLookups
+    getRecordAndLookups: getRecordAndLookups,
+    columns: columns
   })), errorMessage && /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: !!errorMessage,
     onConfirm: clearError,

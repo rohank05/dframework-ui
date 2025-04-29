@@ -297,6 +297,7 @@ const getRecord = async _ref3 => {
       lookupsToFetch.push(field.lookup);
     }
   });
+  const dynamicFields = fields.filter(column => column.type === 'dynamic').map(column => column.field);
   searchParams.set("lookups", lookupsToFetch);
   if (where && (_Object$keys = Object.keys(where)) !== null && _Object$keys !== void 0 && _Object$keys.length) {
     searchParams.set("where", JSON.stringify(where));
@@ -322,6 +323,14 @@ const getRecord = async _ref3 => {
           const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
           if (lookupValue) {
             title = lookupValue.label;
+          }
+        }
+      }
+      for (const field of dynamicFields) {
+        if (record && typeof record[field] === 'string' && record[field]) {
+          const dynamicFieldValues = JSON.parse(record[field] || '{}');
+          for (const [key, value] of Object.entries(dynamicFieldValues)) {
+            record["".concat(field, "-").concat(key)] = value;
           }
         }
       }
