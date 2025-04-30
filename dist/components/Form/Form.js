@@ -51,6 +51,7 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
+const stringType = 'string';
 const Form = _ref => {
   var _stateData$gridSettin;
   let {
@@ -150,8 +151,13 @@ const Form = _ref => {
   const initialValues = id === "0" ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
   const columns = (0, _react.useMemo)(() => {
     const modelColumns = [...model.columns];
-    const newColumns = [];
-    const existingFields = modelColumns.map(col => col.field);
+    const newColumnsToAdd = [];
+    const existingFields = modelColumns.map(_ref2 => {
+      let {
+        field
+      } = _ref2;
+      return field;
+    });
 
     // adding dynamic columns
     for (const column of dynamicColumns) {
@@ -160,32 +166,32 @@ const Form = _ref => {
         field
       } = column;
       let configValue = (initialValues === null || initialValues === void 0 ? void 0 : initialValues[dynamicColumnConfig]) || [];
-      if (typeof configValue === 'string') {
-        configValue = JSON.parse(configValue || '{}');
+      if (typeof configValue === stringType) {
+        configValue = JSON.parse(configValue || '[]');
       }
-      const updatedConfig = configValue.map(item => _objectSpread(_objectSpread({}, item), {}, {
-        field: "".concat(field, "-").concat(item.field),
-        label: item.label || item.field
-      }));
-      if (!updatedConfig.length) {
+      if (!configValue.length) {
         continue;
       }
-
-      // Filter out columns that already exist in modelColumns
-      const newColumnsToAdd = updatedConfig.filter(item => !existingFields.includes(item.field));
-      if (newColumnsToAdd.length) {
-        newColumns.push(...newColumnsToAdd);
-      }
+      configValue.forEach(item => {
+        const newItem = _objectSpread(_objectSpread({}, item), {}, {
+          field: "".concat(field, "-").concat(item.field),
+          label: item.label || item.field
+        });
+        if (existingFields.includes(newItem.field)) {
+          return;
+        }
+        newColumnsToAdd.push(newItem);
+      });
     }
-    return [...modelColumns, ...newColumns];
+    return [...modelColumns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
-  const getRecordAndLookups = _ref2 => {
+  const getRecordAndLookups = _ref3 => {
     let {
       lookups,
       scopeId,
       customSetIsLoading,
       customSetActiveRecord
-    } = _ref2;
+    } = _ref3;
     const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
     try {
       const params = {
@@ -231,10 +237,10 @@ const Form = _ref => {
     initialValues,
     validationSchema: validationSchema,
     validateOnBlur: false,
-    onSubmit: async (values, _ref3) => {
+    onSubmit: async (values, _ref4) => {
       let {
         resetForm
-      } = _ref3;
+      } = _ref4;
       const dynamicFieldMapper = new Map();
       const toSave = {};
       for (const key in values) {
@@ -298,13 +304,13 @@ const Form = _ref => {
     snackbar.showError(title, error);
     handleNavigation();
   };
-  const setActiveRecord = function setActiveRecord(_ref4) {
+  const setActiveRecord = function setActiveRecord(_ref5) {
     let {
       id,
       title,
       record,
       lookups
-    } = _ref4;
+    } = _ref5;
     const isCopy = idWithOptions.indexOf("-") > -1;
     const isNew = !id || id === "0";
     const localTitle = isNew ? "Create" : isCopy ? "Copy" : "Edit";

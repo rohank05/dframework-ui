@@ -22,6 +22,7 @@ import { getPermissions } from "../utils";
 import Relations from "./relations";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
+const stringType = 'string';
 
 const Form = ({
   model,
@@ -106,35 +107,35 @@ const Form = ({
 
   const columns = useMemo(() => {
     const modelColumns = [...model.columns];
-    const newColumns = [];
-    const existingFields = modelColumns.map(col => col.field);
+    const newColumnsToAdd = [];
+    const existingFields = modelColumns.map(({field}) => field);
 
     // adding dynamic columns
     for (const column of dynamicColumns) {
       const { config: dynamicColumnConfig, field } = column;
       let configValue = initialValues?.[dynamicColumnConfig] || [];
-      if (typeof configValue === 'string') {
-        configValue = JSON.parse(configValue || '{}');
+      if (typeof configValue === stringType) {
+        configValue = JSON.parse(configValue || '[]');
       }
 
-      const updatedConfig = configValue.map(item => ({
-        ...item,
-        field: `${field}-${item.field}`,
-        label: item.label || item.field,
-      }));
-
-      if (!updatedConfig.length) {
+      if (!configValue.length) {
         continue;
       }
 
-      // Filter out columns that already exist in modelColumns
-      const newColumnsToAdd = updatedConfig.filter(item => !existingFields.includes(item.field));
-
-      if (newColumnsToAdd.length) {
-        newColumns.push(...newColumnsToAdd);
-      }
+      configValue.forEach(item => {
+        const newItem = {
+          ...item,
+          field: `${field}-${item.field}`,
+          label: item.label || item.field,
+        }
+        if(existingFields.includes(newItem.field)) {
+          return;
+        }
+        newColumnsToAdd.push(newItem);
+      });
     }
-    return [...modelColumns, ...newColumns];
+
+    return [...modelColumns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
 
   const getRecordAndLookups = ({
