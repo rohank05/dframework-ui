@@ -1,12 +1,13 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { FormHelperText } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 
-const field = ({ column, field, label, formik, otherProps, classes, onChange }) => {
+const Field = ({ column, field, label, formik, otherProps, classes, onChange }) => {
     const handleChange = (event) => {
         formik.setFieldValue(field, event.target.checked);
     }
+    const checked = useMemo(()=> formik.values[field] !== undefined ? formik.values[field] === true : column.defaultValue, [formik, column])
     return <div key={field}>
         <FormControlLabel
             control={
@@ -14,9 +15,10 @@ const field = ({ column, field, label, formik, otherProps, classes, onChange }) 
                     {...otherProps}
                     name={field}
                     disabled={column?.readOnly === true || column?.disabled}
-                    checked={formik.values[field] === true}
+                    checked={checked}
                     onChange={handleChange}
                     onBlur={formik.handleBlur}
+                    defaultChecked={column.defaultValue}
                 />
             }
             // label={label} commenting this code due to showing two label on ui 
@@ -25,4 +27,4 @@ const field = ({ column, field, label, formik, otherProps, classes, onChange }) 
     </div>
 }
 
-export default field;
+export default Field;

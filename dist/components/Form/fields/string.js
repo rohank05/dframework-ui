@@ -39,6 +39,8 @@ const field = _ref => {
     error: formik.touched[field] && Boolean(formik.errors[field]),
     helperText: formik.touched[field] && formik.errors[field],
     autoComplete: column.autoComplete
-  }, otherProps));
+  }, otherProps, {
+    defaultValue: column.defaultValue
+  }));
 };
 var _default = exports.default = field;
