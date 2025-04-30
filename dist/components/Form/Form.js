@@ -148,8 +148,9 @@ const Form = _ref => {
   const dynamicColumns = (0, _react.useMemo)(() => {
     return model.columns.filter(col => col.type === 'dynamic') || [];
   }, [model]);
-  const initialValues = id === "0" ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data);
+  const initialValues = (0, _react.useMemo)(() => id === "0" ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data), [model.initialValues, data, id]);
   const columns = (0, _react.useMemo)(() => {
+    const defaultValues = {};
     const modelColumns = [...model.columns];
     const newColumnsToAdd = [];
     const existingFields = modelColumns.map(_ref2 => {
@@ -173,16 +174,19 @@ const Form = _ref => {
         continue;
       }
       configValue.forEach(item => {
+        const fieldName = "".concat(field, "-").concat(item.field);
         const newItem = _objectSpread(_objectSpread({}, item), {}, {
-          field: "".concat(field, "-").concat(item.field),
+          field: fieldName,
           label: item.label || item.field
         });
         if (existingFields.includes(newItem.field)) {
           return;
         }
+        defaultValues[fieldName] = item.defaultValue || '';
         newColumnsToAdd.push(newItem);
       });
     }
+    model.initialValues = _objectSpread(_objectSpread({}, model.initialValues), defaultValues);
     return [...modelColumns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
   const getRecordAndLookups = _ref3 => {
@@ -232,6 +236,7 @@ const Form = _ref => {
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url, columns]);
+  console.log(initialValues);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues,

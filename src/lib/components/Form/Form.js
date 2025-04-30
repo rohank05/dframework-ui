@@ -101,11 +101,12 @@ const Form = ({
     return model.columns.filter(col => col.type === 'dynamic') || [];
   }, [model]);
 
-  const initialValues = id === "0"
+  const initialValues = useMemo(() => id === "0"
       ? { ...model.initialValues, ...data, ...baseSaveData }
-      : { ...baseSaveData, ...model.initialValues, ...data };
+      : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
 
   const columns = useMemo(() => {
+    const defaultValues = {};
     const modelColumns = [...model.columns];
     const newColumnsToAdd = [];
     const existingFields = modelColumns.map(({field}) => field);
@@ -123,18 +124,20 @@ const Form = ({
       }
 
       configValue.forEach(item => {
+        const fieldName = `${field}-${item.field}`;
         const newItem = {
           ...item,
-          field: `${field}-${item.field}`,
+          field: fieldName,
           label: item.label || item.field,
         }
         if(existingFields.includes(newItem.field)) {
           return;
         }
+        defaultValues[fieldName] = item.defaultValue || '';
         newColumnsToAdd.push(newItem);
       });
     }
-
+    model.initialValues = { ...model.initialValues, ...defaultValues}
     return [...modelColumns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
 
@@ -186,6 +189,7 @@ const Form = ({
 
   }, [id, idWithOptions, model, url, columns]);
 
+  console.log(initialValues);
   const formik = useFormik({
     enableReinitialize: true,
     initialValues,
