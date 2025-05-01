@@ -236,7 +236,6 @@ const Form = _ref => {
       getRecordAndLookups({});
     }
   }, [id, idWithOptions, model, url, columns]);
-  console.log(initialValues);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues,
