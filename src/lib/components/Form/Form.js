@@ -189,7 +189,6 @@ const Form = ({
 
   }, [id, idWithOptions, model, url, columns]);
 
-  console.log(initialValues);
   const formik = useFormik({
     enableReinitialize: true,
     initialValues,
