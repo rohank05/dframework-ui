@@ -97,11 +97,12 @@ const Form = ({
     navigate(navigatePath);
   }
 
+  const isNew = useMemo(() => [null, undefined, '', '0', 0].includes(id), [id]);
   const dynamicColumns = useMemo(() => {
     return model.columns.filter(col => col.type === 'dynamic') || [];
   }, [model]);
 
-  const initialValues = useMemo(() => id === "0"
+  const initialValues = useMemo(() => isNew
       ? { ...model.initialValues, ...data, ...baseSaveData }
       : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
 
@@ -115,8 +116,13 @@ const Form = ({
     for (const column of dynamicColumns) {
       const { config: dynamicColumnConfig, field } = column;
       let configValue = initialValues?.[dynamicColumnConfig] || [];
-      if (typeof configValue === stringType) {
-        configValue = JSON.parse(configValue || '[]');
+      try {
+        if (typeof configValue === stringType) {
+          configValue = JSON.parse(configValue);
+        }
+      } catch (err) {
+        console.error(`Error while parsing json ${configValue}`, err);
+        return [];
       }
 
       if (!configValue.length) {
@@ -137,7 +143,7 @@ const Form = ({
         newColumnsToAdd.push(newItem);
       });
     }
-    model.initialValues = { ...model.initialValues, ...defaultValues}
+    model.initialValues = { ...model.initialValues, ...defaultValues};
     return [...modelColumns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
 
@@ -199,7 +205,8 @@ const Form = ({
       const toSave = {};
       for (const key in values) {
         const [dynamicColumnField, field] = key.split('-');
-        if(dynamicColumnField && field) {
+        const isDynamicColumnExist = columns.find(column => column.type === 'dynamic' && column.field === dynamicColumnField);
+        if(dynamicColumnField && isDynamicColumnExist && field) {
           if(dynamicFieldMapper.has(dynamicColumnField)) {
             dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
           } else {
