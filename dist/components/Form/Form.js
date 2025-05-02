@@ -145,10 +145,11 @@ const Form = _ref => {
     }
     navigate(navigatePath);
   };
+  const isNew = (0, _react.useMemo)(() => [null, undefined, '', '0', 0].includes(id), [id]);
   const dynamicColumns = (0, _react.useMemo)(() => {
     return model.columns.filter(col => col.type === 'dynamic') || [];
   }, [model]);
-  const initialValues = (0, _react.useMemo)(() => id === "0" ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data), [model.initialValues, data, id]);
+  const initialValues = (0, _react.useMemo)(() => isNew ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data), [model.initialValues, data, id]);
   const columns = (0, _react.useMemo)(() => {
     const defaultValues = {};
     const modelColumns = [...model.columns];
@@ -167,8 +168,13 @@ const Form = _ref => {
         field
       } = column;
       let configValue = (initialValues === null || initialValues === void 0 ? void 0 : initialValues[dynamicColumnConfig]) || [];
-      if (typeof configValue === stringType) {
-        configValue = JSON.parse(configValue || '[]');
+      try {
+        if (typeof configValue === stringType) {
+          configValue = JSON.parse(configValue);
+        }
+      } catch (err) {
+        console.error("Error while parsing json ".concat(configValue), err);
+        return [];
       }
       if (!configValue.length) {
         continue;
@@ -249,7 +255,8 @@ const Form = _ref => {
       const toSave = {};
       for (const key in values) {
         const [dynamicColumnField, field] = key.split('-');
-        if (dynamicColumnField && field) {
+        const isDynamicColumnExist = columns.find(column => column.type === 'dynamic' && column.field === dynamicColumnField);
+        if (dynamicColumnField && isDynamicColumnExist && field) {
           if (dynamicFieldMapper.has(dynamicColumnField)) {
             dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
           } else {
