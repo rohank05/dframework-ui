@@ -68,6 +68,7 @@ const Form = ({
   let gridApi = `${url}${model.api || api}`;
   const { mode } = stateData.dataForm;
   const userData = stateData.getUserData || {};
+  const initialFormData = stateData.initialFormData || {};
   const userDefinedPermissions = {
     add: true,
     edit: true,
@@ -103,14 +104,13 @@ const Form = ({
   }, [model]);
 
   const initialValues = useMemo(() => isNew
-      ? { ...model.initialValues, ...data, ...baseSaveData }
-      : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
+      ? { ...model.initialValues, ...data, ...initialFormData, ...baseSaveData }
+      : { ...baseSaveData, ...model.initialValues, ...initialFormData, ...data }, [model.initialValues, initialFormData, data, id]);
 
   const columns = useMemo(() => {
     const defaultValues = {};
-    const modelColumns = [...model.columns];
     const newColumnsToAdd = [];
-    const existingFields = modelColumns.map(({field}) => field);
+    const existingFields = model.columns.map(({field}) => field);
 
     // adding dynamic columns
     for (const column of dynamicColumns) {
@@ -122,7 +122,7 @@ const Form = ({
         }
       } catch (err) {
         console.error(`Error while parsing json ${configValue}`, err);
-        return [];
+        return model.columns;
       }
 
       if (!configValue.length) {
@@ -144,7 +144,7 @@ const Form = ({
       });
     }
     model.initialValues = { ...model.initialValues, ...defaultValues};
-    return [...modelColumns, ...newColumnsToAdd];
+    return [...model.columns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
 
   const getRecordAndLookups = ({

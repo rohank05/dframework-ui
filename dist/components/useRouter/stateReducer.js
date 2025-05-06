@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 require("core-js/modules/es.error.cause.js");
+var _react = require("react");
 var _actions = _interopRequireDefault(require("./actions"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -80,6 +81,10 @@ const stateReducer = (state, action) => {
         timeZone: action.payload
       });
       return newState;
+    case _actions.default.INIT_FORM:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        initialFormData: action.payload
+      });
     default:
       return state;
   }

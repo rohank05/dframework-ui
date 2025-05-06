@@ -113,6 +113,7 @@ const Form = _ref => {
     mode
   } = stateData.dataForm;
   const userData = stateData.getUserData || {};
+  const initialFormData = stateData.initialFormData || {};
   const userDefinedPermissions = _objectSpread(_objectSpread({
     add: true,
     edit: true,
@@ -149,12 +150,11 @@ const Form = _ref => {
   const dynamicColumns = (0, _react.useMemo)(() => {
     return model.columns.filter(col => col.type === 'dynamic') || [];
   }, [model]);
-  const initialValues = (0, _react.useMemo)(() => isNew ? _objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), baseSaveData) : _objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), data), [model.initialValues, data, id]);
+  const initialValues = (0, _react.useMemo)(() => isNew ? _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), initialFormData), baseSaveData) : _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), initialFormData), data), [model.initialValues, initialFormData, data, id]);
   const columns = (0, _react.useMemo)(() => {
     const defaultValues = {};
-    const modelColumns = [...model.columns];
     const newColumnsToAdd = [];
-    const existingFields = modelColumns.map(_ref2 => {
+    const existingFields = model.columns.map(_ref2 => {
       let {
         field
       } = _ref2;
@@ -174,7 +174,7 @@ const Form = _ref => {
         }
       } catch (err) {
         console.error("Error while parsing json ".concat(configValue), err);
-        return [];
+        return model.columns;
       }
       if (!configValue.length) {
         continue;
@@ -193,7 +193,7 @@ const Form = _ref => {
       });
     }
     model.initialValues = _objectSpread(_objectSpread({}, model.initialValues), defaultValues);
-    return [...modelColumns, ...newColumnsToAdd];
+    return [...model.columns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
   const getRecordAndLookups = _ref3 => {
     let {
