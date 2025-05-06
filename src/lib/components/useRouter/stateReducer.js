@@ -1,4 +1,3 @@
-import { act } from "react";
 import actionsStateProvider from "./actions";
 const stateReducer = (state, action) => {
     let newState;
