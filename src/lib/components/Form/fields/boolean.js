@@ -22,7 +22,7 @@ const Field = ({ column, field, label, formik, otherProps, classes, onChange }) 
                 />
             }
         />
-        <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
+        <FormHelperText error={formik.touched[field] && Boolean(formik.errors[field])} >{formik.touched[field] && formik.errors[field]}</FormHelperText>
     </div>
 }
 

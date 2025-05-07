@@ -40,6 +40,8 @@ const Field = _ref => {
       onBlur: formik.handleBlur,
       defaultChecked: column.defaultValue
     }))
-  }), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
+  }), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, {
+    error: formik.touched[field] && Boolean(formik.errors[field])
+  }, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = Field;
