@@ -81,6 +81,9 @@ class UiModel {
 					if (max) {
 						config = config.max(Number(max), `${formLabel} must be at most ${max} characters long`);
 					}
+					if(required) {
+						config = config.trim().required(`${formLabel} is required`);
+					}
 					break;
 				case 'boolean':
 					config = yup.bool().nullable().transform((value, originalValue) => {
@@ -164,8 +167,8 @@ class UiModel {
 					config = yup.mixed().nullable().label(formLabel);
 					break;
 			}
-			if (required && type !== "number") {
-				config = config.trim().required(`${formLabel} is required`);
+			if (required && type !== "string") {
+				config = config.required(`${formLabel} is required`);
 			}
 			if (requiredIfNew && (!id || id === '')) {
 				config = config.trim().required(`${formLabel} is required`);

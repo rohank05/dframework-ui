@@ -297,6 +297,12 @@ const getRecord = async _ref3 => {
       lookupsToFetch.push(field.lookup);
     }
   });
+  const dynamicFields = fields.filter(column => column.type === 'dynamic').map(_ref4 => {
+    let {
+      field
+    } = _ref4;
+    return field;
+  });
   searchParams.set("lookups", lookupsToFetch);
   if (where && (_Object$keys = Object.keys(where)) !== null && _Object$keys !== void 0 && _Object$keys.length) {
     searchParams.set("where", JSON.stringify(where));
@@ -325,6 +331,18 @@ const getRecord = async _ref3 => {
           }
         }
       }
+      for (const field of dynamicFields) {
+        if (record && record[field]) {
+          try {
+            const dynamicFieldValues = JSON.parse(record[field] || '{}');
+            for (const [key, value] of Object.entries(dynamicFieldValues)) {
+              record["".concat(field, "-").concat(key)] = value;
+            }
+          } catch (e) {
+            console.error("Invalid JSON field ".concat(field), e);
+          }
+        }
+      }
       const defaultValues = _objectSpread({}, modelConfig.defaultValues);
       setActiveRecord({
         id,
@@ -350,14 +368,14 @@ const getRecord = async _ref3 => {
   }
 };
 exports.getRecord = getRecord;
-const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
+const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
   let {
     id,
     api,
     setIsLoading,
     setError,
     setErrorMessage
-  } = _ref4;
+  } = _ref5;
   let result = {
     success: false,
     error: ''
@@ -398,14 +416,14 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
   }
   return result;
 };
-const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
+const saveRecord = exports.saveRecord = async function saveRecord(_ref6) {
   let {
     id,
     api,
     values,
     setIsLoading,
     setError
-  } = _ref5;
+  } = _ref6;
   let url, method;
   if (id !== 0) {
     url = "".concat(api, "/").concat(id);
@@ -448,7 +466,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
   }
   return false;
 };
-const getLookups = async _ref6 => {
+const getLookups = async _ref7 => {
   let {
     api,
     setIsLoading,
@@ -457,7 +475,7 @@ const getLookups = async _ref6 => {
     setError,
     lookups,
     scopeId
-  } = _ref6;
+  } = _ref7;
   api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
   setIsLoading(true);
   const searchParams = new URLSearchParams();

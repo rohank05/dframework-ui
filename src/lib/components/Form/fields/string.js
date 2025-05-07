@@ -24,6 +24,7 @@ const field = ({ column, field, formik, otherProps }) => {
         helperText={formik.touched[field] && formik.errors[field]}
         autoComplete={column.autoComplete}
         {...otherProps}
+        defaultValue={column.defaultValue}
     />
 };
 

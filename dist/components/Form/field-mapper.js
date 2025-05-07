@@ -112,6 +112,7 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function _taggedTemplateLiteral(e, t) { return t || (t = e.slice(0)), Object.freeze(Object.defineProperties(e, { raw: { value: Object.freeze(t) } })); }
+const dynamicColumnType = 'dynamic';
 const fieldMappers = exports.fieldMappers = {
   "boolean": _boolean.default,
   "select": _select.default,
@@ -161,7 +162,8 @@ const RenderSteps = _ref => {
     lookups,
     fieldConfigs,
     mode,
-    handleSubmit
+    handleSubmit,
+    columns
   } = _ref;
   const [skipped, setSkipped] = React.useState(new Set());
   const {
@@ -170,11 +172,11 @@ const RenderSteps = _ref => {
   } = React.useContext(_Form.ActiveStepContext);
   const classes = useStyles();
   let skipSteps = {};
-  for (let index = 0, len = model.columns.length; index < len; index++) {
+  for (let index = 0, len = columns.length; index < len; index++) {
     const {
       field,
       skip
-    } = model.columns[index];
+    } = columns[index];
     if (skip) {
       skipSteps[skip.step] = formik.values[field];
     }
@@ -341,6 +343,9 @@ const getFormConfig = function getFormConfig(_ref5) {
       /* If the field should not be shown in form mode, specify label as null */
       continue;
     }
+    if (column.type === dynamicColumnType) {
+      continue;
+    }
     const {
       field,
       label,
@@ -380,6 +385,7 @@ const getFormConfig = function getFormConfig(_ref5) {
 };
 const FormLayout = _ref6 => {
   let {
+    columns,
     model,
     formik,
     data,
@@ -405,7 +411,7 @@ const FormLayout = _ref6 => {
       formElements,
       tabColumns
     } = getFormConfig({
-      columns: model.columns,
+      columns,
       tabs: showTabs ? model.tabs : {},
       getRecordAndLookups,
       id: displayId,
@@ -441,7 +447,8 @@ const FormLayout = _ref6 => {
     lookups: lookups,
     fieldConfigs: fieldConfigs,
     mode: mode,
-    handleSubmit: handleSubmit
+    handleSubmit: handleSubmit,
+    columns: columns
   })));
 };
 var _default = exports.default = FormLayout;
