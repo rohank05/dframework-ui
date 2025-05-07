@@ -40,7 +40,6 @@ const Field = _ref => {
       onBlur: formik.handleBlur,
       defaultChecked: column.defaultValue
     }))
-    // label={label} commenting this code due to showing two label on ui 
   }), /*#__PURE__*/_react.default.createElement(_material.FormHelperText, null, formik.touched[field] && formik.errors[field]));
 };
 var _default = exports.default = Field;

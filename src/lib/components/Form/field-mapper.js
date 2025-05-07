@@ -26,6 +26,7 @@ import TreeCheckbox from './fields/treeCheckBox';
 import fileUpload from './fields/fileUpload';
 import JSONInput from './fields/jsonInput';
 
+const dynamicColumnType = 'dynamic'
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -186,7 +187,7 @@ const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, s
         if (column.label === null) { /* If the field should not be shown in form mode, specify label as null */
             continue;
         }
-        if(column.type === 'dynamic') {
+        if(column.type === dynamicColumnType) {
             continue;
         }
         const { field, label, tab } = column;

@@ -23,6 +23,7 @@ import Relations from "./relations";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
 const stringType = 'string';
+const dynamicColumnType = 'dynamic';
 
 const Form = ({
   model,
@@ -100,7 +101,7 @@ const Form = ({
 
   const isNew = useMemo(() => [null, undefined, '', '0', 0].includes(id), [id]);
   const dynamicColumns = useMemo(() => {
-    return model.columns.filter(col => col.type === 'dynamic') || [];
+    return model.columns.filter(col => col.type === dynamicColumnType);
   }, [model]);
 
   const initialValues = useMemo(() => isNew
@@ -205,7 +206,7 @@ const Form = ({
       const toSave = {};
       for (const key in values) {
         const [dynamicColumnField, field] = key.split('-');
-        const isDynamicColumnExist = columns.find(column => column.type === 'dynamic' && column.field === dynamicColumnField);
+        const isDynamicColumnExist = columns.find(column => column.type === dynamicColumnType && column.field === dynamicColumnField);
         if(dynamicColumnField && isDynamicColumnExist && field) {
           if(dynamicFieldMapper.has(dynamicColumnField)) {
             dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
@@ -214,7 +215,7 @@ const Form = ({
           }
         } else {
           toSave[key] = values[key];
-          if (typeof values[key] === "string") {
+          if (typeof values[key] === stringType) {
             toSave[key] = values[key].trim();
           } 
         }

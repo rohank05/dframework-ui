@@ -21,7 +21,6 @@ const Field = ({ column, field, label, formik, otherProps, classes, onChange }) 
                     defaultChecked={column.defaultValue}
                 />
             }
-            // label={label} commenting this code due to showing two label on ui 
         />
         <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
     </div>

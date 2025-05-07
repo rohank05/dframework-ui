@@ -52,6 +52,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
 const stringType = 'string';
+const dynamicColumnType = 'dynamic';
 const Form = _ref => {
   var _stateData$gridSettin;
   let {
@@ -148,7 +149,7 @@ const Form = _ref => {
   };
   const isNew = (0, _react.useMemo)(() => [null, undefined, '', '0', 0].includes(id), [id]);
   const dynamicColumns = (0, _react.useMemo)(() => {
-    return model.columns.filter(col => col.type === 'dynamic') || [];
+    return model.columns.filter(col => col.type === dynamicColumnType);
   }, [model]);
   const initialValues = (0, _react.useMemo)(() => isNew ? _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, model.initialValues), data), initialFormData), baseSaveData) : _objectSpread(_objectSpread(_objectSpread(_objectSpread({}, baseSaveData), model.initialValues), initialFormData), data), [model.initialValues, initialFormData, data, id]);
   const columns = (0, _react.useMemo)(() => {
@@ -255,7 +256,7 @@ const Form = _ref => {
       const toSave = {};
       for (const key in values) {
         const [dynamicColumnField, field] = key.split('-');
-        const isDynamicColumnExist = columns.find(column => column.type === 'dynamic' && column.field === dynamicColumnField);
+        const isDynamicColumnExist = columns.find(column => column.type === dynamicColumnType && column.field === dynamicColumnField);
         if (dynamicColumnField && isDynamicColumnExist && field) {
           if (dynamicFieldMapper.has(dynamicColumnField)) {
             dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
@@ -266,7 +267,7 @@ const Form = _ref => {
           }
         } else {
           toSave[key] = values[key];
-          if (typeof values[key] === "string") {
+          if (typeof values[key] === stringType) {
             toSave[key] = values[key].trim();
           }
         }
