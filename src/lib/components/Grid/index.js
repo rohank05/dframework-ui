@@ -187,7 +187,10 @@ const GridBase = memo(({
     const rowsSelected = showRowsSelected;
     const [selection, setSelection] = useState([]);
     const [isOrderDetailModalOpen, setIsOrderDetailModalOpen] = useState(false);
-    const [selectedOrder, setSelectedOrder]
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [record, setRecord] = useState(null);
+    const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
