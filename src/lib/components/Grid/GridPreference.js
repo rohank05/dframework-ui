@@ -57,7 +57,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
     const preferences = stateData?.preferences;
     const currentPreference = stateData?.currentPreference;
-    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
+    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi; // this is the api endpoint used to fetch, save, edit or delete the preferences, passed via redux form application.
     const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);

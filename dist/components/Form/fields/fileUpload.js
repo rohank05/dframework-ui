@@ -39,7 +39,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const {
   errorMapping
 } = _utils.default;
-function fileUpload(_ref) {
+function FileUpload(_ref) {
   var _stateData$gridSettin, _formik$values$field;
   let {
     column,
@@ -237,4 +237,4 @@ function fileUpload(_ref) {
     color: "inherit"
   }) : "Upload File")));
 }
-var _default = exports.default = fileUpload;
+var _default = exports.default = FileUpload;

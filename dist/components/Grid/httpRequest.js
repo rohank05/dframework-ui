@@ -33,7 +33,7 @@ const transport = exports.transport = _axios.default.create({
 });
 const HTTP_STATUS_CODES = exports.HTTP_STATUS_CODES = {
   OK: 200,
-  UNAUTHORIZED: 401,
+  SESSION_EXPIRED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500

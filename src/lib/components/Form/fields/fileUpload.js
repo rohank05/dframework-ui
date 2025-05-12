@@ -7,7 +7,7 @@ import utils from "../../utils";
 
 const { errorMapping } = utils;
 
-function fileUpload({ column, field, formik}) {
+function FileUpload({ column, field, formik}) {
     let inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
     const { maxSize } = column;
@@ -176,4 +176,4 @@ function fileUpload({ column, field, formik}) {
     );
 }
 
-export default fileUpload;
+export default FileUpload;

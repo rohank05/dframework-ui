@@ -23,7 +23,7 @@ import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
 import ChipInput from './fields/chipInput';
 import TreeCheckbox from './fields/treeCheckBox';
-import fileUpload from './fields/fileUpload';
+import FileUpload from './fields/fileUpload';
 import JSONInput from './fields/jsonInput';
 
 const dynamicColumnType = 'dynamic'
@@ -43,7 +43,7 @@ const fieldMappers = {
     "email": StringField,
     "chipInput": ChipInput,
     "treeCheckbox": TreeCheckbox,
-    "fileUpload": fileUpload,
+    "fileUpload": FileUpload,
     "json": JSONInput
 };
 
@@ -177,7 +177,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
     )
 }
 
-const getFormConfig = function ({ columns, tabs = {}, getRecordAndLookups, id, searchParams }) {
+const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
     const formElements = [], tabColumns = {};
     for (const tab in tabs) {
         tabColumns[tab] = [];

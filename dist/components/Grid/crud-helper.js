@@ -251,7 +251,7 @@ const getList = async _ref => {
       setError(response.statusText);
     }
   } catch (error) {
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
@@ -355,7 +355,7 @@ const getRecord = async _ref3 => {
     }
   } catch (error) {
     // Handle 401 specifically in the error block
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
@@ -403,7 +403,7 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
       setError('Delete failed', response.body);
     }
   } catch (error) {
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
@@ -453,7 +453,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref6) {
       setError('Save failed', response.body);
     }
   } catch (error) {
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
@@ -490,7 +490,7 @@ const getLookups = async _ref7 => {
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       setActiveRecord(response.data);
-    } else if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
+    } else if (response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       // setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';

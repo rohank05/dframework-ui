@@ -176,7 +176,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             setError(response.statusText);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
@@ -253,7 +253,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         }
     } catch (error) {
         // Handle 401 specifically in the error block
-        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
@@ -292,7 +292,7 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
             setError('Delete failed', response.body);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
@@ -340,7 +340,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             setError('Save failed', response.body);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
@@ -371,7 +371,7 @@ const getLookups = async ({ api, setIsLoading, setActiveRecord, modelConfig, set
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
             setActiveRecord(response.data);
-        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+        } else if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             // setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';

@@ -140,6 +140,7 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
     }
     return equal;
 }
+// TODO: Add support for additional languages in localization (e.g., translations for filterValueTrue, filterValueFalse, etc.)
 const GridBase = memo(({
     showGrid = true,
     model,
@@ -178,7 +179,7 @@ const GridBase = memo(({
     readOnly = false,
     ...props
 }) => {
-
+    // TODO: Add constants for default values like defaultPageSize and recordCounts.
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
     const [data, setData] = useState({ recordCount: 0, records: [], lookups: {} });
     const [isLoading, setIsLoading] = useState(true);
@@ -186,10 +187,7 @@ const GridBase = memo(({
     const rowsSelected = showRowsSelected;
     const [selection, setSelection] = useState([]);
     const [isOrderDetailModalOpen, setIsOrderDetailModalOpen] = useState(false);
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
-    const [isDeleting, setIsDeleting] = useState(false);
-    const [record, setRecord] = useState(null);
+    const [selectedOrder, setSelectedOrder]
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
