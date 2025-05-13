@@ -83,7 +83,7 @@ function FileUpload({ column, field, formik}) {
     React.useEffect(() => {
         setFormState({
             ...formState,
-            isExternal: !inputValue.includes(host.toLowerCase()) ? "yes" : "no",
+            isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no",
         });
     }, [inputValue]);
 
