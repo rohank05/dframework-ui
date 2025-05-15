@@ -146,7 +146,7 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     )
 }
 
-const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, getRecordAndLookups = () => { }, isAdd }) => {
+const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, isAdd }) => {
     const classes = useStyles();
     if (!formElements?.length) {
         return null;
@@ -167,7 +167,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                                 : null
                             }
                             <Grid item xs={isGridComponent ? 12 : 9} className={classes.childStyles}>
-                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} getRecordAndLookups={getRecordAndLookups} {...otherProps} />
+                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
                             </Grid>
                         </Grid >
                     )
@@ -210,17 +210,17 @@ const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
     return { formElements, tabColumns: tabsData };
 }
 
-const FormLayout = ({ columns, model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit, getRecordAndLookups = () => { } }) => {
+const FormLayout = ({ columns, model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit}) => {
     const classes = useStyles();
     const { formElements, tabColumns, showTabs } = React.useMemo(() => {
         let showTabs = model?.formConfig?.showTabbed;
         const searchParams = new URLSearchParams(window.location.search);
-        const { formElements, tabColumns } = getFormConfig({ columns, tabs: showTabs ? model.tabs : {}, getRecordAndLookups, id: displayId, searchParams });
+        const { formElements, tabColumns } = getFormConfig({ columns, tabs: showTabs ? model.tabs : {}, id: displayId, searchParams });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
     return (
         <div>
-            <RenderColumns isAdd={displayId == 0} getRecordAndLookups={getRecordAndLookups} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
+            <RenderColumns isAdd={displayId == 0} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
             <div className={classes.renderSteps}>
                 <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} columns={columns} />
             </div>

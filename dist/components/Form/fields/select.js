@@ -33,8 +33,7 @@ const SelectField = _ref => {
     lookups,
     otherProps,
     classes,
-    onChange,
-    getRecordAndLookups
+    onChange
   } = _ref;
   const userSelected = _react.default.useRef(false);
   const {
@@ -58,29 +57,6 @@ const SelectField = _ref => {
       setOptions(initialOptions);
     }
   }, [initialOptions, userSelected.current]);
-  const setActiveRecord = lookups => {
-    const {
-      State
-    } = lookups;
-    if (!State) return;
-    if (!userSelected.current) {
-      setOptions(State);
-    }
-  };
-  const onOpen = () => {
-    if (!column.parentComboField) return;
-    const valueField = column.parentComboField;
-    if (!formik.values[valueField]) return;
-    getRecordAndLookups({
-      scopeId: formik.values[valueField],
-      lookups: column.lookup,
-      customSetIsLoading: () => {},
-      customSetActiveRecord: setActiveRecord
-    });
-  };
-  (0, _react.useEffect)(() => {
-    onOpen();
-  }, [formik.values[column.parentComboField]]);
   let inputValue = formik.values[field];
   if (options !== null && options !== void 0 && options.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
     const isDefaultOption = options.find(e => e.IsDefault);
@@ -111,7 +87,6 @@ const SelectField = _ref => {
     IconComponent: _KeyboardArrowDown.default
   }, otherProps, {
     name: field,
-    onOpen: onOpen,
     multiple: column.multiSelect === true,
     readOnly: column.readOnly === true,
     value: "".concat(inputValue),

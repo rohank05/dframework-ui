@@ -196,62 +196,37 @@ const Form = _ref => {
     model.initialValues = _objectSpread(_objectSpread({}, model.initialValues), defaultValues);
     return [...model.columns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
-  const getRecordAndLookups = _ref3 => {
-    let {
-      lookups,
-      scopeId,
-      customSetIsLoading,
-      customSetActiveRecord
-    } = _ref3;
-    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
-    try {
-      const params = {
-        api: api || gridApi,
-        modelConfig: _objectSpread(_objectSpread({}, model), {}, {
-          columns
-        }),
-        setError: errorOnLoad
-      };
-      if (lookups) {
-        (0, _crudHelper.getLookups)(_objectSpread(_objectSpread({}, params), {}, {
-          // setIsLoading,
-          setIsLoading: customSetIsLoading || setIsLoading,
-          setActiveRecord: customSetActiveRecord,
-          lookups,
-          scopeId
-        }));
-      } else {
-        (0, _crudHelper.getRecord)(_objectSpread(_objectSpread({}, params), {}, {
-          id: options.length > 1 ? options[1] : options[0],
-          setIsLoading,
-          setActiveRecord
-        }));
-      }
-    } catch (error) {
-      snackbar.showError("An error occured, please try after some time.", error);
-      handleNavigation();
-    }
-  };
   (0, _react.useEffect)(() => {
-    if (url) {
-      setValidationSchema(model.getValidationSchema.call(_objectSpread(_objectSpread({}, model), {}, {
+    if (!url) return;
+    setValidationSchema(model.getValidationSchema.call(_objectSpread(_objectSpread({}, model), {}, {
+      columns
+    }), {
+      id,
+      snackbar
+    }));
+    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
+    const params = {
+      api: api || gridApi,
+      modelConfig: _objectSpread(_objectSpread({}, model), {}, {
         columns
-      }), {
-        id,
-        snackbar
-      }));
-      getRecordAndLookups({});
-    }
+      }),
+      setError: errorOnLoad
+    };
+    (0, _crudHelper.getRecord)(_objectSpread(_objectSpread({}, params), {}, {
+      id: options.length > 1 ? options[1] : options[0],
+      setIsLoading,
+      setActiveRecord
+    }));
   }, [id, idWithOptions, model, url, columns]);
   const formik = (0, _formik.useFormik)({
     enableReinitialize: true,
     initialValues,
     validationSchema: validationSchema,
     validateOnBlur: false,
-    onSubmit: async (values, _ref4) => {
+    onSubmit: async (values, _ref3) => {
       let {
         resetForm
-      } = _ref4;
+      } = _ref3;
       const dynamicFieldMapper = new Map();
       const toSave = {};
       for (const key in values) {
@@ -316,13 +291,13 @@ const Form = _ref => {
     snackbar.showError(title, error);
     handleNavigation();
   };
-  const setActiveRecord = function setActiveRecord(_ref5) {
+  const setActiveRecord = function setActiveRecord(_ref4) {
     let {
       id,
       title,
       record,
       lookups
-    } = _ref5;
+    } = _ref4;
     const isCopy = idWithOptions.indexOf("-") > -1;
     const isNew = !id || id === "0";
     const localTitle = isNew ? "Create" : isCopy ? "Copy" : "Edit";
@@ -476,7 +451,6 @@ const Form = _ref => {
     id: id,
     handleSubmit: handleSubmit,
     mode: mode,
-    getRecordAndLookups: getRecordAndLookups,
     columns: columns
   })), errorMessage && /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: !!errorMessage,

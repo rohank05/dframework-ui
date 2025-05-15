@@ -6,7 +6,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-const SelectField = ({ column, field, label, formik, activeRecord, lookups, otherProps, classes, onChange, getRecordAndLookups }) => {
+const SelectField = ({ column, field, label, formik, activeRecord, lookups, otherProps, classes, onChange }) => {
     const userSelected = React.useRef(false);
     const { filter, placeHolder } = column;
 
@@ -24,30 +24,6 @@ const SelectField = ({ column, field, label, formik, activeRecord, lookups, othe
             setOptions(initialOptions);
         }
     }, [initialOptions, userSelected.current]);
-
-    const setActiveRecord = (lookups) => {
-        const { State } = lookups;
-        if (!State) return;
-        if (!userSelected.current) {
-            setOptions(State);
-        }
-    };
-
-    const onOpen = () => {
-        if (!column.parentComboField) return;
-        const valueField = column.parentComboField;
-        if (!formik.values[valueField]) return;
-        getRecordAndLookups({
-            scopeId: formik.values[valueField],
-            lookups: column.lookup,
-            customSetIsLoading: () => { },
-            customSetActiveRecord: setActiveRecord
-        });
-    };
-
-    useEffect(() => {
-        onOpen();
-    }, [formik.values[column.parentComboField]]);
 
     let inputValue = formik.values[field];
     if (options?.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
@@ -83,7 +59,6 @@ const SelectField = ({ column, field, label, formik, activeRecord, lookups, othe
                 IconComponent={KeyboardArrowDownIcon}
                 {...otherProps}
                 name={field}
-                onOpen={onOpen}
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
                 value={`${inputValue}`}

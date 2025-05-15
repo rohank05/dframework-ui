@@ -83,17 +83,17 @@ const Form = ({
     userDefinedPermissions
   });
   const { hideBreadcrumb = false, navigateBack } = model;
-  
+
   const handleNavigation = () => {
     let navigatePath;
 
     if (typeof navigateBack === "function") {
       navigatePath = navigateBack({ params, searchParams, data });
     } else {
-      navigatePath = typeof navigateBack === "string" ?  navigateBack  : pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
     }
 
-    if(navigatePath.includes("window.history")) {
+    if (navigatePath.includes("window.history")) {
       window.history.back();
     }
     navigate(navigatePath);
@@ -105,13 +105,13 @@ const Form = ({
   }, [model]);
 
   const initialValues = useMemo(() => isNew
-      ? { ...model.initialValues, ...data, ...initialFormData, ...baseSaveData }
-      : { ...baseSaveData, ...model.initialValues, ...initialFormData, ...data }, [model.initialValues, initialFormData, data, id]);
+    ? { ...model.initialValues, ...data, ...initialFormData, ...baseSaveData }
+    : { ...baseSaveData, ...model.initialValues, ...initialFormData, ...data }, [model.initialValues, initialFormData, data, id]);
 
   const columns = useMemo(() => {
     const defaultValues = {};
     const newColumnsToAdd = [];
-    const existingFields = model.columns.map(({field}) => field);
+    const existingFields = model.columns.map(({ field }) => field);
 
     // adding dynamic columns
     for (const column of dynamicColumns) {
@@ -137,62 +137,34 @@ const Form = ({
           field: fieldName,
           label: item.label || item.field,
         }
-        if(existingFields.includes(newItem.field)) {
+        if (existingFields.includes(newItem.field)) {
           return;
         }
         defaultValues[fieldName] = item.defaultValue || '';
         newColumnsToAdd.push(newItem);
       });
     }
-    model.initialValues = { ...model.initialValues, ...defaultValues};
+    model.initialValues = { ...model.initialValues, ...defaultValues };
     return [...model.columns, ...newColumnsToAdd];
   }, [JSON.stringify(initialValues), model, dynamicColumns]);
 
-  const getRecordAndLookups = ({
-    lookups,
-    scopeId,
-    customSetIsLoading,
-    customSetActiveRecord
-  }) => {
-    const options = idWithOptions?.split("-");
-    try {
-      const params = {
-        api: api || gridApi,
-        modelConfig: {...model, columns },
-        setError: errorOnLoad
-      };
-      if (lookups) {
-        getLookups({
-          ...params,
-          // setIsLoading,
-          setIsLoading: customSetIsLoading || setIsLoading,
-          setActiveRecord: customSetActiveRecord,
-          lookups,
-          scopeId
-        });
-      } else {
-        getRecord({
-          ...params,
-          id: options.length > 1 ? options[1] : options[0],
-          setIsLoading,
-          setActiveRecord
-        });
-      }
-    } catch (error) {
-      snackbar.showError(
-        "An error occured, please try after some time.",
-        error
-      );
-      handleNavigation();
-    }
-  };
   useEffect(() => {
-    if (url) {
-      setValidationSchema(
-        model.getValidationSchema.call({ ...model, columns }, { id, snackbar })
-      );
-      getRecordAndLookups({});
-    }
+    if (!url) return;
+    setValidationSchema(
+      model.getValidationSchema.call({ ...model, columns }, { id, snackbar })
+    );
+    const options = idWithOptions?.split("-");
+    const params = {
+      api: api || gridApi,
+      modelConfig: { ...model, columns },
+      setError: errorOnLoad
+    };
+    getRecord({
+      ...params,
+      id: options.length > 1 ? options[1] : options[0],
+      setIsLoading,
+      setActiveRecord
+    });
 
   }, [id, idWithOptions, model, url, columns]);
 
@@ -207,8 +179,8 @@ const Form = ({
       for (const key in values) {
         const [dynamicColumnField, field] = key.split('-');
         const isDynamicColumnExist = columns.find(column => column.type === dynamicColumnType && column.field === dynamicColumnField);
-        if(dynamicColumnField && isDynamicColumnExist && field) {
-          if(dynamicFieldMapper.has(dynamicColumnField)) {
+        if (dynamicColumnField && isDynamicColumnExist && field) {
+          if (dynamicFieldMapper.has(dynamicColumnField)) {
             dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
           } else {
             dynamicFieldMapper.set(dynamicColumnField, { [field]: values[key] });
@@ -217,10 +189,10 @@ const Form = ({
           toSave[key] = values[key];
           if (typeof values[key] === stringType) {
             toSave[key] = values[key].trim();
-          } 
+          }
         }
       }
-      for(const [key, value] of dynamicFieldMapper.entries()) {
+      for (const [key, value] of dynamicFieldMapper.entries()) {
         toSave[key] = JSON.stringify(value);
       }
       setIsLoading(true);
@@ -427,7 +399,6 @@ const Form = ({
               id={id}
               handleSubmit={handleSubmit}
               mode={mode}
-              getRecordAndLookups={getRecordAndLookups}
               columns={columns}
             />
           </form>
