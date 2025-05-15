@@ -127,10 +127,10 @@ function FileUpload(_ref) {
       setLoading(false); // Stop loading
     }
   };
-  const host = new URL(Url).hostname;
+  const host = new URL(Url).hostname.toLowerCase();
   _react.default.useEffect(() => {
     setFormState(_objectSpread(_objectSpread({}, formState), {}, {
-      isExternal: !inputValue.includes(host) ? "yes" : "no"
+      isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no"
     }));
   }, [inputValue]);
   const isLengthExceded = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > (column.max || 500);

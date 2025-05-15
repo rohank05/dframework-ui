@@ -34,7 +34,7 @@ const Field = _ref => {
   }, /*#__PURE__*/_react.default.createElement(_FormControlLabel.default, {
     control: /*#__PURE__*/_react.default.createElement(_Checkbox.default, _extends({}, otherProps, {
       name: field,
-      disabled: (column === null || column === void 0 ? void 0 : column.readOnly) === true || (column === null || column === void 0 ? void 0 : column.disabled),
+      disabled: column.readOnly === true || column.disabled === true,
       checked: checked,
       onChange: handleChange,
       onBlur: formik.handleBlur,
