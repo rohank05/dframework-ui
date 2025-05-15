@@ -80,10 +80,6 @@ const stateReducer = (state, action) => {
         timeZone: action.payload
       });
       return newState;
-    case _actions.default.INIT_FORM:
-      return _objectSpread(_objectSpread({}, state), {}, {
-        initialFormData: action.payload
-      });
     default:
       return state;
   }

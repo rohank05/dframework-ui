@@ -22,8 +22,6 @@ import { getPermissions } from "../utils";
 import Relations from "./relations";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
-const stringType = 'string';
-const dynamicColumnType = 'dynamic';
 
 const Form = ({
   model,
@@ -69,7 +67,6 @@ const Form = ({
   let gridApi = `${url}${model.api || api}`;
   const { mode } = stateData.dataForm;
   const userData = stateData.getUserData || {};
-  const initialFormData = stateData.initialFormData || {};
   const userDefinedPermissions = {
     add: true,
     edit: true,
@@ -100,53 +97,10 @@ const Form = ({
   }
 
   const isNew = useMemo(() => [null, undefined, '', '0', 0].includes(id), [id]);
-  const dynamicColumns = useMemo(() => {
-    return model.columns.filter(col => col.type === dynamicColumnType);
-  }, [model]);
 
   const initialValues = useMemo(() => isNew
-      ? { ...model.initialValues, ...data, ...initialFormData, ...baseSaveData }
-      : { ...baseSaveData, ...model.initialValues, ...initialFormData, ...data }, [model.initialValues, initialFormData, data, id]);
-
-  const columns = useMemo(() => {
-    const defaultValues = {};
-    const newColumnsToAdd = [];
-    const existingFields = model.columns.map(({field}) => field);
-
-    // adding dynamic columns
-    for (const column of dynamicColumns) {
-      const { config: dynamicColumnConfig, field } = column;
-      let configValue = initialValues?.[dynamicColumnConfig] || [];
-      try {
-        if (typeof configValue === stringType) {
-          configValue = JSON.parse(configValue);
-        }
-      } catch (err) {
-        console.error(`Error while parsing json ${configValue}`, err);
-        return model.columns;
-      }
-
-      if (!configValue.length) {
-        continue;
-      }
-
-      configValue.forEach(item => {
-        const fieldName = `${field}-${item.field}`;
-        const newItem = {
-          ...item,
-          field: fieldName,
-          label: item.label || item.field,
-        }
-        if(existingFields.includes(newItem.field)) {
-          return;
-        }
-        defaultValues[fieldName] = item.defaultValue || '';
-        newColumnsToAdd.push(newItem);
-      });
-    }
-    model.initialValues = { ...model.initialValues, ...defaultValues};
-    return [...model.columns, ...newColumnsToAdd];
-  }, [JSON.stringify(initialValues), model, dynamicColumns]);
+      ? { ...model.initialValues, ...data, ...baseSaveData }
+      : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
 
   const getRecordAndLookups = ({
     lookups,
@@ -158,7 +112,7 @@ const Form = ({
     try {
       const params = {
         api: api || gridApi,
-        modelConfig: {...model, columns },
+        modelConfig: {...model },
         setError: errorOnLoad
       };
       if (lookups) {
@@ -188,13 +142,11 @@ const Form = ({
   };
   useEffect(() => {
     if (url) {
-      setValidationSchema(
-        model.getValidationSchema.call({ ...model, columns }, { id, snackbar })
-      );
+      setValidationSchema(model.getValidationSchema({ id, snackbar }));
       getRecordAndLookups({});
     }
 
-  }, [id, idWithOptions, model, url, columns]);
+  }, [id, idWithOptions, model, url]);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -202,32 +154,16 @@ const Form = ({
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
-      const dynamicFieldMapper = new Map();
-      const toSave = {};
       for (const key in values) {
-        const [dynamicColumnField, field] = key.split('-');
-        const isDynamicColumnExist = columns.find(column => column.type === dynamicColumnType && column.field === dynamicColumnField);
-        if(dynamicColumnField && isDynamicColumnExist && field) {
-          if(dynamicFieldMapper.has(dynamicColumnField)) {
-            dynamicFieldMapper.get(dynamicColumnField)[field] = values[key];
-          } else {
-            dynamicFieldMapper.set(dynamicColumnField, { [field]: values[key] });
-          }
-        } else {
-          toSave[key] = values[key];
-          if (typeof values[key] === stringType) {
-            toSave[key] = values[key].trim();
+          if (typeof values[key] === 'string') {
+            values[key] = values[key].trim();
           } 
-        }
-      }
-      for(const [key, value] of dynamicFieldMapper.entries()) {
-        toSave[key] = JSON.stringify(value);
       }
       setIsLoading(true);
       saveRecord({
         id,
         api: gridApi,
-        values: toSave,
+        values: values,
         setIsLoading,
         setError: snackbar.showError,
       })
@@ -284,7 +220,7 @@ const Form = ({
       record[model.linkColumn] = "";
     }
 
-    columns.forEach((item) => {
+    model.columns.forEach((item) => {
       if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
@@ -360,7 +296,7 @@ const Form = ({
     if (errorMessage) {
       snackbar.showError(errorMessage, null, "error");
     }
-    const fieldConfig = columns.find(
+    const fieldConfig = model.columns.find(
       (column) => column.field === fieldName
     );
     if (fieldConfig && fieldConfig.tab) {
@@ -428,7 +364,6 @@ const Form = ({
               handleSubmit={handleSubmit}
               mode={mode}
               getRecordAndLookups={getRecordAndLookups}
-              columns={columns}
             />
           </form>
           {errorMessage && (

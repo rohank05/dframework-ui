@@ -33,8 +33,6 @@ const stateReducer = (state, action) => {
         case actionsStateProvider.SET_TIMEZONE:
             newState = { ...state, timeZone: action.payload };
             return newState;
-        case actionsStateProvider.INIT_FORM:
-            return { ...state, initialFormData: action.payload };
         default:
             return state;
     }
