@@ -208,7 +208,6 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             lookupsToFetch.push(field.lookup);
         }
     });
-    const dynamicFields = fields.filter(column => column.type === 'dynamic').map(({field}) => field);
     searchParams.set("lookups", lookupsToFetch);
     if (where && Object.keys(where)?.length) {
         searchParams.set("where", JSON.stringify(where));
@@ -231,18 +230,6 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
                         title = lookupValue.label;
                     }
                 }
-            }
-            for(const field of dynamicFields) {
-                if (record && record[field]) {
-                    try {
-                        const dynamicFieldValues = JSON.parse(record[field] || '{}');
-                        for (const [key, value] of Object.entries(dynamicFieldValues)) {
-                          record[`${field}-${key}`] = value;
-                        }
-                    } catch(e) {
-                        console.error(`Invalid JSON field ${field}`, e)
-                    }
-                  }
             }
             const defaultValues = { ...modelConfig.defaultValues };
 
