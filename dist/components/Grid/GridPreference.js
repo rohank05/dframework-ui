@@ -404,17 +404,6 @@ const GridPreferences = _ref => {
     }
   };
   const prefName = formik.values.prefName.trim();
-
-  // field is within a dialog that's not visible when the top-level component mounts
-  const focusUsernameInputField = input => {
-    var _input$dataset;
-    if (input && !((_input$dataset = input.dataset) !== null && _input$dataset !== void 0 && _input$dataset.touched)) {
-      setTimeout(() => {
-        input.focus();
-        input.dataset.touched = "true";
-      }, 10);
-    }
-  };
   const isManageForm = formType === formTypes.Manage;
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     id: "grid-preferences-btn",
@@ -475,6 +464,7 @@ const GridPreferences = _ref => {
       primary: tTranslate(prefName, tOpts)
     }));
   }))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+    disableRestoreFocus: true,
     open: openDialog,
     maxWidth: isManageForm ? 'md' : 'sm',
     fullWidth: true
@@ -488,7 +478,7 @@ const GridPreferences = _ref => {
     columnGap: 2
   }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "h5"
-  }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : '', "}"), tOpts)))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+  }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts)))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
     rowGap: 2,
@@ -514,12 +504,12 @@ const GridPreferences = _ref => {
         color: 'red'
       }
     }, "*")),
+    autoFocus: true,
     name: 'prefName',
     onChange: formik.handleChange,
     error: !!formik.errors.prefName,
     helperText: formik.errors.prefName,
-    fullWidth: true,
-    inputRef: focusUsernameInputField
+    fullWidth: true
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
     item: true,
     xs: 12
