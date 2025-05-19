@@ -66,7 +66,7 @@ class UiModel {
 		const { columns } = this;
 		let validationConfig = {};
 		for (const column of columns) {
-			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validationLength = 0, validate } = column;
+			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validate } = column;
 			const formLabel = label || header || field;
 			if (!formLabel) {
 				continue;
@@ -122,6 +122,13 @@ class UiModel {
 					}
 					break;
 				case 'password':
+					// TODO: Implement configurable password validation regex pattern to support application-specific password requirements
+					// Currently enforces:
+					// - Length between 8-50 characters
+					// - At least one uppercase letter
+					// - At least one lowercase letter 
+					// - At least one number
+					// - At least one special character
 					config = yup.string()
 						.label(formLabel)
 						.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {

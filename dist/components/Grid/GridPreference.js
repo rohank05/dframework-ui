@@ -30,6 +30,7 @@ var _reactI18next = require("react-i18next");
 var _httpRequest = _interopRequireDefault(require("./httpRequest"));
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
+var _Dialog = require("../Dialog");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
@@ -463,22 +464,23 @@ const GridPreferences = _ref => {
     }, /*#__PURE__*/_react.default.createElement(_material.ListItemText, {
       primary: tTranslate(prefName, tOpts)
     }));
-  }))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
-    disableRestoreFocus: true,
+  }))), /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: openDialog,
+    disableRestoreFocus: true,
+    onConfirm: formik.handleSubmit,
+    onCancel: handleDialogClose,
+    title: /*#__PURE__*/_react.default.createElement(_material.Stack, {
+      direction: "row",
+      columnGap: 2
+    }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
+      variant: "h5"
+    }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts))),
     maxWidth: isManageForm ? 'md' : 'sm',
     fullWidth: true
-  }, /*#__PURE__*/_react.default.createElement(_material.DialogTitle, {
-    sx: {
-      backgroundColor: '#e0e0e0',
-      mb: 2
-    }
-  }, /*#__PURE__*/_react.default.createElement(_material.Stack, {
-    direction: "row",
-    columnGap: 2
-  }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
-    variant: "h5"
-  }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts)))), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
+    // customContent={true}
+    ,
+    customActions: true
+  }, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
     rowGap: 2,
@@ -595,42 +597,18 @@ const GridPreferences = _ref => {
     disableRowGrouping: true,
     disableRowSelectionOnClick: true,
     autoHeight: true
-  })))), isManageForm && /*#__PURE__*/_react.default.createElement(_material.DialogActions, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
-    color: "error",
-    variant: "contained",
-    size: "small",
-    onClick: () => closeModal(),
-    disableElevation: true
-  }, tTranslate('Close', tOpts)))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+  })))), /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: openPreferenceExistsModal,
-    maxWidth: "xs",
-    fullWidth: true
-  }, /*#__PURE__*/_react.default.createElement(_material.DialogContent, {
-    sx: {
-      fontSize: '16px'
-    }
-  }, "\"", prefName, "\" ", tTranslate('name already in use, please use another name.', tOpts)), /*#__PURE__*/_react.default.createElement(_material.DialogActions, {
-    sx: {
-      justifyContent: 'center',
-      marginTop: '4%'
-    }
-  }, /*#__PURE__*/_react.default.createElement(_material.Button, {
-    color: "success",
-    variant: "contained",
-    size: "small",
-    onClick: () => setOpenPreferenceExistsModal(false),
-    disableElevation: true
-  }, tTranslate('Ok', tOpts)))), /*#__PURE__*/_react.default.createElement(_material.Dialog, {
+    onConfirm: () => setOpenPreferenceExistsModal(false),
+    title: "",
+    okText: tTranslate('Ok', tOpts),
+    cancelText: ""
+  }, "\"", prefName, "\" ", tTranslate('name already in use, please use another name.', tOpts)), /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: openConfirmDeleteDialog.preferenceName,
-    maxWidth: "sm",
-    fullWidth: true
-  }, /*#__PURE__*/_react.default.createElement(_material.DialogTitle, null, "Confirm delete"), /*#__PURE__*/_react.default.createElement(_material.DialogContent, null, /*#__PURE__*/_react.default.createElement(_material.DialogContentText, {
-    id: "alert-dialog-description"
-  }, "Are you sure you wish to delete \"", openConfirmDeleteDialog.preferenceName, "\"")), /*#__PURE__*/_react.default.createElement(_material.DialogActions, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
-    onClick: () => setOpenConfirmDeleteDialog({})
-  }, "Cancel"), /*#__PURE__*/_react.default.createElement(_material.Button, {
-    onClick: confirmDeletePreference,
-    autoFocus: true
-  }, "Ok"))));
+    onConfirm: confirmDeletePreference,
+    onCancel: () => setOpenConfirmDeleteDialog({}),
+    title: "Confirm delete",
+    yesNo: true
+  }, "Are you sure you wish to delete \"", openConfirmDeleteDialog.preferenceName, "\""));
 };
 var _default = exports.default = GridPreferences;

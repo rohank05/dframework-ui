@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip, ListItemIcon, DialogContentText } from '@mui/material';
+import { Box, Button, Checkbox, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip, ListItemIcon, DialogContentText } from '@mui/material';
 import { DataGridPremium, GridActionsCellItem, gridFilterModelSelector, gridSortModelSelector, useGridSelector, useGridApiRef, } from '@mui/x-data-grid-premium';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import request from './httpRequest';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
+import { DialogComponent } from '../Dialog';
 
 const actionTypes = {
     Copy: "Copy",
@@ -41,8 +42,8 @@ const initialValues = {
 };
 
 const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
-    const { pathname, navigate } = useRouter();
+    const { stateData, dispatchData, removeCurrentPreferenceName, getAllSavedPreferences } = useStateContext();
+    const { navigate } = useRouter();
     const apiRef = useGridApiRef();
     const snackbar = useSnackbar();
     const { t: translate, i18n } = useTranslation();
@@ -220,12 +221,6 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         }
     }
 
-    const closeModal = () => {
-        setFormType(null);
-        handleClose();
-        setOpenDialog(false);
-    }
-
     const confirmDeletePreference = async () => {
         const { prefId, preferenceName: currentPrefname } = openConfirmDeleteDialog;
         await deletePreference(prefId, currentPrefname);
@@ -316,175 +311,168 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                     )
                 })}
             </Menu>
-            <Dialog disableRestoreFocus open={openDialog} maxWidth={isManageForm ? 'md' : 'sm'} fullWidth>
-                <DialogTitle sx={{ backgroundColor: '#e0e0e0', mb: 2 }}>
+            <DialogComponent
+                open={openDialog}
+                disableRestoreFocus
+                onConfirm={formik.handleSubmit}
+                onCancel={handleDialogClose}
+                title={
                     <Stack direction="row" columnGap={2}>
                         <Typography variant="h5" >
                             {formType} {tTranslate(`Preference${(formType === formTypes.Manage ? 's' : '')}`, tOpts)}
                         </Typography>
                     </Stack>
-                </DialogTitle>
-                <DialogContent>
-                    {openForm && (
-                        <Grid
-                            component={'form'}
-                            onSubmit={formik.handleSubmit}
-                            rowGap={2}
-                            container
-                            sx={{
-                                '& .MuiFormLabel-root:not(.MuiTypography-root)': {
-                                    fontWeight: 400,
-                                    display: 'table',
-                                    whiteSpace: 'pre-wrap' /* css-3 */,
-                                    wordWrap: 'break-word' /* Internet Explorer 5.5+ */
+                }
+                maxWidth={isManageForm ? 'md' : 'sm'}
+                fullWidth
+                customActions={true}
+            >
+                {openForm && (
+                    <Grid
+                        component={'form'}
+                        onSubmit={formik.handleSubmit}
+                        rowGap={2}
+                        container
+                        sx={{
+                            '& .MuiFormLabel-root:not(.MuiTypography-root)': {
+                                fontWeight: 400,
+                                display: 'table',
+                                whiteSpace: 'pre-wrap' /* css-3 */,
+                                wordWrap: 'break-word' /* Internet Explorer 5.5+ */
+                            }
+                        }}
+                    >
+                        <Grid item xs={12}>
+                            <TextField
+                                defaultValue={tTranslate(formik.values.prefName, tOpts)}
+                                variant="outlined"
+                                size="small"
+                                margin="dense"
+                                label={
+                                    <span>
+                                        {tTranslate('Preference Name', tOpts)} <span style={{ color: 'red' }}>*</span>
+                                    </span>
                                 }
-                            }}
-                        >
-                            <Grid item xs={12}>
-                                <TextField
-                                    defaultValue={tTranslate(formik.values.prefName, tOpts)}
-                                    variant="outlined"
-                                    size="small"
-                                    margin="dense"
-                                    label={
-                                        <span>
-                                            {tTranslate('Preference Name', tOpts)} <span style={{ color: 'red' }}>*</span>
-                                        </span>
-                                    }
-                                    autoFocus
-                                    name={'prefName'}
-                                    onChange={formik.handleChange}
-                                    error={!!formik.errors.prefName}
-                                    helperText={formik.errors.prefName}
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    defaultValue={tTranslate(formik.values.prefDesc, tOpts)}
-                                    variant="outlined"
-                                    multiline
-                                    rows={2}
-                                    size="small"
-                                    margin="dense"
-                                    label={tTranslate('Preference Description', tOpts)}
-                                    name={'prefDesc'}
-                                    onChange={formik.handleChange}
-                                    error={!!formik.errors.prefDesc}
-                                    helperText={formik.errors.prefDesc}
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            checked={formik.values.isDefault}
-                                            name={'isDefault'}
-                                            onChange={formik.handleChange}
-                                        />
-                                    }
-                                    label={tTranslate('Default', tOpts)}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Stack direction="row" columnGap={1} style={{ justifyContent: 'end' }}>
-                                    <Button
-                                        type="submit"
-                                        size="small"
-                                        startIcon={<SaveIcon />}
-                                        color="primary"
-                                        variant="contained"
-                                        disableElevation
-                                    >
-                                        {tTranslate('Save', tOpts)}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        startIcon={<CloseIcon />}
-                                        color="error"
-                                        variant="contained"
-                                        size="small"
-                                        onClick={handleDialogClose}
-                                        disableElevation
-                                    >
-                                        {tTranslate('Close', tOpts)}
-                                    </Button>
-                                </Stack>
-                            </Grid>
+                                autoFocus
+                                name={'prefName'}
+                                onChange={formik.handleChange}
+                                error={!!formik.errors.prefName}
+                                helperText={formik.errors.prefName}
+                                fullWidth
+                            />
                         </Grid>
-                    )}
-
-                    {(openDialog && formType === formTypes.Manage) && (
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <DataGridPremium
-                                    sx={{
-                                        "& .MuiTablePagination-selectLabel": {
-                                            marginTop: 2
-                                        },
-                                        "& .MuiTablePagination-displayedRows": {
-                                            marginTop: 2
-                                        },
-                                        "& .MuiDataGrid-columnHeader .MuiInputLabel-shrink": {
-                                            display: "none"
-                                        }
-                                    }}
-                                    className="pagination-fix"
-                                    onCellClick={onCellClick}
-                                    columns={gridColumns}
-                                    pageSizeOptions={[5, 10, 20, 50, 100]}
-                                    pagination
-                                    rowCount={filteredPrefs.length}
-                                    rows={filteredPrefs}
-                                    getRowId={getGridRowId}
-                                    slots={{
-                                        headerFilterMenu: false
-                                    }}
-                                    density="compact"
-                                    disableDensitySelector={true}
-                                    apiRef={apiRef}
-                                    disableAggregation={true}
-                                    disableRowGrouping={true}
-                                    disableRowSelectionOnClick={true}
-                                    autoHeight
-                                />
-                            </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                defaultValue={tTranslate(formik.values.prefDesc, tOpts)}
+                                variant="outlined"
+                                multiline
+                                rows={2}
+                                size="small"
+                                margin="dense"
+                                label={tTranslate('Preference Description', tOpts)}
+                                name={'prefDesc'}
+                                onChange={formik.handleChange}
+                                error={!!formik.errors.prefDesc}
+                                helperText={formik.errors.prefDesc}
+                                fullWidth
+                            />
                         </Grid>
-                    )}
-                </DialogContent>
-                {isManageForm && (
-                    <DialogActions>
-                        <Button color="error" variant="contained" size="small" onClick={() => closeModal()} disableElevation>
-                            {tTranslate('Close', tOpts)}
-                        </Button>
-                    </DialogActions>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={formik.values.isDefault}
+                                        name={'isDefault'}
+                                        onChange={formik.handleChange}
+                                    />
+                                }
+                                label={tTranslate('Default', tOpts)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Stack direction="row" columnGap={1} style={{ justifyContent: 'end' }}>
+                                <Button
+                                    type="submit"
+                                    size="small"
+                                    startIcon={<SaveIcon />}
+                                    color="primary"
+                                    variant="contained"
+                                    disableElevation
+                                >
+                                    {tTranslate('Save', tOpts)}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    startIcon={<CloseIcon />}
+                                    color="error"
+                                    variant="contained"
+                                    size="small"
+                                    onClick={handleDialogClose}
+                                    disableElevation
+                                >
+                                    {tTranslate('Close', tOpts)}
+                                </Button>
+                            </Stack>
+                        </Grid>
+                    </Grid>
                 )}
-            </Dialog>
-            <Dialog open={openPreferenceExistsModal} maxWidth='xs' fullWidth>
-                <DialogContent sx={{ fontSize: '16px' }}>
-                    "{prefName}" {tTranslate('name already in use, please use another name.', tOpts)}
-                </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center', marginTop: '4%' }}>
-                    <Button color="success" variant="contained" size="small" onClick={() => setOpenPreferenceExistsModal(false)} disableElevation>
-                        {tTranslate('Ok', tOpts)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog open={openConfirmDeleteDialog.preferenceName} maxWidth='sm' fullWidth>
-                <DialogTitle>Confirm delete</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Are you sure you wish to delete "{openConfirmDeleteDialog.preferenceName}"
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenConfirmDeleteDialog({})}>Cancel</Button>
-                    <Button onClick={confirmDeletePreference} autoFocus>
-                        Ok
-                    </Button>
-                </DialogActions>
-            </Dialog>
+
+                {(openDialog && formType === formTypes.Manage) && (
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <DataGridPremium
+                                sx={{
+                                    "& .MuiTablePagination-selectLabel": {
+                                        marginTop: 2
+                                    },
+                                    "& .MuiTablePagination-displayedRows": {
+                                        marginTop: 2
+                                    },
+                                    "& .MuiDataGrid-columnHeader .MuiInputLabel-shrink": {
+                                        display: "none"
+                                    }
+                                }}
+                                className="pagination-fix"
+                                onCellClick={onCellClick}
+                                columns={gridColumns}
+                                pageSizeOptions={[5, 10, 20, 50, 100]}
+                                pagination
+                                rowCount={filteredPrefs.length}
+                                rows={filteredPrefs}
+                                getRowId={getGridRowId}
+                                slots={{
+                                    headerFilterMenu: false
+                                }}
+                                density="compact"
+                                disableDensitySelector={true}
+                                apiRef={apiRef}
+                                disableAggregation={true}
+                                disableRowGrouping={true}
+                                disableRowSelectionOnClick={true}
+                                autoHeight
+                            />
+                        </Grid>
+                    </Grid>
+                )}
+            </DialogComponent>
+            <DialogComponent
+                open={openPreferenceExistsModal}
+                onConfirm={() => setOpenPreferenceExistsModal(false)}
+                title=""
+                okText={tTranslate('Ok', tOpts)}
+                cancelText=""
+            >
+                "{prefName}" {tTranslate('name already in use, please use another name.', tOpts)}
+            </DialogComponent>
+            <DialogComponent
+                open={openConfirmDeleteDialog.preferenceName}
+                onConfirm={confirmDeletePreference}
+                onCancel={() => setOpenConfirmDeleteDialog({})}
+                title="Confirm delete"
+                yesNo={true}
+            >
+                Are you sure you wish to delete "{openConfirmDeleteDialog.preferenceName}"
+            </DialogComponent>
         </Box>
     );
 }
