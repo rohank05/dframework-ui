@@ -3,6 +3,7 @@
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.weak-map.js");
+require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
@@ -60,7 +61,6 @@ exports.fieldMappers = exports.default = void 0;
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.search.js");
-require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/esnext.set.difference.v2.js");
 require("core-js/modules/esnext.set.intersection.v2.js");
@@ -268,7 +268,6 @@ const RenderColumns = _ref3 => {
     lookups,
     fieldConfigs,
     mode,
-    getRecordAndLookups = () => {},
     isAdd
   } = _ref3;
   const classes = useStyles();
@@ -317,8 +316,7 @@ const RenderColumns = _ref3 => {
       data: data,
       onChange: onChange,
       combos: combos,
-      lookups: lookups,
-      getRecordAndLookups: getRecordAndLookups
+      lookups: lookups
     }, otherProps))));
   }));
 };
@@ -388,8 +386,7 @@ const FormLayout = _ref6 => {
     id: displayId,
     fieldConfigs,
     mode,
-    handleSubmit,
-    getRecordAndLookups = () => {}
+    handleSubmit
   } = _ref6;
   const classes = useStyles();
   const {
@@ -406,7 +403,6 @@ const FormLayout = _ref6 => {
     } = getFormConfig({
       columns: model.columns,
       tabs: showTabs ? model.tabs : {},
-      getRecordAndLookups,
       id: displayId,
       searchParams
     });
@@ -418,7 +414,6 @@ const FormLayout = _ref6 => {
   }, [model]);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
     isAdd: displayId == 0,
-    getRecordAndLookups: getRecordAndLookups,
     formElements: formElements,
     model: model,
     formik: formik,

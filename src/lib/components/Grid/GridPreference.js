@@ -253,13 +253,6 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     }
 
     const prefName = formik.values.prefName.trim();
-
-    // field is within a dialog that's not visible when the top-level component mounts
-    const focusUsernameInputField = input => {
-        if (input && !input.dataset?.touched) {
-            setTimeout(() => { input.focus(); input.dataset.touched = "true"; }, 10);
-        }
-    };
     const isManageForm = formType === formTypes.Manage;
     return (
         <Box>
@@ -323,11 +316,11 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                     )
                 })}
             </Menu>
-            <Dialog open={openDialog} maxWidth={isManageForm ? 'md' : 'sm'} fullWidth>
+            <Dialog disableRestoreFocus open={openDialog} maxWidth={isManageForm ? 'md' : 'sm'} fullWidth>
                 <DialogTitle sx={{ backgroundColor: '#e0e0e0', mb: 2 }}>
                     <Stack direction="row" columnGap={2}>
                         <Typography variant="h5" >
-                            {formType} {tTranslate(`Preference${(formType === formTypes.Manage ? 's' : '')}}`, tOpts)}
+                            {formType} {tTranslate(`Preference${(formType === formTypes.Manage ? 's' : '')}`, tOpts)}
                         </Typography>
                     </Stack>
                 </DialogTitle>
@@ -358,12 +351,12 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                                             {tTranslate('Preference Name', tOpts)} <span style={{ color: 'red' }}>*</span>
                                         </span>
                                     }
+                                    autoFocus
                                     name={'prefName'}
                                     onChange={formik.handleChange}
                                     error={!!formik.errors.prefName}
                                     helperText={formik.errors.prefName}
                                     fullWidth
-                                    inputRef={focusUsernameInputField}
                                 />
                             </Grid>
                             <Grid item xs={12}>

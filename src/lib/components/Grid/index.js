@@ -31,7 +31,7 @@ import { getList, getRecord, deleteRecord, saveRecord } from './crud-helper';
 import PropTypes from 'prop-types';
 import { Footer } from './footer';
 import template from './template';
-import { Tooltip, CardContent, Card, Box } from "@mui/material";
+import { Tooltip, CardContent, Card } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from "@material-ui/core";
@@ -444,22 +444,22 @@ const GridBase = memo(({
                     ) : undefined
                 }));
             }
-            if(column.type === 'boolean') {
+            if (column.type === 'boolean') {
                 const booleanOperators = getGridBooleanOperators();
                 overrides.filterOperators = booleanOperators.map((operator) => ({
                     ...operator,
                     InputComponent: operator.InputComponent ? (params) => (
-                        <CustomDropdownmenu 
-                        column={{
-                            ...column,
-                            customLookup: [
-                                { value: true, label: 'Yes' },
-                                { value: false, label: 'No' },
-                            ],
-                            dataRef
-                        }}
-                        {...params}
-                        autoHighlight
+                        <CustomDropdownmenu
+                            column={{
+                                ...column,
+                                customLookup: [
+                                    { value: true, label: 'Yes' },
+                                    { value: false, label: 'No' },
+                                ],
+                                dataRef
+                            }}
+                            {...params}
+                            autoHighlight
                         />
                     ) : undefined
                 }));
@@ -598,7 +598,7 @@ const GridBase = memo(({
             finalFilters.items = [...finalFilters.items, ...additionalFilters];
         }
         const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
-        if(!isValidFilters) {
+        if (!isValidFilters) {
             return;
         }
         getList({
@@ -810,7 +810,7 @@ const GridBase = memo(({
 
     const handleAddRecords = () => {
         let gridApi = `${url}${selectionApi || api}/updateMany`;
-        
+
         if (selectedSet.current.size < 1) {
             snackbar.showError(
                 "Please select atleast one record to proceed"
@@ -822,8 +822,8 @@ const GridBase = memo(({
         const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
         let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
 
-        if(Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
-            selectedRecords = selectedRecords.map(item => 
+        if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+            selectedRecords = selectedRecords.map(item =>
                 Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
             );
         }
@@ -939,7 +939,7 @@ const GridBase = memo(({
                     }
                     {available && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAssign} size="medium" variant="contained" className={classes.buttons}  >{"Assign"}</Button>}
                     {assigned && <Button startIcon={!showAddIcon ? null : <RemoveIcon />} onClick={onUnassign} size="medium" variant="contained" className={classes.buttons}  >{"Remove"}</Button>}
-                    </div>
+                </div>
                 <GridToolbarContainer {...props}>
                     {effectivePermissions.showColumnsOrder && (
                         <GridToolbarColumnsButton />
@@ -1206,10 +1206,10 @@ const GridBase = memo(({
                             </span>
                         </DialogComponent>)}
                     {showAddConfirmation && (
-                        <DialogComponent 
-                            open={showAddConfirmation} 
-                            onConfirm={handleAddRecords} 
-                            onCancel={() => setShowAddConfirmation(false)} 
+                        <DialogComponent
+                            open={showAddConfirmation}
+                            onConfirm={handleAddRecords}
+                            onCancel={() => setShowAddConfirmation(false)}
                             title="Confirm Add"
                         >
                             <span className={classes.deleteContent}>

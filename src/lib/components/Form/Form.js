@@ -4,8 +4,7 @@ import { useState, useEffect, createContext, useMemo } from "react";
 import {
   getRecord,
   saveRecord,
-  deleteRecord,
-  getLookups
+  deleteRecord
 } from "../Grid/crud-helper";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
@@ -81,17 +80,17 @@ const Form = ({
     userDefinedPermissions
   });
   const { hideBreadcrumb = false, navigateBack } = model;
-  
+
   const handleNavigation = () => {
     let navigatePath;
 
     if (typeof navigateBack === "function") {
       navigatePath = navigateBack({ params, searchParams, data });
     } else {
-      navigatePath = typeof navigateBack === "string" ?  navigateBack  : pathname.substring(0, pathname.lastIndexOf("/"));
+      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
     }
 
-    if(navigatePath.includes("window.history")) {
+    if (navigatePath.includes("window.history")) {
       window.history.back();
     }
     navigate(navigatePath);
@@ -100,52 +99,24 @@ const Form = ({
   const isNew = useMemo(() => [null, undefined, '', '0', 0].includes(id), [id]);
 
   const initialValues = useMemo(() => isNew
-      ? { ...model.initialValues, ...data, ...baseSaveData }
-      : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
+    ? { ...model.initialValues, ...data, ...baseSaveData }
+    : { ...baseSaveData, ...model.initialValues, ...data }, [model.initialValues, data, id]);
 
-  const getRecordAndLookups = ({
-    lookups,
-    scopeId,
-    customSetIsLoading,
-    customSetActiveRecord
-  }) => {
-    const options = idWithOptions?.split("-");
-    try {
-      const params = {
-        api: api || gridApi,
-        modelConfig: {...model },
-        setError: errorOnLoad
-      };
-      if (lookups) {
-        getLookups({
-          ...params,
-          // setIsLoading,
-          setIsLoading: customSetIsLoading || setIsLoading,
-          setActiveRecord: customSetActiveRecord,
-          lookups,
-          scopeId
-        });
-      } else {
-        getRecord({
-          ...params,
-          id: options.length > 1 ? options[1] : options[0],
-          setIsLoading,
-          setActiveRecord
-        });
-      }
-    } catch (error) {
-      snackbar.showError(
-        "An error occured, please try after some time.",
-        error
-      );
-      handleNavigation();
-    }
-  };
   useEffect(() => {
-    if (url) {
-      setValidationSchema(model.getValidationSchema({ id, snackbar }));
-      getRecordAndLookups({});
-    }
+    if (!url) return;
+    setValidationSchema(model.getValidationSchema({ id, snackbar }));
+    const options = idWithOptions?.split("-");
+    const params = {
+      api: api || gridApi,
+      modelConfig: { ...model },
+      setError: errorOnLoad
+    };
+    getRecord({
+      ...params,
+      id: options.length > 1 ? options[1] : options[0],
+      setIsLoading,
+      setActiveRecord
+    });
 
   }, [id, idWithOptions, model, url]);
 
@@ -158,7 +129,7 @@ const Form = ({
       for (const key in values) {
           if (typeof values[key] === 'string') {
             values[key] = values[key].trim();
-          } 
+          }
       }
       setIsLoading(true);
       saveRecord({
@@ -367,7 +338,6 @@ const Form = ({
               id={id}
               handleSubmit={handleSubmit}
               mode={mode}
-              getRecordAndLookups={getRecordAndLookups}
             />
           </form>
           {errorMessage && (
