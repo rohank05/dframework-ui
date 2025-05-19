@@ -308,10 +308,10 @@ const Form = _ref => {
     gridData[name] = value;
     setData(gridData);
   };
-  const handleSubmit = function handleSubmit(e) {
+  const handleSubmit = async function handleSubmit(e) {
     if (e) e.preventDefault();
     if (typeof beforeSubmit === 'function') {
-      beforeSubmit({
+      await beforeSubmit({
         formik
       });
     }

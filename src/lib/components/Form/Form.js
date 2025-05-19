@@ -259,10 +259,10 @@ const Form = ({
     setData(gridData);
   };
 
-  const handleSubmit = function (e) {
+  const handleSubmit = async function (e) {
     if (e) e.preventDefault();
     if(typeof beforeSubmit === 'function') {
-      beforeSubmit({ formik });
+      await beforeSubmit({ formik });
     }
     const { errors } = formik;
     formik.handleSubmit();
