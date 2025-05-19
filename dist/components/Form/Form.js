@@ -60,7 +60,8 @@ const Form = _ref => {
     Layout = _fieldMapper.default,
     baseSaveData = {},
     sx,
-    readOnly
+    readOnly,
+    beforeSubmit
   } = _ref;
   const formTitle = model.formTitle || model.title;
   const {
@@ -334,6 +335,11 @@ const Form = _ref => {
   };
   const handleSubmit = function handleSubmit(e) {
     if (e) e.preventDefault();
+    if (typeof beforeSubmit === 'function') {
+      beforeSubmit({
+        formik
+      });
+    }
     const {
       errors
     } = formik;

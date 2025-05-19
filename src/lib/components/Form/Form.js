@@ -32,7 +32,8 @@ const Form = ({
   Layout = FormLayout,
   baseSaveData = {},
   sx,
-  readOnly
+  readOnly,
+  beforeSubmit
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
@@ -289,6 +290,9 @@ const Form = ({
 
   const handleSubmit = function (e) {
     if (e) e.preventDefault();
+    if(typeof beforeSubmit === 'function') {
+      beforeSubmit({ formik });
+    }
     const { errors } = formik;
     formik.handleSubmit();
     const fieldName = Object.keys(errors)[0];
