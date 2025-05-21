@@ -9,7 +9,7 @@ const Field = ({ column, field, formik, lookups, data, otherProps, model, fieldC
     let options = lookups ? lookups[column?.lookup] : [];
     const { filter } = column;
 
-    if(filter){
+    if (filter) {
         options = filter({ options });
     }
 
@@ -33,7 +33,7 @@ const Field = ({ column, field, formik, lookups, data, otherProps, model, fieldC
                 {...otherProps}
                 multiple
                 id={field}
-                limitTags={5}
+                limitTags={column.limitTags || 5}
                 options={options || []}
                 getOptionLabel={(option) => option.label || ''}
                 defaultValue={filteredCombos}

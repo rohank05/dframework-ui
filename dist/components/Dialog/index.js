@@ -14,7 +14,7 @@ var _DialogActions = _interopRequireDefault(require("@mui/material/DialogActions
 var _DialogContent = _interopRequireDefault(require("@mui/material/DialogContent"));
 var _DialogContentText = _interopRequireDefault(require("@mui/material/DialogContentText"));
 var _DialogTitle = _interopRequireDefault(require("@mui/material/DialogTitle"));
-const _excluded = ["open", "onConfirm", "title", "onCancel", "okText", "cancelText", "yesNo", "children", "maxWidth", "fullWidth", "customContent", "customActions"];
+const _excluded = ["open", "onConfirm", "title", "onCancel", "okText", "cancelText", "yesNo", "children", "maxWidth", "fullWidth", "customActions"];
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var s = Object.getOwnPropertySymbols(e); for (r = 0; r < s.length; r++) o = s[r], t.includes(o) || {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
@@ -31,7 +31,6 @@ const DialogComponent = _ref => {
       children,
       maxWidth = 'sm',
       fullWidth = true,
-      customContent = false,
       customActions = false
     } = _ref,
     props = _objectWithoutProperties(_ref, _excluded);
@@ -50,7 +49,7 @@ const DialogComponent = _ref => {
       backgroundColor: '#e0e0e0',
       mb: 2
     }
-  }, title), /*#__PURE__*/_react.default.createElement(_DialogContent.default, null, customContent ? children : /*#__PURE__*/_react.default.createElement(_DialogContentText.default, null, children)), !customActions && /*#__PURE__*/_react.default.createElement(_DialogActions.default, null, /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, title), /*#__PURE__*/_react.default.createElement(_DialogContent.default, null, /*#__PURE__*/_react.default.createElement(_DialogContentText.default, null, children)), !customActions && /*#__PURE__*/_react.default.createElement(_DialogActions.default, null, /*#__PURE__*/_react.default.createElement(_Button.default, {
     onClick: onCancel
   }, cancelText), /*#__PURE__*/_react.default.createElement(_Button.default, {
     onClick: onConfirm,

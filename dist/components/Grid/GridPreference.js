@@ -116,16 +116,12 @@ const GridPreferences = _ref => {
     setIsGridPreferenceFetched
   } = _ref;
   const {
-    systemDateTimeFormat,
     stateData,
     dispatchData,
-    formatDate,
     removeCurrentPreferenceName,
-    getAllSavedPreferences,
-    applyDefaultPreferenceIfExists
+    getAllSavedPreferences
   } = (0, _StateProvider.useStateContext)();
   const {
-    pathname,
     navigate
   } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
@@ -365,11 +361,6 @@ const GridPreferences = _ref => {
       formik.resetForm();
     }
   };
-  const closeModal = () => {
-    setFormType(null);
-    handleClose();
-    setOpenDialog(false);
-  };
   const confirmDeletePreference = async () => {
     const {
       prefId,
@@ -476,9 +467,7 @@ const GridPreferences = _ref => {
       variant: "h5"
     }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts))),
     maxWidth: isManageForm ? 'md' : 'sm',
-    fullWidth: true
-    // customContent={true}
-    ,
+    fullWidth: true,
     customActions: true
   }, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',

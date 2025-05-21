@@ -1,11 +1,8 @@
 import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
-import request from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect']
-
-const exportRecordSize = 10000;
 
 const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport, model }) => {
     if (!contentType) {
@@ -204,7 +201,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     const lookupsToFetch = [];
     const fields = modelConfig.formDef || modelConfig.columns;
     fields?.forEach(field => {
-        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboField)) {
+        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id === 0 && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
         }
     });
@@ -359,15 +356,12 @@ const getLookups = async ({ api, setIsLoading, setActiveRecord, modelConfig, set
         if (response.status === HTTP_STATUS_CODES.OK) {
             setActiveRecord(response.data);
         } else if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            // setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
-            }, 2000);
-        } else {
-            // setError('Could not load lookups', response.body.toString());
+            }, 500);
         }
     } catch (error) {
-        // setError('Could not load lookups', error);
+        setError('Could not delete record', error.message || error.toString());
     } finally {
         setIsLoading(false);
     }

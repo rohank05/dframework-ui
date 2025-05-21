@@ -1,7 +1,6 @@
 "use strict";
 
 require("core-js/modules/es.error.cause.js");
-require("core-js/modules/es.weak-map.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -23,9 +22,7 @@ require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
-var _httpRequest = _interopRequireWildcard(require("./httpRequest"));
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+var _httpRequest = require("./httpRequest");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -34,7 +31,6 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect'];
-const exportRecordSize = 10000;
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -293,7 +289,7 @@ const getRecord = async _ref3 => {
   const lookupsToFetch = [];
   const fields = modelConfig.formDef || modelConfig.columns;
   fields === null || fields === void 0 || fields.forEach(field => {
-    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id == 0 && field.parentComboField)) {
+    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id === 0 && field.parentComboField)) {
       lookupsToFetch.push(field.lookup);
     }
   });
@@ -473,15 +469,12 @@ const getLookups = async _ref6 => {
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       setActiveRecord(response.data);
     } else if (response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
-      // setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
-      }, 2000);
-    } else {
-      // setError('Could not load lookups', response.body.toString());
+      }, 500);
     }
   } catch (error) {
-    // setError('Could not load lookups', error);
+    setError('Could not delete record', error.message || error.toString());
   } finally {
     setIsLoading(false);
   }

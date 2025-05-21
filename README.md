@@ -219,6 +219,7 @@ export default function App() {
 | `isUtc`            | `boolean`                  | Indicates if the field value is stored in UTC format.                                                                                                                            | `false`         | `No`       |
 | `placeHolder`      | `string`                   | To show `placeHolder` only for type [select](#2-type-select).                                                                                                                    | -               | `No`       |
 | `config`      | `string`                   | To Specify configuration for the dynamic columns.       | -               | Required for `dynamic` type      |
+| `limitTags`      | `string`                   | To Specify number of tags to be shown in autocomplete (while not in focus). Specific to type [autocomplete](#10-type-autocomplete).       | 5              | Required for `dynamic` type      |
 
 
 # **Field Components Properties Table**
