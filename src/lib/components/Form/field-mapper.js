@@ -48,8 +48,8 @@ const fieldMappers = {
 
 const useStyles = makeStyles({
     root: {
-        marginTop: "1rem",
-        marginBottom: "1rem"
+        marginTop: "1rem !important",
+        marginBottom: "1rem !important"
     },
     childStyles: {
         paddingTop: "2.5px",

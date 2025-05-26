@@ -133,8 +133,8 @@ const fieldMappers = exports.fieldMappers = {
 };
 const useStyles = (0, _core.makeStyles)({
   root: {
-    marginTop: "1rem",
-    marginBottom: "1rem"
+    marginTop: "1rem !important",
+    marginBottom: "1rem !important"
   },
   childStyles: {
     paddingTop: "2.5px",

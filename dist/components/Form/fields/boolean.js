@@ -28,7 +28,10 @@ const Field = _ref => {
   const handleChange = event => {
     formik.setFieldValue(field, event.target.checked);
   };
-  const checked = (0, _react.useMemo)(() => formik.values[field] !== undefined ? formik.values[field] === true : Boolean(column.defaultValue), [formik, column]);
+  const checked = (0, _react.useMemo)(() => {
+    var _formik$values$field;
+    return (_formik$values$field = formik.values[field]) !== null && _formik$values$field !== void 0 ? _formik$values$field : !!column.defaultValue;
+  }, [formik, column]);
   return /*#__PURE__*/_react.default.createElement("div", {
     key: field
   }, /*#__PURE__*/_react.default.createElement(_FormControlLabel.default, {
