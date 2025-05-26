@@ -3,7 +3,6 @@
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.weak-map.js");
-require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 Object.defineProperty(exports, "__esModule", {
@@ -61,6 +60,7 @@ exports.fieldMappers = exports.default = void 0;
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.search.js");
+require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/esnext.set.difference.v2.js");
 require("core-js/modules/esnext.set.intersection.v2.js");
@@ -133,8 +133,8 @@ const fieldMappers = exports.fieldMappers = {
 };
 const useStyles = (0, _core.makeStyles)({
   root: {
-    marginTop: "1rem",
-    marginBottom: "1rem"
+    marginTop: "1rem !important",
+    marginBottom: "1rem !important"
   },
   childStyles: {
     paddingTop: "2.5px",
@@ -148,6 +148,10 @@ const useStyles = (0, _core.makeStyles)({
   },
   renderSteps: {
     marginTop: "20px"
+  },
+  labelText: {
+    fontSize: "16px !important",
+    fontWeight: "bold !important"
   }
 });
 const RenderSteps = _ref => {
@@ -296,10 +300,7 @@ const RenderColumns = _ref3 => {
       xs: 3,
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
-      sx: {
-        fontSize: '16px',
-        fontWeight: 'bold'
-      }
+      className: classes.labelText
     }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
       item: true,
       xs: isGridComponent ? 12 : 9,

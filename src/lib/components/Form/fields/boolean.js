@@ -7,7 +7,7 @@ const Field = ({ column, field, label, formik, otherProps, classes, onChange }) 
     const handleChange = (event) => {
         formik.setFieldValue(field, event.target.checked);
     }
-    const checked = useMemo(()=> formik.values[field] !== undefined ? formik.values[field] === true : column.defaultValue, [formik, column])
+    const checked = useMemo(()=> formik.values[field] ?? !!column.defaultValue, [formik, column]);
     return <div key={field}>
         <FormControlLabel
             control={

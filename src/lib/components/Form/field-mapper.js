@@ -48,8 +48,8 @@ const fieldMappers = {
 
 const useStyles = makeStyles({
     root: {
-        marginTop: "1rem",
-        marginBottom: "1rem"
+        marginTop: "1rem !important",
+        marginBottom: "1rem !important"
     },
     childStyles: {
         paddingTop: "2.5px",
@@ -63,6 +63,10 @@ const useStyles = makeStyles({
     },
     renderSteps: {
         marginTop: "20px"
+    },
+    labelText: {
+        fontSize: "16px !important",
+        fontWeight: "bold !important",
     }
 })
 
@@ -161,7 +165,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
                             {column?.showLabel !== false ?
                                 <Grid item xs={3} className={classes.childStyles}>
-                                    <Typography sx={{ fontSize: '16px', fontWeight: 'bold' }}>{column.label || field}: {column.required && <ImportantSpan>*</ImportantSpan>}</Typography>
+                                    <Typography className={classes.labelText}>{column.label || field}: {column.required && <ImportantSpan>*</ImportantSpan>}</Typography>
                                 </Grid>
                                 : null
                             }
