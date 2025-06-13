@@ -29,14 +29,14 @@ const getPermissions = _ref => {
     userDefinedPermissions
   } = _ref;
   const {
-    menuDetails = []
+    permissions = []
   } = userData;
   userDefinedPermissions = userDefinedPermissions || {
     add: true,
     edit: true,
     delete: true
   };
-  const userPermissions = menuDetails.find(item => item.Module === model.module);
+  const userPermissions = permissions.find(item => item.Module === model.module);
   if (!userPermissions) {
     return {
       canAdd: userDefinedPermissions.add,

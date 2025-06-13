@@ -15,9 +15,9 @@ const utils = {
     }
 }
 export const getPermissions = ({ userData = {}, model, userDefinedPermissions }) => {
-    const { menuDetails = [] } = userData;
+    const { permissions = [] } = userData;
     userDefinedPermissions = userDefinedPermissions || { add: true, edit: true, delete: true };
-    const userPermissions = menuDetails.find(item => item.Module === model.module);
+    const userPermissions = permissions.find(item => item.Module === model.module);
     if (!userPermissions) {
         return { canAdd: userDefinedPermissions.add, canEdit: userDefinedPermissions.edit, canDelete: userDefinedPermissions.delete };
     }
