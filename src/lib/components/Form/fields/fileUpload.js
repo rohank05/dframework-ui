@@ -79,7 +79,7 @@ function FileUpload({ column, field, formik}) {
         }
     };
 
-    const host = new URL(Url).hostname.toLowerCase();
+    const host = new URL(Url, window.location.origin).hostname.toLowerCase();
     React.useEffect(() => {
         setFormState({
             ...formState,
