@@ -126,7 +126,6 @@ function FileUpload(_ref) {
       setLoading(false); // Stop loading
     }
   };
-  console.log("Url is ", Url);
   const host = new URL(Url, window.location.origin).hostname.toLowerCase();
   _react.default.useEffect(() => {
     setFormState(_objectSpread(_objectSpread({}, formState), {}, {
