@@ -3,7 +3,7 @@ import {
     Grid, Typography,
     Dialog, DialogContent, DialogTitle,
 } from '@mui/material';
-import { Replay, Close } from '@material-ui/icons';
+import { Replay, Close } from '@mui/icons-material';
 import { useStateContext } from '../useRouter/StateProvider';
 import actionsStateProvider from '../useRouter/actions';
 

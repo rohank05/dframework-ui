@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import { withTranslation } from "react-i18next";
 import MuiTypography from "../Typography";
 import useMobile from "../useMobile";
