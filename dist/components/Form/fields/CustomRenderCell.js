@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RenderDayCell = RenderDayCell;
 exports.brandColor = exports.brandBackgroundColor = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 var _makeStyles = _interopRequireDefault(require("@mui/styles/makeStyles"));
 var _material = require("@mui/material");
