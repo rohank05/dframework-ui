@@ -6,12 +6,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
-const SelectField = ({ column, field, label, formik, activeRecord, lookups, otherProps, classes, onChange }) => {
+const SelectField = ({ column, field, formik, lookups, otherProps }) => {
     const userSelected = React.useRef(false);
     const { filter, placeHolder } = column;
 
     const initialOptions = useMemo(() => {
-        let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
+        const options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
         if (filter) {
             return filter({ options, currentValue: formik.values[field], state: formik.values });
         }
@@ -68,6 +68,9 @@ const SelectField = ({ column, field, label, formik, activeRecord, lookups, othe
                     classes: {
                         // list: classes.select
                     }
+                }}
+                sx={{
+                    backgroundColor: column.readOnly ? '#dfdede' : ''
                 }}
             >
                 {Array.isArray(options) && options.map(option => (
