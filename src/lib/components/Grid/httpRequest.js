@@ -1,8 +1,7 @@
 import React from 'react';
-import axios from 'axios';
 import actionsStateProvider from '../useRouter/actions';
 let pendingRequests = 0;
-const transport = axios.create({ withCredentials: true });
+
 const HTTP_STATUS_CODES = {
     OK: 200,
     SESSION_EXPIRED: 401,
@@ -10,6 +9,7 @@ const HTTP_STATUS_CODES = {
     NOT_FOUND: 404,
     INTERNAL_SERVER_ERROR: 500
 };
+
 const getFormData = (props) => {
     let formData = new FormData();
     for (let key in props) {
@@ -31,8 +31,57 @@ const exportRequest = (url, query) => {
     window.open(newURL, '_blank').focus();
 }
 
-const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false, dispatchData }) => {
+const transport = async (config) => {
+    const { 
+        method = 'GET',
+        url,
+        data,
+        headers = {},
+        credentials = 'include',
+        ...rest
+    } = config;
 
+    const fetchOptions = {
+        method,
+        credentials,
+        headers: {
+            ...headers,
+        },
+        ...rest
+    };
+
+    if (data) {
+        if (headers['Content-Type'] === 'multipart/form-data') {
+            delete fetchOptions.headers['Content-Type']; // Let browser set it
+            fetchOptions.body = data instanceof FormData ? data : getFormData(data);
+        } else {
+            fetchOptions.headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+            fetchOptions.body = typeof data === 'string' ? data : JSON.stringify(data);
+        }
+    }
+
+    const response = await fetch(url, fetchOptions);
+    const contentType = response.headers.get('content-type');
+    const responseData = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
+
+    if (!response.ok) {
+        throw {
+            response: {
+                status: response.status,
+                statusText: response.statusText,
+                data: responseData
+            }
+        };
+    }
+
+    return {
+        status: response.status,
+        data: responseData,
+        headers: Object.fromEntries(response.headers.entries())
+    };
+};
+
+const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false, dispatchData }) => {
     if (params.exportData) {
         return exportRequest(url, params);
     }
@@ -40,6 +89,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
     }
     pendingRequests++;
+
     let reqParams = {
         method: 'POST',
         credentials: 'include',
@@ -47,6 +97,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         headers: jsonPayload ? { ...additionalHeaders } : { 'Content-Type': 'multipart/form-data', ...additionalHeaders },
         ...additionalParams
     };
+
     if (params) {
         reqParams.data = jsonPayload ? params : getFormData(params);
     }
@@ -55,6 +106,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         let response = await transport(reqParams);
         pendingRequests--;
         let data = response.data;
+        
         if (response) {
             if (pendingRequests === 0 && !disableLoader) {
                 dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
@@ -87,7 +139,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
             dispatchData({ type: actions.SET_USER_DATA, userData: {} });
             history('/login');
         } else if (ex?.response?.status === 500) {
-            
+
         }
         else {
             console.error(ex);
