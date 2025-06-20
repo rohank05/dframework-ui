@@ -11,6 +11,7 @@ require("core-js/modules/es.array.sort.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.to-string.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
@@ -31,6 +32,16 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect'];
+function shouldApplyFilter(filter) {
+  const {
+    operator,
+    value,
+    type
+  } = filter;
+  const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+  const hasValidValue = value !== undefined && value !== null && (value !== '' || type === 'number' && value === 0 || type === 'boolean' && value === false);
+  return isUnaryOperator || hasValidValue;
+}
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -95,7 +106,7 @@ const getList = async _ref => {
   const where = [];
   if (filterModel !== null && filterModel !== void 0 && (_filterModel$items = filterModel.items) !== null && _filterModel$items !== void 0 && _filterModel$items.length) {
     filterModel.items.forEach(filter => {
-      if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || filter.value === false && filter.type === 'boolean') {
+      if (shouldApplyFilter(filter)) {
         var _column$;
         const {
           field,

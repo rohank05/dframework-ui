@@ -2,7 +2,18 @@ import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
-const lookupDataTypes = ['singleSelect']
+const lookupDataTypes = ['singleSelect'];
+
+function shouldApplyFilter(filter) {
+    const { operator, value, type } = filter;
+
+    const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+    const hasValidValue = value !== undefined &&
+        value !== null &&
+        (value !== '' || (type === 'number' && value === 0) || (type === 'boolean' && value === false));
+
+    return isUnaryOperator || hasValidValue;
+}
 
 const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport, model }) => {
     if (!contentType) {
@@ -28,7 +39,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     const where = [];
     if (filterModel?.items?.length) {
         filterModel.items.forEach(filter => {
-            if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || (filter.value === false && filter.type === 'boolean')) {
+            if (shouldApplyFilter(filter)) {
                 const { field, operator, filterField } = filter;
                 let { value } = filter;
                 const column = gridColumns.filter((item) => item?.field === filter?.field);
