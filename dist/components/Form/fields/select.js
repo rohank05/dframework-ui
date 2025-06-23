@@ -26,13 +26,9 @@ const SelectField = _ref => {
   let {
     column,
     field,
-    label,
     formik,
-    activeRecord,
     lookups,
-    otherProps,
-    classes,
-    onChange
+    otherProps
   } = _ref;
   const userSelected = _react.default.useRef(false);
   const {
@@ -40,7 +36,7 @@ const SelectField = _ref => {
     placeHolder
   } = column;
   const initialOptions = (0, _react.useMemo)(() => {
-    let options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
+    const options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
     if (filter) {
       return filter({
         options,
@@ -95,6 +91,9 @@ const SelectField = _ref => {
       classes: {
         // list: classes.select
       }
+    },
+    sx: {
+      backgroundColor: column.readOnly ? '#dfdede' : ''
     }
   }), Array.isArray(options) && options.map(option => /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     key: option.value,

@@ -82,7 +82,11 @@ const Field = _ref2 => {
           if (!(keyCode > minKey && keyCode < maxKey)) {
             event.preventDefault();
           }
-        }
+        },
+        sx: column !== null && column !== void 0 && column.readOnly ? {
+          backgroundColor: '#dfdede'
+        } // Light grey background for read-only inputs
+        : undefined
       }
     },
     type: 'number'

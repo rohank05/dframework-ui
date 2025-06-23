@@ -4,25 +4,23 @@ import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
+import { useCallback } from 'react';
 
-const Field = ({ isAdd, column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
-    let inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];
-    let isDisabled;
-    if (mode !== 'copy') {
-        isDisabled = fieldConfigs?.disabled;
-    }
-    const handleAutoCompleteChange = (e, newValue, action, item) => {
-        let lastElement = newValue.pop();
-        lastElement = lastElement?.trim();
+const Field = ({ isAdd, column, field, formik, otherProps, fieldConfigs = {}, mode }) => {
+    const inputValue = formik.values[field]?.length ? formik.values[field].split(",") : [];
+    const isDisabled = mode !== 'copy' ? fieldConfigs.disabled : false;
+    const fixedOptions = column.hasDefault && !isAdd ? inputValue[0] : [];
+
+    const handleAutoCompleteChange = useCallback((e, newValue, action, item = {}) => {
+        const lastElement = newValue.pop()?.trim();
         if (!newValue.includes(lastElement)) {
             newValue.push(lastElement);
         }
-        if(fixedOptions.includes(item.option) && action === "removeOption"){
+        if (fixedOptions && fixedOptions.includes(item.option) && action === "removeOption") {
             newValue = [item.option];
         }
-        formik.setFieldValue(field, newValue?.join(', ') || '');
-    }
-    const fixedOptions = column.hasDefault && !isAdd ? inputValue[0] : '';
+        formik.setFieldValue(field, newValue?.join(',') || '');
+    },[formik, field]);
 
     return (
         <FormControl
