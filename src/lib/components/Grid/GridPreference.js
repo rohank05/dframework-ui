@@ -342,7 +342,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                             }
                         }}
                     >
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <TextField
                                 defaultValue={tTranslate(formik.values.prefName, tOpts)}
                                 variant="outlined"
@@ -361,7 +361,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                                 fullWidth
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <TextField
                                 defaultValue={tTranslate(formik.values.prefDesc, tOpts)}
                                 variant="outlined"
@@ -377,7 +377,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                                 fullWidth
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -389,7 +389,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                                 label={tTranslate('Default', tOpts)}
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <Stack direction="row" columnGap={1} style={{ justifyContent: 'end' }}>
                                 <Button
                                     type="submit"
@@ -419,7 +419,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
 
                 {(openDialog && formType === formTypes.Manage) && (
                     <Grid container>
-                        <Grid item xs={12}>
+                        <Grid size={12}>
                             <DataGridPremium
                                 sx={{
                                     "& .MuiTablePagination-selectLabel": {

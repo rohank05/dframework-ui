@@ -482,8 +482,7 @@ const GridPreferences = _ref => {
       }
     }
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
     defaultValue: tTranslate(formik.values.prefName, tOpts),
     variant: "outlined",
@@ -501,8 +500,7 @@ const GridPreferences = _ref => {
     helperText: formik.errors.prefName,
     fullWidth: true
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
     defaultValue: tTranslate(formik.values.prefDesc, tOpts),
     variant: "outlined",
@@ -517,8 +515,7 @@ const GridPreferences = _ref => {
     helperText: formik.errors.prefDesc,
     fullWidth: true
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.FormControlLabel, {
     control: /*#__PURE__*/_react.default.createElement(_material.Checkbox, {
       checked: formik.values.isDefault,
@@ -527,8 +524,7 @@ const GridPreferences = _ref => {
     }),
     label: tTranslate('Default', tOpts)
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.Stack, {
     direction: "row",
     columnGap: 1,
@@ -553,8 +549,7 @@ const GridPreferences = _ref => {
   }, tTranslate('Close', tOpts))))), openDialog && formType === formTypes.Manage && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
     sx: {
       "& .MuiTablePagination-selectLabel": {

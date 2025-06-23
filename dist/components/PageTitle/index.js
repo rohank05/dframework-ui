@@ -48,7 +48,6 @@ function PageTitle(props) {
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
@@ -73,7 +72,6 @@ function PageTitle(props) {
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
   }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableBackButton) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
@@ -83,7 +81,6 @@ function PageTitle(props) {
     variant: "contained",
     onClick: handleBack
   }, "Back")), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
