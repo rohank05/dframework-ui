@@ -84,12 +84,7 @@ const transport = async config => {
   }
   const response = await fetch(url, fetchOptions);
   const contentType = response.headers.get('content-type');
-  let responseData;
-  if (contentType && contentType.includes('application/json')) {
-    responseData = await response.json();
-  } else {
-    responseData = await response.text();
-  }
+  const responseData = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
   if (!response.ok) {
     throw {
       response: {
