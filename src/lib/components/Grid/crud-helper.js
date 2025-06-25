@@ -139,7 +139,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             },
             credentials: 'include'
         };
-
+        setData({ records: [], recordCount: 0, lookups: {} });
         const response = await transport(params);
         function isLocalTime(dateValue) {
             const date = new Date(dateValue);

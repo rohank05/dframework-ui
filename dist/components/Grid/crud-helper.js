@@ -207,6 +207,11 @@ const getList = async _ref => {
       }, headers),
       credentials: 'include'
     };
+    setData({
+      records: [],
+      recordCount: 0,
+      lookups: {}
+    });
     const response = await (0, _httpRequest.transport)(params);
     function isLocalTime(dateValue) {
       const date = new Date(dateValue);
