@@ -295,14 +295,16 @@ const RenderColumns = _ref3 => {
       className: classes.root,
       alignItems: isGridComponent ? "flex-start" : "center"
     }, (column === null || column === void 0 ? void 0 : column.showLabel) !== false ? /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: 3,
+      size: {
+        xs: 3
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
       className: classes.labelText
     }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: isGridComponent ? 12 : 9,
+      size: {
+        xs: isGridComponent ? 12 : 9
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
       isAdd: isAdd,

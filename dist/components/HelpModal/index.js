@@ -72,12 +72,13 @@ const HelpModal = () => {
     container: true,
     spacing: 1
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     className: "",
-    xs: 11,
-    sm: 11,
-    md: 11,
-    lg: 11
+    size: {
+      xs: 11,
+      sm: 11,
+      md: 11,
+      lg: 11
+    }
   }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "h7",
     component: "div"
@@ -85,12 +86,13 @@ const HelpModal = () => {
     variant: "caption",
     component: "div"
   }, (openModal === null || openModal === void 0 || (_openModal$data3 = openModal.data) === null || _openModal$data3 === void 0 ? void 0 : _openModal$data3.subTitle) || /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, "\xA0"))), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     className: "text-right",
-    xs: 1,
-    sm: 1,
-    md: 1,
-    lg: 1
+    size: {
+      xs: 1,
+      sm: 1,
+      md: 1,
+      lg: 1
+    }
   }, /*#__PURE__*/_react.default.createElement(_iconsMaterial.Replay, {
     className: "cursor_pointer mt-2 mr-2",
     onClick: resetIframe

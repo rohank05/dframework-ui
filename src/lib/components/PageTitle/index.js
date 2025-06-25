@@ -39,7 +39,7 @@ function PageTitle(props) {
         <CardContent sx={{ backgroundColor: breadcrumbColor || '#fff' }}>
           {/* Add BreadCrumbs  */}
           <Grid container>
-            <Grid item sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+            <Grid sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
               <Breadcrumbs variant="h5" aria-label="breadcrumb" separator=">" className={`${titleClass} breadcrumbs-text-title text-max-width`}>
                 {breadcrumbs.map((breadcrumb, index) => index < breadcrumbsLasIndex ? (
                   <MuiLink onClick={handleBack} key={index} className={`${titleClass} breadcrumbs-text-title text-max-width`} variant="inherit" sx={{ textDecoration: 'none', color: '#1976d2' }}>
@@ -50,10 +50,10 @@ function PageTitle(props) {
                 </Typography>)}
               </Breadcrumbs>
             </Grid>
-            {(breadcrumbs.length > 1 || enableBackButton) && <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+            {(breadcrumbs.length > 1 || enableBackButton) && <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
               <Button variant="contained" onClick={handleBack}>Back</Button>
             </Grid>}
-            <Grid item sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            <Grid sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
               <IconButton color="primary" title='Help' size="large">
                 <HelpIcon fontSize="inherit" />
               </IconButton>
