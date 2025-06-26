@@ -21,6 +21,15 @@ import { getPermissions } from "../utils";
 import Relations from "./relations";
 export const ActiveStepContext = createContext(1);
 const defaultFieldConfigs = {};
+const consts = {
+  object: "object",
+  function: "function",
+  baseData: "baseData",
+  string: "string",
+  create: "Create",
+  copy: "Copy",
+  edit: "Edit"
+};
 
 const Form = ({
   model,
@@ -39,13 +48,13 @@ const Form = ({
   const { relations = [] } = model;
   const { dispatchData, stateData } = useStateContext();
   const params = useParams() || getParams;
-  const { id: idWithOptions } = params;
-  const id = idWithOptions?.split("-")[0];
+  const { id: idWithOptions = "" } = params;
+  const id = idWithOptions.split("-")[0];
   const searchParams = new URLSearchParams(window.location.search);
-  const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+  const baseDataFromParams = searchParams.has(consts.baseData) && searchParams.get(consts.baseData);
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);
-    if (typeof parsedData === 'object' && parsedData !== null) {
+    if (typeof parsedData === consts.object && parsedData !== null) {
       baseSaveData = { ...baseSaveData, ...parsedData };
     }
   }
@@ -54,17 +63,16 @@ const Form = ({
   const [lookups, setLookups] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const snackbar = useSnackbar();
-  const combos = {};
   const [validationSchema, setValidationSchema] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
   const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const url = stateData?.gridSettings?.permissions?.Url;
-  const fieldConfigs = model?.applyFieldConfig
-    ? model?.applyFieldConfig({ data, lookups })
+  const url = stateData?.gridSettings?.permissions?.Url || '';
+  const fieldConfigs = typeof model.applyFieldConfig === consts.function
+    ? model.applyFieldConfig({ data, lookups })
     : defaultFieldConfigs;
-  let gridApi = `${url}${model.api || api}`;
+  const gridApi = useMemo(() => `${url}${model.api || api || ''}`, [url, model.api, api]);
   const { mode } = stateData.dataForm;
   const userData = stateData.getUserData || {};
   const userDefinedPermissions = {
@@ -83,18 +91,22 @@ const Form = ({
 
   const handleNavigation = () => {
     let navigatePath;
-
-    if (typeof navigateBack === "function") {
-      navigatePath = navigateBack({ params, searchParams, data });
-    } else {
-      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
+    switch (typeof navigateBack) {
+      case consts.function:
+        navigatePath = navigateBack({ params, searchParams, data });
+        break;
+      case consts.string:
+        navigatePath = navigateBack;
+        break;
+      default:
+        navigatePath = pathname.substring(0, pathname.lastIndexOf("/"));
+        break;
     }
-
     if (navigatePath.includes("window.history")) {
       window.history.back();
     }
     navigate(navigatePath);
-  }
+  };
 
   const isNew = useMemo(() => [null, undefined, '', '0', 0].includes(id), [id]);
 
@@ -105,7 +117,7 @@ const Form = ({
   useEffect(() => {
     if (!url) return;
     setValidationSchema(model.getValidationSchema({ id, snackbar }));
-    const options = idWithOptions?.split("-");
+    const options = idWithOptions.split("-");
     const params = {
       api: api || gridApi,
       modelConfig: { ...model },
@@ -126,11 +138,11 @@ const Form = ({
     validationSchema: validationSchema,
     validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
-      for (const key in values) {
-          if (typeof values[key] === 'string') {
-            values[key] = values[key].trim();
-          }
-      }
+      Object.keys(values).forEach(key => {
+        if (typeof values[key] === consts.string) {
+          values[key] = values[key].trim();
+        }
+      });
       setIsLoading(true);
       saveRecord({
         id,
@@ -140,14 +152,12 @@ const Form = ({
         setError: snackbar.showError,
       })
         .then((success) => {
-          if (success) {
-            if (model.reloadOnSave) {
-              return window.location.reload();
-            }
-            const operation = id == 0 ? "Added" : "Updated";
-            snackbar.showMessage(`Record ${operation} Successfully.`);
-            handleNavigation();
+          if (!success) return;
+          if (model.reloadOnSave) {
+            return window.location.reload();
           }
+          snackbar.showMessage(`Record ${id === 0 ? "Added" : "Updated"} Successfully.`);
+          handleNavigation();
         })
         .catch((err) => {
           snackbar.showError(
@@ -170,12 +180,6 @@ const Form = ({
     handleNavigation();
   };
 
-  const warnUnsavedChanges = () => {
-    if (dirty) {
-      setIsDiscardDialogOpen(true);
-    }
-  };
-
   const errorOnLoad = function (title, error) {
     snackbar.showError(title, error);
     handleNavigation();
@@ -184,25 +188,21 @@ const Form = ({
   const setActiveRecord = function ({ id, title, record, lookups }) {
     const isCopy = idWithOptions.indexOf("-") > -1;
     const isNew = !id || id === "0";
-    const localTitle = isNew ? "Create" : isCopy ? "Copy" : "Edit";
-    const localValue = isNew ? "" : record[model.linkColumn];
-    const breadcrumbs = [{ text: model?.breadCrumbs }, { text: localTitle }];
-
+    const pageTitle = isNew ? consts.create : isCopy ? consts.copy : consts.edit;
+    const linkColumn = isNew ? "" : record[model.linkColumn];
+    const breadcrumbs = [{ text: model.breadCrumbs }, { text: pageTitle }];
     if (isCopy) {
       record[model.linkColumn] = "";
     }
-
     model.columns.forEach((item) => {
       if (item.skipCopy && isCopy) {
         record[item.field] = "";
       }
-    })
-
+    });
     setData(record);
     setLookups(lookups);
-
-    if (localValue !== "") {
-      breadcrumbs.push({ text: localValue });
+    if (linkColumn !== "") {
+      breadcrumbs.push({ text: linkColumn });
     }
     dispatchData({
       type: actionsStateProvider.PAGE_TITLE_DETAILS,
@@ -214,19 +214,18 @@ const Form = ({
   };
   const handleFormCancel = function (event) {
     if (dirty) {
-      warnUnsavedChanges();
-      event.preventDefault();
+      setIsDiscardDialogOpen(true);
     } else {
       handleNavigation();
-      event.preventDefault();
     }
+    event.preventDefault();
   };
   const handleDelete = async function () {
-    setIsDeleting(true);
     try {
+      setIsDeleting(true);
       const response = await deleteRecord({
         id,
-        api: api || model?.api,
+        api: api || model.api,
         setIsLoading,
         setError: snackbar.showError,
         setErrorMessage
@@ -236,7 +235,7 @@ const Form = ({
         handleNavigation();
       }
     } catch (error) {
-      snackbar?.showError("An error occured, please try after some time.");
+      snackbar.showError("An error occured, please try after some time.");
     } finally {
       setIsDeleting(false);
     }
@@ -254,14 +253,12 @@ const Form = ({
   }
   const handleChange = function (e) {
     const { name, value } = e.target;
-    const gridData = { ...data };
-    gridData[name] = value;
-    setData(gridData);
+    setData({ ...data, [name]: value });
   };
 
   const handleSubmit = async function (e) {
     if (e) e.preventDefault();
-    if(typeof beforeSubmit === 'function') {
+    if (typeof beforeSubmit === consts.function) {
       await beforeSubmit({ formik });
     }
     const { errors } = formik;
@@ -273,10 +270,9 @@ const Form = ({
     }
     const fieldConfig = model.columns.find(
       (column) => column.field === fieldName
-    );
-    if (fieldConfig && fieldConfig.tab) {
-      const tabKeys = Object.keys(model.tabs);
-      setActiveStep(tabKeys.indexOf(fieldConfig.tab));
+    ) || {};
+    if (fieldConfig.tab) {
+      setActiveStep(Object.keys(model.tabs).indexOf(fieldConfig.tab));
     }
   };
 
@@ -317,7 +313,7 @@ const Form = ({
                 variant="contained"
                 type="cancel"
                 color="error"
-                onClick={(e) => handleFormCancel(e)}
+                onClick={handleFormCancel}
               >{`${"Cancel"}`}</Button>
               {permissions.delete && (
                 <Button
@@ -332,7 +328,6 @@ const Form = ({
               formik={formik}
               data={data}
               fieldConfigs={fieldConfigs}
-              combos={combos}
               onChange={handleChange}
               lookups={lookups}
               id={id}

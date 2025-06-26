@@ -40,8 +40,7 @@ var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _utils = require("../utils");
 var _relations = _interopRequireDefault(require("./relations"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -49,6 +48,15 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const ActiveStepContext = exports.ActiveStepContext = /*#__PURE__*/(0, _react.createContext)(1);
 const defaultFieldConfigs = {};
+const consts = {
+  object: "object",
+  function: "function",
+  baseData: "baseData",
+  string: "string",
+  create: "Create",
+  copy: "Copy",
+  edit: "Edit"
+};
 const Form = _ref => {
   var _stateData$gridSettin;
   let {
@@ -79,14 +87,14 @@ const Form = _ref => {
   } = (0, _StateProvider.useStateContext)();
   const params = useParams() || getParams;
   const {
-    id: idWithOptions
+    id: idWithOptions = ""
   } = params;
-  const id = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-")[0];
+  const id = idWithOptions.split("-")[0];
   const searchParams = new URLSearchParams(window.location.search);
-  const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+  const baseDataFromParams = searchParams.has(consts.baseData) && searchParams.get(consts.baseData);
   if (baseDataFromParams) {
     const parsedData = JSON.parse(baseDataFromParams);
-    if (typeof parsedData === 'object' && parsedData !== null) {
+    if (typeof parsedData === consts.object && parsedData !== null) {
       baseSaveData = _objectSpread(_objectSpread({}, baseSaveData), parsedData);
     }
   }
@@ -95,18 +103,17 @@ const Form = _ref => {
   const [lookups, setLookups] = (0, _react.useState)(null);
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const snackbar = (0, _SnackBar.useSnackbar)();
-  const combos = {};
   const [validationSchema, setValidationSchema] = (0, _react.useState)(null);
   const [activeStep, setActiveStep] = (0, _react.useState)(0);
   const [isDiscardDialogOpen, setIsDiscardDialogOpen] = (0, _react.useState)(false);
   const [deleteError, setDeleteError] = (0, _react.useState)(null);
   const [errorMessage, setErrorMessage] = (0, _react.useState)("");
-  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url;
-  const fieldConfigs = model !== null && model !== void 0 && model.applyFieldConfig ? model === null || model === void 0 ? void 0 : model.applyFieldConfig({
+  const url = (stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.Url) || '';
+  const fieldConfigs = typeof model.applyFieldConfig === consts.function ? model.applyFieldConfig({
     data,
     lookups
   }) : defaultFieldConfigs;
-  let gridApi = "".concat(url).concat(model.api || api);
+  const gridApi = (0, _react.useMemo)(() => "".concat(url).concat(model.api || api || ''), [url, model.api, api]);
   const {
     mode
   } = stateData.dataForm;
@@ -129,14 +136,20 @@ const Form = _ref => {
   } = model;
   const handleNavigation = () => {
     let navigatePath;
-    if (typeof navigateBack === "function") {
-      navigatePath = navigateBack({
-        params,
-        searchParams,
-        data
-      });
-    } else {
-      navigatePath = typeof navigateBack === "string" ? navigateBack : pathname.substring(0, pathname.lastIndexOf("/"));
+    switch (typeof navigateBack) {
+      case consts.function:
+        navigatePath = navigateBack({
+          params,
+          searchParams,
+          data
+        });
+        break;
+      case consts.string:
+        navigatePath = navigateBack;
+        break;
+      default:
+        navigatePath = pathname.substring(0, pathname.lastIndexOf("/"));
+        break;
     }
     if (navigatePath.includes("window.history")) {
       window.history.back();
@@ -151,7 +164,7 @@ const Form = _ref => {
       id,
       snackbar
     }));
-    const options = idWithOptions === null || idWithOptions === void 0 ? void 0 : idWithOptions.split("-");
+    const options = idWithOptions.split("-");
     const params = {
       api: api || gridApi,
       modelConfig: _objectSpread({}, model),
@@ -172,11 +185,11 @@ const Form = _ref => {
       let {
         resetForm
       } = _ref2;
-      for (const key in values) {
-        if (typeof values[key] === 'string') {
+      Object.keys(values).forEach(key => {
+        if (typeof values[key] === consts.string) {
           values[key] = values[key].trim();
         }
-      }
+      });
       setIsLoading(true);
       (0, _crudHelper.saveRecord)({
         id,
@@ -185,14 +198,12 @@ const Form = _ref => {
         setIsLoading,
         setError: snackbar.showError
       }).then(success => {
-        if (success) {
-          if (model.reloadOnSave) {
-            return window.location.reload();
-          }
-          const operation = id == 0 ? "Added" : "Updated";
-          snackbar.showMessage("Record ".concat(operation, " Successfully."));
-          handleNavigation();
+        if (!success) return;
+        if (model.reloadOnSave) {
+          return window.location.reload();
         }
+        snackbar.showMessage("Record ".concat(id === 0 ? "Added" : "Updated", " Successfully."));
+        handleNavigation();
       }).catch(err => {
         snackbar.showError("An error occured, please try after some time.second", err);
         if (model.reloadOnSave) {
@@ -209,11 +220,6 @@ const Form = _ref => {
     setIsDiscardDialogOpen(false);
     handleNavigation();
   };
-  const warnUnsavedChanges = () => {
-    if (dirty) {
-      setIsDiscardDialogOpen(true);
-    }
-  };
   const errorOnLoad = function errorOnLoad(title, error) {
     snackbar.showError(title, error);
     handleNavigation();
@@ -227,12 +233,12 @@ const Form = _ref => {
     } = _ref3;
     const isCopy = idWithOptions.indexOf("-") > -1;
     const isNew = !id || id === "0";
-    const localTitle = isNew ? "Create" : isCopy ? "Copy" : "Edit";
-    const localValue = isNew ? "" : record[model.linkColumn];
+    const pageTitle = isNew ? consts.create : isCopy ? consts.copy : consts.edit;
+    const linkColumn = isNew ? "" : record[model.linkColumn];
     const breadcrumbs = [{
-      text: model === null || model === void 0 ? void 0 : model.breadCrumbs
+      text: model.breadCrumbs
     }, {
-      text: localTitle
+      text: pageTitle
     }];
     if (isCopy) {
       record[model.linkColumn] = "";
@@ -244,9 +250,9 @@ const Form = _ref => {
     });
     setData(record);
     setLookups(lookups);
-    if (localValue !== "") {
+    if (linkColumn !== "") {
       breadcrumbs.push({
-        text: localValue
+        text: linkColumn
       });
     }
     dispatchData({
@@ -259,19 +265,18 @@ const Form = _ref => {
   };
   const handleFormCancel = function handleFormCancel(event) {
     if (dirty) {
-      warnUnsavedChanges();
-      event.preventDefault();
+      setIsDiscardDialogOpen(true);
     } else {
       handleNavigation();
-      event.preventDefault();
     }
+    event.preventDefault();
   };
   const handleDelete = async function handleDelete() {
-    setIsDeleting(true);
     try {
+      setIsDeleting(true);
       const response = await (0, _crudHelper.deleteRecord)({
         id,
-        api: api || (model === null || model === void 0 ? void 0 : model.api),
+        api: api || model.api,
         setIsLoading,
         setError: snackbar.showError,
         setErrorMessage
@@ -281,7 +286,7 @@ const Form = _ref => {
         handleNavigation();
       }
     } catch (error) {
-      snackbar === null || snackbar === void 0 || snackbar.showError("An error occured, please try after some time.");
+      snackbar.showError("An error occured, please try after some time.");
     } finally {
       setIsDeleting(false);
     }
@@ -304,13 +309,13 @@ const Form = _ref => {
       name,
       value
     } = e.target;
-    const gridData = _objectSpread({}, data);
-    gridData[name] = value;
-    setData(gridData);
+    setData(_objectSpread(_objectSpread({}, data), {}, {
+      [name]: value
+    }));
   };
   const handleSubmit = async function handleSubmit(e) {
     if (e) e.preventDefault();
-    if (typeof beforeSubmit === 'function') {
+    if (typeof beforeSubmit === consts.function) {
       await beforeSubmit({
         formik
       });
@@ -324,10 +329,9 @@ const Form = _ref => {
     if (errorMessage) {
       snackbar.showError(errorMessage, null, "error");
     }
-    const fieldConfig = model.columns.find(column => column.field === fieldName);
-    if (fieldConfig && fieldConfig.tab) {
-      const tabKeys = Object.keys(model.tabs);
-      setActiveStep(tabKeys.indexOf(fieldConfig.tab));
+    const fieldConfig = model.columns.find(column => column.field === fieldName) || {};
+    if (fieldConfig.tab) {
+      setActiveStep(Object.keys(model.tabs).indexOf(fieldConfig.tab));
     }
   };
   const breadcrumbs = [{
@@ -367,7 +371,7 @@ const Form = _ref => {
     variant: "contained",
     type: "cancel",
     color: "error",
-    onClick: e => handleFormCancel(e)
+    onClick: handleFormCancel
   }, "Cancel"), permissions.delete && /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     color: "error",
@@ -377,7 +381,6 @@ const Form = _ref => {
     formik: formik,
     data: data,
     fieldConfigs: fieldConfigs,
-    combos: combos,
     onChange: handleChange,
     lookups: lookups,
     id: id,
