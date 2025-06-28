@@ -51,10 +51,11 @@ var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
 var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
 var _reactI18next = require("react-i18next");
+var _iconsMaterial = require("@mui/icons-material");
+var _Box = _interopRequireDefault(require("@mui/material/Box"));
 const _excluded = ["row", "field", "id"],
   _excluded2 = ["filterField"];
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
@@ -132,35 +133,56 @@ const ExportMenuItem = _ref => {
     handleExport,
     contentType,
     type,
-    isPivotExport = false
+    isPivotExport = false,
+    icon
   } = _ref;
   return /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     onClick: handleExport,
     "data-type": type,
     "data-content-type": contentType,
     "data-is-pivot-export": isPivotExport
-  }, tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+  }, /*#__PURE__*/_react.default.createElement(_Box.default, {
+    className: "grid-icons"
+  }, icon), tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
 };
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
 };
 const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.GridOn, {
+    fontSize: "small"
+  }),
   type: "csv",
   contentType: "text/csv"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.TableChart, {
+    fontSize: "small"
+  }),
   type: "excel",
   contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 })), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.TableChart, {
+    fontSize: "small"
+  }),
   type: "excel With Pivot",
   contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   isPivotExport: true
 })), (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.Code, {
+    fontSize: "small"
+  }),
   type: "xml",
   contentType: "text/xml"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.Language, {
+    fontSize: "small"
+  }),
   type: "html",
   contentType: "text/html"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
+  icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.DataObject, {
+    fontSize: "small"
+  }),
   type: "json",
   contentType: "application/json"
 }))));

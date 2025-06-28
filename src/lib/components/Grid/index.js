@@ -40,6 +40,8 @@ import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
 import CustomDropdownmenu from './CustomDropdownmenu';
 import { useTranslation } from 'react-i18next';
+import { GridOn, Code, Language, TableChart, DataObject as DataObjectIcon } from '@mui/icons-material';
+import Box from '@mui/material/Box';
 
 const defaultPageSize = 10;
 const sortRegex = /(\w+)( ASC| DESC)?/i;
@@ -84,7 +86,7 @@ const convertDefaultSort = (defaultSort) => {
     }
     return orderBy;
 };
-const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
+const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false, icon }) => {
     return (
         <MenuItem
             onClick={handleExport}
@@ -92,6 +94,7 @@ const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, is
             data-content-type={contentType}
             data-is-pivot-export={isPivotExport}
         >
+            <Box className="grid-icons">{icon}</Box>
             {tTranslate("Export", tOpts)} {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
         </MenuItem>
     );
@@ -103,13 +106,13 @@ ExportMenuItem.propTypes = {
 
 const CustomExportButton = (props) => (
     <GridToolbarExportContainer {...props}>
-        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} type="csv" contentType="text/csv" />}
-        <ExportMenuItem {...props} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-        {props.showPivotExportBtn && <ExportMenuItem {...props} type="excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
+        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} icon={<GridOn fontSize="small" />} type="csv" contentType="text/csv" />}
+        <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        {props.showPivotExportBtn && <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
         {props?.showOnlyExcelExport !== true && <>
-            <ExportMenuItem {...props} type="xml" contentType="text/xml" />
-            <ExportMenuItem {...props} type="html" contentType="text/html" />
-            <ExportMenuItem {...props} type="json" contentType="application/json" />
+            <ExportMenuItem {...props} icon={<Code fontSize="small" />} type="xml" contentType="text/xml" />
+            <ExportMenuItem {...props} icon={<Language fontSize="small" />} type="html" contentType="text/html" />
+            <ExportMenuItem {...props} icon={<DataObjectIcon fontSize="small" />} type="json" contentType="application/json" />
         </>}
     </GridToolbarExportContainer>
 );
