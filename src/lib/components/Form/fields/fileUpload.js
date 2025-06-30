@@ -58,10 +58,10 @@ function FileUpload({ column, field, formik}) {
             formData.append("AssociationId", id); // Association ID
             const response = await transport({
                 method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'multipart/form-data' },
                 url: uploadApi,
                 data: formData,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                credentials: 'include'
             });
             const data = response.data || {};
             if (!data.success) {

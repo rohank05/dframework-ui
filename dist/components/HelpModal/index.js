@@ -8,7 +8,7 @@ exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _material = require("@mui/material");
-var _icons = require("@material-ui/icons");
+var _iconsMaterial = require("@mui/icons-material");
 var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -72,12 +72,7 @@ const HelpModal = () => {
     container: true,
     spacing: 1
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    className: "",
-    xs: 11,
-    sm: 11,
-    md: 11,
-    lg: 11
+    size: 11
   }, /*#__PURE__*/_react.default.createElement(_material.Typography, {
     variant: "h7",
     component: "div"
@@ -85,16 +80,12 @@ const HelpModal = () => {
     variant: "caption",
     component: "div"
   }, (openModal === null || openModal === void 0 || (_openModal$data3 = openModal.data) === null || _openModal$data3 === void 0 ? void 0 : _openModal$data3.subTitle) || /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, "\xA0"))), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     className: "text-right",
-    xs: 1,
-    sm: 1,
-    md: 1,
-    lg: 1
-  }, /*#__PURE__*/_react.default.createElement(_icons.Replay, {
+    size: 1
+  }, /*#__PURE__*/_react.default.createElement(_iconsMaterial.Replay, {
     className: "cursor_pointer mt-2 mr-2",
     onClick: resetIframe
-  }), /*#__PURE__*/_react.default.createElement(_icons.Close, {
+  }), /*#__PURE__*/_react.default.createElement(_iconsMaterial.Close, {
     className: "cursor_pointer mt-2",
     onClick: () => {
       dispatchData({

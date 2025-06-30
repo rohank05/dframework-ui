@@ -19,13 +19,13 @@ const Field = ({ otherProps, ...props }) => {
 			endAdornment: (
 				<InputAdornment position="end">
 					<IconButton
-						aria-label="toggle password visibility"
-						onClick={handleClickShowPassword}
-						onMouseDown={handleMouseDownPassword}
-						edge="end"
-						disabled={props.column?.disabled || false}
-						readOnly={props.column?.readOnly || false}
-					>
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                        disabled={props.column?.disabled || false}
+                        readOnly={props.column?.readOnly || false}
+                        size="large">
 						{showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
 					</IconButton>
 				</InputAdornment>

@@ -50,7 +50,8 @@ const Field = _ref => {
         onMouseDown: handleMouseDownPassword,
         edge: "end",
         disabled: ((_props$column3 = props.column) === null || _props$column3 === void 0 ? void 0 : _props$column3.disabled) || false,
-        readOnly: ((_props$column4 = props.column) === null || _props$column4 === void 0 ? void 0 : _props$column4.readOnly) || false
+        readOnly: ((_props$column4 = props.column) === null || _props$column4 === void 0 ? void 0 : _props$column4.readOnly) || false,
+        size: "large"
       }, showPassword ? /*#__PURE__*/_react.default.createElement(_VisibilityOff.default, null) : /*#__PURE__*/_react.default.createElement(_Visibility.default, null)))
     }
   }, otherProps);

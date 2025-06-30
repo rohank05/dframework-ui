@@ -93,7 +93,7 @@ var _Step = _interopRequireDefault(require("@mui/material/Step"));
 var _StepLabel = _interopRequireDefault(require("@mui/material/StepLabel"));
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _dayRadio = _interopRequireDefault(require("./fields/dayRadio"));
-var _core = require("@material-ui/core");
+var _makeStyles = _interopRequireDefault(require("@mui/styles/makeStyles"));
 var _material = require("@mui/material");
 var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
@@ -130,7 +130,7 @@ const fieldMappers = exports.fieldMappers = {
   "fileUpload": _fileUpload.default,
   "json": _jsonInput.default
 };
-const useStyles = (0, _core.makeStyles)({
+const useStyles = (0, _makeStyles.default)({
   root: {
     marginTop: "1rem !important",
     marginBottom: "1rem !important"
@@ -295,14 +295,16 @@ const RenderColumns = _ref3 => {
       className: classes.root,
       alignItems: isGridComponent ? "flex-start" : "center"
     }, (column === null || column === void 0 ? void 0 : column.showLabel) !== false ? /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: 3,
+      size: {
+        xs: 3
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
       className: classes.labelText
     }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: isGridComponent ? 12 : 9,
+      size: {
+        xs: isGridComponent ? 12 : 9
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
       isAdd: isAdd,

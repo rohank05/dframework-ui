@@ -63,7 +63,7 @@ var _template = _interopRequireDefault(require("./template"));
 var _material = require("@mui/material");
 var _Check = _interopRequireDefault(require("@mui/icons-material/Check"));
 var _Close = _interopRequireDefault(require("@mui/icons-material/Close"));
-var _core = require("@material-ui/core");
+var _makeStyles = _interopRequireDefault(require("@mui/styles/makeStyles"));
 var _PageTitle = _interopRequireDefault(require("../PageTitle"));
 var _StateProvider = require("../useRouter/StateProvider");
 var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker"));
@@ -132,7 +132,7 @@ const booleanIconRenderer = params => {
     });
   }
 };
-const useStyles = (0, _core.makeStyles)({
+const useStyles = (0, _makeStyles.default)({
   buttons: {
     margin: '6px !important'
   },
