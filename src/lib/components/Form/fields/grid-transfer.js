@@ -9,7 +9,7 @@ const useStyles = makeStyles({
         fontSize: '20px'
     }
 });
-const TransferField = ({ component, name, formik, field, type, column, ...props }) => {
+const TransferField = ({ component, name, formik, field, column }) => {
     const { value } = formik.getFieldProps(name || field);
     const { setFieldValue } = formik;
     const Component = component || column.relation;

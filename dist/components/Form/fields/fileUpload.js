@@ -38,6 +38,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const {
   errorMapping
 } = _utils.default;
+const MB = 1024 * 1024;
 function FileUpload(_ref) {
   var _stateData$gridSettin, _formik$values$field;
   let {
@@ -45,7 +46,7 @@ function FileUpload(_ref) {
     field,
     formik
   } = _ref;
-  let inputValue = formik.values[field] || "";
+  const inputValue = formik.values[field] || "";
   const {
     stateData
   } = (0, _StateProvider.useStateContext)();
@@ -79,20 +80,19 @@ function FileUpload(_ref) {
     }));
     formik.setFieldValue(field, formik.values[field]); // Reset form field value
   };
-  const handleInputChange = value => {
-    formik.setFieldValue(field, value);
+  const handleInputChange = e => {
+    formik.setFieldValue(field, e.target.value);
   };
   const handleFileChange = event => {
-    const file = event.target.files[0];
-    if (file) {
-      if (maxSize && file.size > maxSize * 1024 * 1024) {
-        snackbar.showError("File size exceeds the maximum limit of ".concat(maxSize, " MB."));
-        return;
-      }
-      setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
-        selectedFile: file
-      }));
+    const selectedFile = event.target.files[0];
+    if (!selectedFile) return;
+    if (maxSize && selectedFile.size > maxSize * MB) {
+      snackbar.showError("File size exceeds the maximum limit of ".concat(maxSize, " MB."));
+      return;
     }
+    setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
+      selectedFile
+    }));
   };
   const handleFileUpload = async () => {
     if (!formState.selectedFile) return;
@@ -121,7 +121,6 @@ function FileUpload(_ref) {
     } catch (error) {
       const statusCode = (error.message.match(/status code (\d{3})/) || [])[1];
       snackbar.showError(errorMapping[statusCode]);
-      console.error("Error uploading file: ", error);
     } finally {
       setLoading(false); // Stop loading
     }
@@ -194,7 +193,7 @@ function FileUpload(_ref) {
         }
       }
     },
-    onChange: e => handleInputChange(e.target.value),
+    onChange: handleInputChange,
     placeholder: "Enter external link"
   }) : /*#__PURE__*/_react.default.createElement(_material.TextField, {
     fullWidth: true,

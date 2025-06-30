@@ -51,7 +51,7 @@ const Field = ({ field, formik }) => {
                     }}
                 >
                     <Typography variant="body1" sx={{ width: "180px", marginRight: 2 }}>
-                        {key} :
+                        {key}:
                     </Typography>
                     <Input
                         id={key}

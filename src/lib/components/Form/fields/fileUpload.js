@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Box, RadioGroup, FormControlLabel, Radio, TextField, Button, Typography, Tooltip, CircularProgress  } from "@mui/material";
+import { Box, RadioGroup, FormControlLabel, Radio, TextField, Button, Typography, Tooltip, CircularProgress } from "@mui/material";
 import { useRouter, useStateContext } from "../../useRouter/StateProvider";
 import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 import utils from "../../utils";
 
 const { errorMapping } = utils;
-
-function FileUpload({ column, field, formik}) {
-    let inputValue = formik.values[field] || "";
+const MB = 1024 * 1024;
+function FileUpload({ column, field, formik }) {
+    const inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
     const { maxSize } = column;
     const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
@@ -32,19 +32,18 @@ function FileUpload({ column, field, formik}) {
         formik.setFieldValue(field, formik.values[field]); // Reset form field value
     };
 
-    const handleInputChange = (value) => {
-        formik.setFieldValue(field, value);
+    const handleInputChange = (e) => {
+        formik.setFieldValue(field, e.target.value);
     };
 
     const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            if (maxSize && file.size > maxSize * 1024 * 1024) {
-                snackbar.showError(`File size exceeds the maximum limit of ${maxSize} MB.`);
-                return;
-            }
-            setFormState((prev) => ({ ...prev, selectedFile: file }));
+        const selectedFile = event.target.files[0];
+        if (!selectedFile) return;
+        if (maxSize && selectedFile.size > maxSize * MB) {
+            snackbar.showError(`File size exceeds the maximum limit of ${maxSize} MB.`);
+            return;
         }
+        setFormState((prev) => ({ ...prev, selectedFile }));
     };
 
     const handleFileUpload = async () => {
@@ -73,7 +72,6 @@ function FileUpload({ column, field, formik}) {
         } catch (error) {
             const statusCode = (error.message.match(/status code (\d{3})/) || [])[1];
             snackbar.showError(errorMapping[statusCode]);
-            console.error("Error uploading file: ", error);
         } finally {
             setLoading(false); // Stop loading
         }
@@ -126,7 +124,7 @@ function FileUpload({ column, field, formik}) {
                                     "&:hover fieldset": { borderColor: colorScheme },
                                 },
                             }}
-                            onChange={(e) => handleInputChange(e.target.value)}
+                            onChange={handleInputChange}
                             placeholder="Enter external link"
                         />
                     ) : (
