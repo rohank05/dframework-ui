@@ -34,7 +34,7 @@ import template from './template';
 import { Tooltip, CardContent, Card } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { makeStyles } from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
 import PageTitle from '../PageTitle';
 import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import LocalizedDatePicker from './LocalizedDatePicker';

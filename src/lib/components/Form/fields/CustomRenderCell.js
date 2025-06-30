@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import makeStyles from '@mui/styles/makeStyles';
 import { Avatar, useTheme } from "@mui/material";
 
 const useStyles = makeStyles({

@@ -8,11 +8,10 @@ require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.map.js");
 var _react = _interopRequireDefault(require("react"));
 var _reactHelmetAsync = require("react-helmet-async");
-var _core = require("@material-ui/core");
+var _material = require("@mui/material");
 var _reactI18next = require("react-i18next");
 var _Typography = _interopRequireDefault(require("../Typography"));
 var _useMobile = _interopRequireDefault(require("../useMobile"));
-var _material = require("@mui/material");
 var _Help = _interopRequireDefault(require("@mui/icons-material/Help"));
 var _HelpModal = _interopRequireDefault(require("../HelpModal"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -49,7 +48,6 @@ function PageTitle(props) {
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
@@ -74,7 +72,6 @@ function PageTitle(props) {
     className: "".concat(titleClass, " breadcrumbs-text-title text-max-width"),
     variant: "inherit"
   }, breadcrumb.text)))), (breadcrumbs.length > 1 || enableBackButton) && /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
@@ -84,7 +81,6 @@ function PageTitle(props) {
     variant: "contained",
     onClick: handleBack
   }, "Back")), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
     sx: {
       display: 'flex',
       alignItems: 'center',
@@ -96,7 +92,7 @@ function PageTitle(props) {
     size: "large"
   }, /*#__PURE__*/_react.default.createElement(_Help.default, {
     fontSize: "inherit"
-  })))), /*#__PURE__*/_react.default.createElement(_core.Box, {
+  })))), /*#__PURE__*/_react.default.createElement(_material.Box, {
     className: "app-page-title--first"
   }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("div", {
     style: {
@@ -112,6 +108,6 @@ function PageTitle(props) {
     variant: "p",
     text: titleHeading,
     name: name
-  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_core.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null), " "));
+  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null), " "));
 }
 var _default = exports.default = (0, _reactI18next.withTranslation)()(PageTitle);
