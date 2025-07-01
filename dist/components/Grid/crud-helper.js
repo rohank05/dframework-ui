@@ -31,6 +31,7 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect'];
+const timeInterval = 200;
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -53,7 +54,6 @@ const getList = async _ref => {
     configFileName = null,
     dispatchData,
     showFullScreenLoader = false,
-    oderStatusId = 0,
     modelConfig = null,
     baseFilters = null,
     isElasticExport,
@@ -105,7 +105,7 @@ const getList = async _ref => {
         let {
           value
         } = filter;
-        const column = gridColumns.filter(item => (item === null || item === void 0 ? void 0 : item.field) === (filter === null || filter === void 0 ? void 0 : filter.field));
+        const column = gridColumns.filter(item => (item === null || item === void 0 ? void 0 : item.field) === filter.field);
         const type = (_column$ = column[0]) === null || _column$ === void 0 ? void 0 : _column$.type;
         if (type === 'boolean') {
           value = value === 'true' || value === true ? 1 : 0;
@@ -115,9 +115,9 @@ const getList = async _ref => {
         value = filter.filterValues || value;
         where.push({
           field: filterField || field,
-          operator: operator,
-          value: value,
-          type: type
+          operator,
+          value,
+          type
         });
       }
     });
@@ -135,11 +135,9 @@ const getList = async _ref => {
     logicalOperator: filterModel.logicOperator,
     sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
     where,
-    oderStatusId: oderStatusId,
     isElasticExport,
     model: model.module,
-    fileName: modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.overrideFileName,
-    userTimezoneOffset: new Date().getTimezoneOffset() * -1
+    fileName: modelConfig.overrideFileName
   });
   if (lookups) {
     requestData.lookups = lookups.join(',');
@@ -170,7 +168,7 @@ const getList = async _ref => {
         } else if (typeof v !== 'string') {
           v = JSON.stringify(v);
         }
-        let hiddenTag = document.createElement('input');
+        const hiddenTag = document.createElement('input');
         hiddenTag.type = "hidden";
         hiddenTag.name = key;
         hiddenTag.value = v;
@@ -231,14 +229,13 @@ const getList = async _ref => {
               }
             }
           });
-          (modelConfig.columns || []).forEach(column => {
-            const {
+          modelConfig.columns.forEach(_ref3 => {
+            let {
               field,
               displayIndex
-            } = column;
-            if (displayIndex) {
-              record[field] = record[displayIndex];
-            }
+            } = _ref3;
+            if (!displayIndex) return;
+            record[field] = record[displayIndex];
           });
         });
       }
@@ -247,30 +244,33 @@ const getList = async _ref => {
       setError(response.statusText);
     }
   } catch (error) {
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
-      setError('Session Expired!');
-      setTimeout(() => {
+    var _error$response;
+    switch ((_error$response = error.response) === null || _error$response === void 0 ? void 0 : _error$response.status) {
+      case _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED:
+        setError('Session Expired!');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, timeInterval);
+        break;
+      case _httpRequest.HTTP_STATUS_CODES.FORBIDDEN:
         window.location.href = '/';
-      }, 2000);
-    } else if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.FORBIDDEN) {
-      window.location.href = '/';
-    } else {
-      setError('Could not list record', error.message || error.toString());
+        break;
+      default:
+        setError('Could not list record', error.message || error.toString());
+        break;
     }
   } finally {
-    if (!contentType) {
-      setIsLoading(false);
-      if (showFullScreenLoader) {
-        dispatchData({
-          type: _actions.default.UPDATE_LOADER_STATE,
-          payload: false
-        });
-      }
+    setIsLoading(false);
+    if (!contentType && showFullScreenLoader) {
+      dispatchData({
+        type: _actions.default.UPDATE_LOADER_STATE,
+        payload: false
+      });
     }
   }
 };
 exports.getList = getList;
-const getRecord = async _ref3 => {
+const getRecord = async _ref4 => {
   var _Object$keys;
   let {
     api,
@@ -281,15 +281,15 @@ const getRecord = async _ref3 => {
     parentFilters,
     where = {},
     setError
-  } = _ref3;
-  api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
+  } = _ref4;
+  api = api || modelConfig.api;
   setIsLoading(true);
   const searchParams = new URLSearchParams();
   const url = "".concat(api, "/").concat(id === undefined || id === null ? '-' : id);
   const lookupsToFetch = [];
   const fields = modelConfig.formDef || modelConfig.columns;
   fields === null || fields === void 0 || fields.forEach(field => {
-    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id === 0 && field.parentComboField)) {
+    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
       lookupsToFetch.push(field.lookup);
     }
   });
@@ -336,7 +336,7 @@ const getRecord = async _ref3 => {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
-      }, 2000);
+      }, timeInterval);
     } else {
       setError('Could not load record', error.message || error.toString());
     }
@@ -345,14 +345,14 @@ const getRecord = async _ref3 => {
   }
 };
 exports.getRecord = getRecord;
-const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
+const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
   let {
     id,
     api,
     setIsLoading,
     setError,
     setErrorMessage
-  } = _ref4;
+  } = _ref5;
   let result = {
     success: false,
     error: ''
@@ -380,11 +380,12 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
       setError('Delete failed', response.body);
     }
   } catch (error) {
-    if (error.response && error.response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
+    var _error$response2;
+    if (((_error$response2 = error.response) === null || _error$response2 === void 0 ? void 0 : _error$response2.status) === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
-      }, 2000);
+      }, timeInterval);
     } else {
       setError('Could not delete record', error.message || error.toString());
     }
@@ -393,14 +394,14 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
   }
   return result;
 };
-const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
+const saveRecord = exports.saveRecord = async function saveRecord(_ref6) {
   let {
     id,
     api,
     values,
     setIsLoading,
     setError
-  } = _ref5;
+  } = _ref6;
   let url, method;
   if (id !== 0) {
     url = "".concat(api, "/").concat(id);
@@ -434,7 +435,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       setError('Session Expired!');
       setTimeout(() => {
         window.location.href = '/';
-      }, 2000);
+      }, timeInterval);
     } else {
       setError('Could not save record', error.message || error.toString());
     }
@@ -443,7 +444,7 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
   }
   return false;
 };
-const getLookups = async _ref6 => {
+const getLookups = async _ref7 => {
   let {
     api,
     setIsLoading,
@@ -452,8 +453,8 @@ const getLookups = async _ref6 => {
     setError,
     lookups,
     scopeId
-  } = _ref6;
-  api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
+  } = _ref7;
+  api = api || modelConfig.api;
   setIsLoading(true);
   const searchParams = new URLSearchParams();
   const url = "".concat(api, "/lookups");
@@ -468,9 +469,7 @@ const getLookups = async _ref6 => {
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       setActiveRecord(response.data);
     } else if (response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 500);
+      window.location.href = '/';
     }
   } catch (error) {
     setError('Could not delete record', error.message || error.toString());

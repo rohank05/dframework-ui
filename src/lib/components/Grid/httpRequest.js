@@ -1,4 +1,3 @@
-import React from 'react';
 import actionsStateProvider from '../useRouter/actions';
 let pendingRequests = 0;
 
@@ -11,8 +10,8 @@ const HTTP_STATUS_CODES = {
 };
 
 const getFormData = (props) => {
-    let formData = new FormData();
-    for (let key in props) {
+    const formData = new FormData();
+    for (const key in props) {
         if (typeof props[key] == "object") {
             formData.append(key, JSON.stringify(props[key]));
         } else {
@@ -24,7 +23,7 @@ const getFormData = (props) => {
 
 const exportRequest = (url, query) => {
     const newURL = new URL(url);
-    for (let key in query) {
+    for (const key in query) {
         const value = typeof query[key] === 'object' ? JSON.stringify(query[key]) : query[key];
         newURL.searchParams.append(key, value);
     }
@@ -32,7 +31,7 @@ const exportRequest = (url, query) => {
 }
 
 const transport = async (config) => {
-    const { 
+    const {
         method = 'GET',
         url,
         data,
@@ -61,24 +60,17 @@ const transport = async (config) => {
     }
 
     const response = await fetch(url, fetchOptions);
-    const contentType = response.headers.get('content-type');
-    const responseData = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
-
+    const contentType = response.headers.get('content-type') || {};
+    const repsonseObj = {
+        status: response.status,
+        data: contentType.includes('application/json') ? await response.json() : await response.text(),
+        headers: Object.fromEntries(response.headers.entries())
+    }
     if (!response.ok) {
-        throw {
-            response: {
-                status: response.status,
-                statusText: response.statusText,
-                data: responseData
-            }
-        };
+        repsonseObj.status = response.INTERNAL_SERVER_ERROR
     }
 
-    return {
-        status: response.status,
-        data: responseData,
-        headers: Object.fromEntries(response.headers.entries())
-    };
+    return repsonseObj;
 };
 
 const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false, dispatchData }) => {
@@ -90,7 +82,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
     }
     pendingRequests++;
 
-    let reqParams = {
+    const reqParams = {
         method: 'POST',
         credentials: 'include',
         url: url,
@@ -103,31 +95,23 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
     }
 
     try {
-        let response = await transport(reqParams);
+        const response = await transport(reqParams);
         pendingRequests--;
-        let data = response.data;
-        
-        if (response) {
-            if (pendingRequests === 0 && !disableLoader) {
-                dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
-            }
-            if (response.status === 200) {
-                let json = response.data;
-                if (json.success === false) {
-                    if (json.info === 'Session has expired!') {
-                        history('/login');
-                        return;
-                    }
-                    else if (response.status === 200) {
-                        return data;
-                    }
-                }
-                else {
-                    return data;
-                }
-            }
-        } else {
+        const data = response.data;
+
+        if (!response) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
+            return data;
+        }
+        if (pendingRequests === 0 && !disableLoader) {
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+        }
+        if (response.status === HTTP_STATUS_CODES.OK) {
+            const json = response.data;
+            if (json.success === false && json.info === 'Session has expired!') {
+                history('/login');
+                return;
+            }
             return data;
         }
     } catch (ex) {
@@ -135,19 +119,15 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         if (pendingRequests === 0) {
             dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
         }
-        if (ex?.response?.status === 401) {
-            dispatchData({ type: actions.SET_USER_DATA, userData: {} });
+        if (ex?.response?.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+            dispatchData({ type: actionsStateProvider.SET_USER_DATA, userData: {} });
             history('/login');
-        } else if (ex?.response?.status === 500) {
-
         }
         else {
             console.error(ex);
             return { error: ex.response };
         }
     }
-
-    return <></>
 }
 
 export {

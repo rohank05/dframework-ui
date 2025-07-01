@@ -75,13 +75,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     }, []);
 
     useEffect(() => {
-        const filteredPrefs = preferences?.filter(pref => {
-            if (pref.prefId === 0) {
-                return false;
-            }
-            return true;
-        });
-        setFilteredPrefs(filteredPrefs);
+        setFilteredPrefs(preferences?.filter(pref => pref.prefId !== 0));
     }, [preferences])
 
     const formik = useFormik({
@@ -142,8 +136,8 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         const gridColumn = [];
         orderedFields?.forEach(ele => {
             const { field } = lookup[ele];
-            let col = columns?.find(ele => ele.field === field) || lookup[ele];
-            col = { ...col, width: lookup[ele].width };
+            const col = columns.find(ele => ele.field === field) || lookup[ele];
+            col.width = lookup[ele].width;
             gridColumn.push(col);
         })
         const filter = filterModel?.items?.map(ele => {
@@ -151,7 +145,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             return { field, operator, value }
         })
         filterModel.items = filter;
-        let params = {
+        const params = {
             action: 'save',
             id: preferenceName,
             prefName: presetName,
@@ -183,28 +177,27 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                 Username,
                 prefId
             };
-            const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
-            userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : null;
-            defaultPreference = response?.prefValue ? response.prefName : '';
+            const response = await request({ url: preferenceApi, params, history: navigate, dispatchData }) || {};
+            userPreferenceCharts = response.prefValue ? JSON.parse(response.prefValue) : null;
+            defaultPreference = response.prefValue || '';
         }
 
         // If userPreferenceCharts is available, apply preferences to the grid
-        if (userPreferenceCharts) {
-            const { gridColumn, columnVisibilityModel, pinnedColumns, sortModel, filterModel } = userPreferenceCharts;
-            gridColumn.forEach(({ field, width }) => {
-                if (gridRef.current.getColumnIndex(field) !== -1) {
-                    gridRef.current.setColumnWidth(field, width);
-                }
-            });
-            gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
-            gridRef.current.state.columns.orderedFields = gridColumn.map(({ field }) => field);
-            gridRef.current.setPinnedColumns(pinnedColumns);
-            gridRef.current.setSortModel(sortModel || []);
-            gridRef.current.setFilterModel(filterModel);
+        if (!userPreferenceCharts) return;
+        const { gridColumn, columnVisibilityModel, pinnedColumns, sortModel, filterModel } = userPreferenceCharts;
+        gridColumn.forEach(({ field, width }) => {
+            if (gridRef.current.getColumnIndex(field) !== -1) {
+                gridRef.current.setColumnWidth(field, width);
+            }
+        });
+        gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
+        gridRef.current.state.columns.orderedFields = gridColumn.map(({ field }) => field);
+        gridRef.current.setPinnedColumns(pinnedColumns);
+        gridRef.current.setSortModel(sortModel || []);
+        gridRef.current.setFilterModel(filterModel);
 
-            dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference });
-            setIsGridPreferenceFetched(true);
-        }
+        dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference });
+        setIsGridPreferenceFetched(true);
     }
 
     const getGridRowId = (row) => {
@@ -228,8 +221,8 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         setOpenConfirmDeleteDialog({});
     }
 
-    const onCellClick = async (cellParams, event, details) => {
-        let action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
+    const onCellClick = async (cellParams) => {
+        const action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
         if (cellParams.id === 0 && (action === actionTypes.Edit || action === actionTypes.Delete)) {
             snackbar.showMessage(`Default Preference Can Not Be ${action === actionTypes.Edit ? 'Edited' : 'Deleted'}`);
             return
