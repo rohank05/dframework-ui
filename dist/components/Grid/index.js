@@ -123,6 +123,27 @@ const constants = {
     filter: true
   }
 };
+const auditColumnMappings = [{
+  key: 'addCreatedOnColumn',
+  field: 'CreatedOn',
+  type: 'dateTime',
+  header: 'Created On'
+}, {
+  key: 'addCreatedByColumn',
+  field: 'CreatedByUser',
+  type: 'string',
+  header: 'Created By'
+}, {
+  key: 'addModifiedOnColumn',
+  field: 'ModifiedOn',
+  type: 'dateTime',
+  header: 'Modified On'
+}, {
+  key: 'addModifiedByColumn',
+  field: 'ModifiedByUser',
+  type: 'string',
+  header: 'Modified By'
+}];
 const booleanIconRenderer = params => {
   if (params.value) {
     return /*#__PURE__*/_react.default.createElement(_Check.default, {
@@ -582,48 +603,37 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const finalColumns = [];
     const lookupMap = {};
     for (const column of baseColumnList) {
+      if (column.gridLabel === null || parent && column.lookup === parent || column.type === 'oneToMany' && column.countInList === false) continue;
       const overrides = {};
-      if (column.gridLabel === null) {
-        continue;
-      }
-      if (parent && column.lookup === parent) {
-        continue;
-      }
       if (column.type === 'oneToMany') {
-        if (column.countInList === false) {
-          continue;
-        }
         overrides.type = 'number';
         overrides.field = column.field.replace(/s$/, 'Count');
       }
       if (gridColumnTypes[column.type]) {
         Object.assign(overrides, gridColumnTypes[column.type]);
       }
-      if (overrides.valueOptions === "lookup") {
-        overrides.valueOptions = lookupOptions;
-        let lookupFilters = [...(0, _xDataGridPremium.getGridDateOperators)(), ...(0, _xDataGridPremium.getGridStringOperators)()].filter(operator => ['is', 'not', 'isAnyOf'].includes(operator.value));
-        overrides.filterOperators = lookupFilters.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
+      // Common filter operator pattern
+      if (overrides.valueOptions === 'lookup' || column.type === 'boolean') {
+        let operators = [];
+        if (overrides.valueOptions === 'lookup') {
+          overrides.valueOptions = lookupOptions;
+          const lookupFilters = [...(0, _xDataGridPremium.getGridDateOperators)(), ...(0, _xDataGridPremium.getGridStringOperators)()].filter(op => ['is', 'not', 'isAnyOf'].includes(op.value));
+          operators = lookupFilters;
+        }
+        if (column.type === 'boolean') {
+          operators = (0, _xDataGridPremium.getGridBooleanOperators)();
+        }
+        overrides.filterOperators = operators.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
           InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
-            column: _objectSpread(_objectSpread({}, column), {}, {
-              dataRef: dataRef
-            })
-          }, params, {
-            autoHighlight: true
-          })) : undefined
-        }));
-      }
-      if (column.type === 'boolean') {
-        const booleanOperators = (0, _xDataGridPremium.getGridBooleanOperators)();
-        overrides.filterOperators = booleanOperators.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
-          InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
-            column: _objectSpread(_objectSpread({}, column), {}, {
+            column: _objectSpread(_objectSpread(_objectSpread({}, column), column.type === 'boolean' ? {
               customLookup: [{
                 value: true,
                 label: 'Yes'
               }, {
                 value: false,
                 label: 'No'
-              }],
+              }]
+            } : {}), {}, {
               dataRef
             })
           }, params, {
@@ -631,11 +641,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           })) : undefined
         }));
       }
-      if (column.linkTo) {
-        overrides.cellClassName = "mui-grid-linkColumn";
-      }
-      if (column.link) {
-        overrides.cellClassName = "mui-grid-linkColumn";
+      if (column.linkTo || column.link) {
+        overrides.cellClassName = 'mui-grid-linkColumn';
       }
       const headerName = tTranslate(column.gridLabel || column.label, tOpts);
       finalColumns.push(_objectSpread(_objectSpread({
@@ -648,7 +655,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       lookupMap[column.field] = column;
     }
     let auditColumns = model.standard;
-    if (typeof auditColumns === 'boolean' && auditColumns) {
+    if (auditColumns === true) {
       auditColumns = {
         addCreatedOnColumn: true,
         addCreatedByColumn: true,
@@ -656,29 +663,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         addModifiedByColumn: true
       };
     }
-    if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
-      const columnDefinitions = [{
-        key: "addCreatedOnColumn",
-        field: "CreatedOn",
-        type: "dateTime",
-        header: "Created On"
-      }, {
-        key: "addCreatedByColumn",
-        field: "CreatedByUser",
-        type: "string",
-        header: "Created By"
-      }, {
-        key: "addModifiedOnColumn",
-        field: "ModifiedOn",
-        type: "dateTime",
-        header: "Modified On"
-      }, {
-        key: "addModifiedByColumn",
-        field: "ModifiedByUser",
-        type: "string",
-        header: "Modified By"
-      }];
-      columnDefinitions.forEach(_ref8 => {
+    if (auditColumns && typeof auditColumns === 'object') {
+      auditColumnMappings.forEach(_ref8 => {
         let {
           key,
           field,
@@ -686,16 +672,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           header
         } = _ref8;
         if (auditColumns[key] === true) {
-          // Ensure the value is explicitly true
           const column = {
             field,
             type,
             headerName: header,
             width: 200
           };
-          if (type === "dateTime") {
+          if (type === 'dateTime') {
             column.filterOperators = (0, _LocalizedDatePicker.default)({
-              columnType: "date"
+              columnType: 'date'
             });
             column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
             column.keepLocal = true;
@@ -774,7 +759,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         color: "primary"
       }));
     }
-    if (actions.length > 0) {
+    if (actions.length) {
       finalColumns.push({
         field: 'actions',
         type: 'actions',
@@ -783,8 +768,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         hideable: false,
         getActions: params => {
           const rowActions = [...actions];
-          const isDisabled = params.row.canEdit === false;
           if (canEdit && !isReadOnly) {
+            const isDisabled = params.row.canEdit === false;
             rowActions[0] = /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
               icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
                 title: "Edit"

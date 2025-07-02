@@ -69,7 +69,12 @@ const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
     permissions: { edit: true, add: true, export: true, delete: true, showColumnsOrder: true, filter: true }
 }
-
+const auditColumnMappings = [
+    { key: 'addCreatedOnColumn', field: 'CreatedOn', type: 'dateTime', header: 'Created On' },
+    { key: 'addCreatedByColumn', field: 'CreatedByUser', type: 'string', header: 'Created By' },
+    { key: 'addModifiedOnColumn', field: 'ModifiedOn', type: 'dateTime', header: 'Modified On' },
+    { key: 'addModifiedByColumn', field: 'ModifiedByUser', type: 'string', header: 'Modified By' }
+];
 const booleanIconRenderer = (params) => {
     if (params.value) {
         return <CheckIcon style={{ color: 'green' }} />;
@@ -385,66 +390,56 @@ const GridBase = memo(({
         const finalColumns = [];
         const lookupMap = {};
         for (const column of baseColumnList) {
+            if (column.gridLabel === null || (parent && column.lookup === parent) || (column.type === 'oneToMany' && column.countInList === false)) continue;
             const overrides = {};
-            if (column.gridLabel === null) {
-                continue;
-            }
-            if (parent && column.lookup === parent) {
-                continue;
-            }
             if (column.type === 'oneToMany') {
-                if (column.countInList === false) {
-                    continue;
-                }
                 overrides.type = 'number';
                 overrides.field = column.field.replace(/s$/, 'Count');
             }
-
             if (gridColumnTypes[column.type]) {
                 Object.assign(overrides, gridColumnTypes[column.type]);
             }
-            if (overrides.valueOptions === "lookup") {
-                overrides.valueOptions = lookupOptions;
-                let lookupFilters = [...getGridDateOperators(), ...getGridStringOperators()].filter((operator) => ['is', 'not', 'isAnyOf'].includes(operator.value))
-                overrides.filterOperators = lookupFilters.map((operator) => ({
+            // Common filter operator pattern
+            if (overrides.valueOptions === 'lookup' || column.type === 'boolean') {
+                let operators = [];
+
+                if (overrides.valueOptions === 'lookup') {
+                    overrides.valueOptions = lookupOptions;
+                    const lookupFilters = [...getGridDateOperators(), ...getGridStringOperators()]
+                        .filter((op) => ['is', 'not', 'isAnyOf'].includes(op.value));
+                    operators = lookupFilters;
+                }
+
+                if (column.type === 'boolean') {
+                    operators = getGridBooleanOperators();
+                }
+
+                overrides.filterOperators = operators.map((operator) => ({
                     ...operator,
-                    InputComponent: operator.InputComponent ? (params) => (
-                        <CustomDropdownmenu
-                            column={{
-                                ...column,
-                                dataRef: dataRef
-                            }}
-                            {...params}
-                            autoHighlight
-                        />
-                    ) : undefined
+                    InputComponent: operator.InputComponent
+                        ? (params) => (
+                            <CustomDropdownmenu
+                                column={{
+                                    ...column,
+                                    ...(column.type === 'boolean'
+                                        ? {
+                                            customLookup: [
+                                                { value: true, label: 'Yes' },
+                                                { value: false, label: 'No' },
+                                            ]
+                                        }
+                                        : {}),
+                                    dataRef,
+                                }}
+                                {...params}
+                                autoHighlight
+                            />
+                        )
+                        : undefined,
                 }));
             }
-            if (column.type === 'boolean') {
-                const booleanOperators = getGridBooleanOperators();
-                overrides.filterOperators = booleanOperators.map((operator) => ({
-                    ...operator,
-                    InputComponent: operator.InputComponent ? (params) => (
-                        <CustomDropdownmenu
-                            column={{
-                                ...column,
-                                customLookup: [
-                                    { value: true, label: 'Yes' },
-                                    { value: false, label: 'No' },
-                                ],
-                                dataRef
-                            }}
-                            {...params}
-                            autoHighlight
-                        />
-                    ) : undefined
-                }));
-            }
-            if (column.linkTo) {
-                overrides.cellClassName = "mui-grid-linkColumn";
-            }
-            if (column.link) {
-                overrides.cellClassName = "mui-grid-linkColumn";
+            if (column.linkTo || column.link) {
+                overrides.cellClassName = 'mui-grid-linkColumn';
             }
             const headerName = tTranslate(column.gridLabel || column.label, tOpts);
             finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
@@ -453,30 +448,19 @@ const GridBase = memo(({
             }
             lookupMap[column.field] = column;
         }
-
         let auditColumns = model.standard;
-        if (typeof auditColumns === 'boolean' && auditColumns) {
-            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true }
+        if (auditColumns === true) {
+            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true };
         }
-
-        if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
-            const columnDefinitions = [
-                { key: "addCreatedOnColumn", field: "CreatedOn", type: "dateTime", header: "Created On" },
-                { key: "addCreatedByColumn", field: "CreatedByUser", type: "string", header: "Created By" },
-                { key: "addModifiedOnColumn", field: "ModifiedOn", type: "dateTime", header: "Modified On" },
-                { key: "addModifiedByColumn", field: "ModifiedByUser", type: "string", header: "Modified By" }
-            ];
-
-            columnDefinitions.forEach(({ key, field, type, header }) => {
-                if (auditColumns[key] === true) {  // Ensure the value is explicitly true
+        if (auditColumns && typeof auditColumns === 'object') {
+            auditColumnMappings.forEach(({ key, field, type, header }) => {
+                if (auditColumns[key] === true) {
                     const column = { field, type, headerName: header, width: 200 };
-
-                    if (type === "dateTime") {
-                        column.filterOperators = LocalizedDatePicker({ columnType: "date" });
+                    if (type === 'dateTime') {
+                        column.filterOperators = LocalizedDatePicker({ columnType: 'date' });
                         column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
                         column.keepLocal = true;
                     }
-
                     finalColumns.push(column);
                 }
             });
@@ -511,7 +495,7 @@ const GridBase = memo(({
         if (documentField.length) {
             actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
         }
-        if (actions.length > 0) {
+        if (actions.length) {
             finalColumns.push({
                 field: 'actions',
                 type: 'actions',
@@ -520,8 +504,8 @@ const GridBase = memo(({
                 hideable: false,
                 getActions: (params) => {
                     const rowActions = [...actions];
-                    const isDisabled = params.row.canEdit === false;
                     if (canEdit && !isReadOnly) {
+                        const isDisabled = params.row.canEdit === false;
                         rowActions[0] = (
                             <GridActionsCellItem
                                 icon={
@@ -543,6 +527,7 @@ const GridBase = memo(({
         pinnedColumns.right.push('actions');
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
     }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
+
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
