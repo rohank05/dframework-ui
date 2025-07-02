@@ -1014,29 +1014,29 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         fileName: record.FileName
       });
     }
-    if (toLink.length) {
-      if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
-        onCellClick(cellParams.row);
-        return;
-      }
-      const {
-        row: record
-      } = cellParams;
-      const columnConfig = lookupMap[cellParams.field] || {};
-      let historyObject = {
-        pathname: _template.default.replaceTags(columnConfig.linkTo, record)
-      };
-      if (model.addRecordToState) {
-        historyObject.state = record;
-      }
-      navigate(historyObject);
+    if (!toLink.length) {
+      return;
     }
+    if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+      onCellClick(cellParams.row);
+      return;
+    }
+    const {
+      row
+    } = cellParams;
+    const columnConfig = lookupMap[cellParams.field] || {};
+    const historyObject = {
+      pathname: _template.default.replaceTags(columnConfig.linkTo, row)
+    };
+    if (model.addRecordToState) {
+      historyObject.state = row;
+    }
+    navigate(historyObject);
   };
   const handleDelete = async function handleDelete() {
-    let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api);
     const result = await (0, _crudHelper.deleteRecord)({
-      id: record === null || record === void 0 ? void 0 : record.id,
-      api: gridApi,
+      id: record.id,
+      api: "".concat(model.controllerType === 'cs' ? withControllersUrl : url).concat(model.api || api),
       setIsLoading,
       setError: snackbar.showError,
       setErrorMessage
@@ -1046,9 +1046,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       snackbar.showMessage('Record Deleted Successfully.');
       fetchData();
     } else {
-      setTimeout(() => {
-        setIsDeleting(false);
-      }, 200);
+      setIsDeleting(false);
     }
   };
   const clearError = () => {
@@ -1056,20 +1054,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     setIsDeleting(false);
   };
   const processRowUpdate = updatedRow => {
-    if (props.processRowUpdate) {
+    if (typeof props.processRowUpdate === "function") {
       props.processRowUpdate(updatedRow, data);
     }
     return updatedRow;
   };
   const onCellDoubleClick = event => {
+    if (event.row.canEdit === false) {
+      return;
+    }
     const {
       row: record
     } = event;
     if (typeof onCellDoubleClickOverride === 'function') {
       onCellDoubleClickOverride(event);
-      return;
-    }
-    if (event.row.canEdit === false) {
       return;
     }
     if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
@@ -1079,7 +1077,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       });
     }
     if (isReadOnly && model.rowRedirectLink) {
-      let historyObject = {
+      const historyObject = {
         pathname: _template.default.replaceTags(model.rowRedirectLink, record)
       };
       if (model.addRecordToState) {
@@ -1087,7 +1085,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
       navigate(historyObject);
     }
-    if (onRowDoubleClick) {
+    if (typeof onRowDoubleClick === 'function') {
       onRowDoubleClick(event);
     }
   };
@@ -1097,10 +1095,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     fetchData();
   };
   const handleAddRecords = () => {
-    let gridApi = "".concat(url).concat(selectionApi || api, "/updateMany");
     if (selectedSet.current.size < 1) {
       snackbar.showError("Please select atleast one record to proceed");
-      setIsLoading(false);
       return;
     }
     const selectedIds = Array.from(selectedSet.current);
@@ -1111,7 +1107,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     (0, _crudHelper.saveRecord)({
       id: 0,
-      api: gridApi,
+      api: "".concat(url).concat(selectionApi || api, "/updateMany"),
       values: {
         items: selectedRecords
       },

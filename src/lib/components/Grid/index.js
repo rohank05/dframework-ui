@@ -697,36 +697,32 @@ const GridBase = memo(({
         if (action === actionTypes.Download) {
             handleDownload({ documentLink: record[documentField], fileName: record.FileName });
         }
-        if (toLink.length) {
-            if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
-                onCellClick(cellParams.row);
-                return;
-            }
-            const { row: record } = cellParams;
-            const columnConfig = lookupMap[cellParams.field] || {};
-            let historyObject = {
-                pathname: template.replaceTags(columnConfig.linkTo, record),
-            }
-
-            if (model.addRecordToState) {
-                historyObject.state = record
-            }
-            navigate(historyObject);
+        if (!toLink.length) {
+            return;
         }
+        if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+            onCellClick(cellParams.row);
+            return;
+        }
+        const { row } = cellParams;
+        const columnConfig = lookupMap[cellParams.field] || {};
+        const historyObject = {
+            pathname: template.replaceTags(columnConfig.linkTo, row)
+        }
+        if (model.addRecordToState) {
+            historyObject.state = row
+        }
+        navigate(historyObject);
     };
 
     const handleDelete = async function () {
-
-        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
-        const result = await deleteRecord({ id: record?.id, api: gridApi, setIsLoading, setError: snackbar.showError, setErrorMessage });
+        const result = await deleteRecord({ id: record.id, api: `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`, setIsLoading, setError: snackbar.showError, setErrorMessage });
         if (result === true) {
             setIsDeleting(false);
             snackbar.showMessage('Record Deleted Successfully.');
             fetchData();
         } else {
-            setTimeout(() => {
-                setIsDeleting(false);
-            }, 200);
+            setIsDeleting(false);
         }
     }
     const clearError = () => {
@@ -735,38 +731,34 @@ const GridBase = memo(({
     };
 
     const processRowUpdate = (updatedRow) => {
-        if (props.processRowUpdate) {
+        if (typeof props.processRowUpdate === "function") {
             props.processRowUpdate(updatedRow, data);
         }
         return updatedRow;
     }
 
     const onCellDoubleClick = (event) => {
+        if (event.row.canEdit === false) {
+            return;
+        }
         const { row: record } = event;
         if (typeof onCellDoubleClickOverride === 'function') {
             onCellDoubleClickOverride(event);
             return;
         }
-
-        if (event.row.canEdit === false) {
-            return;
-        }
-
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm({ id: record[idProperty], record });
         }
         if (isReadOnly && model.rowRedirectLink) {
-            let historyObject = {
+            const historyObject = {
                 pathname: template.replaceTags(model.rowRedirectLink, record),
             }
-
             if (model.addRecordToState) {
                 historyObject.state = record
             }
             navigate(historyObject);
         }
-
-        if (onRowDoubleClick) {
+        if (typeof onRowDoubleClick === 'function') {
             onRowDoubleClick(event);
         }
     };
@@ -778,13 +770,8 @@ const GridBase = memo(({
     };
 
     const handleAddRecords = () => {
-        let gridApi = `${url}${selectionApi || api}/updateMany`;
-
         if (selectedSet.current.size < 1) {
-            snackbar.showError(
-                "Please select atleast one record to proceed"
-            );
-            setIsLoading(false);
+            snackbar.showError("Please select atleast one record to proceed");
             return;
         }
         const selectedIds = Array.from(selectedSet.current);
@@ -796,7 +783,7 @@ const GridBase = memo(({
                 Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
             );
         }
-        saveRecord({ id: 0, api: gridApi, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
+        saveRecord({ id: 0, api: `${url}${selectionApi || api}/updateMany`, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
             if (success) {
                 fetchData();
                 snackbar.showMessage("Record Added Successfully.");
