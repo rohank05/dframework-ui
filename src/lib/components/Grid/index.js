@@ -343,61 +343,37 @@ const GridBase = memo(({
     }, [data]);
 
     useEffect(() => {
-        if (customFilters && Object.keys(customFilters) !== 0) {
-            if (customFilters.clear) {
-                let filterObject = {
-                    items: [],
-                    logicOperator: "and",
-                    quickFilterValues: [],
-                    quickFilterLogicOperator: "and"
-                }
-                setFilterModel(filterObject)
-                return
-            } else {
-                const newArray = [];
-                for (const key in customFilters) {
-                    if (key === 'startDate' || key === 'endDate') {
-                        newArray.push(customFilters[key])
-                    } else {
-                        if (customFilters.hasOwnProperty(key)) {
-                            const newObj = {
-                                field: key,
-                                value: customFilters[key],
-                                operator: "equals",
-                                type: "string"
-                            };
-                            newArray.push(newObj);
-                        }
-                    }
-                }
-                let filterObject = {
-                    items: newArray,
-                    logicOperator: "and",
-                    quickFilterValues: [],
-                    quickFilterLogicOperator: "and"
-                }
-                setFilterModel(filterObject)
-            }
+        if (!customFilters || !Object.keys(customFilters).length) return;
+        if (customFilters.clear) {
+            setFilterModel({ items: [], logicOperator: "and", quickFilterValues: [], quickFilterLogicOperator: "and" });
+            return;
         }
+        const items = Object.entries(customFilters).reduce((acc, [key, value]) => {
+            if (key === 'startDate' || key === 'endDate') {
+                acc.push(value);
+            } else if (key in customFilters) {
+                acc.push({ field: key, value, operator: "equals", type: "string" });
+            }
+            return acc;
+        }, []);
+        setFilterModel({ items, logicOperator: "and", quickFilterValues: [], quickFilterLogicOperator: "and" });
     }, [customFilters]);
 
-    const lookupOptions = ({ row, field, id, ...others }) => {
+    const lookupOptions = ({ field }) => {
         const lookupData = dataRef.current.lookups || {};
         return lookupData[lookupMap[field].lookup] || [];
     };
 
     useEffect(() => {
-        if (props.isChildGrid) {
+        if (props.isChildGrid || !hideTopFilters) {
             return;
         }
-        if (hideTopFilters) {
-            dispatchData({
-                type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-                    filterButton: null,
-                    hidden: { search: true, operation: true, export: true, print: true, filter: true }
-                }
-            });
-        }
+        dispatchData({
+            type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+                filterButton: null,
+                hidden: { search: true, operation: true, export: true, print: true, filter: true }
+            }
+        });
     }, []);
     const { customActions = [] } = model;
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {

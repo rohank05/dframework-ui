@@ -8,6 +8,7 @@ exports.default = void 0;
 require("core-js/modules/es.error.cause.js");
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
+require("core-js/modules/es.array.reduce.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.object.from-entries.js");
@@ -27,6 +28,7 @@ require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
+require("core-js/modules/esnext.iterator.reduce.js");
 require("core-js/modules/esnext.set.difference.v2.js");
 require("core-js/modules/esnext.set.intersection.v2.js");
 require("core-js/modules/esnext.set.is-disjoint-from.v2.js");
@@ -76,8 +78,7 @@ var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 var _reactI18next = require("react-i18next");
 const _excluded = ["exportFormats"],
   _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
-  _excluded3 = ["row", "field", "id"],
-  _excluded4 = ["filterField"];
+  _excluded3 = ["filterField"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -506,72 +507,61 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
-    if (customFilters && Object.keys(customFilters) !== 0) {
-      if (customFilters.clear) {
-        let filterObject = {
-          items: [],
-          logicOperator: "and",
-          quickFilterValues: [],
-          quickFilterLogicOperator: "and"
-        };
-        setFilterModel(filterObject);
-        return;
-      } else {
-        const newArray = [];
-        for (const key in customFilters) {
-          if (key === 'startDate' || key === 'endDate') {
-            newArray.push(customFilters[key]);
-          } else {
-            if (customFilters.hasOwnProperty(key)) {
-              const newObj = {
-                field: key,
-                value: customFilters[key],
-                operator: "equals",
-                type: "string"
-              };
-              newArray.push(newObj);
-            }
-          }
-        }
-        let filterObject = {
-          items: newArray,
-          logicOperator: "and",
-          quickFilterValues: [],
-          quickFilterLogicOperator: "and"
-        };
-        setFilterModel(filterObject);
-      }
+    if (!customFilters || !Object.keys(customFilters).length) return;
+    if (customFilters.clear) {
+      setFilterModel({
+        items: [],
+        logicOperator: "and",
+        quickFilterValues: [],
+        quickFilterLogicOperator: "and"
+      });
+      return;
     }
+    const items = Object.entries(customFilters).reduce((acc, _ref6) => {
+      let [key, value] = _ref6;
+      if (key === 'startDate' || key === 'endDate') {
+        acc.push(value);
+      } else if (key in customFilters) {
+        acc.push({
+          field: key,
+          value,
+          operator: "equals",
+          type: "string"
+        });
+      }
+      return acc;
+    }, []);
+    setFilterModel({
+      items,
+      logicOperator: "and",
+      quickFilterValues: [],
+      quickFilterLogicOperator: "and"
+    });
   }, [customFilters]);
-  const lookupOptions = _ref6 => {
+  const lookupOptions = _ref7 => {
     let {
-        row,
-        field,
-        id
-      } = _ref6,
-      others = _objectWithoutProperties(_ref6, _excluded3);
+      field
+    } = _ref7;
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
   (0, _react.useEffect)(() => {
-    if (props.isChildGrid) {
+    if (props.isChildGrid || !hideTopFilters) {
       return;
     }
-    if (hideTopFilters) {
-      dispatchData({
-        type: _actions.default.PASS_FILTERS_TOHEADER,
-        payload: {
-          filterButton: null,
-          hidden: {
-            search: true,
-            operation: true,
-            export: true,
-            print: true,
-            filter: true
-          }
+    dispatchData({
+      type: _actions.default.PASS_FILTERS_TOHEADER,
+      payload: {
+        filterButton: null,
+        hidden: {
+          search: true,
+          operation: true,
+          export: true,
+          print: true,
+          filter: true
         }
-      });
-    }
+      }
+    });
   }, []);
   const {
     customActions = []
@@ -688,13 +678,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         type: "string",
         header: "Modified By"
       }];
-      columnDefinitions.forEach(_ref7 => {
+      columnDefinitions.forEach(_ref8 => {
         let {
           key,
           field,
           type,
           header
-        } = _ref7;
+        } = _ref8;
         if (auditColumns[key] === true) {
           // Ensure the value is explicitly true
           const column = {
@@ -757,12 +747,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         }));
       }
       if (customActions.length) {
-        customActions.forEach(_ref8 => {
+        customActions.forEach(_ref9 => {
           let {
             icon,
             action,
             color
-          } = _ref8;
+          } = _ref9;
           actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
             icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
               title: action
@@ -899,12 +889,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       model: model
     });
   };
-  const openForm = _ref9 => {
+  const openForm = _ref0 => {
     let {
       id,
       record = {},
       mode
-    } = _ref9;
+    } = _ref0;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -941,11 +931,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref0 => {
+  const handleDownload = async _ref1 => {
     let {
       documentLink,
       fileName
-    } = _ref0;
+    } = _ref1;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -1190,11 +1180,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
     }
   };
-  const updateAssignment = _ref1 => {
+  const updateAssignment = _ref10 => {
     let {
       unassign,
       assign
-    } = _ref1;
+    } = _ref10;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1334,11 +1324,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref10 => {
+    gridColumns.forEach(_ref11 => {
       let {
         exportable,
         field
-      } = _ref10;
+      } = _ref11;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
@@ -1438,7 +1428,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         const {
             filterField
           } = item,
-          newItem = _objectWithoutProperties(item, _excluded4);
+          newItem = _objectWithoutProperties(item, _excluded3);
         return newItem;
       }
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
