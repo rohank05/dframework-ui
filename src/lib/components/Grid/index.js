@@ -58,6 +58,9 @@ const actionTypes = {
     Download: "Download",
     NavigateToRelation: "NavigateToRelation"
 };
+const iconMapper = {
+    'article': <ArticleIcon />
+}
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
     permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER", showColumnsOrder: true, filter: true },
@@ -399,7 +402,7 @@ const GridBase = memo(({
             });
         }
     }, []);
-
+    const { customActions = [] } = model;
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
         let baseColumnList = columns || model?.gridColumns || model?.columns;
         if (dynamicColumns) {
@@ -506,7 +509,6 @@ const GridBase = memo(({
                 }
             });
         }
-
         const actions = [];
         if (!forAssignment && !isReadOnly) {
             if (canEdit) {
@@ -521,8 +523,17 @@ const GridBase = memo(({
             if (showHistory) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
             }
-            if (navigateToRelation.length > 0) {
-                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label="" />);
+            if (customActions.length) {
+                customActions.forEach(({ icon, action, color }) => {
+                    actions.push(
+                        <GridActionsCellItem
+                            icon={<Tooltip title={action}>{iconMapper[icon] || <CopyIcon />}</Tooltip>}
+                            data-action={action}
+                            label={action}
+                            color={color || "primary"}
+                        />
+                    );
+                });
             }
         }
         if (documentField.length) {
@@ -708,21 +719,26 @@ const GridBase = memo(({
                 });
                 return;
             }
-            if (action === actionTypes.Edit) {
-                return openForm({ id: record[idProperty], record });
-            }
-            if (action === actionTypes.Copy) {
-                return openForm({ id: record[idProperty], mode: 'copy' });
-            }
-            if (action === actionTypes.Delete) {
-                setIsDeleting(true);
-                setRecord({ name: record[model?.linkColumn], id: record[idProperty] });
-            }
-            if (action === actionTypes.History) {
-                return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
-            }
-            if (action === actionTypes.NavigateToRelation) {
-                return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
+            switch (action) {
+                case actionTypes.Edit:
+                    return openForm({ id: record[idProperty], record });
+                case actionTypes.Copy:
+                    return openForm({ id: record[idProperty], mode: 'copy' });
+                case actionTypes.Delete:
+                    setIsDeleting(true);
+                    setRecord({ name: record[model.linkColumn], id: record[idProperty] });
+                    break;
+                case actionTypes.History:
+                    // navigates to history screen, specifying the tablename, id of record and breadcrumb to render title on history screen.
+                    return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
+                default:
+                    // Check if action matches any customAction and call its onClick if found
+                    const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === 'function');
+                    if (foundCustomAction) {
+                        foundCustomAction.onClick({ row: record, navigate });
+                        return;
+                    }
+                    break;
             }
         }
         if (action === actionTypes.Download) {

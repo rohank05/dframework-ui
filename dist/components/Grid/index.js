@@ -100,6 +100,9 @@ const actionTypes = {
   Download: "Download",
   NavigateToRelation: "NavigateToRelation"
 };
+const iconMapper = {
+  'article': /*#__PURE__*/_react.default.createElement(_Article.default, null)
+};
 const constants = {
   gridFilterModel: {
     items: [],
@@ -572,6 +575,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
   }, []);
   const {
+    customActions = []
+  } = model;
+  const {
     gridColumns,
     pinnedColumns,
     lookupMap
@@ -752,15 +758,22 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           color: "primary"
         }));
       }
-      if (navigateToRelation.length > 0) {
-        actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
-          icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
-            title: ""
-          }, /*#__PURE__*/_react.default.createElement(_Article.default, null), " "),
-          "data-action": actionTypes.NavigateToRelation,
-          color: "primary",
-          label: ""
-        }));
+      if (customActions.length) {
+        customActions.forEach(_ref7 => {
+          let {
+            icon,
+            action,
+            color
+          } = _ref7;
+          actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
+            icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
+              title: action
+            }, iconMapper[icon] || /*#__PURE__*/_react.default.createElement(_FileCopy.default, null)),
+            "data-action": action,
+            label: action,
+            color: color || "primary"
+          }));
+        });
       }
     }
     if (documentField.length) {
@@ -888,12 +901,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       model: model
     });
   };
-  const openForm = _ref7 => {
+  const openForm = _ref8 => {
     let {
       id,
       record = {},
       mode
-    } = _ref7;
+    } = _ref8;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -930,11 +943,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref8 => {
+  const handleDownload = async _ref9 => {
     let {
       documentLink,
       fileName
-    } = _ref8;
+    } = _ref9;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -994,30 +1007,38 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         });
         return;
       }
-      if (action === actionTypes.Edit) {
-        return openForm({
-          id: record[idProperty],
-          record
-        });
-      }
-      if (action === actionTypes.Copy) {
-        return openForm({
-          id: record[idProperty],
-          mode: 'copy'
-        });
-      }
-      if (action === actionTypes.Delete) {
-        setIsDeleting(true);
-        setRecord({
-          name: record[model === null || model === void 0 ? void 0 : model.linkColumn],
-          id: record[idProperty]
-        });
-      }
-      if (action === actionTypes.History) {
-        return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
-      }
-      if (action === actionTypes.NavigateToRelation) {
-        return navigate("/masterScope/".concat(record[idProperty], "?showRelation=").concat(navigateToRelation));
+      switch (action) {
+        case actionTypes.Edit:
+          return openForm({
+            id: record[idProperty],
+            record
+          });
+        case actionTypes.Copy:
+          return openForm({
+            id: record[idProperty],
+            mode: 'copy'
+          });
+        case actionTypes.Delete:
+          setIsDeleting(true);
+          setRecord({
+            name: record[model.linkColumn],
+            id: record[idProperty]
+          });
+          break;
+        case actionTypes.History:
+          // navigates to history screen, specifying the tablename, id of record and breadcrumb to render title on history screen.
+          return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
+        default:
+          // Check if action matches any customAction and call its onClick if found
+          const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === 'function');
+          if (foundCustomAction) {
+            foundCustomAction.onClick({
+              row: record,
+              navigate
+            });
+            return;
+          }
+          break;
       }
     }
     if (action === actionTypes.Download) {
@@ -1171,11 +1192,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
     }
   };
-  const updateAssignment = _ref9 => {
+  const updateAssignment = _ref0 => {
     let {
       unassign,
       assign
-    } = _ref9;
+    } = _ref0;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1315,11 +1336,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref0 => {
+    gridColumns.forEach(_ref1 => {
       let {
         exportable,
         field
-      } = _ref0;
+      } = _ref1;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
