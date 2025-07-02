@@ -1188,29 +1188,30 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
   };
   (0, _react.useEffect)(() => {
-    if (preferenceName && preferenceApi) {
-      removeCurrentPreferenceName({
-        dispatchData
-      });
-      getAllSavedPreferences({
-        preferenceName,
-        history: navigate,
-        dispatchData,
-        Username,
-        preferenceApi,
-        defaultPreferenceEnums
-      });
-      applyDefaultPreferenceIfExists({
-        preferenceName,
-        history: navigate,
-        dispatchData,
-        Username,
-        gridRef: apiRef,
-        setIsGridPreferenceFetched,
-        preferenceApi,
-        defaultPreferenceEnums
-      });
+    if (!preferenceName || !preferenceApi) {
+      return;
     }
+    removeCurrentPreferenceName({
+      dispatchData
+    });
+    getAllSavedPreferences({
+      preferenceName,
+      history: navigate,
+      dispatchData,
+      Username,
+      preferenceApi,
+      defaultPreferenceEnums
+    });
+    applyDefaultPreferenceIfExists({
+      preferenceName,
+      history: navigate,
+      dispatchData,
+      Username,
+      gridRef: apiRef,
+      setIsGridPreferenceFetched,
+      preferenceApi,
+      defaultPreferenceEnums
+    });
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
     const addtext = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
@@ -1295,46 +1296,35 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       columnVisibilityModel,
       lookup
     } = apiRef.current.state.columns;
-    const columns = {};
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-    const nonExportColumns = new Set();
-    gridColumns.forEach(_ref11 => {
-      let {
-        exportable,
-        field
-      } = _ref11;
-      if (exportable === false) nonExportColumns.add(field);
-    });
-    const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
-    if ((visibleColumns === null || visibleColumns === void 0 ? void 0 : visibleColumns.length) === 0) {
+    const nonExportColumns = new Set(gridColumns.filter(col => col.exportable === false).map(col => col.field));
+    const visibleColumns = orderedFields.filter(field => !nonExportColumns.has(field) && !hiddenColumns.includes(field) && field !== '__check__' && field !== 'actions');
+    if (visibleColumns.length === 0) {
       snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
       return;
     }
-    visibleColumns.forEach(ele => {
-      var _lookup$ele;
-      columns[ele] = {
-        field: ele,
-        width: lookup[ele].width,
-        headerName: lookup[ele].headerName || lookup[ele].field,
-        type: lookup[ele].type,
-        keepLocal: lookup[ele].keepLocal === true,
-        isParsable: (_lookup$ele = lookup[ele]) === null || _lookup$ele === void 0 ? void 0 : _lookup$ele.isParsable,
-        lookup: lookup[ele].lookup
+    const columns = {};
+    visibleColumns.forEach(field => {
+      const col = lookup[field];
+      columns[field] = {
+        field,
+        width: col.width,
+        headerName: col.headerName || col.field,
+        type: col.type,
+        keepLocal: col.keepLocal === true,
+        isParsable: col.isParsable,
+        lookup: col.lookup
       };
     });
     fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
-    if (url) {
-      fetchData();
-    }
+    if (!url) return;
+    fetchData();
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {
-    if (props.isChildGrid) {
-      return;
-    }
-    if (forAssignment || !updatePageTitle) {
+    if (props.isChildGrid || forAssignment || !updatePageTitle) {
       return;
     }
     dispatchData({
