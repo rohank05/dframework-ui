@@ -200,7 +200,7 @@ const GridBase = memo(({
     const { t: translate, i18n } = useTranslation()
     const tOpts = { t: translate, i18n };
     const [errorMessage, setErrorMessage] = useState('');
-    const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
+    const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
     if (model.defaultFilters) {
         initialFilterModel.items = [];
@@ -213,7 +213,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
@@ -242,7 +242,7 @@ const GridBase = memo(({
     };
     const tTranslate = model.tTranslate ?? ((key) => key);
 
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [], breadcrumbColor } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, breadcrumbColor } = model;
     const gridTitle = model.gridTitle || model.title;
     const OrderSuggestionHistoryFields = {
         OrderStatus: 'OrderStatusId'
@@ -346,7 +346,7 @@ const GridBase = memo(({
     }, [data]);
 
     useEffect(() => {
-        if (customFilters && Object.keys(customFilters) != 0) {
+        if (customFilters && Object.keys(customFilters) !== 0) {
             if (customFilters.clear) {
                 let filterObject = {
                     items: [],
@@ -404,7 +404,7 @@ const GridBase = memo(({
     }, []);
     const { customActions = [] } = model;
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
-        let baseColumnList = columns || model?.gridColumns || model?.columns;
+        let baseColumnList = columns || model.gridColumns || model.columns;
         if (dynamicColumns) {
             baseColumnList = [...dynamicColumns, ...baseColumnList];
         }
@@ -479,7 +479,6 @@ const GridBase = memo(({
                 pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
             }
             lookupMap[column.field] = column;
-            column.label = column?.label
         }
 
         let auditColumns = model.standard;
@@ -575,9 +574,9 @@ const GridBase = memo(({
         const { pageSize, page } = paginationModel;
         let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
 
-        let controllerType = model?.controllerType;
+        let controllerType = model.controllerType;
         if (isPivotExport) {
-            gridApi = `${withControllersUrl}${model?.pivotApi}`;
+            gridApi = `${withControllersUrl}${model.pivotApi}`;
             controllerType = 'cs';
         }
         if (assigned || available) {
@@ -629,8 +628,8 @@ const GridBase = memo(({
             setError: snackbar.showError,
             contentType,
             columns,
-            template: isPivotExport ? model?.exportTemplate : null,
-            configFileName: isPivotExport ? model?.configFileName : null,
+            template: isPivotExport ? model.exportTemplate : null,
+            configFileName: isPivotExport ? model.configFileName : null,
             dispatchData,
             showFullScreenLoader,
             history: navigate,
@@ -641,7 +640,7 @@ const GridBase = memo(({
     };
     const openForm = ({ id, record = {}, mode }) => {
         if (setActiveRecord) {
-            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
+            getRecord({ id, api: api || model.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
             return;
         }
         let path = pathname;
@@ -745,7 +744,7 @@ const GridBase = memo(({
             handleDownload({ documentLink: record[documentField], fileName: record.FileName });
         }
         if (toLink.length) {
-            if (model?.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+            if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
                 onCellClick(cellParams.row);
                 return;
             }
@@ -966,7 +965,7 @@ const GridBase = memo(({
                     </>)}
 
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} exportFormats={model.exportFormats || {}} tTranslate={tTranslate} tOpts={tOpts} />
+                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model.pivotApi} exportFormats={model.exportFormats || {}} tTranslate={tTranslate} tOpts={tOpts} />
                     )}
                     {preferenceName &&
                         <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
@@ -1017,7 +1016,7 @@ const GridBase = memo(({
         if (forAssignment || !updatePageTitle) {
             return;
         }
-        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, title: model?.title } })
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model.pageTitle || model.title, title: model.title } })
         return () => {
             dispatchData({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null

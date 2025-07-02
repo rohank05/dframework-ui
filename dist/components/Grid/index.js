@@ -293,7 +293,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     i18n
   };
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
-  const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || (model === null || model === void 0 ? void 0 : model.defaultSort)));
+  const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || model.defaultSort));
   const initialFilterModel = {
     items: [],
     logicOperator: 'and',
@@ -322,7 +322,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     idProperty = "id",
     showHeaderFilters = true,
     disableRowSelectionOnClick = true,
-    createdOnKeepLocal = true,
     hideBackButton = false,
     hideTopFilters = true,
     updatePageTitle = true,
@@ -392,7 +391,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     tableName,
     showHistory = true,
     hideBreadcrumbInGrid = false,
-    navigateToRelation = [],
     breadcrumbColor
   } = model;
   const gridTitle = model.gridTitle || model.title;
@@ -500,7 +498,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     dataRef.current = data;
   }, [data]);
   (0, _react.useEffect)(() => {
-    if (customFilters && Object.keys(customFilters) != 0) {
+    if (customFilters && Object.keys(customFilters) !== 0) {
       if (customFilters.clear) {
         let filterObject = {
           items: [],
@@ -575,7 +573,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     pinnedColumns,
     lookupMap
   } = (0, _react.useMemo)(() => {
-    let baseColumnList = columns || (model === null || model === void 0 ? void 0 : model.gridColumns) || (model === null || model === void 0 ? void 0 : model.columns);
+    let baseColumnList = columns || model.gridColumns || model.columns;
     if (dynamicColumns) {
       baseColumnList = [...dynamicColumns, ...baseColumnList];
     }
@@ -650,7 +648,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
       }
       lookupMap[column.field] = column;
-      column.label = column === null || column === void 0 ? void 0 : column.label;
     }
     let auditColumns = model.standard;
     if (typeof auditColumns === 'boolean' && auditColumns) {
@@ -824,9 +821,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       page
     } = paginationModel;
     let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url || "").concat(model.api || api);
-    let controllerType = model === null || model === void 0 ? void 0 : model.controllerType;
+    let controllerType = model.controllerType;
     if (isPivotExport) {
-      gridApi = "".concat(withControllersUrl).concat(model === null || model === void 0 ? void 0 : model.pivotApi);
+      gridApi = "".concat(withControllersUrl).concat(model.pivotApi);
       controllerType = 'cs';
     }
     if (assigned || available) {
@@ -884,8 +881,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       setError: snackbar.showError,
       contentType,
       columns,
-      template: isPivotExport ? model === null || model === void 0 ? void 0 : model.exportTemplate : null,
-      configFileName: isPivotExport ? model === null || model === void 0 ? void 0 : model.configFileName : null,
+      template: isPivotExport ? model.exportTemplate : null,
+      configFileName: isPivotExport ? model.configFileName : null,
       dispatchData,
       showFullScreenLoader,
       history: navigate,
@@ -903,7 +900,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
-        api: api || (model === null || model === void 0 ? void 0 : model.api),
+        api: api || model.api,
         setIsLoading,
         setActiveRecord,
         modelConfig: model,
@@ -1041,7 +1038,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       });
     }
     if (toLink.length) {
-      if (model !== null && model !== void 0 && model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+      if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
         onCellClick(cellParams.row);
         return;
       }
@@ -1301,7 +1298,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       size: "small"
     }, "CLEAR FILTER")), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
       handleExport: handleExport,
-      showPivotExportBtn: model === null || model === void 0 ? void 0 : model.pivotApi,
+      showPivotExportBtn: model.pivotApi,
       exportFormats: model.exportFormats || {},
       tTranslate: tTranslate,
       tOpts: tOpts
@@ -1371,8 +1368,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       type: _actions.default.PAGE_TITLE_DETAILS,
       payload: {
         icon: "",
-        titleHeading: (model === null || model === void 0 ? void 0 : model.pageTitle) || (model === null || model === void 0 ? void 0 : model.title),
-        title: model === null || model === void 0 ? void 0 : model.title
+        titleHeading: model.pageTitle || model.title,
+        title: model.title
       }
     });
     return () => {
