@@ -76,8 +76,7 @@ var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDown
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 var _reactI18next = require("react-i18next");
 const _excluded = ["exportFormats"],
-  _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"],
-  _excluded3 = ["filterField"];
+  _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -1371,7 +1370,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     });
   }, [isLoading]);
   const updateFilters = e => {
-    var _e$items, _chartFilters$items2;
+    var _chartFilters$items2;
     const {
       items
     } = e;
@@ -1382,23 +1381,16 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         type,
         value
       } = item;
-      const column = gridColumns.find(col => col.field === field);
-      const isNumber = (column === null || column === void 0 ? void 0 : column.type) === filterFieldDataTypes.Number;
+      const column = gridColumns.find(col => col.field === field) || {};
+      const isNumber = column.type === filterFieldDataTypes.Number;
       if (isNumber && value < 0) {
         return _objectSpread(_objectSpread({}, item), {}, {
           value: null
         });
       }
-      if (field === OrderSuggestionHistoryFields.OrderStatus) {
-        const {
-            filterField
-          } = item,
-          newItem = _objectWithoutProperties(item, _excluded3);
-        return newItem;
-      }
       if (emptyIsAnyOfOperatorFilters.includes(operator) || isNumber && !isNaN(value) || !isNumber) {
         var _gridColumns$filter$;
-        const isKeywordField = isElasticScreen && ((_gridColumns$filter$ = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (item === null || item === void 0 ? void 0 : item.field))[0]) === null || _gridColumns$filter$ === void 0 ? void 0 : _gridColumns$filter$.isKeywordField);
+        const isKeywordField = isElasticScreen && ((_gridColumns$filter$ = gridColumns.filter(element => element.field === field)[0]) === null || _gridColumns$filter$ === void 0 ? void 0 : _gridColumns$filter$.isKeywordField);
         if (isKeywordField) {
           item.filterField = "".concat(item.field, ".keyword");
         }
@@ -1417,29 +1409,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     });
     e.items = updatedItems;
     setFilterModel(e);
-    if ((e === null || e === void 0 || (_e$items = e.items) === null || _e$items === void 0 ? void 0 : _e$items.findIndex(ele => ele.isChartFilter && !['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) {
-      if (clearChartFilter) {
-        clearChartFilter();
-      }
-    }
-    if ((chartFilters === null || chartFilters === void 0 || (_chartFilters$items2 = chartFilters.items) === null || _chartFilters$items2 === void 0 ? void 0 : _chartFilters$items2.length) > 0) {
-      if (e.items.length === 0) {
-        if (clearChartFilter) {
-          clearChartFilter();
-        }
-      } else {
-        const chartFilterIndex = chartFilters === null || chartFilters === void 0 ? void 0 : chartFilters.items.findIndex(ele => ele.columnField === e.items[0].field);
-        if (chartFilterIndex > -1) {
-          if (clearChartFilter) {
-            clearChartFilter();
-          }
-        }
-      }
+    const shouldClearChartFilter = e.items.findIndex(ele => ele.isChartFilter && !['isEmpty', 'isNotEmpty'].includes(ele.operator)) === -1 || (chartFilters === null || chartFilters === void 0 || (_chartFilters$items2 = chartFilters.items) === null || _chartFilters$items2 === void 0 ? void 0 : _chartFilters$items2.length) && (!e.items.length || chartFilters.items.findIndex(ele => {
+      var _e$items$;
+      return ele.columnField === ((_e$items$ = e.items[0]) === null || _e$items$ === void 0 ? void 0 : _e$items$.field);
+    }) > -1);
+    if (shouldClearChartFilter && clearChartFilter) {
+      clearChartFilter();
     }
   };
   const updateSort = e => {
     const sort = e.map(ele => {
-      const field = gridColumns.filter(element => (element === null || element === void 0 ? void 0 : element.field) === (ele === null || ele === void 0 ? void 0 : ele.field))[0] || {};
+      const field = gridColumns.filter(element => element.field === ele.field)[0] || {};
       const isKeywordField = isElasticScreen && field.isKeywordField;
       const obj = _objectSpread(_objectSpread({}, ele), {}, {
         filterField: isKeywordField ? "".concat(ele.field, ".keyword") : ele.field
@@ -1451,17 +1431,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     });
     setSortModel(sort);
   };
-  let breadCrumbs;
-  if (searchParamKey) {
-    const subBreadcrumbs = searchParams.get(searchParamKey);
-    breadCrumbs = [{
-      text: subBreadcrumbs
-    }];
-  } else {
-    breadCrumbs = [{
-      text: title || model.gridTitle || model.title
-    }];
-  }
+  const pageTitle = title || model.gridTitle || model.title;
+  const breadCrumbs = searchParamKey ? [{
+    text: searchParams.get(searchParamKey) || pageTitle
+  }] : [{
+    text: pageTitle
+  }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,

@@ -1003,20 +1003,15 @@ const GridBase = memo(({
         const { items } = e;
         const updatedItems = items.map(item => {
             const { field, operator, type, value } = item;
-            const column = gridColumns.find(col => col.field === field);
-            const isNumber = column?.type === filterFieldDataTypes.Number;
+            const column = gridColumns.find(col => col.field === field) || {};
+            const isNumber = column.type === filterFieldDataTypes.Number;
 
             if (isNumber && value < 0) {
                 return { ...item, value: null };
             }
 
-            if (field === OrderSuggestionHistoryFields.OrderStatus) {
-                const { filterField, ...newItem } = item;
-                return newItem;
-            }
-
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
-                const isKeywordField = isElasticScreen && gridColumns.filter(element => element?.field === item?.field)[0]?.isKeywordField;
+                const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === field)[0]?.isKeywordField;
                 if (isKeywordField) {
                     item.filterField = `${item.field}.keyword`;
                 }
@@ -1028,30 +1023,24 @@ const GridBase = memo(({
         });
         e.items = updatedItems;
         setFilterModel(e);
-        if (e?.items?.findIndex(ele => ele.isChartFilter && !(['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) {
-            if (clearChartFilter) {
-                clearChartFilter();
-            }
-        }
-        if (chartFilters?.items?.length > 0) {
-            if (e.items.length === 0) {
-                if (clearChartFilter) {
-                    clearChartFilter();
-                }
-            } else {
-                const chartFilterIndex = chartFilters?.items.findIndex(ele => ele.columnField === e.items[0].field);
-                if (chartFilterIndex > -1) {
-                    if (clearChartFilter) {
-                        clearChartFilter();
-                    }
-                }
-            }
+        const shouldClearChartFilter =
+            (e.items.findIndex(ele => ele.isChartFilter && !(['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) ||
+            (
+                chartFilters?.items?.length &&
+                (
+                    (!e.items.length) ||
+                    (chartFilters.items.findIndex(ele => ele.columnField === e.items[0]?.field) > -1)
+                )
+            );
+
+        if (shouldClearChartFilter && clearChartFilter) {
+            clearChartFilter();
         }
     };
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {
-            const field = gridColumns.filter(element => element?.field === ele?.field)[0] || {};
+            const field = gridColumns.filter(element => element.field === ele.field)[0] || {};
             const isKeywordField = isElasticScreen && field.isKeywordField;
             const obj = { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
             if (field.dataIndex) {
@@ -1061,16 +1050,10 @@ const GridBase = memo(({
         });
         setSortModel(sort);
     }
-
-    let breadCrumbs;
-
-    if (searchParamKey) {
-        const subBreadcrumbs = searchParams.get(searchParamKey);
-        breadCrumbs = [{ text: subBreadcrumbs }];
-    }
-    else {
-        breadCrumbs = [{ text: title || model.gridTitle || model.title }];
-    }
+    const pageTitle = title || model.gridTitle || model.title;
+    const breadCrumbs = searchParamKey
+        ? [{ text: searchParams.get(searchParamKey) || pageTitle }]
+        : [{ text: pageTitle }];
     return (
         <>
             <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
