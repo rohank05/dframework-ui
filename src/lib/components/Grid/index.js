@@ -769,50 +769,55 @@ const GridBase = memo(({
         fetchData();
     };
 
-    const handleAddRecords = () => {
+    const handleAddRecords = async () => {
         if (selectedSet.current.size < 1) {
-            snackbar.showError("Please select atleast one record to proceed");
+            snackbar.showError("Please select at least one record to proceed");
             return;
         }
+
         const selectedIds = Array.from(selectedSet.current);
         const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
         let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
 
+        // If selectionUpdateKeys is defined, filter each record to only those keys
         if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
             selectedRecords = selectedRecords.map(item =>
                 Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
             );
         }
-        saveRecord({ id: 0, api: `${url}${selectionApi || api}/updateMany`, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
-            if (success) {
+
+        try {
+            const result = await saveRecord({
+                id: 0,
+                api: `${url}${selectionApi || api}/updateMany`,
+                values: { items: selectedRecords },
+                setIsLoading,
+                setError: snackbar.showError
+            });
+
+            if (result) {
                 fetchData();
                 snackbar.showMessage("Record Added Successfully.");
             }
-        })
-            .catch((err) => {
-                snackbar.showError(
-                    "An error occured, please try after some time.second",
-                    err
-                );
-            })
-            .finally(() => {
-                selectedSet.current.clear();
-                setIsLoading(false);
-                setShowAddConfirmation(false);
-            });
-    }
+        } catch (err) {
+            snackbar.showError(err.message || "An error occurred, please try again later.");
+        } finally {
+            selectedSet.current.clear();
+            setIsLoading(false);
+            setShowAddConfirmation(false);
+        }
+    };
 
     const onAdd = () => {
         if (selectionApi.length > 0) {
-            const selectedCount = selectedSet.current.size;
-            if (selectedCount < 1) {
-                snackbar.showError(
-                    "Please select atleast one record to proceed"
-                );
-                setIsLoading(false);
+            if (selectedSet.current.size) {
+                setShowAddConfirmation(true);
                 return;
             }
-            setShowAddConfirmation(true);
+            snackbar.showError(
+                "Please select atleast one record to proceed"
+            );
+            setIsLoading(false);
             return;
         }
         if (typeof onAddOverride === 'function') {
@@ -823,12 +828,11 @@ const GridBase = memo(({
     }
 
     const clearFilters = () => {
-        if (filterModel?.items?.length > 0) {
-            const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
-            setFilterModel(filters);
-            if (clearChartFilter) {
-                clearChartFilter();
-            }
+        if (!filterModel?.items?.length) return;
+        const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
+        setFilterModel(filters);
+        if (clearChartFilter) {
+            clearChartFilter();
         }
     }
     const updateAssignment = ({ unassign, assign }) => {

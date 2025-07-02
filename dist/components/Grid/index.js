@@ -14,7 +14,6 @@ require("core-js/modules/es.object.assign.js");
 require("core-js/modules/es.object.from-entries.js");
 require("core-js/modules/es.parse-int.js");
 require("core-js/modules/es.promise.js");
-require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.regexp.to-string.js");
 require("core-js/modules/es.string.ends-with.js");
@@ -1094,47 +1093,49 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     setSelectedOrder(null);
     fetchData();
   };
-  const handleAddRecords = () => {
+  const handleAddRecords = async () => {
     if (selectedSet.current.size < 1) {
-      snackbar.showError("Please select atleast one record to proceed");
+      snackbar.showError("Please select at least one record to proceed");
       return;
     }
     const selectedIds = Array.from(selectedSet.current);
     const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
     let selectedRecords = selectedIds.map(id => _objectSpread(_objectSpread({}, baseSaveData), recordMap.get(id)));
+
+    // If selectionUpdateKeys is defined, filter each record to only those keys
     if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
       selectedRecords = selectedRecords.map(item => Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]])));
     }
-    (0, _crudHelper.saveRecord)({
-      id: 0,
-      api: "".concat(url).concat(selectionApi || api, "/updateMany"),
-      values: {
-        items: selectedRecords
-      },
-      setIsLoading,
-      setError: snackbar.showError
-    }).then(success => {
-      if (success) {
+    try {
+      const result = await (0, _crudHelper.saveRecord)({
+        id: 0,
+        api: "".concat(url).concat(selectionApi || api, "/updateMany"),
+        values: {
+          items: selectedRecords
+        },
+        setIsLoading,
+        setError: snackbar.showError
+      });
+      if (result) {
         fetchData();
         snackbar.showMessage("Record Added Successfully.");
       }
-    }).catch(err => {
-      snackbar.showError("An error occured, please try after some time.second", err);
-    }).finally(() => {
+    } catch (err) {
+      snackbar.showError(err.message || "An error occurred, please try again later.");
+    } finally {
       selectedSet.current.clear();
       setIsLoading(false);
       setShowAddConfirmation(false);
-    });
+    }
   };
   const onAdd = () => {
     if (selectionApi.length > 0) {
-      const selectedCount = selectedSet.current.size;
-      if (selectedCount < 1) {
-        snackbar.showError("Please select atleast one record to proceed");
-        setIsLoading(false);
+      if (selectedSet.current.size) {
+        setShowAddConfirmation(true);
         return;
       }
-      setShowAddConfirmation(true);
+      snackbar.showError("Please select atleast one record to proceed");
+      setIsLoading(false);
       return;
     }
     if (typeof onAddOverride === 'function') {
@@ -1147,12 +1148,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   };
   const clearFilters = () => {
     var _filterModel$items;
-    if ((filterModel === null || filterModel === void 0 || (_filterModel$items = filterModel.items) === null || _filterModel$items === void 0 ? void 0 : _filterModel$items.length) > 0) {
-      const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
-      setFilterModel(filters);
-      if (clearChartFilter) {
-        clearChartFilter();
-      }
+    if (!(filterModel !== null && filterModel !== void 0 && (_filterModel$items = filterModel.items) !== null && _filterModel$items !== void 0 && _filterModel$items.length)) return;
+    const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
+    setFilterModel(filters);
+    if (clearChartFilter) {
+      clearChartFilter();
     }
   };
   const updateAssignment = _ref10 => {
