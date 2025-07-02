@@ -55,15 +55,14 @@ const actionTypes = {
     Edit: "Edit",
     Delete: "Delete",
     History: "History",
-    Download: "Download",
-    NavigateToRelation: "NavigateToRelation"
+    Download: "Download"
 };
 const iconMapper = {
     'article': <ArticleIcon />
 }
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
-    permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER", showColumnsOrder: true, filter: true },
+    permissions: { edit: true, add: true, export: true, delete: true, showColumnsOrder: true, filter: true }
 }
 
 const booleanIconRenderer = (params) => {
@@ -87,20 +86,21 @@ const useStyles = makeStyles({
 })
 
 const convertDefaultSort = (defaultSort) => {
-    const orderBy = [];
-    if (typeof defaultSort === 'string') {
-        const sortFields = defaultSort.split(',');
-        for (const sortField of sortFields) {
-            sortRegex.lastIndex = 0;
-            const sortInfo = sortRegex.exec(sortField);
-            if (sortInfo) {
-                const [, field, direction = 'ASC'] = sortInfo;
-                orderBy.push({ field: field.trim(), sort: direction.trim().toLowerCase() });
-            }
-        }
-    }
-    return orderBy;
+    if (typeof defaultSort !== 'string') return [];
+    
+    return defaultSort.split(',').map(sortField => {
+        sortRegex.lastIndex = 0;
+        const sortInfo = sortRegex.exec(sortField);
+        if (!sortInfo) return null;
+        
+        const [, field, direction = 'ASC'] = sortInfo;
+        return { 
+            field: field.trim(), 
+            sort: direction.trim().toLowerCase() 
+        };
+    }).filter(Boolean);
 };
+
 const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
     return (
         <MenuItem
@@ -193,7 +193,7 @@ const GridBase = memo(({
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [record, setRecord] = useState(null);
-    const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
+    const visibilityModel = { CreatedOn: false, CreatedByUser: false, ...model.columnVisibilityModel };
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';

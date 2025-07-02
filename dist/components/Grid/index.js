@@ -97,8 +97,7 @@ const actionTypes = {
   Edit: "Edit",
   Delete: "Delete",
   History: "History",
-  Download: "Download",
-  NavigateToRelation: "NavigateToRelation"
+  Download: "Download"
 };
 const iconMapper = {
   'article': /*#__PURE__*/_react.default.createElement(_Article.default, null)
@@ -115,7 +114,6 @@ const constants = {
     add: true,
     export: true,
     delete: true,
-    clearFilterText: "CLEAR THIS FILTER",
     showColumnsOrder: true,
     filter: true
   }
@@ -147,22 +145,17 @@ const useStyles = (0, _makeStyles.default)({
   }
 });
 const convertDefaultSort = defaultSort => {
-  const orderBy = [];
-  if (typeof defaultSort === 'string') {
-    const sortFields = defaultSort.split(',');
-    for (const sortField of sortFields) {
-      sortRegex.lastIndex = 0;
-      const sortInfo = sortRegex.exec(sortField);
-      if (sortInfo) {
-        const [, field, direction = 'ASC'] = sortInfo;
-        orderBy.push({
-          field: field.trim(),
-          sort: direction.trim().toLowerCase()
-        });
-      }
-    }
-  }
-  return orderBy;
+  if (typeof defaultSort !== 'string') return [];
+  return defaultSort.split(',').map(sortField => {
+    sortRegex.lastIndex = 0;
+    const sortInfo = sortRegex.exec(sortField);
+    if (!sortInfo) return null;
+    const [, field, direction = 'ASC'] = sortInfo;
+    return {
+      field: field.trim(),
+      sort: direction.trim().toLowerCase()
+    };
+  }).filter(Boolean);
 };
 const ExportMenuItem = _ref => {
   let {
@@ -284,10 +277,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const [selectedOrder, setSelectedOrder] = (0, _react.useState)(null);
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const [record, setRecord] = (0, _react.useState)(null);
-  const [visibilityModel, setVisibilityModel] = (0, _react.useState)(_objectSpread({
+  const visibilityModel = _objectSpread({
     CreatedOn: false,
     CreatedByUser: false
-  }, model === null || model === void 0 ? void 0 : model.columnVisibilityModel));
+  }, model.columnVisibilityModel);
   const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
   const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
