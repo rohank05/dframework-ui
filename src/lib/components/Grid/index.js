@@ -60,6 +60,11 @@ const actionTypes = {
 const iconMapper = {
     'article': <ArticleIcon />
 }
+const filterFieldDataTypes = {
+    Number: 'number',
+    String: 'string',
+    Boolean: 'boolean'
+};
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
     permissions: { edit: true, add: true, export: true, delete: true, showColumnsOrder: true, filter: true }
@@ -87,16 +92,16 @@ const useStyles = makeStyles({
 
 const convertDefaultSort = (defaultSort) => {
     if (typeof defaultSort !== 'string') return [];
-    
+
     return defaultSort.split(',').map(sortField => {
         sortRegex.lastIndex = 0;
         const sortInfo = sortRegex.exec(sortField);
         if (!sortInfo) return null;
-        
+
         const [, field, direction = 'ASC'] = sortInfo;
-        return { 
-            field: field.trim(), 
-            sort: direction.trim().toLowerCase() 
+        return {
+            field: field.trim(),
+            sort: direction.trim().toLowerCase()
         };
     }).filter(Boolean);
 };
@@ -225,23 +230,23 @@ const GridBase = memo(({
     const { timeZone } = stateData;
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
-    const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    const url = stateData?.gridSettings?.permissions?.Url;
-    const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
-    const currentPreference = stateData?.currentPreference;
-    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
+    const {
+        gridSettings: {
+            permissions: {
+                routesWithNoChildRoute = [],
+                Url: url,
+                withControllersUrl,
+                defaultPreferenceEnums
+            } = {}
+        } = {},
+        currentPreference
+    } = stateData;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'fileUpload')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions({ userData, model, userDefinedPermissions });
-    const filterFieldDataTypes = {
-        Number: 'number',
-        String: 'string',
-        Boolean: 'boolean'
-    };
     const tTranslate = model.tTranslate ?? ((key) => key);
-
     const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, breadcrumbColor } = model;
     const gridTitle = model.gridTitle || model.title;
     const OrderSuggestionHistoryFields = {
@@ -251,48 +256,40 @@ const GridBase = memo(({
     const preferenceName = model.preferenceId || model.module?.preferenceId;
     const searchParams = new URLSearchParams(window.location.search);
 
-    let baseSaveData = {};
-
+    const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+    const baseSaveData = (() => {
+        if (baseDataFromParams) {
+            const parsedData = JSON.parse(baseDataFromParams);
+            if (typeof parsedData === 'object' && parsedData !== null) {
+                return parsedData;
+            }
+        }
+        return {};
+    })();
     const selectedSet = useRef(new Set());
 
-    const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
-    if (baseDataFromParams) {
-        const parsedData = JSON.parse(baseDataFromParams);
-        if (typeof parsedData === 'object' && parsedData !== null) {
-            baseSaveData = parsedData;
-        }
-    }
-
-    const handleSelectRow = (params) => {
-        const isAlreadySelected = Array.from(selectedSet.current).some(
-            (item) => item === params.row[idProperty]
-        );
-
-        if (isAlreadySelected) {
-            // Remove the object if it is already selected
-            selectedSet.current.delete(params.row[idProperty]);
-            setSelection(Array.from(selectedSet.current));
+    const handleSelectRow = ({ row }) => {
+        const rowId = row[idProperty];
+        const isSelected = selectedSet.current.has(rowId);
+        if (isSelected) {
+            selectedSet.current.delete(rowId);
         } else {
-            // Add the object if it is not selected
-            selectedSet.current.add(params.row[idProperty]);
-            setSelection(Array.from(selectedSet.current));
+            selectedSet.current.add(rowId);
         }
+        setSelection(Array.from(selectedSet.current));
     };
 
-
     const CustomCheckBox = (params) => {
-        const [isCheckedLocal, setIsCheckedLocal] = useState(false);
+        const rowId = params.row[idProperty];
+        const [isCheckedLocal, setIsCheckedLocal] = useState(selectedSet.current.has(rowId));
 
         useEffect(() => {
-            const isSelected = Array.from(selectedSet.current).some(
-                (item) => item === params.row[idProperty]
-            );
-            setIsCheckedLocal(isSelected);
+            setIsCheckedLocal(selectedSet.current.has(rowId));
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [params.row, selectedSet.current.size]);
 
         const handleCheckboxClick = (event) => {
             event.stopPropagation();
-            setIsCheckedLocal(!isCheckedLocal);
             handleSelectRow(params);
         };
 

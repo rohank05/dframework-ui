@@ -27,7 +27,6 @@ require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
-require("core-js/modules/esnext.iterator.some.js");
 require("core-js/modules/esnext.set.difference.v2.js");
 require("core-js/modules/esnext.set.intersection.v2.js");
 require("core-js/modules/esnext.set.is-disjoint-from.v2.js");
@@ -101,6 +100,11 @@ const actionTypes = {
 };
 const iconMapper = {
   'article': /*#__PURE__*/_react.default.createElement(_Article.default, null)
+};
+const filterFieldDataTypes = {
+  Number: 'number',
+  String: 'string',
+  Boolean: 'boolean'
 };
 const constants = {
   gridFilterModel: {
@@ -220,7 +224,7 @@ const areEqual = function areEqual() {
 };
 // TODO: Add support for additional languages in localization (e.g., translations for filterValueTrue, filterValueFalse, etc.)
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
-  var _stateData$gridSettin, _stateData$gridSettin2, _stateData$gridSettin3, _stateData$gridSettin4, _model$columns$find, _model$tTranslate, _stateData$gridSettin5, _model$module;
+  var _model$columns$find, _model$tTranslate, _stateData$gridSettin, _model$module;
   let {
       showGrid = true,
       model,
@@ -356,11 +360,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const {
     Username
   } = stateData !== null && stateData !== void 0 && stateData.getUserData ? stateData.getUserData : {};
-  const routesWithNoChildRoute = ((_stateData$gridSettin = stateData.gridSettings.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.routesWithNoChildRoute) || [];
-  const url = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.Url;
-  const withControllersUrl = stateData === null || stateData === void 0 || (_stateData$gridSettin3 = stateData.gridSettings) === null || _stateData$gridSettin3 === void 0 || (_stateData$gridSettin3 = _stateData$gridSettin3.permissions) === null || _stateData$gridSettin3 === void 0 ? void 0 : _stateData$gridSettin3.withControllersUrl;
-  const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
-  const defaultPreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin4 = stateData.gridSettings) === null || _stateData$gridSettin4 === void 0 || (_stateData$gridSettin4 = _stateData$gridSettin4.permissions) === null || _stateData$gridSettin4 === void 0 ? void 0 : _stateData$gridSettin4.defaultPreferenceEnums;
+  const {
+    gridSettings: {
+      permissions: {
+        routesWithNoChildRoute = [],
+        Url: url,
+        withControllersUrl,
+        defaultPreferenceEnums
+      } = {}
+    } = {},
+    currentPreference
+  } = stateData;
   const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
   const userData = stateData.getUserData || {};
   const documentField = ((_model$columns$find = model.columns.find(ele => ele.type === 'fileUpload')) === null || _model$columns$find === void 0 ? void 0 : _model$columns$find.field) || "";
@@ -378,11 +388,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     model,
     userDefinedPermissions
   });
-  const filterFieldDataTypes = {
-    Number: 'number',
-    String: 'string',
-    Boolean: 'boolean'
-  };
   const tTranslate = (_model$tTranslate = model.tTranslate) !== null && _model$tTranslate !== void 0 ? _model$tTranslate : key => key;
   const {
     addUrlParamKey,
@@ -397,39 +402,42 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const OrderSuggestionHistoryFields = {
     OrderStatus: 'OrderStatusId'
   };
-  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin5 = stateData.gridSettings) === null || _stateData$gridSettin5 === void 0 || (_stateData$gridSettin5 = _stateData$gridSettin5.permissions) === null || _stateData$gridSettin5 === void 0 ? void 0 : _stateData$gridSettin5.preferenceApi;
+  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
   const preferenceName = model.preferenceId || ((_model$module = model.module) === null || _model$module === void 0 ? void 0 : _model$module.preferenceId);
   const searchParams = new URLSearchParams(window.location.search);
-  let baseSaveData = {};
-  const selectedSet = (0, _react.useRef)(new Set());
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
-  if (baseDataFromParams) {
-    const parsedData = JSON.parse(baseDataFromParams);
-    if (typeof parsedData === 'object' && parsedData !== null) {
-      baseSaveData = parsedData;
+  const baseSaveData = (() => {
+    if (baseDataFromParams) {
+      const parsedData = JSON.parse(baseDataFromParams);
+      if (typeof parsedData === 'object' && parsedData !== null) {
+        return parsedData;
+      }
     }
-  }
-  const handleSelectRow = params => {
-    const isAlreadySelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
-    if (isAlreadySelected) {
-      // Remove the object if it is already selected
-      selectedSet.current.delete(params.row[idProperty]);
-      setSelection(Array.from(selectedSet.current));
+    return {};
+  })();
+  const selectedSet = (0, _react.useRef)(new Set());
+  const handleSelectRow = _ref5 => {
+    let {
+      row
+    } = _ref5;
+    const rowId = row[idProperty];
+    const isSelected = selectedSet.current.has(rowId);
+    if (isSelected) {
+      selectedSet.current.delete(rowId);
     } else {
-      // Add the object if it is not selected
-      selectedSet.current.add(params.row[idProperty]);
-      setSelection(Array.from(selectedSet.current));
+      selectedSet.current.add(rowId);
     }
+    setSelection(Array.from(selectedSet.current));
   };
   const CustomCheckBox = params => {
-    const [isCheckedLocal, setIsCheckedLocal] = (0, _react.useState)(false);
+    const rowId = params.row[idProperty];
+    const [isCheckedLocal, setIsCheckedLocal] = (0, _react.useState)(selectedSet.current.has(rowId));
     (0, _react.useEffect)(() => {
-      const isSelected = Array.from(selectedSet.current).some(item => item === params.row[idProperty]);
-      setIsCheckedLocal(isSelected);
+      setIsCheckedLocal(selectedSet.current.has(rowId));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.row, selectedSet.current.size]);
     const handleCheckboxClick = event => {
       event.stopPropagation();
-      setIsCheckedLocal(!isCheckedLocal);
       handleSelectRow(params);
     };
     return /*#__PURE__*/_react.default.createElement(_Checkbox.default, {
@@ -535,13 +543,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
     }
   }, [customFilters]);
-  const lookupOptions = _ref5 => {
+  const lookupOptions = _ref6 => {
     let {
         row,
         field,
         id
-      } = _ref5,
-      others = _objectWithoutProperties(_ref5, _excluded3);
+      } = _ref6,
+      others = _objectWithoutProperties(_ref6, _excluded3);
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -680,13 +688,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         type: "string",
         header: "Modified By"
       }];
-      columnDefinitions.forEach(_ref6 => {
+      columnDefinitions.forEach(_ref7 => {
         let {
           key,
           field,
           type,
           header
-        } = _ref6;
+        } = _ref7;
         if (auditColumns[key] === true) {
           // Ensure the value is explicitly true
           const column = {
@@ -749,12 +757,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         }));
       }
       if (customActions.length) {
-        customActions.forEach(_ref7 => {
+        customActions.forEach(_ref8 => {
           let {
             icon,
             action,
             color
-          } = _ref7;
+          } = _ref8;
           actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
             icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
               title: action
@@ -891,12 +899,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       model: model
     });
   };
-  const openForm = _ref8 => {
+  const openForm = _ref9 => {
     let {
       id,
       record = {},
       mode
-    } = _ref8;
+    } = _ref9;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -933,11 +941,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref9 => {
+  const handleDownload = async _ref0 => {
     let {
       documentLink,
       fileName
-    } = _ref9;
+    } = _ref0;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -1182,11 +1190,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
     }
   };
-  const updateAssignment = _ref0 => {
+  const updateAssignment = _ref1 => {
     let {
       unassign,
       assign
-    } = _ref0;
+    } = _ref1;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
@@ -1326,11 +1334,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const isPivotExport = e.target.dataset.isPivotExport === 'true';
     const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
     const nonExportColumns = new Set();
-    gridColumns.forEach(_ref1 => {
+    gridColumns.forEach(_ref10 => {
       let {
         exportable,
         field
-      } = _ref1;
+      } = _ref10;
       if (exportable === false) nonExportColumns.add(field);
     });
     const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !(hiddenColumns !== null && hiddenColumns !== void 0 && hiddenColumns.includes(ele)) && ele !== '__check__' && ele !== 'actions');
