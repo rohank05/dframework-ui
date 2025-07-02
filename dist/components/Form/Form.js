@@ -167,7 +167,7 @@ const Form = _ref => {
     const options = idWithOptions.split("-");
     const params = {
       api: api || gridApi,
-      modelConfig: _objectSpread({}, model),
+      model,
       setError: errorOnLoad
     };
     (0, _crudHelper.getRecord)(_objectSpread(_objectSpread({}, params), {}, {

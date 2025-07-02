@@ -277,17 +277,17 @@ const getRecord = async _ref4 => {
     id,
     setIsLoading,
     setActiveRecord,
-    modelConfig,
+    model,
     parentFilters,
     where = {},
     setError
   } = _ref4;
-  api = api || modelConfig.api;
+  api = api || model.api;
   setIsLoading(true);
   const searchParams = new URLSearchParams();
   const url = "".concat(api, "/").concat(id === undefined || id === null ? '-' : id);
   const lookupsToFetch = [];
-  const fields = modelConfig.formDef || modelConfig.columns;
+  const fields = model.formDef || model.columns;
   fields === null || fields === void 0 || fields.forEach(field => {
     if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
       lookupsToFetch.push(field.lookup);
@@ -309,8 +309,8 @@ const getRecord = async _ref4 => {
         data: record,
         lookups
       } = response.data;
-      let title = record[modelConfig.linkColumn];
-      const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
+      let title = record[model.linkColumn];
+      const columnConfig = model.columns.find(a => a.field === model.linkColumn);
       if (columnConfig && columnConfig.lookup) {
         var _lookups$columnConfig;
         if (lookups && lookups[columnConfig.lookup] && (_lookups$columnConfig = lookups[columnConfig.lookup]) !== null && _lookups$columnConfig !== void 0 && _lookups$columnConfig.length) {
@@ -320,7 +320,7 @@ const getRecord = async _ref4 => {
           }
         }
       }
-      const defaultValues = _objectSpread({}, modelConfig.defaultValues);
+      const defaultValues = _objectSpread({}, model.defaultValues);
       setActiveRecord({
         id,
         title: title,

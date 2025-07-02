@@ -189,13 +189,13 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
 };
 
-const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
-    api = api || modelConfig.api;
+const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parentFilters, where = {}, setError }) => {
+    api = api || model.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/${id === undefined || id === null ? '-' : id}`;
     const lookupsToFetch = [];
-    const fields = modelConfig.formDef || modelConfig.columns;
+    const fields = model.formDef || model.columns;
     fields?.forEach(field => {
         if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
@@ -213,8 +213,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
             const { data: record, lookups } = response.data;
-            let title = record[modelConfig.linkColumn];
-            const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
+            let title = record[model.linkColumn];
+            const columnConfig = model.columns.find(a => a.field === model.linkColumn);
             if (columnConfig && columnConfig.lookup) {
                 if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup]?.length) {
                     const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
@@ -223,7 +223,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
                     }
                 }
             }
-            const defaultValues = { ...modelConfig.defaultValues };
+            const defaultValues = { ...model.defaultValues };
 
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
         }

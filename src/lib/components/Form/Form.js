@@ -120,7 +120,7 @@ const Form = ({
     const options = idWithOptions.split("-");
     const params = {
       api: api || gridApi,
-      modelConfig: { ...model },
+      model,
       setError: errorOnLoad
     };
     getRecord({
