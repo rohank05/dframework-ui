@@ -803,62 +803,58 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       pageSize,
       page
     } = paginationModel;
-    let gridApi = "".concat(model.controllerType === 'cs' ? withControllersUrl : url || "").concat(model.api || api);
     let controllerType = model.controllerType;
+    let gridApi = "".concat(controllerType === "cs" ? withControllersUrl : url || "").concat(model.api || api);
     if (isPivotExport) {
       gridApi = "".concat(withControllersUrl).concat(model.pivotApi);
-      controllerType = 'cs';
+      controllerType = "cs";
     }
     if (assigned || available) {
-      extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(',') : selected;
+      extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(",") : selected;
     }
-    let filters = _objectSpread({}, filterModel),
-      finalFilters = _objectSpread({}, filterModel);
+    const filters = _objectSpread({}, filterModel);
     if ((chartFilters === null || chartFilters === void 0 || (_chartFilters$items = chartFilters.items) === null || _chartFilters$items === void 0 ? void 0 : _chartFilters$items.length) > 0) {
-      let {
-        columnField: field,
-        operatorValue: operator
-      } = chartFilters.items[0];
-      field = constants.chartFilterFields[field];
-      const chartFilter = [{
-        field: field,
-        operator: operator,
+      const {
+        columnField,
+        operatorValue
+      } = chartFilters.items[0] || {};
+      const chartField = constants.chartFilterFields[columnField];
+      filters.items = [{
+        field: chartField,
+        operator: operatorValue,
         isChartFilter: false
       }];
-      filters.items = [...chartFilter];
       if (JSON.stringify(filterModel) !== JSON.stringify(filters)) {
         setFilterModel(_objectSpread({}, filters));
-        finalFilters = filters;
         chartFilters.items.length = 0;
       }
     }
+    const baseFilters = [];
     if (model.joinColumn && id) {
-      baseFilters = [{
+      baseFilters.push({
         field: model.joinColumn,
-        operator: 'is',
+        operator: "is",
         type: "number",
         value: Number(id)
-      }];
+      });
     }
     if (additionalFilters) {
-      finalFilters.items = [...finalFilters.items, ...additionalFilters];
+      filters.items = [...(filters.items || []), ...additionalFilters];
     }
-    const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
-    if (!isValidFilters) {
-      return;
-    }
+    const isValidFilters = !filters.items.length || filters.items.every(item => "value" in item && item.value !== undefined);
+    if (!isValidFilters) return;
     (0, _crudHelper.getList)({
       action,
       page: !contentType ? page : 0,
       pageSize: !contentType ? pageSize : 1000000,
       sortModel,
-      filterModel: finalFilters,
-      controllerType: controllerType,
+      filterModel: filters,
+      controllerType,
       api: gridApi,
       setIsLoading,
       setData,
       gridColumns,
-      modelConfig: model,
+      model,
       parentFilters,
       extraParams,
       setError: snackbar.showError,
@@ -870,8 +866,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       showFullScreenLoader,
       history: navigate,
       baseFilters,
-      isElasticExport,
-      model: model
+      isElasticExport
     });
   };
   const openForm = _ref0 => {
@@ -886,10 +881,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         api: api || model.api,
         setIsLoading,
         setActiveRecord,
-        modelConfig: model,
+        model,
         parentFilters,
-        where,
-        model
+        where
       });
       return;
     }

@@ -19,7 +19,7 @@ const ReadonlyPanel = ({ apiEndpoint, model, onDataFetched }) => {
         try {
             await getRecord({
                 api: gridApi,
-                modelConfig: model,
+                model,
                 setIsLoading,
                 setActiveRecord,
                 id

@@ -44,7 +44,7 @@ const ReadonlyPanel = _ref => {
     try {
       await (0, _crudHelper.getRecord)({
         api: gridApi,
-        modelConfig: model,
+        model,
         setIsLoading,
         setActiveRecord,
         id

@@ -530,57 +530,53 @@ const GridBase = memo(({
 
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
-        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
 
         let controllerType = model.controllerType;
+        let gridApi = `${controllerType === "cs" ? withControllersUrl : url || ""}${model.api || api}`;
+
         if (isPivotExport) {
             gridApi = `${withControllersUrl}${model.pivotApi}`;
-            controllerType = 'cs';
+            controllerType = "cs";
         }
+
         if (assigned || available) {
-            extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(',') : selected;
+            extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(",") : selected;
         }
-        let filters = { ...filterModel }, finalFilters = { ...filterModel };
+
+        const filters = { ...filterModel };
         if (chartFilters?.items?.length > 0) {
-            let { columnField: field, operatorValue: operator } = chartFilters.items[0];
-            field = constants.chartFilterFields[field];
-            const chartFilter = [{ field: field, operator: operator, isChartFilter: false }];
-            filters.items = [...chartFilter];
+            const { columnField, operatorValue } = chartFilters.items[0] || {};
+            const chartField = constants.chartFilterFields[columnField];
+            filters.items = [{ field: chartField, operator: operatorValue, isChartFilter: false }];
             if (JSON.stringify(filterModel) !== JSON.stringify(filters)) {
                 setFilterModel({ ...filters });
-                finalFilters = filters;
                 chartFilters.items.length = 0;
             }
         }
+        const baseFilters = [];
         if (model.joinColumn && id) {
-            baseFilters = [
-                {
-                    field: model.joinColumn,
-                    operator: 'is',
-                    type: "number",
-                    value: Number(id)
-                }
-            ]
+            baseFilters.push({ field: model.joinColumn, operator: "is", type: "number", value: Number(id) });
         }
+
         if (additionalFilters) {
-            finalFilters.items = [...finalFilters.items, ...additionalFilters];
+            filters.items = [...(filters.items || []), ...additionalFilters];
         }
-        const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
-        if (!isValidFilters) {
-            return;
-        }
+
+        const isValidFilters = !filters.items.length || filters.items.every(item => "value" in item && item.value !== undefined);
+        if (!isValidFilters) return;
+
         getList({
             action,
             page: !contentType ? page : 0,
             pageSize: !contentType ? pageSize : 1000000,
             sortModel,
-            filterModel: finalFilters,
-            controllerType: controllerType,
+            filterModel: filters,
+            controllerType,
             api: gridApi,
             setIsLoading,
             setData,
             gridColumns,
-            modelConfig: model,
+            model,
             parentFilters,
             extraParams,
             setError: snackbar.showError,
@@ -592,13 +588,13 @@ const GridBase = memo(({
             showFullScreenLoader,
             history: navigate,
             baseFilters,
-            isElasticExport,
-            model: model
+            isElasticExport
         });
     };
+
     const openForm = ({ id, record = {}, mode }) => {
         if (setActiveRecord) {
-            getRecord({ id, api: api || model.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
+            getRecord({ id, api: api || model.api, setIsLoading, setActiveRecord, model, parentFilters, where });
             return;
         }
         let path = pathname;

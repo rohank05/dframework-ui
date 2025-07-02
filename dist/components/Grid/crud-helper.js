@@ -54,10 +54,9 @@ const getList = async _ref => {
     configFileName = null,
     dispatchData,
     showFullScreenLoader = false,
-    modelConfig = null,
+    model,
     baseFilters = null,
-    isElasticExport,
-    model
+    isElasticExport
   } = _ref;
   if (!contentType) {
     if (showFullScreenLoader) {
@@ -130,20 +129,20 @@ const getList = async _ref => {
   }
   const requestData = _objectSpread(_objectSpread({
     start: page * pageSize,
-    limit: isElasticExport ? modelConfig.exportSize : pageSize
+    limit: isElasticExport ? model.exportSize : pageSize
   }, extraParams), {}, {
     logicalOperator: filterModel.logicOperator,
     sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
     where,
     isElasticExport,
     model: model.module,
-    fileName: modelConfig.overrideFileName
+    fileName: model.overrideFileName
   });
   if (lookups) {
     requestData.lookups = lookups.join(',');
   }
-  if (modelConfig !== null && modelConfig !== void 0 && modelConfig.limitToSurveyed) {
-    requestData.limitToSurveyed = modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.limitToSurveyed;
+  if (model !== null && model !== void 0 && model.limitToSurveyed) {
+    requestData.limitToSurveyed = model === null || model === void 0 ? void 0 : model.limitToSurveyed;
   }
   const headers = {};
   let url = controllerType === 'cs' ? "".concat(api, "?action=").concat(action, "&asArray=0") : "".concat(api, "/").concat(action);
@@ -229,7 +228,7 @@ const getList = async _ref => {
               }
             }
           });
-          modelConfig.columns.forEach(_ref3 => {
+          model.columns.forEach(_ref3 => {
             let {
               field,
               displayIndex
@@ -449,12 +448,12 @@ const getLookups = async _ref7 => {
     api,
     setIsLoading,
     setActiveRecord,
-    modelConfig,
+    model,
     setError,
     lookups,
     scopeId
   } = _ref7;
-  api = api || modelConfig.api;
+  api = api || model.api;
   setIsLoading(true);
   const searchParams = new URLSearchParams();
   const url = "".concat(api, "/lookups");

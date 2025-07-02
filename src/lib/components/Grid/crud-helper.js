@@ -5,7 +5,7 @@ const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect']
 const timeInterval = 200;
 
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, modelConfig = null, baseFilters = null, isElasticExport, model }) => {
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, model, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
         if (showFullScreenLoader) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
@@ -58,22 +58,22 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
     const requestData = {
         start: page * pageSize,
-        limit: isElasticExport ? modelConfig.exportSize : pageSize,
+        limit: isElasticExport ? model.exportSize : pageSize,
         ...extraParams,
         logicalOperator: filterModel.logicOperator,
         sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
         where,
         isElasticExport,
         model: model.module,
-        fileName: modelConfig.overrideFileName
+        fileName: model.overrideFileName
     };
 
     if (lookups) {
         requestData.lookups = lookups.join(',');
     }
 
-    if (modelConfig?.limitToSurveyed) {
-        requestData.limitToSurveyed = modelConfig?.limitToSurveyed
+    if (model?.limitToSurveyed) {
+        requestData.limitToSurveyed = model?.limitToSurveyed
     }
 
     const headers = {};
@@ -156,7 +156,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                             }
                         }
                     });
-                    modelConfig.columns.forEach(({ field, displayIndex }) => {
+                    model.columns.forEach(({ field, displayIndex }) => {
                         if (!displayIndex) return;
                         record[field] = record[displayIndex];
                     });
@@ -335,8 +335,8 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
     return false;
 };
 
-const getLookups = async ({ api, setIsLoading, setActiveRecord, modelConfig, setError, lookups, scopeId }) => {
-    api = api || modelConfig.api
+const getLookups = async ({ api, setIsLoading, setActiveRecord, model, setError, lookups, scopeId }) => {
+    api = api || model.api
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/lookups`;
