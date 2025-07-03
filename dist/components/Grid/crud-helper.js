@@ -317,7 +317,6 @@ const getRecord = async _ref3 => {
   try {
     const response = await (0, _httpRequest.transport)({
       url: "".concat(url, "?").concat(searchParams.toString()),
-      model: modelConfig.module,
       method: 'GET',
       credentials: 'include'
     });

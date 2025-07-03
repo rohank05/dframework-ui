@@ -2,13 +2,42 @@ import React, {
   memo,
   useState
 } from "react";
+import PropTypes from 'prop-types';
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
+import Tabs from '@mui/material/Tabs';
 
 import { UiModel } from "../Grid/ui-models";
+
+// tablist was replaced by tabs, tab context and tab panel not in mui/material hence implemented 
+function CustomTabPanel(props) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+CustomTabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 /**
  * Memoized ChildGrid Component
  * @param {Object} params - Parameters for rendering the child grid
@@ -39,39 +68,38 @@ const ChildGrid = memo(({ relation, parentFilters, parent, where, models, readOn
   );
 });
 
+/**
+ * Relations component using MUI Tabs
+ * Renders a tab for each relation, and a ChildGrid in each panel
+ */
 const Relations = ({ relations, parent, where, models, relationFilters, readOnly }) => {
-  const [activeTab, setActiveTab] = useState(relations[0]);
+  const [tabIndex, setTabIndex] = useState(0);
 
-  const handleChange = (event, newValue) => {
-    setActiveTab(newValue);
+  const handleChange = (_, newValue) => {
+    setTabIndex(newValue);
   };
+
   return (
-    <TabContext value={activeTab}>
-      <Box>
-        <TabList
-          onChange={handleChange}
-        >
-          {relations.map((relation) => {
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={tabIndex} onChange={handleChange} aria-label="relations tabs">
+          {relations.map((relation, idx) => {
             const modelConfigOfChildGrid = models.find(
               (model) => model.name === relation
             ) || {};
-            const label = modelConfigOfChildGrid.listTitle || modelConfigOfChildGrid.title || "";
+            const label = modelConfigOfChildGrid.listTitle || modelConfigOfChildGrid.title || relation;
             return (
               <Tab
                 key={relation}
                 label={label}
-                value={relation}
+                {...a11yProps(idx)}
               />
             )
           })}
-        </TabList>
+        </Tabs>
       </Box>
-      {relations.map((relation) => (
-        <TabPanel
-          sx={{ padding: 0 }}
-          value={relation}
-          key={relation}
-        >
+      {relations.map((relation, idx) => (
+        <CustomTabPanel value={tabIndex} index={idx} key={relation}>
           <ChildGrid
             readOnly={readOnly}
             relation={relation}
@@ -81,9 +109,9 @@ const Relations = ({ relations, parent, where, models, relationFilters, readOnly
             parent={parent}
             where={where}
           />
-        </TabPanel>
+        </CustomTabPanel>
       ))}
-    </TabContext>
+    </Box>
   );
 };
 

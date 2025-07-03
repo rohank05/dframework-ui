@@ -93,7 +93,7 @@ var _Step = _interopRequireDefault(require("@mui/material/Step"));
 var _StepLabel = _interopRequireDefault(require("@mui/material/StepLabel"));
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
 var _dayRadio = _interopRequireDefault(require("./fields/dayRadio"));
-var _core = require("@material-ui/core");
+var _makeStyles = _interopRequireDefault(require("@mui/styles/makeStyles"));
 var _material = require("@mui/material");
 var _Form = require("./Form");
 var _styled = _interopRequireDefault(require("@emotion/styled"));
@@ -103,8 +103,7 @@ var _fileUpload = _interopRequireDefault(require("./fields/fileUpload"));
 var _jsonInput = _interopRequireDefault(require("./fields/jsonInput"));
 var _templateObject;
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -131,7 +130,7 @@ const fieldMappers = exports.fieldMappers = {
   "fileUpload": _fileUpload.default,
   "json": _jsonInput.default
 };
-const useStyles = (0, _core.makeStyles)({
+const useStyles = (0, _makeStyles.default)({
   root: {
     marginTop: "1rem !important",
     marginBottom: "1rem !important"
@@ -296,14 +295,16 @@ const RenderColumns = _ref3 => {
       className: classes.root,
       alignItems: isGridComponent ? "flex-start" : "center"
     }, (column === null || column === void 0 ? void 0 : column.showLabel) !== false ? /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: 3,
+      size: {
+        xs: 3
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(_material.Typography, {
       className: classes.labelText
     }, column.label || field, ": ", column.required && /*#__PURE__*/React.createElement(ImportantSpan, null, "*"))) : null, /*#__PURE__*/React.createElement(_Grid.default, {
-      item: true,
-      xs: isGridComponent ? 12 : 9,
+      size: {
+        xs: isGridComponent ? 12 : 9
+      },
       className: classes.childStyles
     }, /*#__PURE__*/React.createElement(Component, _extends({
       isAdd: isAdd,

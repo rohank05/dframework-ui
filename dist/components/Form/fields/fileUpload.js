@@ -104,12 +104,12 @@ function FileUpload(_ref) {
       formData.append("AssociationId", id); // Association ID
       const response = await (0, _httpRequest.transport)({
         method: 'POST',
-        credentials: 'include',
+        url: uploadApi,
+        data: formData,
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        url: uploadApi,
-        data: formData
+        credentials: 'include'
       });
       const data = response.data || {};
       if (!data.success) {
