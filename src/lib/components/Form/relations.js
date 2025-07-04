@@ -6,10 +6,8 @@ import PropTypes from 'prop-types';
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Tabs from '@mui/material/Tabs';
-
 import { UiModel } from "../Grid/ui-models";
 
-// tablist was replaced by tabs, tab context and tab panel not in mui/material hence implemented 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -48,9 +46,7 @@ function a11yProps(index) {
  * @param {Array} params.models - List of available models
  */
 const ChildGrid = memo(({ relation, parentFilters, parent, where, models, readOnly }) => {
-  const modelConfigOfChildGrid = models.find(
-    (model) => model.name === relation
-  );
+  const modelConfigOfChildGrid = models.find(({ name }) => name === relation);
   if (!modelConfigOfChildGrid) return null;
   const config = { ...modelConfigOfChildGrid, hideBreadcrumb: true };
   const ChildModel = config instanceof UiModel ? config : new UiModel(config);
@@ -84,9 +80,7 @@ const Relations = ({ relations, parent, where, models, relationFilters, readOnly
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tabIndex} onChange={handleChange} aria-label="relations tabs">
           {relations.map((relation, idx) => {
-            const modelConfigOfChildGrid = models.find(
-              (model) => model.name === relation
-            ) || {};
+            const modelConfigOfChildGrid = models.find(({ name }) => name === relation) || {};
             const label = modelConfigOfChildGrid.listTitle || modelConfigOfChildGrid.title || relation;
             return (
               <Tab

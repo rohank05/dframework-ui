@@ -174,6 +174,7 @@ export default function App() {
 | `applyFieldConfig`     | `function`          | A function used to apply custom field configurations, such as disabling a date field. [View Example](#1-applyfieldconfig-column-property)                                                                                                                                                                                                                                                                                                                                        | -                 | No           |
 | `relations`            | `array`             | Defines the relationship configurations for related grids. </br>[View Example](#relations-example)                                                                                                                                                                                                                                                                                                                                                                                 | -                 | No           |
 | `exportFormats`        | `object`            | The `exportFormats` object controls the visibility of different export formats in the UI. Each key in `exportFormats` represents a file format (CSV, Excel, XML, HTML, or JSON), and its value determines whether the corresponding export option is available. [View Example](#exportformats)                                                                                                                                                                                     | `{ excel: true,  csv: true, xml: true, html: true, json: true}`            | No           |
+| `customActions`        | `array`             | An array of custom action objects to add custom buttons to the grid's action column. Each object should have an `action` (string), `icon` (string, see note below), and `onClick` (function) handler. The `onClick` function receives an object with `{ row, navigate }`. | -                 | No           |
 
 ### Navigation Properties 
 | **Property**       | **Type**  | **Description**                                                                                                                                                                                                                                                | **Defaults to**                           |
@@ -829,3 +830,31 @@ const surveyModel = new UiModel({
 After enabling the showTabbed property within formConfig, the navigation bar will be visible in the UI. Below is an example representation of the tabbed stepper:
 
 <img src="docs/images/tabs.png" alt="Grid View - Enable Back Button" width="100%"> 
+
+### `customActions` property example.
+
+You can add custom action buttons to the grid's action column using the `customActions` property. Each action can have a label, icon, and a custom click handler. The handler receives the current row and a `navigate` function for routing.
+
+```js
+const exampleModel = new UiModel({
+  title: "ScopeModel",
+  columns: [
+    { field: "ScopeModelId", type: "number", label: "ID" },
+    { field: "Name", type: "string", label: "Name" },
+    // ... other columns ...
+  ],
+  customActions: [
+    {
+      action: "navigateToRelation",
+      icon: "article", // a string name, see note above
+      onClick: ({ row, navigate }) => {
+        navigate(`/masterScope/${row.ScopeModelId}?showRelation=Document`);
+      }
+    }
+  ]
+});
+```
+
+This will add a custom action button with an Article icon to each row. When clicked, it will navigate to the related document page for that row.
+
+**Note:** The `icon` property in `customActions` should be a string that maps to a supported icon name. For example, `"article"` will use the Article icon. If an unknown icon is provided, a default icon will be used.

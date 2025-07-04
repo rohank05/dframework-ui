@@ -31,7 +31,6 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
-// tablist was replaced by tabs, tab context and tab panel not in mui/material hence implemented 
 function CustomTabPanel(props) {
   const {
       children,
@@ -80,7 +79,12 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
     models,
     readOnly
   } = _ref;
-  const modelConfigOfChildGrid = models.find(model => model.name === relation);
+  const modelConfigOfChildGrid = models.find(_ref2 => {
+    let {
+      name
+    } = _ref2;
+    return name === relation;
+  });
   if (!modelConfigOfChildGrid) return null;
   const config = _objectSpread(_objectSpread({}, modelConfigOfChildGrid), {}, {
     hideBreadcrumb: true
@@ -101,7 +105,7 @@ const ChildGrid = /*#__PURE__*/(0, _react.memo)(_ref => {
  * Relations component using MUI Tabs
  * Renders a tab for each relation, and a ChildGrid in each panel
  */
-const Relations = _ref2 => {
+const Relations = _ref3 => {
   let {
     relations,
     parent,
@@ -109,7 +113,7 @@ const Relations = _ref2 => {
     models,
     relationFilters,
     readOnly
-  } = _ref2;
+  } = _ref3;
   const [tabIndex, setTabIndex] = (0, _react.useState)(0);
   const handleChange = (_, newValue) => {
     setTabIndex(newValue);
@@ -128,7 +132,12 @@ const Relations = _ref2 => {
     onChange: handleChange,
     "aria-label": "relations tabs"
   }, relations.map((relation, idx) => {
-    const modelConfigOfChildGrid = models.find(model => model.name === relation) || {};
+    const modelConfigOfChildGrid = models.find(_ref4 => {
+      let {
+        name
+      } = _ref4;
+      return name === relation;
+    }) || {};
     const label = modelConfigOfChildGrid.listTitle || modelConfigOfChildGrid.title || relation;
     return /*#__PURE__*/_react.default.createElement(_Tab.default, _extends({
       key: relation,

@@ -57,6 +57,7 @@ Object.defineProperty(exports, "TimeField", {
   }
 });
 exports.fieldMappers = exports.default = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.regexp.exec.js");
 require("core-js/modules/es.string.search.js");
@@ -391,13 +392,13 @@ const FormLayout = _ref6 => {
     handleSubmit
   } = _ref6;
   const classes = useStyles();
+  const isAdd = [0, undefined, null, ''].includes(displayId);
   const {
     formElements,
-    tabColumns,
-    showTabs
+    tabColumns
   } = React.useMemo(() => {
     var _model$formConfig;
-    let showTabs = model === null || model === void 0 || (_model$formConfig = model.formConfig) === null || _model$formConfig === void 0 ? void 0 : _model$formConfig.showTabbed;
+    let showTabs = (_model$formConfig = model.formConfig) === null || _model$formConfig === void 0 ? void 0 : _model$formConfig.showTabbed;
     const searchParams = new URLSearchParams(window.location.search);
     const {
       formElements,
@@ -415,7 +416,7 @@ const FormLayout = _ref6 => {
     };
   }, [model]);
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(RenderColumns, {
-    isAdd: displayId == 0,
+    isAdd: isAdd,
     formElements: formElements,
     model: model,
     formik: formik,

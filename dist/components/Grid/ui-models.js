@@ -24,10 +24,8 @@ var _react = _interopRequireDefault(require("react"));
 var yup = _interopRequireWildcard(require("yup"));
 var _material = require("@mui/material");
 var _Form = _interopRequireDefault(require("../Form/Form"));
-var _ReadonlyPanel = _interopRequireDefault(require("../ReadonlyPanel"));
 const _excluded = ["match"],
-  _excluded2 = ["match"],
-  _excluded3 = ["match"];
+  _excluded2 = ["match"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -38,7 +36,12 @@ function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-const nonAlphaNumeric = /[^a-zA-Z0-9]/g;
+const regexConfig = {
+  password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
+  nonAlphaNumeric: /[^a-zA-Z0-9]/g,
+  compareValidatorRegex: /^compare:(.+)$/,
+  email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+};
 const customStyle = {};
 const showRowsSelected = true;
 const defaultValueConfigs = {
@@ -47,7 +50,6 @@ const defaultValueConfigs = {
   "radio": false,
   "oneToMany": ""
 };
-const compareValidatorRegex = /^compare:(.+)$/;
 class UiModel {
   constructor(modelConfig) {
     _defineProperty(this, "Form", _ref => {
@@ -68,15 +70,6 @@ class UiModel {
       return /*#__PURE__*/_react.default.createElement(_index.default, _extends({
         model: this,
         showRowsSelected: showRowsSelected
-      }, props));
-    });
-    _defineProperty(this, "Readonly", _ref3 => {
-      let {
-          match
-        } = _ref3,
-        props = _objectWithoutProperties(_ref3, _excluded3);
-      return /*#__PURE__*/_react.default.createElement(_ReadonlyPanel.default, _extends({
-        model: this
       }, props));
     });
     _defineProperty(this, "ChildGrid", props => {
@@ -103,7 +96,7 @@ class UiModel {
     // if module is not specified, use title as module name after removing all alphanumeric characters
     const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
     if (!api) {
-      api = "".concat(title.replaceAll(nonAlphaNumeric, '-').toLowerCase());
+      api = "".concat(title.replaceAll(regexConfig.nonAlphaNumeric, '-').toLowerCase());
       idProperty = title.replaceAll(' ', '') + 'Id';
     }
     api = controllerType === 'cs' ? "".concat(api, ".ashx") : "".concat(api);
@@ -115,7 +108,6 @@ class UiModel {
       // for child grid wuth no specific module but wants name to be identified in models list in relations.
       permissions: _objectSpread({}, UiModel.defaultPermissions),
       idProperty,
-      defaultSort: "ModifiedOn DESC",
       linkColumn: "".concat(name, "Name"),
       overrideFileName: title,
       preferenceId: name,
@@ -135,10 +127,10 @@ class UiModel {
     this.columnVisibilityModel = columnVisibilityModel;
     this.defaultValues = defaultValues;
   }
-  getValidationSchema(_ref4) {
+  getValidationSchema(_ref3) {
     let {
       id
-    } = _ref4;
+    } = _ref3;
     const {
       columns
     } = this;
@@ -206,22 +198,18 @@ class UiModel {
           }
           break;
         case 'password':
-          // TODO: Implement configurable password validation regex pattern to support application-specific password requirements
-          // Currently enforces:
-          // - Length between 8-50 characters
-          // - At least one uppercase letter
-          // - At least one lowercase letter 
-          // - At least one number
-          // - At least one special character
           config = yup.string().label(formLabel).test("ignore-asterisks", "".concat(formLabel, " must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"), value => {
             // Skip further validations if value is exactly "******"
             if (value === "******") return true;
+            const minlength = Number(min) || 8;
+            const maxlength = Number(max) || 50;
+            const regex = column.regex || regexConfig.password;
             // Check minimum length, maximum length, and pattern if not "******"
-            return yup.string().min(8, "".concat(formLabel, " must be at least 8 characters")).max(50, "".concat(formLabel, " must be at most 50 characters")).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character")).isValidSync(value);
+            return yup.string().min(minlength, "".concat(formLabel, " must be at least ").concat(minlength, " characters")).max(maxlength, "".concat(formLabel, " must be at most ").concat(maxlength, " characters")).x(regex, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character")).isValidSync(value);
           });
           break;
         case 'email':
-          config = yup.string().trim().matches(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/, 'Email must be a valid email');
+          config = yup.string().trim().matches(column.regex || regexConfig.email, 'Email must be a valid email');
           break;
         case 'number':
           if (required) {
@@ -250,7 +238,7 @@ class UiModel {
         config = config.trim().required("".concat(formLabel, " is required"));
       }
       if (validate) {
-        const compareValidator = compareValidatorRegex.exec(validate);
+        const compareValidator = regexConfig.compareValidatorRegex.exec(validate);
         if (compareValidator) {
           const compareFieldName = compareValidator[1];
           const compareField = columns.find(f => (f.formField === compareFieldName || f.field) === compareFieldName);
@@ -259,8 +247,7 @@ class UiModel {
       }
       validationConfig[field] = config;
     }
-    let validationSchema = yup.object(_objectSpread(_objectSpread({}, validationConfig), this.validationSchema));
-    return validationSchema;
+    return yup.object(_objectSpread(_objectSpread({}, validationConfig), this.validationSchema));
   }
 }
 exports.UiModel = UiModel;

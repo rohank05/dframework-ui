@@ -29,20 +29,20 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
         }, 400),
         [resolvedMin, resolvedMax, formik.values]
     );
-    
+    const { onBlur } = props;
     otherProps = {
         InputProps: {
             inputProps: {
                 min,
                 max: resolvedMax,
-                readOnly: column?.readOnly === true,
+                readOnly: column.readOnly === true,
                 onKeyPress: (event) => {
                     const keyCode = event.which ? event.which : event.keyCode;
                     if (!(keyCode > minKey && keyCode < maxKey)) {
                         event.preventDefault();
                     }
                 },
-                sx: column?.readOnly
+                sx: column.readOnly
                     ? { backgroundColor: '#dfdede' } // Light grey background for read-only inputs
                     : undefined,
             }
@@ -50,10 +50,9 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
         type: 'number',
         ...otherProps,
         onChange: (event) => {
-            const { value } = event.target;
-            debouncedSetFieldValue(field, Number(value)); // Pass the updated value to the debounced function
-            if (props.onBlur) {
-                props.onBlur(event);
+            debouncedSetFieldValue(field, Number(event.target.value)); // Pass the updated value to the debounced function
+            if (typeof onBlur === "function") {
+                onBlur(event);
             }
         },
     };

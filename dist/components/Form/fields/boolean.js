@@ -18,11 +18,8 @@ const Field = _ref => {
   let {
     column,
     field,
-    label,
     formik,
-    otherProps,
-    classes,
-    onChange
+    otherProps
   } = _ref;
   const handleChange = event => {
     formik.setFieldValue(field, event.target.checked);

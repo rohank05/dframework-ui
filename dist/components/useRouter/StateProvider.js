@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.useStateContext = exports.useRouter = exports.StateProvider = exports.RouterProvider = void 0;
 require("core-js/modules/es.error.cause.js");
+require("core-js/modules/es.array.unshift.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -31,6 +32,15 @@ const StateProvider = _ref => {
     children
   } = _ref;
   const [stateData, dispatchData] = (0, _react.useReducer)(_stateReducer.default, _initialState.default);
+
+  /**
+   * Returns the system date and/or time format string based on user preferences and options.
+   *
+   * @param {boolean} isDateFormatOnly - If true, returns only the date format; otherwise, returns date and time format.
+   * @param {boolean} showOnlyDate - If true and isDateFormatOnly is false, returns only the date part in uppercase.
+   * @param {string|null|undefined} state - The user-defined date/time format string (e.g., "dd-mm-yyyy hh:mm A").
+   * @returns {string} The formatted date/time format string.
+   */
   function systemDateTimeFormat(isDateFormatOnly, showOnlyDate, state) {
     if (state !== undefined && state !== null) {
       const userData = state; // Access 'state' 
@@ -54,6 +64,20 @@ const StateProvider = _ref => {
     }
     return isDateFormatOnly ? 'DD-MM-YYYY' : 'DD-MM-YYYY hh:mm:ss A';
   }
+
+  /**
+   * Fetches all saved preferences for a given grid and user, and updates the state.
+   * Optionally adds a default preference to the list.
+   *
+   * @param {Object} params - The parameters object.
+   * @param {string} params.preferenceName - The name of the grid or preference.
+   * @param {string} params.Username - The username for which to fetch preferences.
+   * @param {object} params.history - The history object for navigation.
+   * @param {function} params.dispatchData - The dispatch function to update state.
+   * @param {string} params.preferenceApi - The API endpoint for preferences.
+   * @param {Object} [params.defaultPreferenceEnums={}] - Default preferences mapping.
+   * @param {boolean} [params.addDefaultPreference=false] - Whether to add a default preference.
+   */
   async function getAllSavedPreferences(_ref2) {
     let {
       preferenceName,
@@ -64,27 +88,25 @@ const StateProvider = _ref => {
       defaultPreferenceEnums = {},
       addDefaultPreference = false
     } = _ref2;
-    const params = {
-      action: 'list',
-      id: preferenceName,
-      Username
-    };
-    const response = await (0, _httpRequest.default)({
+    const response = (await (0, _httpRequest.default)({
       url: preferenceApi,
-      params,
+      params: {
+        action: 'list',
+        id: preferenceName,
+        Username
+      },
       history,
       dispatchData
-    });
-    let preferences = (response === null || response === void 0 ? void 0 : response.preferences) || [];
+    })) || {};
+    const preferences = response.preferences || [];
     if (addDefaultPreference) {
-      const defaultPref = {
-        "prefName": "Default",
-        "prefId": 0,
-        "GridId": preferenceName,
-        "GridPreferenceId": 0,
-        "prefValue": defaultPreferenceEnums[preferenceName]
-      };
-      preferences = [defaultPref, ...preferences];
+      preferences.unshift({
+        prefName: "Default",
+        prefId: 0,
+        GridId: preferenceName,
+        GridPreferenceId: 0,
+        prefValue: defaultPreferenceEnums[preferenceName]
+      });
     }
     dispatchData({
       type: _actions.default.UDPATE_PREFERENCES,
@@ -97,13 +119,13 @@ const StateProvider = _ref => {
   }
 
   /**
-  * Filters out data elements whose fields do not exist in the grid's columns.
-  *
-  * @param {Object} params - The parameters object.
-  * @param {Object} params.gridRef - A reference to the grid component.
-  * @param {Array} params.data - The data array to filter.
-  * @returns {Array} The filtered array containing only elements with existing columns in the grid.
-  */
+   * Filters out data elements whose fields do not exist in the grid's columns.
+   *
+   * @param {Object} params - The parameters object.
+   * @param {Object} params.gridRef - A reference to the grid component.
+   * @param {Array} params.data - The data array to filter.
+   * @returns {Array} The filtered array containing only elements with existing columns in the grid.
+   */
   const filterNonExistingColumns = _ref3 => {
     let {
       gridRef,
@@ -111,6 +133,21 @@ const StateProvider = _ref => {
     } = _ref3;
     return data.filter(ele => gridRef.current.getColumnIndex(ele.field) !== -1);
   };
+
+  /**
+   * Applies the default grid preference if it exists for the user, otherwise applies the default enum.
+   * Updates the grid and state accordingly.
+   *
+   * @param {Object} params - The parameters object.
+   * @param {Object} params.gridRef - Reference to the grid component.
+   * @param {Object} params.history - History object for navigation.
+   * @param {Function} params.dispatchData - Dispatch function to update state.
+   * @param {string} params.Username - Username for which to fetch preferences.
+   * @param {string} params.preferenceName - Name of the grid or preference.
+   * @param {Function} params.setIsGridPreferenceFetched - Callback to set grid preference fetched state.
+   * @param {string} params.preferenceApi - API endpoint for preferences.
+   * @param {Object} [params.defaultPreferenceEnums={}] - Default preferences mapping.
+   */
   async function applyDefaultPreferenceIfExists(_ref4) {
     let {
       gridRef,
@@ -127,13 +164,13 @@ const StateProvider = _ref => {
       id: preferenceName,
       Username
     };
-    const response = await (0, _httpRequest.default)({
+    const response = (await (0, _httpRequest.default)({
       url: preferenceApi,
       params,
       history,
       dispatchData
-    });
-    let userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
+    })) || {};
+    const userPreferenceCharts = response.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
       userPreferenceCharts.gridColumn = filterNonExistingColumns({
         gridRef,
@@ -160,6 +197,13 @@ const StateProvider = _ref => {
       setIsGridPreferenceFetched(true);
     }
   }
+
+  /**
+   * Removes the current preference name from the state.
+   *
+   * @param {Object} params - The parameters object.
+   * @param {Function} params.dispatchData - Dispatch function to update state.
+   */
   function removeCurrentPreferenceName(_ref5) {
     let {
       dispatchData
@@ -169,6 +213,18 @@ const StateProvider = _ref => {
       payload: null
     });
   }
+
+  /**
+   * Formats a date value using the system or user-defined format and optional timezone.
+   *
+   * @param {Object} params - The parameters object.
+   * @param {string|Date} params.value - The date value to format.
+   * @param {boolean} params.useSystemFormat - Whether to use the system date format.
+   * @param {boolean} [params.showOnlyDate=false] - Whether to show only the date part.
+   * @param {string|null|undefined} params.state - The user-defined date/time format string.
+   * @param {string} [params.timeZone] - The timezone to use for formatting.
+   * @returns {string} The formatted date string or '-' if value is falsy.
+   */
   function formatDate(_ref6) {
     let {
       value,
@@ -177,20 +233,24 @@ const StateProvider = _ref => {
       state,
       timeZone
     } = _ref6;
-    if (value) {
-      const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
-      if (!timeZone) {
-        return (0, _dayjs.default)(value).format(format);
-      }
-      return (0, _dayjs.default)(value).tz(timeZone).format(format);
+    if (!value) return '-';
+    const format = systemDateTimeFormat(useSystemFormat, showOnlyDate, state); // Pass 'state' as an argument
+    if (!timeZone) {
+      return (0, _dayjs.default)(value).format(format);
     }
-    return '-';
+    return (0, _dayjs.default)(value).tz(timeZone).format(format);
   }
+
+  /**
+   * Provides localization utilities for the current locale.
+   *
+   * @returns {Object} An object with a getLocalizedString function.
+   */
   function useLocalization() {
     const currentLocaleData = stateData.dataLocalization;
     const localeData = _localization.locales[currentLocaleData];
     function getLocalizedString(key) {
-      return stateData.dataLocalization === 'pt-PT' || stateData.dataLocalization === 'ptPT' ? localeData.components.MuiDataGrid.defaultProps.localeText[key] || key : localeData[key] || key;
+      return currentLocaleData === 'pt-PT' || currentLocaleData === 'ptPT' ? localeData.components.MuiDataGrid.defaultProps.localeText[key] || key : localeData[key] || key;
     }
     return {
       getLocalizedString
