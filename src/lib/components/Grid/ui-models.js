@@ -3,10 +3,14 @@ import React from 'react';
 import * as yup from 'yup';
 import { Divider } from '@mui/material';
 import Form from '../Form/Form';
-import ReadonlyPanel from '../ReadonlyPanel';
 
+const regexConfig = {
+	password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
+	nonAlphaNumeric: /[^a-zA-Z0-9]/g,
+	compareValidatorRegex: /^compare:(.+)$/,
+	email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+}
 
-const nonAlphaNumeric = /[^a-zA-Z0-9]/g;
 const customStyle = {};
 const showRowsSelected = true;
 const defaultValueConfigs = {
@@ -15,7 +19,6 @@ const defaultValueConfigs = {
 	"radio": false,
 	"oneToMany": ""
 }
-const compareValidatorRegex = /^compare:(.+)$/;
 
 class UiModel {
 
@@ -30,7 +33,7 @@ class UiModel {
 		// if module is not specified, use title as module name after removing all alphanumeric characters
 		const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
 		if (!api) {
-			api = `${title.replaceAll(nonAlphaNumeric, '-').toLowerCase()}`;
+			api = `${title.replaceAll(regexConfig.nonAlphaNumeric, '-').toLowerCase()}`;
 			idProperty = title.replaceAll(' ', '') + 'Id';
 		}
 		api = controllerType === 'cs' ? `${api}.ashx` : `${api}`;
@@ -41,7 +44,6 @@ class UiModel {
 			name, // for child grid wuth no specific module but wants name to be identified in models list in relations.
 			permissions: { ...UiModel.defaultPermissions },
 			idProperty,
-			defaultSort: "ModifiedOn DESC",
 			linkColumn: `${name}Name`,
 			overrideFileName: title,
 			preferenceId: name,
@@ -81,7 +83,7 @@ class UiModel {
 					if (max) {
 						config = config.max(Number(max), `${formLabel} must be at most ${max} characters long`);
 					}
-					if(required) {
+					if (required) {
 						config = config.trim().required(`${formLabel} is required`);
 					}
 					break;
@@ -122,24 +124,20 @@ class UiModel {
 					}
 					break;
 				case 'password':
-					// TODO: Implement configurable password validation regex pattern to support application-specific password requirements
-					// Currently enforces:
-					// - Length between 8-50 characters
-					// - At least one uppercase letter
-					// - At least one lowercase letter 
-					// - At least one number
-					// - At least one special character
 					config = yup.string()
 						.label(formLabel)
 						.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
 							// Skip further validations if value is exactly "******"
 							if (value === "******") return true;
+							const minlength = Number(min) || 8;
+							const maxlength = Number(max) || 50;
+							const regex = column.regex || regexConfig.password;
 							// Check minimum length, maximum length, and pattern if not "******"
 							return yup.string()
-								.min(8, `${formLabel} must be at least 8 characters`)
-								.max(50, `${formLabel} must be at most 50 characters`)
-								.matches(
-									/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/,
+								.min(minlength, `${formLabel} must be at least ${minlength} characters`)
+								.max(maxlength, `${formLabel} must be at most ${maxlength} characters`)
+								.x(
+									regex,
 									`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
 								)
 								.isValidSync(value);
@@ -150,7 +148,7 @@ class UiModel {
 						.string()
 						.trim()
 						.matches(
-							/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+							(column.regex || regexConfig.email),
 							'Email must be a valid email'
 						)
 					break;
@@ -181,7 +179,7 @@ class UiModel {
 				config = config.trim().required(`${formLabel} is required`);
 			}
 			if (validate) {
-				const compareValidator = compareValidatorRegex.exec(validate);
+				const compareValidator = regexConfig.compareValidatorRegex.exec(validate);
 				if (compareValidator) {
 					const compareFieldName = compareValidator[1];
 					const compareField = columns.find(
@@ -198,8 +196,7 @@ class UiModel {
 			validationConfig[field] = config;
 		}
 
-		let validationSchema = yup.object({ ...validationConfig, ...this.validationSchema });
-		return validationSchema;
+		return yup.object({ ...validationConfig, ...this.validationSchema });
 	}
 
 	Form = ({ match, ...props }) => {
@@ -208,9 +205,6 @@ class UiModel {
 
 	Grid = ({ match, ...props }) => {
 		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />
-	}
-	Readonly = ({ match, ...props }) => {
-		return <ReadonlyPanel model={this} {...props} />
 	}
 	ChildGrid = (props) => {
 		return <>

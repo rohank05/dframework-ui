@@ -15,9 +15,10 @@ var _useMobile = _interopRequireDefault(require("../useMobile"));
 var _Help = _interopRequireDefault(require("@mui/icons-material/Help"));
 var _HelpModal = _interopRequireDefault(require("../HelpModal"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function PageTitle(props) {
-  const {
+function PageTitle(_ref) {
+  let {
     titleHeading,
+    navigate,
     name = null,
     RightComponent = null,
     mobileRightComponent,
@@ -27,17 +28,18 @@ function PageTitle(props) {
     breadcrumbs = [],
     enableBackButton = false,
     breadcrumbColor
-  } = props;
+  } = _ref;
+  console.log(navigate);
   const isMobile = (0, _useMobile.default)(true);
   const breadcrumbsLasIndex = breadcrumbs.length - 1;
   const needToShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length;
   const handleBack = () => {
-    window.history.back(); // Navigate to the previous page when clicked
+    navigate(-1);
   };
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_reactHelmetAsync.Helmet, null, /*#__PURE__*/_react.default.createElement("title", null, title)), /*#__PURE__*/_react.default.createElement(_Typography.default, {
     className: "print-only",
     text: titleHeading
-  }), needToShowBreadcrumbs && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, " ", /*#__PURE__*/_react.default.createElement(_material.Card, {
+  }), needToShowBreadcrumbs && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.Card, {
     sx: {
       mb: 3
     }
@@ -108,6 +110,6 @@ function PageTitle(props) {
     variant: "p",
     text: titleHeading,
     name: name
-  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null), " "));
+  }))))), !isMobile && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", RightComponent && /*#__PURE__*/_react.default.createElement(RightComponent, null), " "), /*#__PURE__*/_react.default.createElement(_material.Box, null, " ", mobileRightComponent, " ")))), /*#__PURE__*/_react.default.createElement(_HelpModal.default, null)));
 }
 var _default = exports.default = (0, _reactI18next.withTranslation)()(PageTitle);

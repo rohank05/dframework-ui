@@ -23,5 +23,5 @@ function MuiTypography(_ref) {
   return /*#__PURE__*/_react.default.createElement(_material.Typography, _extends({
     variant: variant,
     component: component
-  }, rest), text && text || '', " ", name && name);
+  }, rest), text, name && " ".concat(name));
 }

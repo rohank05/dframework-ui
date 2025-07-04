@@ -344,6 +344,7 @@ const Form = _ref => {
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+    navigate: navigate,
     title: formTitle,
     showBreadcrumbs: !hideBreadcrumb,
     breadcrumbs: breadcrumbs,

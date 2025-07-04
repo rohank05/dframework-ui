@@ -287,6 +287,7 @@ const Form = ({
   return (
     <>
       <PageTitle
+        navigate={navigate}
         title={formTitle}
         showBreadcrumbs={!hideBreadcrumb}
         breadcrumbs={breadcrumbs}

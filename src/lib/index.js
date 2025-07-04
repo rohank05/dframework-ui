@@ -18,5 +18,4 @@ import { trTRGrid } from './components/mui/locale/data-grid/trTR';
 import { StateProvider, useStateContext, useRouter, RouterProvider } from './components/useRouter/StateProvider';
 import useMobile from './components/useMobile';
 import httpRequest from './components/Grid/httpRequest';
-import ReadonlyPanel from './components/ReadonlyPanel';
-export { SnackbarProvider, SnackbarContext, useSnackbar, DialogComponent, UiModel, GridBase, RouterProvider, MuiTypography, PageTitle, locales, useLocalization, daDKGrid, deDEGrid, elGRGrid, esESGrid, frFRGrid, itITGrid, ptPT, trTRGrid, StateProvider, useStateContext, HelpModal, useMobile, useRouter, httpRequest, ReadonlyPanel };
+export { SnackbarProvider, SnackbarContext, useSnackbar, DialogComponent, UiModel, GridBase, RouterProvider, MuiTypography, PageTitle, locales, useLocalization, daDKGrid, deDEGrid, elGRGrid, esESGrid, frFRGrid, itITGrid, ptPT, trTRGrid, StateProvider, useStateContext, HelpModal, useMobile, useRouter, httpRequest };

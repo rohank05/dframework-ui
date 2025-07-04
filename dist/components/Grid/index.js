@@ -100,11 +100,6 @@ const actionTypes = {
 const iconMapper = {
   'article': /*#__PURE__*/_react.default.createElement(_Article.default, null)
 };
-const filterFieldDataTypes = {
-  Number: 'number',
-  String: 'string',
-  Boolean: 'boolean'
-};
 const constants = {
   gridFilterModel: {
     items: [],
@@ -119,7 +114,22 @@ const constants = {
     delete: true,
     showColumnsOrder: true,
     filter: true
-  }
+  },
+  client: 'client',
+  server: 'server',
+  object: 'object',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  oneToMany: 'oneToMany',
+  lookup: 'lookup',
+  Number: 'number',
+  string: 'string',
+  boolean: 'boolean',
+  right: 'right',
+  left: 'left',
+  dateTime: 'dateTime',
+  actions: 'actions',
+  function: 'function'
 };
 const auditColumnMappings = [{
   key: 'addCreatedOnColumn',
@@ -169,7 +179,7 @@ const useStyles = (0, _makeStyles.default)({
   }
 });
 const convertDefaultSort = defaultSort => {
-  if (typeof defaultSort !== 'string') return [];
+  if (typeof defaultSort !== constants.string) return [];
   return defaultSort.split(',').map(sortField => {
     sortRegex.lastIndex = 0;
     const sortInfo = sortRegex.exec(sortField);
@@ -244,7 +254,7 @@ const areEqual = function areEqual() {
 };
 // TODO: Add support for additional languages in localization (e.g., translations for filterValueTrue, filterValueFalse, etc.)
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
-  var _model$columns$find, _model$tTranslate, _stateData$gridSettin, _model$module;
+  var _model$columns$find, _model$tTranslate, _model$module;
   let {
       showGrid = true,
       model,
@@ -307,7 +317,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   }, model.columnVisibilityModel);
   const [showAddConfirmation, setShowAddConfirmation] = (0, _react.useState)(false);
   const snackbar = (0, _index.useSnackbar)();
-  const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
+  const paginationMode = model.paginationMode === constants.client ? constants.client : constants.server;
   const {
     t: translate,
     i18n
@@ -386,7 +396,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         routesWithNoChildRoute = [],
         Url: url,
         withControllersUrl,
-        defaultPreferenceEnums
+        defaultPreferenceEnums,
+        preferenceApi
       } = {}
     } = {},
     currentPreference
@@ -419,17 +430,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     breadcrumbColor
   } = model;
   const gridTitle = model.gridTitle || model.title;
-  const OrderSuggestionHistoryFields = {
-    OrderStatus: 'OrderStatusId'
-  };
-  const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
   const preferenceName = model.preferenceId || ((_model$module = model.module) === null || _model$module === void 0 ? void 0 : _model$module.preferenceId);
   const searchParams = new URLSearchParams(window.location.search);
   const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
   const baseSaveData = (() => {
     if (baseDataFromParams) {
       const parsedData = JSON.parse(baseDataFromParams);
-      if (typeof parsedData === 'object' && parsedData !== null) {
+      if (typeof parsedData === constants.object && parsedData !== null) {
         return parsedData;
       }
     }
@@ -538,7 +545,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     const items = Object.entries(customFilters).reduce((acc, _ref6) => {
       let [key, value] = _ref6;
-      if (key === 'startDate' || key === 'endDate') {
+      if (key === constants.startDate || key === constants.endDate) {
         acc.push(value);
       } else if (key in customFilters) {
         acc.push({
@@ -601,9 +608,9 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const finalColumns = [];
     const lookupMap = {};
     for (const column of baseColumnList) {
-      if (column.gridLabel === null || parent && column.lookup === parent || column.type === 'oneToMany' && column.countInList === false) continue;
+      if (column.gridLabel === null || parent && column.lookup === parent || column.type === constants.oneToMany && column.countInList === false) continue;
       const overrides = {};
-      if (column.type === 'oneToMany') {
+      if (column.type === constants.oneToMany) {
         overrides.type = 'number';
         overrides.field = column.field.replace(/s$/, 'Count');
       }
@@ -611,19 +618,19 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         Object.assign(overrides, gridColumnTypes[column.type]);
       }
       // Common filter operator pattern
-      if (overrides.valueOptions === 'lookup' || column.type === 'boolean') {
+      if (overrides.valueOptions === constants.lookup || column.type === constants.boolean) {
         let operators = [];
-        if (overrides.valueOptions === 'lookup') {
+        if (overrides.valueOptions === constants.lookup) {
           overrides.valueOptions = lookupOptions;
           const lookupFilters = [...(0, _xDataGridPremium.getGridDateOperators)(), ...(0, _xDataGridPremium.getGridStringOperators)()].filter(op => ['is', 'not', 'isAnyOf'].includes(op.value));
           operators = lookupFilters;
         }
-        if (column.type === 'boolean') {
+        if (column.type === constants.boolean) {
           operators = (0, _xDataGridPremium.getGridBooleanOperators)();
         }
         overrides.filterOperators = operators.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
           InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
-            column: _objectSpread(_objectSpread(_objectSpread({}, column), column.type === 'boolean' ? {
+            column: _objectSpread(_objectSpread(_objectSpread({}, column), column.type === constants.boolean ? {
               customLookup: [{
                 value: true,
                 label: 'Yes'
@@ -648,7 +655,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         description: headerName
       }, column), overrides));
       if (column.pinned) {
-        pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
+        pinnedColumns[column.pinned === constants.right ? constants.right : constants.left].push(column.field);
       }
       lookupMap[column.field] = column;
     }
@@ -661,7 +668,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         addModifiedByColumn: true
       };
     }
-    if (auditColumns && typeof auditColumns === 'object') {
+    if (auditColumns && typeof auditColumns === constants.object) {
       auditColumnMappings.forEach(_ref8 => {
         let {
           key,
@@ -676,7 +683,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
             headerName: header,
             width: 200
           };
-          if (type === 'dateTime') {
+          if (type === constants.dateTime) {
             column.filterOperators = (0, _LocalizedDatePicker.default)({
               columnType: 'date'
             });
@@ -942,7 +949,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   };
   const onCellClickHandler = async (cellParams, event, details) => {
     let action = cellParams.field === model.linkColumn ? actionTypes.Edit : null;
-    if (!action && cellParams.field === 'actions') {
+    if (!action && cellParams.field === constants.actions) {
       action = details === null || details === void 0 ? void 0 : details.action;
       if (!action) {
         const el = event.target.closest('button');
@@ -961,7 +968,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           event,
           details
         });
-        if (typeof result !== "boolean") {
+        if (typeof result !== constants.boolean) {
           return;
         }
       }
@@ -995,7 +1002,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
         default:
           // Check if action matches any customAction and call its onClick if found
-          const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === 'function');
+          const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === constants.function);
           if (foundCustomAction) {
             foundCustomAction.onClick({
               row: record,
@@ -1064,7 +1071,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     const {
       row: record
     } = event;
-    if (typeof onCellDoubleClickOverride === 'function') {
+    if (typeof onCellDoubleClickOverride === constants.function) {
       onCellDoubleClickOverride(event);
       return;
     }
@@ -1083,7 +1090,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       }
       navigate(historyObject);
     }
-    if (typeof onRowDoubleClick === 'function') {
+    if (typeof onRowDoubleClick === constants.function) {
       onRowDoubleClick(event);
     }
   };
@@ -1137,7 +1144,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       setIsLoading(false);
       return;
     }
-    if (typeof onAddOverride === 'function') {
+    if (typeof onAddOverride === constants.function) {
       onAddOverride();
     } else {
       openForm({
@@ -1161,7 +1168,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     } = _ref10;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
-    onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
+    onAssignChange(typeof selected === constants.string ? finalValues.join(',') : finalValues);
   };
   const onAssign = () => {
     updateAssignment({
@@ -1382,7 +1389,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         value
       } = item;
       const column = gridColumns.find(col => col.field === field) || {};
-      const isNumber = column.type === filterFieldDataTypes.Number;
+      const isNumber = column.type === constants.number;
       if (isNumber && value < 0) {
         return _objectSpread(_objectSpread({}, item), {}, {
           value: null
@@ -1438,6 +1445,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     text: pageTitle
   }];
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
+    navigate: navigate,
     showBreadcrumbs: !hideBreadcrumb && !hideBreadcrumbInGrid,
     breadcrumbs: breadCrumbs,
     enableBackButton: navigateBack,
