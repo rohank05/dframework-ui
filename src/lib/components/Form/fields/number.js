@@ -42,6 +42,9 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
                         event.preventDefault();
                     }
                 },
+                sx: column?.readOnly
+                    ? { backgroundColor: '#dfdede' } // Light grey background for read-only inputs
+                    : undefined,
             }
         },
         type: 'number',

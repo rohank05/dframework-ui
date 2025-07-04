@@ -17,7 +17,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import DaySelection from './fields/dayRadio';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
 import styled from '@emotion/styled';
@@ -164,12 +164,12 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                     return (
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
                             {column?.showLabel !== false ?
-                                <Grid item xs={3} className={classes.childStyles}>
+                                <Grid size={{ xs: 3 }} className={classes.childStyles}>
                                     <Typography className={classes.labelText}>{column.label || field}: {column.required && <ImportantSpan>*</ImportantSpan>}</Typography>
                                 </Grid>
                                 : null
                             }
-                            <Grid item xs={isGridComponent ? 12 : 9} className={classes.childStyles}>
+                            <Grid size={{ xs: isGridComponent ? 12 : 9 }} className={classes.childStyles}>
                                 <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
                             </Grid>
                         </Grid >

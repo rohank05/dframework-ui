@@ -32,8 +32,7 @@ var _StateProvider = require("../useRouter/StateProvider");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _Dialog = require("../Dialog");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -483,8 +482,7 @@ const GridPreferences = _ref => {
       }
     }
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
     defaultValue: tTranslate(formik.values.prefName, tOpts),
     variant: "outlined",
@@ -502,8 +500,7 @@ const GridPreferences = _ref => {
     helperText: formik.errors.prefName,
     fullWidth: true
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.TextField, {
     defaultValue: tTranslate(formik.values.prefDesc, tOpts),
     variant: "outlined",
@@ -518,8 +515,7 @@ const GridPreferences = _ref => {
     helperText: formik.errors.prefDesc,
     fullWidth: true
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.FormControlLabel, {
     control: /*#__PURE__*/_react.default.createElement(_material.Checkbox, {
       checked: formik.values.isDefault,
@@ -528,8 +524,7 @@ const GridPreferences = _ref => {
     }),
     label: tTranslate('Default', tOpts)
   })), /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_material.Stack, {
     direction: "row",
     columnGap: 1,
@@ -554,8 +549,7 @@ const GridPreferences = _ref => {
   }, tTranslate('Close', tOpts))))), openDialog && formType === formTypes.Manage && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     container: true
   }, /*#__PURE__*/_react.default.createElement(_material.Grid, {
-    item: true,
-    xs: 12
+    size: 12
   }, /*#__PURE__*/_react.default.createElement(_xDataGridPremium.DataGridPremium, {
     sx: {
       "& .MuiTablePagination-selectLabel": {

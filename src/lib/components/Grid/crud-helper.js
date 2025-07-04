@@ -223,7 +223,6 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
     try {
         const response = await transport({
             url: `${url}?${searchParams.toString()}`,
-            model: modelConfig.module,
             method: 'GET',
             credentials: 'include'
         });
