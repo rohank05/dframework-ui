@@ -11,7 +11,6 @@ require("core-js/modules/es.array.sort.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.to-string.js");
-require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/esnext.iterator.find.js");
@@ -207,11 +206,9 @@ const getList = async _ref => {
       }, headers),
       credentials: 'include'
     };
-    setData({
-      records: [],
-      recordCount: 0,
-      lookups: {}
-    });
+    setData(prevData => _objectSpread(_objectSpread({}, prevData), {}, {
+      records: []
+    }));
     const response = await (0, _httpRequest.transport)(params);
     function isLocalTime(dateValue) {
       const date = new Date(dateValue);
