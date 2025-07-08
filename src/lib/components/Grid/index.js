@@ -108,7 +108,7 @@ const CustomExportButton = (props) => (
     <GridToolbarExportContainer {...props}>
         {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} icon={<GridOn fontSize="small" />} type="CSV" contentType="text/csv" />}
         <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="Excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-        {props.showPivotExportBtn && <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="Excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
+        {props.showPivotExportBtn && <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="Excel with Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
         {props?.showOnlyExcelExport !== true && <>
             <ExportMenuItem {...props} icon={<Code fontSize="small" />} type="XML" contentType="text/xml" />
             <ExportMenuItem {...props} icon={<Language fontSize="small" />} type="HTML" contentType="text/html" />
