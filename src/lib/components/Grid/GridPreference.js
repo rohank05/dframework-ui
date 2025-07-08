@@ -4,8 +4,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Box, Button, Checkbox, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip, ListItemIcon, DialogContentText } from '@mui/material';
-import { DataGridPremium, GridActionsCellItem, gridFilterModelSelector, gridSortModelSelector, useGridSelector, useGridApiRef, } from '@mui/x-data-grid-premium';
+import { Box, Button, Checkbox, FormControlLabel, Grid, List, ListItem, ListItemButton, ListItemText, Menu, MenuItem, Stack, TextField, Typography, Tooltip, ListItemIcon } from '@mui/material';
+import { DataGridPremium, GridActionsCellItem, gridFilterModelSelector, gridSortModelSelector, useGridSelector, useGridApiRef } from '@mui/x-data-grid-premium';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useSnackbar } from '../SnackBar';
@@ -63,7 +63,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);
     const validationSchema = useMemo(() => {
-        let schema = yup.object({
+        const schema = yup.object({
             prefName: yup
                 .string()
                 .trim(true)
@@ -76,7 +76,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
 
     useEffect(() => {
         setFilteredPrefs(preferences?.filter(pref => pref.prefId !== 0));
-    }, [preferences])
+    }, [preferences]);
 
     const formik = useFormik({
         initialValues,
@@ -102,12 +102,12 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     };
 
     const deletePreference = async (id, prefName) => {
-        let params = {
+        const params = {
             action: 'delete',
             id: preferenceName,
             Username,
             prefIdArray: id
-        }
+        };
         const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
         if (response === true || response?.success) {
             if (prefName === currentPreference) {
@@ -115,14 +115,14 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             }
             snackbar.showMessage('Preference Deleted Successfully.');
         }
-    }
+    };
 
     const applySelectedPreference = async (prefId) => {
         if (setIsGridPreferenceFetched) {
             setIsGridPreferenceFetched(false);
         }
         await applyPreference(prefId);
-    }
+    };
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
         const preferenceAlreadyExists = preferences.findIndex(ele => ele.prefName === presetName);
@@ -139,11 +139,11 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             const col = columns.find(ele => ele.field === field) || lookup[ele];
             col.width = lookup[ele].width;
             gridColumn.push(col);
-        })
+        });
         const filter = filterModel?.items?.map(ele => {
             const { field, operator, value } = ele;
-            return { field, operator, value }
-        })
+            return { field, operator, value };
+        });
         filterModel.items = filter;
         const params = {
             action: 'save',
@@ -151,8 +151,8 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             prefName: presetName,
             prefDesc: values.prefDesc,
             prefValue: { sortModel, filterModel, columnVisibilityModel, gridColumn, pinnedColumns },
-            isDefault: values.isDefault,
-        }
+            isDefault: values.isDefault
+        };
         if (values.prefId) {
             params["prefId"] = values.prefId;
         }
@@ -162,7 +162,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             snackbar.showMessage(`Preference ${action} Successfully.`);
         }
         getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, defaultPreferenceEnums });
-    }
+    };
 
     const applyPreference = async (prefId) => {
         let userPreferenceCharts;
@@ -198,7 +198,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
 
         dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference });
         setIsGridPreferenceFetched(true);
-    }
+    };
 
     const getGridRowId = (row) => {
         return row['GridPreferenceId'];
@@ -212,20 +212,20 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         if (openFormModal) {
             formik.resetForm();
         }
-    }
+    };
 
     const confirmDeletePreference = async () => {
         const { prefId, preferenceName: currentPrefname } = openConfirmDeleteDialog;
         await deletePreference(prefId, currentPrefname);
         getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
         setOpenConfirmDeleteDialog({});
-    }
+    };
 
     const onCellClick = async (cellParams) => {
         const action = cellParams.field === 'editAction' ? actionTypes.Edit : cellParams.field === 'deleteAction' ? actionTypes.Delete : null;
         if (cellParams.id === 0 && (action === actionTypes.Edit || action === actionTypes.Delete)) {
             snackbar.showMessage(`Default Preference Can Not Be ${action === actionTypes.Edit ? 'Edited' : 'Deleted'}`);
-            return
+            return;
         }
         if (action === actionTypes.Edit) {
             setFormType('Modify');
@@ -238,7 +238,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                 preferenceName: cellParams.row.prefName
             });
         }
-    }
+    };
 
     const prefName = formik.values.prefName.trim();
     const isManageForm = formType === formTypes.Manage;
@@ -301,7 +301,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                         >
                             <ListItemText primary={tTranslate(prefName, tOpts)} />
                         </MenuItem>
-                    )
+                    );
                 })}
             </Menu>
             <DialogComponent
@@ -468,7 +468,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             </DialogComponent>
         </Box>
     );
-}
+};
 
 
 export default GridPreferences;

@@ -1,6 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.weak-map.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -11,12 +10,11 @@ require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.for-each.js");
 require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
-var React = _interopRequireWildcard(require("react"));
+var _react = _interopRequireDefault(require("react"));
 var _Box = _interopRequireDefault(require("@mui/material/Box"));
 var _SimpleTreeView = require("@mui/x-tree-view/SimpleTreeView");
 var _TreeItem = require("@mui/x-tree-view/TreeItem");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 /**
  * Builds a tree structure from a flat array of data.
  * 
@@ -74,38 +72,34 @@ function treeCheckBox(_ref) {
     field,
     formik,
     lookups,
-    data,
-    otherProps,
-    model,
     fieldConfigs,
     mode
   } = _ref;
   const options = lookups ? lookups[column.lookup] : [];
   const tree = buildTree(options);
-  let inputValue = (_formik$values$field = formik.values[field]) !== null && _formik$values$field !== void 0 && _formik$values$field.length ? formik.values[field].split(", ") : [];
+  const inputValue = (_formik$values$field = formik.values[field]) !== null && _formik$values$field !== void 0 && _formik$values$field.length ? formik.values[field].split(", ") : [];
   let isDisabled;
   if (mode !== 'copy') {
     isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
   }
-  const handleChange = (event, newValue) => {
+  const handleChange = (_, newValue) => {
     formik.setFieldValue(field, (newValue === null || newValue === void 0 ? void 0 : newValue.join(', ')) || '');
   };
-  return /*#__PURE__*/React.createElement(_Box.default, {
+  return /*#__PURE__*/_react.default.createElement(_Box.default, {
     sx: {
-      minHeight: 352,
-      minWidth: 290
+      minHeight: 350
     }
-  }, /*#__PURE__*/React.createElement(_SimpleTreeView.SimpleTreeView, {
+  }, /*#__PURE__*/_react.default.createElement(_SimpleTreeView.SimpleTreeView, {
     selectedItems: inputValue,
     onSelectedItemsChange: handleChange,
     disabled: isDisabled,
     multiSelect: true,
     checkboxSelection: true
-  }, tree.map(node => /*#__PURE__*/React.createElement(_TreeItem.TreeItem, {
+  }, tree.map(node => /*#__PURE__*/_react.default.createElement(_TreeItem.TreeItem, {
     key: node.value,
     itemId: node.value,
     label: node.label
-  }, node.children.map(child => /*#__PURE__*/React.createElement(_TreeItem.TreeItem, {
+  }, node.children.map(child => /*#__PURE__*/_react.default.createElement(_TreeItem.TreeItem, {
     key: child.value,
     itemId: child.value,
     label: child.label

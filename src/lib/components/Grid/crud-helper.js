@@ -119,7 +119,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
     try {
         setIsLoading(true);
-        let params = {
+        const params = {
             url,
             method: 'POST',
             data: requestData,
@@ -240,7 +240,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parent
 };
 
 const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
-    let result = { success: false, error: '' };
+    const result = { success: false, error: '' };
     if (!id) {
         setError('Deleted failed. No active record.');
         return;

@@ -47,7 +47,7 @@ const Field = ({ field, formik }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.5rem'
                     }}
                 >
                     <Typography variant="body1" sx={{ width: "180px", marginRight: 2 }}>

@@ -12,14 +12,14 @@ const HTTP_STATUS_CODES = {
 const getFormData = (props) => {
     const formData = new FormData();
     for (const key in props) {
-        if (typeof props[key] == "object") {
+        if (typeof props[key] === "object") {
             formData.append(key, JSON.stringify(props[key]));
         } else {
             formData.append(key, props[key]);
         }
     }
     return formData;
-}
+};
 
 const exportRequest = (url, query) => {
     const newURL = new URL(url);
@@ -28,7 +28,7 @@ const exportRequest = (url, query) => {
         newURL.searchParams.append(key, value);
     }
     window.open(newURL, '_blank').focus();
-}
+};
 
 const transport = async (config) => {
     const {
@@ -44,7 +44,7 @@ const transport = async (config) => {
         method,
         credentials,
         headers: {
-            ...headers,
+            ...headers
         },
         ...rest
     };
@@ -65,9 +65,9 @@ const transport = async (config) => {
         status: response.status,
         data: contentType.includes('application/json') ? await response.json() : await response.text(),
         headers: Object.fromEntries(response.headers.entries())
-    }
+    };
     if (!response.ok) {
-        repsonseObj.status = response.INTERNAL_SERVER_ERROR
+        repsonseObj.status = response.INTERNAL_SERVER_ERROR;
     }
 
     return repsonseObj;
@@ -104,7 +104,7 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
             return data;
         }
         if (pendingRequests === 0 && !disableLoader) {
-            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false });
         }
         if (response.status === HTTP_STATUS_CODES.OK) {
             const json = response.data;
@@ -117,18 +117,17 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
     } catch (ex) {
         pendingRequests--;
         if (pendingRequests === 0) {
-            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false });
         }
         if (ex?.response?.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             dispatchData({ type: actionsStateProvider.SET_USER_DATA, userData: {} });
             history('/login');
         }
         else {
-            console.error(ex);
             return { error: ex.response };
         }
     }
-}
+};
 
 export {
     HTTP_STATUS_CODES,

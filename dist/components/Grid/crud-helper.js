@@ -185,7 +185,7 @@ const getList = async _ref => {
   }
   try {
     setIsLoading(true);
-    let params = {
+    const params = {
       url,
       method: 'POST',
       data: requestData,
@@ -341,7 +341,7 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
     setIsLoading,
     setError
   } = _ref5;
-  let result = {
+  const result = {
     success: false,
     error: ''
   };

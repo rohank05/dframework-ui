@@ -42,7 +42,7 @@ const HTTP_STATUS_CODES = exports.HTTP_STATUS_CODES = {
 const getFormData = props => {
   const formData = new FormData();
   for (const key in props) {
-    if (typeof props[key] == "object") {
+    if (typeof props[key] === "object") {
       formData.append(key, JSON.stringify(props[key]));
     } else {
       formData.append(key, props[key]);
@@ -167,7 +167,6 @@ const request = async _ref => {
       });
       history('/login');
     } else {
-      console.error(ex);
       return {
         error: ex.response
       };

@@ -76,7 +76,7 @@ var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDown
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 var _reactI18next = require("react-i18next");
 const _excluded = ["exportFormats"],
-  _excluded2 = ["showGrid", "model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "showModal", "OrderModal", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "baseFilters", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"];
+  _excluded2 = ["model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -246,7 +246,7 @@ const areEqual = function areEqual() {
     }
   }
   for (const o in nextProps) {
-    if (!prevProps.hasOwnProperty(o)) {
+    if (!(o in prevProps)) {
       equal = false;
     }
   }
@@ -256,7 +256,6 @@ const areEqual = function areEqual() {
 const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   var _model$columns$find, _model$tTranslate, _model$module;
   let {
-      showGrid = true,
       model,
       columns,
       api,
@@ -266,8 +265,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       parent,
       where,
       title,
-      showModal,
-      OrderModal,
       permissions,
       selected,
       assigned,
@@ -282,7 +279,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       showFullScreenLoader,
       customFilters,
       onRowDoubleClick,
-      baseFilters,
       onRowClick = () => {},
       gridStyle,
       reRenderKey,
@@ -944,7 +940,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       window.open(documentLink);
-      console.error("Error downloading the file:", error);
     }
   };
   const onCellClickHandler = async (cellParams, event, details) => {

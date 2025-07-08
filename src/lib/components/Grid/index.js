@@ -59,7 +59,7 @@ const actionTypes = {
 };
 const iconMapper = {
     'article': <ArticleIcon />
-}
+};
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
     permissions: { edit: true, add: true, export: true, delete: true, showColumnsOrder: true, filter: true },
@@ -78,7 +78,7 @@ const constants = {
     dateTime: 'dateTime',
     actions: 'actions',
     function: 'function'
-}
+};
 const auditColumnMappings = [
     { key: 'addCreatedOnColumn', field: 'CreatedOn', type: 'dateTime', header: 'Created On' },
     { key: 'addCreatedByColumn', field: 'CreatedByUser', type: 'string', header: 'Created By' },
@@ -91,7 +91,7 @@ const booleanIconRenderer = (params) => {
     } else {
         return <CloseIcon style={{ color: 'gray' }} />;
     }
-}
+};
 
 const useStyles = makeStyles({
     buttons: {
@@ -101,9 +101,9 @@ const useStyles = makeStyles({
         width: '100%',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
+        textOverflow: 'ellipsis'
     }
-})
+});
 
 const convertDefaultSort = (defaultSort) => {
     if (typeof defaultSort !== constants.string) return [];
@@ -157,15 +157,14 @@ const areEqual = (prevProps = {}, nextProps = {}) => {
         }
     }
     for (const o in nextProps) {
-        if (!prevProps.hasOwnProperty(o)) {
+        if (!(o in prevProps)) {
             equal = false;
         }
     }
     return equal;
-}
+};
 // TODO: Add support for additional languages in localization (e.g., translations for filterValueTrue, filterValueFalse, etc.)
 const GridBase = memo(({
-    showGrid = true,
     model,
     columns,
     api,
@@ -175,8 +174,6 @@ const GridBase = memo(({
     parent,
     where,
     title,
-    showModal,
-    OrderModal,
     permissions,
     selected,
     assigned,
@@ -191,7 +188,6 @@ const GridBase = memo(({
     showFullScreenLoader,
     customFilters,
     onRowDoubleClick,
-    baseFilters,
     onRowClick = () => { },
     gridStyle,
     reRenderKey,
@@ -217,16 +213,16 @@ const GridBase = memo(({
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
     const paginationMode = model.paginationMode === constants.client ? constants.client : constants.server;
-    const { t: translate, i18n } = useTranslation()
+    const { t: translate, i18n } = useTranslation();
     const tOpts = { t: translate, i18n };
     const [errorMessage, setErrorMessage] = useState('');
     const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model.defaultSort));
-    const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
+    const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' };
     if (model.defaultFilters) {
         initialFilterModel.items = [];
         model.defaultFilters.forEach((ele) => {
             initialFilterModel.items.push(ele);
-        })
+        });
     }
     const [filterModel, setFilterModel] = useState({ ...initialFilterModel });
     const { navigate, getParams, useParams, pathname } = useRouter();
@@ -324,19 +320,19 @@ const GridBase = memo(({
             "valueFormatter": (value) => (
                 formatDate({ value, useSystemFormat: true, showOnlyDate: false, state: stateData.dateTime, timeZone })
             ),
-            "filterOperators": LocalizedDatePicker({ columnType: "date" }),
+            "filterOperators": LocalizedDatePicker({ columnType: "date" })
         },
         "dateTime": {
             "valueFormatter": (value) => (
                 formatDate({ value, useSystemFormat: false, showOnlyDate: false, state: stateData.dateTime, timeZone })
             ),
-            "filterOperators": LocalizedDatePicker({ columnType: "datetime" }),
+            "filterOperators": LocalizedDatePicker({ columnType: "datetime" })
         },
         "dateTimeLocal": {
             "valueFormatter": (value) => (
                 formatDate({ value, useSystemFormat: false, showOnlyDate: false, state: stateData.dateTime, timeZone })
             ),
-            "filterOperators": LocalizedDatePicker({ type: "dateTimeLocal", convert: true }),
+            "filterOperators": LocalizedDatePicker({ type: "dateTimeLocal", convert: true })
         },
         "boolean": {
             renderCell: booleanIconRenderer
@@ -348,7 +344,7 @@ const GridBase = memo(({
         "selection": {
             renderCell: (params) => <CustomCheckBox {...params} />
         }
-    }
+    };
 
     useEffect(() => {
         dataRef.current = data;
@@ -432,17 +428,17 @@ const GridBase = memo(({
                                         ? {
                                             customLookup: [
                                                 { value: true, label: 'Yes' },
-                                                { value: false, label: 'No' },
+                                                { value: false, label: 'No' }
                                             ]
                                         }
                                         : {}),
-                                    dataRef,
+                                    dataRef
                                 }}
                                 {...params}
                                 autoHighlight
                             />
                         )
-                        : undefined,
+                        : undefined
                 }));
             }
             if (column.linkTo || column.link) {
@@ -528,7 +524,7 @@ const GridBase = memo(({
                         );
                     }
                     return rowActions;
-                },
+                }
             });
         }
         pinnedColumns.right.push('actions');
@@ -610,11 +606,11 @@ const GridBase = memo(({
         }
         if (mode === "copy") {
             path += "0-" + id;
-            dispatchData({ type: 'UPDATE_FORM_MODE', payload: 'copy' })
+            dispatchData({ type: 'UPDATE_FORM_MODE', payload: 'copy' });
 
         } else {
             path += id;
-            dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' })
+            dispatchData({ type: 'UPDATE_FORM_MODE', payload: '' });
         }
         if (addUrlParamKey) {
             searchParams.set(addUrlParamKey, record[addUrlParamKey]);
@@ -650,7 +646,6 @@ const GridBase = memo(({
             window.URL.revokeObjectURL(url);
         } catch (error) {
             window.open(documentLink);
-            console.error("Error downloading the file:", error);
         }
     };
     const onCellClickHandler = async (cellParams, event, details) => {
@@ -715,9 +710,9 @@ const GridBase = memo(({
         const columnConfig = lookupMap[cellParams.field] || {};
         const historyObject = {
             pathname: template.replaceTags(columnConfig.linkTo, row)
-        }
+        };
         if (model.addRecordToState) {
-            historyObject.state = row
+            historyObject.state = row;
         }
         navigate(historyObject);
     };
@@ -731,7 +726,7 @@ const GridBase = memo(({
         } else {
             setIsDeleting(false);
         }
-    }
+    };
     const clearError = () => {
         setErrorMessage(null);
         setIsDeleting(false);
@@ -742,7 +737,7 @@ const GridBase = memo(({
             props.processRowUpdate(updatedRow, data);
         }
         return updatedRow;
-    }
+    };
 
     const onCellDoubleClick = (event) => {
         if (event.row.canEdit === false) {
@@ -758,10 +753,10 @@ const GridBase = memo(({
         }
         if (isReadOnly && model.rowRedirectLink) {
             const historyObject = {
-                pathname: template.replaceTags(model.rowRedirectLink, record),
-            }
+                pathname: template.replaceTags(model.rowRedirectLink, record)
+            };
             if (model.addRecordToState) {
-                historyObject.state = record
+                historyObject.state = record;
             }
             navigate(historyObject);
         }
@@ -832,7 +827,7 @@ const GridBase = memo(({
         } else {
             openForm({ id: 0 });
         }
-    }
+    };
 
     const clearFilters = () => {
         if (!filterModel?.items?.length) return;
@@ -841,20 +836,20 @@ const GridBase = memo(({
         if (clearChartFilter) {
             clearChartFilter();
         }
-    }
+    };
     const updateAssignment = ({ unassign, assign }) => {
         const assignedValues = Array.isArray(selected) ? selected : (selected.length ? selected.split(',') : []);
         const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
         onAssignChange(typeof selected === constants.string ? finalValues.join(',') : finalValues);
-    }
+    };
 
     const onAssign = () => {
         updateAssignment({ assign: selection });
-    }
+    };
 
     const onUnassign = () => {
         updateAssignment({ unassign: selection });
-    }
+    };
 
     const selectAll = () => {
         if (selectedSet.current.size === data.records.length) {
@@ -868,7 +863,7 @@ const GridBase = memo(({
             });
             setSelection(data.records.map(record => record[idProperty]));
         }
-    }
+    };
 
     useEffect(() => {
         if (!preferenceName || !preferenceApi) {
@@ -877,7 +872,7 @@ const GridBase = memo(({
         removeCurrentPreferenceName({ dispatchData });
         getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
         applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
-    }, [preferenceApi])
+    }, [preferenceApi]);
 
     const CustomToolbar = function (props) {
         const addtext = model.customAddText || (model.title ? `Add ${model.title}` : 'Add');
@@ -969,19 +964,19 @@ const GridBase = memo(({
     useEffect(() => {
         if (!url) return;
         fetchData();
-    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url])
+    }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
 
     useEffect(() => {
         if (props.isChildGrid || forAssignment || !updatePageTitle) {
             return;
         }
-        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model.pageTitle || model.title, title: model.title } })
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model.pageTitle || model.title, title: model.title } });
         return () => {
             dispatchData({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
-            })
-        }
-    }, [])
+            });
+        };
+    }, []);
 
     useEffect(() => {
         if (props.isChildGrid) {
@@ -993,7 +988,7 @@ const GridBase = memo(({
         if (hideBackButton || routesWithNoChildRoute.includes(backRoute)) {
             dispatchData({
                 type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-                payload: { status: false, backRoute: '' },
+                payload: { status: false, backRoute: '' }
             });
             return;
         }
@@ -1002,7 +997,7 @@ const GridBase = memo(({
         backRoute = backRoute.join("/");
         dispatchData({
             type: actionsStateProvider.SET_PAGE_BACK_BUTTON,
-            payload: { status: true, backRoute: backRoute },
+            payload: { status: true, backRoute: backRoute }
         });
     }, [isLoading]);
 
@@ -1056,7 +1051,7 @@ const GridBase = memo(({
             return obj;
         });
         setSortModel(sort);
-    }
+    };
     const pageTitle = title || model.gridTitle || model.title;
     const breadCrumbs = searchParamKey
         ? [{ text: searchParams.get(searchParamKey) || pageTitle }]

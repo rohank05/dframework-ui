@@ -9,7 +9,7 @@ const regexConfig = {
 	nonAlphaNumeric: /[^a-zA-Z0-9]/g,
 	compareValidatorRegex: /^compare:(.+)$/,
 	email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
-}
+};
 
 const customStyle = {};
 const showRowsSelected = true;
@@ -18,15 +18,15 @@ const defaultValueConfigs = {
 	"boolean": false,
 	"radio": false,
 	"oneToMany": ""
-}
+};
 
 class UiModel {
 
 	static defaultPermissions = {
 		add: true,
 		edit: true,
-		delete: true,
-	}
+		delete: true
+	};
 	constructor(modelConfig) {
 		const { title = "", controllerType } = modelConfig;
 		let { api, idProperty = api + 'Id' } = modelConfig;
@@ -66,7 +66,7 @@ class UiModel {
 
 	getValidationSchema({ id }) {
 		const { columns } = this;
-		let validationConfig = {};
+		const validationConfig = {};
 		for (const column of columns) {
 			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validate } = column;
 			const formLabel = label || header || field;
@@ -120,7 +120,7 @@ class UiModel {
 					if (required) {
 						config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
 					} else {
-						config = yup.string().nullable()
+						config = yup.string().nullable();
 					}
 					break;
 				case 'password':
@@ -150,13 +150,13 @@ class UiModel {
 						.matches(
 							(column.regex || regexConfig.email),
 							'Email must be a valid email'
-						)
+						);
 					break;
 				case 'number':
 					if (required) {
 						config = yup.number().label(formLabel).required(`${formLabel} is required.`);
 					} else {
-						config = yup.number().nullable()
+						config = yup.number().nullable();
 					}
 					if (min !== undefined && min !== '') {
 						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
@@ -200,22 +200,22 @@ class UiModel {
 	}
 
 	Form = ({ match, ...props }) => {
-		return <Form model={this} Layout={this.Layout} {...props} />
-	}
+		return <Form model={this} Layout={this.Layout} {...props} />;
+	};
 
 	Grid = ({ match, ...props }) => {
-		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />
-	}
+		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />;
+	};
 	ChildGrid = (props) => {
 		return <>
 			<GridBase model={this} {...props} customStyle={customStyle} showRowsSelected={showRowsSelected} />
 			<Divider orientation='horizontal' sx={{ mt: 2 }} />
-		</>
-	}
+		</>;
+	};
 }
 
 export {
 	UiModel
-}
+};
 
 

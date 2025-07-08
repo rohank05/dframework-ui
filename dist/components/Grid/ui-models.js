@@ -134,7 +134,7 @@ class UiModel {
     const {
       columns
     } = this;
-    let validationConfig = {};
+    const validationConfig = {};
     for (const column of columns) {
       const {
         field,

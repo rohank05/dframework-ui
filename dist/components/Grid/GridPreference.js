@@ -144,7 +144,7 @@ const GridPreferences = _ref => {
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
-    let schema = yup.object({
+    const schema = yup.object({
       prefName: yup.string().trim(true).required('Preference Name is Required').max(20, 'Maximum Length is 20'),
       prefDesc: yup.string().max(100, "Description maximum length is 100")
     });
@@ -173,7 +173,7 @@ const GridPreferences = _ref => {
     setOpenDialog(false);
   };
   const deletePreference = async (id, prefName) => {
-    let params = {
+    const params = {
       action: 'delete',
       id: preferenceName,
       Username,

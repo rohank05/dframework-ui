@@ -173,7 +173,7 @@ const RenderSteps = _ref => {
     setActiveStep
   } = React.useContext(_Form.ActiveStepContext);
   const classes = useStyles();
-  let skipSteps = {};
+  const skipSteps = {};
   for (let index = 0, len = model.columns.length; index < len; index++) {
     const {
       field,
@@ -288,7 +288,7 @@ const RenderColumns = _ref3 => {
       label,
       otherProps
     } = _ref4;
-    let isGridComponent = typeof column.relation === 'function';
+    const isGridComponent = typeof column.relation === 'function';
     return /*#__PURE__*/React.createElement(_Grid.default, {
       container: true,
       spacing: 2,
@@ -336,7 +336,7 @@ const getFormConfig = function getFormConfig(_ref5) {
     tabColumns[tab] = [];
   }
   for (const column of columns) {
-    let fieldType = column.type;
+    const fieldType = column.type;
     if (column.label === null) {
       /* If the field should not be shown in form mode, specify label as null */
       continue;
@@ -398,7 +398,7 @@ const FormLayout = _ref6 => {
     tabColumns
   } = React.useMemo(() => {
     var _model$formConfig;
-    let showTabs = (_model$formConfig = model.formConfig) === null || _model$formConfig === void 0 ? void 0 : _model$formConfig.showTabbed;
+    const showTabs = (_model$formConfig = model.formConfig) === null || _model$formConfig === void 0 ? void 0 : _model$formConfig.showTabbed;
     const searchParams = new URLSearchParams(window.location.search);
     const {
       formElements,

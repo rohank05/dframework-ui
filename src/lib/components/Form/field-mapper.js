@@ -66,9 +66,9 @@ const useStyles = makeStyles({
     },
     labelText: {
         fontSize: "16px !important",
-        fontWeight: "bold !important",
+        fontWeight: "bold !important"
     }
-})
+});
 
 const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, handleSubmit }) => {
     const [skipped, setSkipped] = React.useState(new Set());
@@ -76,7 +76,7 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     const { activeStep, setActiveStep } = React.useContext(ActiveStepContext);
     const classes = useStyles();
 
-    let skipSteps = {};
+    const skipSteps = {};
     for (let index = 0, len = model.columns.length; index < len; index++) {
         const { field, skip } = model.columns[index];
         if (skip) {
@@ -146,8 +146,8 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
                 </Box>
             </React.Fragment>
         </>
-    )
-}
+    );
+};
 
 const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, isAdd }) => {
     const classes = useStyles();
@@ -160,7 +160,7 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
         <>
             {
                 formElements.map(({ Component, column, field, label, otherProps }, key) => {
-                    let isGridComponent = typeof column.relation === 'function';
+                    const isGridComponent = typeof column.relation === 'function';
                     return (
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
                             {column?.showLabel !== false ?
@@ -173,12 +173,12 @@ const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lo
                                 <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
                             </Grid>
                         </Grid >
-                    )
+                    );
                 })
             }
         </>
-    )
-}
+    );
+};
 
 const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
     const formElements = [], tabColumns = {};
@@ -186,7 +186,7 @@ const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
         tabColumns[tab] = [];
     }
     for (const column of columns) {
-        let fieldType = column.type;
+        const fieldType = column.type;
         if (column.label === null) { /* If the field should not be shown in form mode, specify label as null */
             continue;
         }
@@ -205,16 +205,16 @@ const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {
-        tabsData.push({ key: tabColumn, title: tabs[tabColumn], items: tabColumns[tabColumn] })
+        tabsData.push({ key: tabColumn, title: tabs[tabColumn], items: tabColumns[tabColumn] });
     }
     return { formElements, tabColumns: tabsData };
-}
+};
 
 const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit }) => {
     const classes = useStyles();
     const isAdd = [0, undefined, null, ''].includes(displayId);
     const { formElements, tabColumns } = React.useMemo(() => {
-        let showTabs = model.formConfig?.showTabbed;
+        const showTabs = model.formConfig?.showTabbed;
         const searchParams = new URLSearchParams(window.location.search);
         const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, id: displayId, searchParams });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
@@ -226,7 +226,7 @@ const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displa
                 <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} />
             </div>
         </div>
-    )
+    );
 };
 
 export {
@@ -239,6 +239,6 @@ export {
     SelectField,
     GridTransfer,
     fieldMappers
-}
+};
 
 export default FormLayout;

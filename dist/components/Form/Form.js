@@ -12,7 +12,6 @@ require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.promise.finally.js");
 require("core-js/modules/es.regexp.exec.js");
-require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.search.js");
 require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
@@ -55,7 +54,8 @@ const consts = {
   string: "string",
   create: "Create",
   copy: "Copy",
-  edit: "Edit"
+  edit: "Edit",
+  number: "number"
 };
 const Form = _ref => {
   var _stateData$gridSettin;
@@ -69,7 +69,8 @@ const Form = _ref => {
     baseSaveData = {},
     sx,
     readOnly,
-    beforeSubmit
+    beforeSubmit,
+    deletePromptText
   } = _ref;
   const formTitle = model.formTitle || model.title;
   const {
@@ -144,15 +145,13 @@ const Form = _ref => {
           data
         });
         break;
+      case consts.number:
       case consts.string:
         navigatePath = navigateBack;
         break;
       default:
         navigatePath = pathname.substring(0, pathname.lastIndexOf("/"));
         break;
-    }
-    if (navigatePath.includes("window.history")) {
-      window.history.back();
     }
     navigate(navigatePath);
   };
@@ -205,7 +204,7 @@ const Form = _ref => {
         snackbar.showMessage("Record ".concat(id === 0 ? "Added" : "Updated", " Successfully."));
         handleNavigation();
       }).catch(err => {
-        snackbar.showError("An error occured, please try after some time.second", err);
+        snackbar.showError("An error occured.", err);
         if (model.reloadOnSave) {
           resetForm();
         }
@@ -343,6 +342,7 @@ const Form = _ref => {
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
+  deletePromptText = deletePromptText || "Are you sure you want to delete ?";
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_PageTitle.default, {
     navigate: navigate,
     title: formTitle,
@@ -408,7 +408,7 @@ const Form = _ref => {
       setDeleteError(null);
     },
     title: deleteError ? "Error Deleting Record" : "Confirm Delete"
-  }, "Are you sure you want to delete ".concat((data === null || data === void 0 ? void 0 : data.GroupName) || (data === null || data === void 0 ? void 0 : data.SurveyName), "?")), showRelations ? /*#__PURE__*/_react.default.createElement(_relations.default, {
+  }, deletePromptText), showRelations ? /*#__PURE__*/_react.default.createElement(_relations.default, {
     readOnly: readOnlyRelations,
     models: models,
     relationFilters: relationFilters,

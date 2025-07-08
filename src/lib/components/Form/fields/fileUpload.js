@@ -14,7 +14,7 @@ function FileUpload({ column, field, formik }) {
     const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
     const [formState, setFormState] = useState({
         isExternal: "no",
-        selectedFile: null,
+        selectedFile: null
     });
     const [loading, setLoading] = useState(false); // Add loading state
     const snackbar = useSnackbar();
@@ -27,7 +27,7 @@ function FileUpload({ column, field, formik }) {
         setFormState({
             ...formState,
             isExternal,
-            selectedFile: null,
+            selectedFile: null
         });
         formik.setFieldValue(field, formik.values[field]); // Reset form field value
     };
@@ -81,7 +81,7 @@ function FileUpload({ column, field, formik }) {
     React.useEffect(() => {
         setFormState({
             ...formState,
-            isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no",
+            isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no"
         });
     }, [inputValue]);
 
@@ -121,8 +121,8 @@ function FileUpload({ column, field, formik }) {
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": { borderColor: colorScheme },
                                     "&.Mui-focused fieldset": { borderColor: colorScheme },
-                                    "&:hover fieldset": { borderColor: colorScheme },
-                                },
+                                    "&:hover fieldset": { borderColor: colorScheme }
+                                }
                             }}
                             onChange={handleInputChange}
                             placeholder="Enter external link"
