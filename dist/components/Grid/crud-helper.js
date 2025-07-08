@@ -32,6 +32,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect'];
 const timeInterval = 200;
+const isLocalTime = dateValue => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -194,22 +195,12 @@ const getList = async _ref => {
       credentials: 'include'
     };
     const response = await (0, _httpRequest.transport)(params);
-    function isLocalTime(dateValue) {
-      const date = new Date(dateValue);
-      const localOffset = new Date().getTimezoneOffset();
-      const dateOffset = date.getTimezoneOffset();
-      return localOffset === dateOffset;
-    }
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
-        records,
-        userCurrencySymbol
+        records
       } = response.data;
       if (records) {
         records.forEach(record => {
-          if (record.hasOwnProperty("TotalOrder")) {
-            record["TotalOrder"] = "".concat(userCurrencySymbol).concat(record["TotalOrder"]);
-          }
           dateColumns.forEach(column => {
             const {
               field,
@@ -296,7 +287,6 @@ const getRecord = async _ref4 => {
   if (where && (_Object$keys = Object.keys(where)) !== null && _Object$keys !== void 0 && _Object$keys.length) {
     searchParams.set("where", JSON.stringify(where));
   }
-  ;
   try {
     const response = await (0, _httpRequest.transport)({
       url: "".concat(url, "?").concat(searchParams.toString()),
@@ -349,8 +339,7 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
     id,
     api,
     setIsLoading,
-    setError,
-    setErrorMessage
+    setError
   } = _ref5;
   let result = {
     success: false,
