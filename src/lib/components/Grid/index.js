@@ -95,7 +95,7 @@ const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, is
             data-is-pivot-export={isPivotExport}
         >
             <Box className="grid-icons">{icon}</Box>
-            {tTranslate("Export", tOpts)} {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+            {type}
         </MenuItem>
     );
 };
@@ -106,13 +106,13 @@ ExportMenuItem.propTypes = {
 
 const CustomExportButton = (props) => (
     <GridToolbarExportContainer {...props}>
-        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} icon={<GridOn fontSize="small" />} type="csv" contentType="text/csv" />}
-        <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-        {props.showPivotExportBtn && <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="excel With Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
+        {props?.showOnlyExcelExport !== true && <ExportMenuItem {...props} icon={<GridOn fontSize="small" />} type="CSV" contentType="text/csv" />}
+        <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="Excel" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        {props.showPivotExportBtn && <ExportMenuItem {...props} icon={<TableChart fontSize="small" />} type="Excel with Pivot" contentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" isPivotExport={true} />}
         {props?.showOnlyExcelExport !== true && <>
-            <ExportMenuItem {...props} icon={<Code fontSize="small" />} type="xml" contentType="text/xml" />
-            <ExportMenuItem {...props} icon={<Language fontSize="small" />} type="html" contentType="text/html" />
-            <ExportMenuItem {...props} icon={<DataObjectIcon fontSize="small" />} type="json" contentType="application/json" />
+            <ExportMenuItem {...props} icon={<Code fontSize="small" />} type="XML" contentType="text/xml" />
+            <ExportMenuItem {...props} icon={<Language fontSize="small" />} type="HTML" contentType="text/html" />
+            <ExportMenuItem {...props} icon={<DataObjectIcon fontSize="small" />} type="JSON" contentType="application/json" />
         </>}
     </GridToolbarExportContainer>
 );
