@@ -16,7 +16,7 @@ const Field = ({ isAdd, column, field, formik, otherProps, fieldConfigs = {}, mo
         if (!newValue.includes(lastElement)) {
             newValue.push(lastElement);
         }
-        if (fixedOptions && fixedOptions.includes(item.option) && action === "removeOption") {
+        if (fixedOptions && fixedOptions === item.option && action === "removeOption") {
             newValue = [item.option];
         }
         formik.setFieldValue(field, newValue?.join(',') || '');
@@ -47,7 +47,7 @@ const Field = ({ isAdd, column, field, formik, otherProps, fieldConfigs = {}, mo
                                 key={key}
                                 label={option}
                                 {...tagProps}
-                                disabled={fixedOptions.includes(option)}
+                                disabled={fixedOptions===option}
                             />
                         );
                     })
