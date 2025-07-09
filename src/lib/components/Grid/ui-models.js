@@ -27,10 +27,10 @@ class UiModel {
 		edit: true,
 		delete: true
 	};
+
 	constructor(modelConfig) {
 		const { title = "", controllerType } = modelConfig;
 		let { api, idProperty = api + 'Id' } = modelConfig;
-		// if module is not specified, use title as module name after removing all alphanumeric characters
 		const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
 		if (!api) {
 			api = `${title.replaceAll(regexConfig.nonAlphaNumeric, '-').toLowerCase()}`;
@@ -41,7 +41,7 @@ class UiModel {
 		const name = module || title;
 		Object.assign(this, {
 			standard: true,
-			name, // for child grid wuth no specific module but wants name to be identified in models list in relations.
+			name,
 			permissions: { ...UiModel.defaultPermissions },
 			idProperty,
 			linkColumn: `${name}Name`,
@@ -52,16 +52,26 @@ class UiModel {
 			...modelConfig,
 			api
 		});
+		this.columnVisibilityModel = this._getColumnVisibilityModel();
+		this.defaultValues = this._getDefaultValues(defaultValues);
+	}
+
+	_getColumnVisibilityModel() {
 		const columnVisibilityModel = {};
 		for (const col of this.columns) {
-			const name = col.field || col.id;
 			if (col.hide === true) {
 				columnVisibilityModel[col.id || col.field] = false;
 			}
+		}
+		return columnVisibilityModel;
+	}
+
+	_getDefaultValues(defaultValues) {
+		for (const col of this.columns) {
+			const name = col.field || col.id;
 			defaultValues[name] = col.defaultValue === undefined ? (defaultValueConfigs[col.type] || "") : col.defaultValue;
 		}
-		this.columnVisibilityModel = columnVisibilityModel;
-		this.defaultValues = defaultValues;
+		return defaultValues;
 	}
 
 	getValidationSchema({ id }) {
@@ -126,7 +136,7 @@ class UiModel {
 				case 'password':
 					config = yup.string()
 						.label(formLabel)
-						.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
+						.test("ignore-asterisks", `${formLabel} must be a valid password.`, (value) => {
 							// Skip further validations if value is exactly "******"
 							if (value === "******") return true;
 							const minlength = Number(min) || 8;
@@ -136,7 +146,7 @@ class UiModel {
 							return yup.string()
 								.min(minlength, `${formLabel} must be at least ${minlength} characters`)
 								.max(maxlength, `${formLabel} must be at most ${maxlength} characters`)
-								.x(
+								.matches(
 									regex,
 									`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
 								)

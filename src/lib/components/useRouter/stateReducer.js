@@ -1,6 +1,5 @@
 import actionsStateProvider from "./actions";
 const stateReducer = (state, action) => {
-    let newState;
     switch (action.type) {
         case actionsStateProvider.UPDATE_LOCALIZATION:
             return { ...state, dataLocalization: action.payload };
@@ -31,8 +30,7 @@ const stateReducer = (state, action) => {
         case actionsStateProvider.PASS_FILTERS_TOHEADER:
             return { ...state, filtersInHeader: action.payload };
         case actionsStateProvider.SET_TIMEZONE:
-            newState = { ...state, timeZone: action.payload };
-            return newState;
+            return { ...state, timeZone: action.payload };
         default:
             return state;
     }

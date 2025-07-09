@@ -83,15 +83,15 @@ const transport = async config => {
   }
   const response = await fetch(url, fetchOptions);
   const contentType = response.headers.get('content-type') || {};
-  const repsonseObj = {
+  const responseObj = {
     status: response.status,
     data: contentType.includes('application/json') ? await response.json() : await response.text(),
     headers: Object.fromEntries(response.headers.entries())
   };
   if (!response.ok) {
-    repsonseObj.status = response.INTERNAL_SERVER_ERROR;
+    responseObj.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
   }
-  return repsonseObj;
+  return responseObj;
 };
 exports.transport = transport;
 const request = async _ref => {
@@ -130,29 +130,28 @@ const request = async _ref => {
     const response = await transport(reqParams);
     pendingRequests--;
     const data = response.data;
-    if (!response) {
-      dispatchData({
-        type: _actions.default.UPDATE_LOADER_STATE,
-        payload: false
-      });
-      return data;
-    }
     if (pendingRequests === 0 && !disableLoader) {
       dispatchData({
         type: 'UPDATE_LOADER_STATE',
         loaderOpen: false
       });
     }
-    if (response.status === HTTP_STATUS_CODES.OK) {
-      const json = response.data;
-      if (json.success === false && json.info === 'Session has expired!') {
-        history('/login');
-        return;
-      }
-      return data;
+
+    // Handle HTTP errors here
+    if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+      history('/login');
+      return;
     }
+    if (response.status !== HTTP_STATUS_CODES.OK) {
+      // You can return the error object or handle as needed
+      return {
+        data: {
+          message: data.message || 'An error occurred'
+        }
+      };
+    }
+    return data;
   } catch (ex) {
-    var _ex$response;
     pendingRequests--;
     if (pendingRequests === 0) {
       dispatchData({
@@ -160,17 +159,12 @@ const request = async _ref => {
         loaderOpen: false
       });
     }
-    if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-      dispatchData({
-        type: _actions.default.SET_USER_DATA,
-        userData: {}
-      });
-      history('/login');
-    } else {
-      return {
-        error: ex.response
-      };
-    }
+    // Only network errors will be caught here
+    return {
+      data: {
+        message: ex.message || 'Network error'
+      }
+    };
   }
 };
 var _default = exports.default = request;

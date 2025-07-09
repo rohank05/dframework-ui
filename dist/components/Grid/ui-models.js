@@ -93,7 +93,6 @@ class UiModel {
       api,
       idProperty = api + 'Id'
     } = modelConfig;
-    // if module is not specified, use title as module name after removing all alphanumeric characters
     const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
     if (!api) {
       api = "".concat(title.replaceAll(regexConfig.nonAlphaNumeric, '-').toLowerCase());
@@ -105,7 +104,6 @@ class UiModel {
     Object.assign(this, _objectSpread(_objectSpread({
       standard: true,
       name,
-      // for child grid wuth no specific module but wants name to be identified in models list in relations.
       permissions: _objectSpread({}, UiModel.defaultPermissions),
       idProperty,
       linkColumn: "".concat(name, "Name"),
@@ -116,16 +114,24 @@ class UiModel {
     }, modelConfig), {}, {
       api
     }));
+    this.columnVisibilityModel = this._getColumnVisibilityModel();
+    this.defaultValues = this._getDefaultValues(defaultValues);
+  }
+  _getColumnVisibilityModel() {
     const columnVisibilityModel = {};
     for (const col of this.columns) {
-      const name = col.field || col.id;
       if (col.hide === true) {
         columnVisibilityModel[col.id || col.field] = false;
       }
+    }
+    return columnVisibilityModel;
+  }
+  _getDefaultValues(defaultValues) {
+    for (const col of this.columns) {
+      const name = col.field || col.id;
       defaultValues[name] = col.defaultValue === undefined ? defaultValueConfigs[col.type] || "" : col.defaultValue;
     }
-    this.columnVisibilityModel = columnVisibilityModel;
-    this.defaultValues = defaultValues;
+    return defaultValues;
   }
   getValidationSchema(_ref3) {
     let {
@@ -198,14 +204,14 @@ class UiModel {
           }
           break;
         case 'password':
-          config = yup.string().label(formLabel).test("ignore-asterisks", "".concat(formLabel, " must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character"), value => {
+          config = yup.string().label(formLabel).test("ignore-asterisks", "".concat(formLabel, " must be a valid password."), value => {
             // Skip further validations if value is exactly "******"
             if (value === "******") return true;
             const minlength = Number(min) || 8;
             const maxlength = Number(max) || 50;
             const regex = column.regex || regexConfig.password;
             // Check minimum length, maximum length, and pattern if not "******"
-            return yup.string().min(minlength, "".concat(formLabel, " must be at least ").concat(minlength, " characters")).max(maxlength, "".concat(formLabel, " must be at most ").concat(maxlength, " characters")).x(regex, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character")).isValidSync(value);
+            return yup.string().min(minlength, "".concat(formLabel, " must be at least ").concat(minlength, " characters")).max(maxlength, "".concat(formLabel, " must be at most ").concat(maxlength, " characters")).matches(regex, "".concat(formLabel, " must contain at least one lowercase letter, one uppercase letter, one digit, and one special character")).isValidSync(value);
           });
           break;
         case 'email':

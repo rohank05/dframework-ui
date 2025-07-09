@@ -41,10 +41,10 @@ export default [
             'comma-dangle': ['error', 'never'],          // Disallow trailing commas
 
             // React-specific rules
-            'react/jsx-uses-react': 'off', // Not needed in React 17+
-            'react/react-in-jsx-scope': 'off', // Not needed in React 17+
+            'react/jsx-uses-react': 'on', // Not needed in React 17+
+            'react/react-in-jsx-scope': 'on', // Not needed in React 17+
             'react/jsx-uses-vars': 'error',
-            'no-undef': ['error', { 'typeof': true, 'varsIgnorePattern': '^React$' }],
+            'no-undef': ['error', { 'typeof': true}],
 
             // Hooks rules
             'react-hooks/rules-of-hooks': 'error',

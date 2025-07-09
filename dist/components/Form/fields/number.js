@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.starts-with.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -39,6 +40,8 @@ const resolveValue = _ref => {
   }
   return value;
 };
+// allowing backspace, delete, tab, escape and enter;
+const allowedKeyCodes = [8, 46, 9, 27, 13];
 const Field = _ref2 => {
   let {
       column,
@@ -49,7 +52,7 @@ const Field = _ref2 => {
     props = _objectWithoutProperties(_ref2, _excluded);
   const {
     minValue: min,
-    maxValue: max
+    minvalueue: max
   } = column;
   const resolvedMin = resolveValue({
     value: min,
@@ -61,16 +64,16 @@ const Field = _ref2 => {
   });
   const minKey = 47;
   const maxKey = 58;
-  const maxval = Math.max(0, resolvedMin);
+  const minvalue = Math.max(0, resolvedMin);
   const debouncedSetFieldValue = (0, _react.useCallback)((0, _lodash.default)((field, value) => {
-    if (value < maxval) {
-      formik.setFieldValue(field, maxval);
+    if (value < minvalue) {
+      formik.setFieldValue(field, minvalue);
     } else if (resolvedMax && value > resolvedMax) {
       formik.setFieldValue(field, resolvedMax);
     } else {
       formik.setFieldValue(field, value);
     }
-  }, 400), [resolvedMin, resolvedMax, formik.values]);
+  }, 400), [resolvedMin, resolvedMax, formik.setFieldValue]);
   const {
     onBlur
   } = props;
@@ -82,6 +85,11 @@ const Field = _ref2 => {
         readOnly: column.readOnly === true,
         onKeyPress: event => {
           const keyCode = event.which ? event.which : event.keyCode;
+          // Allow: backspace, delete, tab, escape, enter, arrows
+          if (allowedKeyCodes.includes(keyCode) || keyCode >= 37 && keyCode <= 40) {
+            return;
+          }
+          // Allow number keys (0-9)
           if (!(keyCode > minKey && keyCode < maxKey)) {
             event.preventDefault();
           }

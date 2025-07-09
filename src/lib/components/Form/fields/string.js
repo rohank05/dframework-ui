@@ -2,6 +2,7 @@ import TextField from '@mui/material/TextField';
 import React from 'react';
 
 const field = ({ column, field, formik, otherProps }) => {
+    const rows = column.rows || (column.multiline ? 5 : 1);
     return <TextField
         type="text"
         variant={column.variant || "standard"}
@@ -9,12 +10,12 @@ const field = ({ column, field, formik, otherProps }) => {
             readOnly: column.readOnly === true,
             sx: column.readOnly
                 ? { backgroundColor: '#dfdede' } // Light grey background for read-only inputs
-                : undefined,
+                : undefined
         }}
         key={field}
-        required={column?.required}
+        required={column.required}
         multiline={column.multiline}
-        rows={column.rows || 5}
+        rows={rows}
         fullWidth
         name={field}
         value={formik.values[field]}
@@ -25,7 +26,7 @@ const field = ({ column, field, formik, otherProps }) => {
         autoComplete={column.autoComplete}
         {...otherProps}
         defaultValue={column.defaultValue}
-    />
+    />;
 };
 
 export default field;

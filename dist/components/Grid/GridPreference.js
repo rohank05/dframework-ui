@@ -99,6 +99,7 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
+const pageSizeOptions = [5, 10, 20, 50, 100];
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
   let {
@@ -380,6 +381,7 @@ const GridPreferences = _ref => {
     }
   };
   const prefName = formik.values.prefName.trim();
+  // represent manage preferences form type.
   const isManageForm = formType === formTypes.Manage;
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     id: "grid-preferences-btn",
@@ -550,7 +552,7 @@ const GridPreferences = _ref => {
     className: "pagination-fix",
     onCellClick: onCellClick,
     columns: gridColumns,
-    pageSizeOptions: [5, 10, 20, 50, 100],
+    pageSizeOptions: pageSizeOptions,
     pagination: true,
     rowCount: filteredPrefs.length,
     rows: filteredPrefs,

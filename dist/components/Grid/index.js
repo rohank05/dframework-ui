@@ -20,7 +20,6 @@ require("core-js/modules/es.string.ends-with.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/es.string.replace.js");
 require("core-js/modules/es.string.search.js");
-require("core-js/modules/es.string.trim.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.every.js");
 require("core-js/modules/esnext.iterator.filter.js");
@@ -43,21 +42,19 @@ require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
 var _Button = _interopRequireDefault(require("@mui/material/Button"));
-var _react = _interopRequireWildcard(require("react"));
 var _xDataGridPremium = require("@mui/x-data-grid-premium");
 var _Delete = _interopRequireDefault(require("@mui/icons-material/Delete"));
 var _FileCopy = _interopRequireDefault(require("@mui/icons-material/FileCopy"));
 var _Article = _interopRequireDefault(require("@mui/icons-material/Article"));
 var _Edit = _interopRequireDefault(require("@mui/icons-material/Edit"));
 var _FilterListOff = _interopRequireDefault(require("@mui/icons-material/FilterListOff"));
+var _react = _interopRequireWildcard(require("react"));
 var _Add = _interopRequireDefault(require("@mui/icons-material/Add"));
 var _Remove = _interopRequireDefault(require("@mui/icons-material/Remove"));
 var _Typography = _interopRequireDefault(require("@mui/material/Typography"));
-var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
 var _index = require("../SnackBar/index");
 var _index2 = require("../Dialog/index");
 var _crudHelper = require("./crud-helper");
-var _propTypes = _interopRequireDefault(require("prop-types"));
 var _footer = require("./footer");
 var _template = _interopRequireDefault(require("./template"));
 var _material = require("@mui/material");
@@ -75,16 +72,16 @@ var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
 var _Checkbox = _interopRequireDefault(require("@mui/material/Checkbox"));
 var _reactI18next = require("react-i18next");
-const _excluded = ["exportFormats"],
-  _excluded2 = ["model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"];
+var _helper = require("./helper");
+const _excluded = ["model", "columns", "api", "defaultSort", "setActiveRecord", "parentFilters", "parent", "where", "title", "permissions", "selected", "assigned", "available", "disableCellRedirect", "onAssignChange", "customStyle", "onCellClick", "showRowsSelected", "chartFilters", "clearChartFilter", "showFullScreenLoader", "customFilters", "onRowDoubleClick", "onRowClick", "gridStyle", "reRenderKey", "additionalFilters", "onCellDoubleClickOverride", "onAddOverride", "dynamicColumns", "readOnly"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 const defaultPageSize = 10;
@@ -129,7 +126,8 @@ const constants = {
   left: 'left',
   dateTime: 'dateTime',
   actions: 'actions',
-  function: 'function'
+  function: 'function',
+  pageSizeOptions: [5, 10, 20, 50, 100]
 };
 const auditColumnMappings = [{
   key: 'addCreatedOnColumn',
@@ -178,82 +176,7 @@ const useStyles = (0, _makeStyles.default)({
     textOverflow: 'ellipsis'
   }
 });
-const convertDefaultSort = defaultSort => {
-  if (typeof defaultSort !== constants.string) return [];
-  return defaultSort.split(',').map(sortField => {
-    sortRegex.lastIndex = 0;
-    const sortInfo = sortRegex.exec(sortField);
-    if (!sortInfo) return null;
-    const [, field, direction = 'ASC'] = sortInfo;
-    return {
-      field: field.trim(),
-      sort: direction.trim().toLowerCase()
-    };
-  }).filter(Boolean);
-};
-const ExportMenuItem = _ref => {
-  let {
-    tTranslate,
-    tOpts,
-    handleExport,
-    contentType,
-    type,
-    isPivotExport = false
-  } = _ref;
-  return /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
-    onClick: handleExport,
-    "data-type": type,
-    "data-content-type": contentType,
-    "data-is-pivot-export": isPivotExport
-  }, tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
-};
-ExportMenuItem.propTypes = {
-  hideMenu: _propTypes.default.func
-};
-const CustomExportButton = _ref2 => {
-  let {
-      exportFormats
-    } = _ref2,
-    props = _objectWithoutProperties(_ref2, _excluded);
-  return /*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridToolbarExportContainer, props, exportFormats.csv !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "csv",
-    contentType: "text/csv"
-  })), exportFormats.excel !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "excel",
-    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  })), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "excel With Pivot",
-    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    isPivotExport: true
-  })), exportFormats.xml !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "xml",
-    contentType: "text/xml"
-  })), exportFormats.html !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "html",
-    contentType: "text/html"
-  })), exportFormats.json !== false && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
-    type: "json",
-    contentType: "application/json"
-  })));
-};
-const areEqual = function areEqual() {
-  let prevProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  let nextProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  let equal = true;
-  for (const o in prevProps) {
-    if (prevProps[o] !== nextProps[o]) {
-      equal = false;
-    }
-  }
-  for (const o in nextProps) {
-    if (!(o in prevProps)) {
-      equal = false;
-    }
-  }
-  return equal;
-};
-// TODO: Add support for additional languages in localization (e.g., translations for filterValueTrue, filterValueFalse, etc.)
-const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
+const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
   var _model$columns$find, _model$tTranslate, _model$module;
   let {
       model,
@@ -287,9 +210,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       onAddOverride,
       dynamicColumns,
       readOnly = false
-    } = _ref3,
-    props = _objectWithoutProperties(_ref3, _excluded2);
-  // TODO: Add constants for default values like defaultPageSize and recordCounts.
+    } = _ref,
+    props = _objectWithoutProperties(_ref, _excluded);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({
     pageSize: defaultPageSize,
     page: 0
@@ -303,8 +225,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const forAssignment = !!onAssignChange;
   const rowsSelected = showRowsSelected;
   const [selection, setSelection] = (0, _react.useState)([]);
-  const [isOrderDetailModalOpen, setIsOrderDetailModalOpen] = (0, _react.useState)(false);
-  const [selectedOrder, setSelectedOrder] = (0, _react.useState)(null);
   const [isDeleting, setIsDeleting] = (0, _react.useState)(false);
   const [record, setRecord] = (0, _react.useState)(null);
   const visibilityModel = _objectSpread({
@@ -323,7 +243,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     i18n
   };
   const [errorMessage, setErrorMessage] = (0, _react.useState)('');
-  const [sortModel, setSortModel] = (0, _react.useState)(convertDefaultSort(defaultSort || model.defaultSort));
+  const [sortModel, setSortModel] = (0, _react.useState)((0, _helper.convertDefaultSort)(defaultSort || model.defaultSort, constants, sortRegex));
   const initialFilterModel = {
     items: [],
     logicOperator: 'and',
@@ -363,10 +283,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   const isDoubleClicked = model.allowDoubleClick === false;
   const dataRef = (0, _react.useRef)(data);
   const showAddIcon = model.showAddIcon === true;
-  const toLink = model.columns.filter(_ref4 => {
+  const toLink = model.columns.filter(_ref2 => {
     let {
       link
-    } = _ref4;
+    } = _ref2;
     return Boolean(link);
   }).map(item => item.link);
   const [isGridPreferenceFetched, setIsGridPreferenceFetched] = (0, _react.useState)(false);
@@ -393,7 +313,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         Url: url,
         withControllersUrl,
         defaultPreferenceEnums,
-        preferenceApi
+        preferenceApi,
+        historyScreenName = "historyScreen"
       } = {}
     } = {},
     currentPreference
@@ -439,10 +360,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     return {};
   })();
   const selectedSet = (0, _react.useRef)(new Set());
-  const handleSelectRow = _ref5 => {
+  const handleSelectRow = _ref3 => {
     let {
       row
-    } = _ref5;
+    } = _ref3;
     const rowId = row[idProperty];
     const isSelected = selectedSet.current.has(rowId);
     if (isSelected) {
@@ -539,8 +460,8 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       });
       return;
     }
-    const items = Object.entries(customFilters).reduce((acc, _ref6) => {
-      let [key, value] = _ref6;
+    const items = Object.entries(customFilters).reduce((acc, _ref4) => {
+      let [key, value] = _ref4;
       if (key === constants.startDate || key === constants.endDate) {
         acc.push(value);
       } else if (key in customFilters) {
@@ -560,10 +481,10 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       quickFilterLogicOperator: "and"
     });
   }, [customFilters]);
-  const lookupOptions = _ref7 => {
+  const lookupOptions = _ref5 => {
     let {
       field
-    } = _ref7;
+    } = _ref5;
     const lookupData = dataRef.current.lookups || {};
     return lookupData[lookupMap[field].lookup] || [];
   };
@@ -665,13 +586,13 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       };
     }
     if (auditColumns && typeof auditColumns === constants.object) {
-      auditColumnMappings.forEach(_ref8 => {
+      auditColumnMappings.forEach(_ref6 => {
         let {
           key,
           field,
           type,
           header
-        } = _ref8;
+        } = _ref6;
         if (auditColumns[key] === true) {
           const column = {
             field,
@@ -733,12 +654,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
         }));
       }
       if (customActions.length) {
-        customActions.forEach(_ref9 => {
+        customActions.forEach(_ref7 => {
           let {
             icon,
             action,
             color
-          } = _ref9;
+          } = _ref7;
           actions.push(/*#__PURE__*/_react.default.createElement(_xDataGridPremium.GridActionsCellItem, {
             icon: /*#__PURE__*/_react.default.createElement(_material.Tooltip, {
               title: action
@@ -870,12 +791,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       isElasticExport
     });
   };
-  const openForm = _ref0 => {
+  const openForm = _ref8 => {
     let {
       id,
       record = {},
       mode
-    } = _ref0;
+    } = _ref8;
     if (setActiveRecord) {
       (0, _crudHelper.getRecord)({
         id,
@@ -911,11 +832,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     }
     navigate(path);
   };
-  const handleDownload = async _ref1 => {
+  const handleDownload = async _ref9 => {
     let {
       documentLink,
       fileName
-    } = _ref1;
+    } = _ref9;
     if (!documentLink) return;
     try {
       const response = await fetch(documentLink);
@@ -994,7 +915,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
           break;
         case actionTypes.History:
           // navigates to history screen, specifying the tablename, id of record and breadcrumb to render title on history screen.
-          return navigate("historyScreen?tableName=".concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
+          return navigate("".concat(historyScreenName, "?tableName=").concat(tableName, "&id=").concat(record[idProperty], "&breadCrumb=").concat(searchParamKey ? searchParams.get(searchParamKey) : gridTitle));
         default:
           // Check if action matches any customAction and call its onClick if found
           const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === constants.function);
@@ -1015,10 +936,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       });
     }
     if (!toLink.length) {
-      return;
-    }
-    if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
-      onCellClick(cellParams.row);
       return;
     }
     const {
@@ -1089,11 +1006,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       onRowDoubleClick(event);
     }
   };
-  const handleCloseOrderDetailModal = () => {
-    setIsOrderDetailModalOpen(false);
-    setSelectedOrder(null);
-    fetchData();
-  };
   const handleAddRecords = async () => {
     if (selectedSet.current.size < 1) {
       snackbar.showError("Please select at least one record to proceed");
@@ -1156,11 +1068,11 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       clearChartFilter();
     }
   };
-  const updateAssignment = _ref10 => {
+  const updateAssignment = _ref0 => {
     let {
       unassign,
       assign
-    } = _ref10;
+    } = _ref0;
     const assignedValues = Array.isArray(selected) ? selected : selected.length ? selected.split(',') : [];
     const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
     onAssignChange(typeof selected === constants.string ? finalValues.join(',') : finalValues);
@@ -1271,7 +1183,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       startIcon: /*#__PURE__*/_react.default.createElement(_FilterListOff.default, null),
       onClick: clearFilters,
       size: "small"
-    }, "CLEAR FILTER")), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(CustomExportButton, {
+    }, "CLEAR FILTER")), effectivePermissions.export && /*#__PURE__*/_react.default.createElement(_helper.CustomExportButton, {
       handleExport: handleExport,
       showPivotExportBtn: model.pivotApi,
       exportFormats: model.exportFormats || {},
@@ -1473,7 +1385,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
     onCellDoubleClick: onCellDoubleClick,
     columns: gridColumns,
     paginationModel: paginationModel,
-    pageSizeOptions: [5, 10, 20, 50, 100],
+    pageSizeOptions: constants.pageSizeOptions,
     onPaginationModelChange: setPaginationModel,
     pagination: true,
     rowCount: data.recordCount,
@@ -1523,16 +1435,6 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
       filterValueTrue: 'Yes',
       filterValueFalse: 'No'
     }
-  }), isOrderDetailModalOpen && selectedOrder && model.OrderModal && /*#__PURE__*/_react.default.createElement(model.OrderModal, {
-    orderId: selectedOrder.OrderId,
-    isOpen: true,
-    orderTotal: selectedOrder.OrderTotal,
-    orderDate: selectedOrder.OrderDateTime,
-    orderStatus: selectedOrder.OrderStatus,
-    customerNumber: selectedOrder.CustomerPhoneNumber,
-    customerName: selectedOrder.CustomerName,
-    customerEmail: selectedOrder.CustomerEmailAddress,
-    onClose: handleCloseOrderDetailModal
   }), errorMessage && /*#__PURE__*/_react.default.createElement(_index2.DialogComponent, {
     open: !!errorMessage,
     onConfirm: clearError,
@@ -1560,5 +1462,5 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref3 => {
   }, /*#__PURE__*/_react.default.createElement("span", {
     className: classes.deleteContent
   }, "Are you sure you want to add ", selectedSet.current.size, " records?")))));
-}, areEqual);
+}, _helper.areEqual);
 var _default = exports.default = GridBase;

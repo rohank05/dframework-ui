@@ -40,7 +40,7 @@ const initialValues = {
     prefDesc: '',
     isDefault: false
 };
-
+const pageSizeOptions = [5, 10, 20, 50, 100];
 const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
     const { stateData, dispatchData, removeCurrentPreferenceName, getAllSavedPreferences } = useStateContext();
     const { navigate } = useRouter();
@@ -241,6 +241,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     };
 
     const prefName = formik.values.prefName.trim();
+    // represent manage preferences form type.
     const isManageForm = formType === formTypes.Manage;
     return (
         <Box>
@@ -428,7 +429,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                                 className="pagination-fix"
                                 onCellClick={onCellClick}
                                 columns={gridColumns}
-                                pageSizeOptions={[5, 10, 20, 50, 100]}
+                                pageSizeOptions={pageSizeOptions}
                                 pagination
                                 rowCount={filteredPrefs.length}
                                 rows={filteredPrefs}
