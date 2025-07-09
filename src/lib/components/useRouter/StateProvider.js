@@ -38,7 +38,7 @@ const StateProvider = ({ children }) => {
           if (showOnlyDate) {
             userDateFormat = userDateFormat[0].toUpperCase();
           } else {
-            userDateFormat[1] += ':ss';
+            userDateFormat[1] += !userDateFormat[1].includes(':ss') ? ':ss' : '';
             userDateFormat = userDateFormat.join(" ");
           }
         } else {

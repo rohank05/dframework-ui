@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.useStateContext = exports.useRouter = exports.StateProvider = exports.RouterProvider = void 0;
 require("core-js/modules/es.error.cause.js");
+require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.unshift.js");
 require("core-js/modules/es.promise.js");
+require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
 require("core-js/modules/web.dom-collections.iterator.js");
@@ -52,7 +54,7 @@ const StateProvider = _ref => {
           if (showOnlyDate) {
             userDateFormat = userDateFormat[0].toUpperCase();
           } else {
-            userDateFormat[1] += ':ss';
+            userDateFormat[1] += !userDateFormat[1].includes(':ss') ? ':ss' : '';
             userDateFormat = userDateFormat.join(" ");
           }
         } else {
