@@ -9,14 +9,14 @@ import { useCallback } from 'react';
 const Field = ({ isAdd, column, field, formik, otherProps, fieldConfigs = {}, mode }) => {
     const inputValue = formik.values[field]?.length ? formik.values[field].split(",") : [];
     const isDisabled = mode !== 'copy' ? fieldConfigs.disabled : false;
-    const fixedOptions = column.hasDefault && !isAdd ? inputValue[0] : [];
+    const fixedOptions = column.hasDefault && !isAdd ? [inputValue[0]] : [];
 
     const handleAutoCompleteChange = useCallback((e, newValue, action, item = {}) => {
         const lastElement = newValue.pop()?.trim();
         if (!newValue.includes(lastElement)) {
             newValue.push(lastElement);
         }
-        if (fixedOptions && fixedOptions === item.option && action === "removeOption") {
+        if (fixedOptions && fixedOptions.includes(item.option) && action === "removeOption") {
             newValue = [item.option];
         }
         formik.setFieldValue(field, newValue?.join(',') || '');
@@ -47,7 +47,7 @@ const Field = ({ isAdd, column, field, formik, otherProps, fieldConfigs = {}, mo
                                 key={key}
                                 label={option}
                                 {...tagProps}
-                                disabled={fixedOptions===option}
+                                disabled={fixedOptions.includes(option)}
                             />
                         );
                     })
