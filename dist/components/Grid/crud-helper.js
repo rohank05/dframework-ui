@@ -204,7 +204,7 @@ const getList = async _ref => {
       credentials: 'include'
     };
     setData(prevData => _objectSpread(_objectSpread({}, prevData), {}, {
-      records: []
+      records: [] // reset records to empty array before fetching new data
     }));
     const response = await (0, _httpRequest.transport)(params);
     function isLocalTime(dateValue) {

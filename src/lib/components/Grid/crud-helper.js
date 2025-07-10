@@ -140,7 +140,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         };
         setData(prevData => ({
             ...prevData,
-            records: []
+            records: [] // reset records to empty array before fetching new data
         }));
         const response = await transport(params);
         function isLocalTime(dateValue) {
