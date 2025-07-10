@@ -289,14 +289,14 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                     {tTranslate('Manage Preferences', tOpts)}
                 </MenuItem>
 
-                {preferences?.length > 0 && preferences?.map((ele, key) => {
+                {preferences?.length > 0 && preferences?.map((ele) => {
                     const { prefName, prefDesc, prefId } = ele;
                     return (
                         <MenuItem
-                            onClick={() => applySelectedPreference(prefId, key)}
+                            onClick={() => applySelectedPreference(prefId)}
                             component={ListItem}
                             selected={currentPreference === prefName}
-                            key={`pref-item-${key}`}
+                            key={`pref-item-${prefId}`}
                             title={tTranslate(prefDesc, tOpts)}
                             dense
                         >
@@ -308,8 +308,6 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             <DialogComponent
                 open={openDialog}
                 disableRestoreFocus
-                onConfirm={formik.handleSubmit}
-                onCancel={handleDialogClose}
                 title={
                     <Stack direction="row" columnGap={2}>
                         <Typography variant="h5" >
@@ -319,7 +317,6 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
                 }
                 maxWidth={isManageForm ? 'md' : 'sm'}
                 fullWidth
-                customActions={true}
             >
                 {openForm && (
                     <Grid

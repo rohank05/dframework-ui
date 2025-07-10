@@ -20,14 +20,13 @@ import DialogTitle from '@mui/material/DialogTitle';
  * @param {React.ReactNode} props.children - The content of the dialog.
  * @param {string} [props.maxWidth='sm'] - The maxWidth of the dialog (xs, sm, md, lg, xl).
  * @param {boolean} [props.fullWidth=true] - If true, the dialog stretches to the full width of its container.
- * @param {boolean} [props.customActions=false] - If true, hides default actions so custom actions can be rendered via children
  * @param {Object} [props.props] - Additional props passed to the MUI Dialog component.
  * @returns {JSX.Element} The rendered Dialog component.
  */
 
-const DialogComponent = ({ open, onConfirm, title = "Confirm", onCancel, okText, cancelText, yesNo = false, children, maxWidth = 'sm', fullWidth = true, customActions = false, ...props }) => {
-    okText = okText ? okText : (yesNo ? 'Yes' : 'Ok');
-    cancelText = cancelText ? cancelText : (yesNo ? 'No' : 'Cancel');
+const DialogComponent = ({ open, onConfirm, title = "Confirm", onCancel, okText, cancelText, yesNo = false, children, maxWidth = 'sm', fullWidth = true, ...props }) => {
+    okText = okText || (yesNo ? 'Yes' : 'Ok');
+    cancelText = cancelText || (yesNo ? 'No' : 'Cancel');
     return (
         <Dialog
             {...props}
@@ -44,13 +43,13 @@ const DialogComponent = ({ open, onConfirm, title = "Confirm", onCancel, okText,
             <DialogContent dividers>
                 <DialogContentText>{children}</DialogContentText>
             </DialogContent>
-            {!customActions && (
-                <DialogActions>
-                    <Button onClick={onCancel}>{cancelText}</Button>
-                    <Button onClick={onConfirm} autoFocus>{okText}</Button>
+            {(onCancel || onConfirm) && (
+                < DialogActions >
+                    {onCancel && <Button onClick={onCancel}>{cancelText}</Button>}
+                    {onConfirm && <Button onClick={onConfirm} autoFocus>{okText}</Button>}
                 </DialogActions>
             )}
-        </Dialog>
+        </Dialog >
     )
 }
 export { DialogComponent }

@@ -425,17 +425,17 @@ const GridPreferences = _ref => {
     dense: true,
     divider: (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0,
     onClick: () => openModal(formTypes.Manage, false)
-  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), tTranslate('Manage Preferences', tOpts)), (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.map((ele, key) => {
+  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), tTranslate('Manage Preferences', tOpts)), (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.map(ele => {
     const {
       prefName,
       prefDesc,
       prefId
     } = ele;
     return /*#__PURE__*/_react.default.createElement(_material.MenuItem, {
-      onClick: () => applySelectedPreference(prefId, key),
+      onClick: () => applySelectedPreference(prefId),
       component: _material.ListItem,
       selected: currentPreference === prefName,
-      key: "pref-item-".concat(key),
+      key: "pref-item-".concat(prefId),
       title: tTranslate(prefDesc, tOpts),
       dense: true
     }, /*#__PURE__*/_react.default.createElement(_material.ListItemText, {
@@ -444,8 +444,6 @@ const GridPreferences = _ref => {
   }))), /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: openDialog,
     disableRestoreFocus: true,
-    onConfirm: formik.handleSubmit,
-    onCancel: handleDialogClose,
     title: /*#__PURE__*/_react.default.createElement(_material.Stack, {
       direction: "row",
       columnGap: 2
@@ -453,8 +451,7 @@ const GridPreferences = _ref => {
       variant: "h5"
     }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts))),
     maxWidth: isManageForm ? 'md' : 'sm',
-    fullWidth: true,
-    customActions: true
+    fullWidth: true
   }, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
