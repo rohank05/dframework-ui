@@ -6,6 +6,16 @@ const lookupDataTypes = ['singleSelect'];
 const timeInterval = 200;
 
 const isLocalTime = (dateValue) => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
+function shouldApplyFilter(filter) {
+    const { operator, value, type } = filter;
+
+    const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+    const hasValidValue = value !== undefined &&
+        value !== null &&
+        (value !== '' || (type === 'number' && value === 0) || (type === 'boolean' && value === false));
+
+    return isUnaryOperator || hasValidValue;
+}
 
 const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, model, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
@@ -31,7 +41,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     const where = [];
     if (filterModel?.items?.length) {
         filterModel.items.forEach(filter => {
-            if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || (filter.value === false && filter.type === 'boolean')) {
+            if (shouldApplyFilter(filter)) {
                 const { field, operator, filterField } = filter;
                 let { value } = filter;
                 const column = gridColumns.filter((item) => item?.field === filter.field);
@@ -129,7 +139,10 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             },
             credentials: 'include'
         };
-
+        setData(prevData => ({
+            ...prevData,
+            records: [] // reset records to empty array before fetching new data
+        }));
         const response = await transport(params);
         if (response.status === HTTP_STATUS_CODES.OK) {
             const { records } = response.data;

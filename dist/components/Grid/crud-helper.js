@@ -33,6 +33,16 @@ const dateDataTypes = ['date', 'dateTime'];
 const lookupDataTypes = ['singleSelect'];
 const timeInterval = 200;
 const isLocalTime = dateValue => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
+function shouldApplyFilter(filter) {
+  const {
+    operator,
+    value,
+    type
+  } = filter;
+  const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+  const hasValidValue = value !== undefined && value !== null && (value !== '' || type === 'number' && value === 0 || type === 'boolean' && value === false);
+  return isUnaryOperator || hasValidValue;
+}
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -95,7 +105,7 @@ const getList = async _ref => {
   const where = [];
   if (filterModel !== null && filterModel !== void 0 && (_filterModel$items = filterModel.items) !== null && _filterModel$items !== void 0 && _filterModel$items.length) {
     filterModel.items.forEach(filter => {
-      if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value || filter.value === false && filter.type === 'boolean') {
+      if (shouldApplyFilter(filter)) {
         var _column$;
         const {
           field,
@@ -194,6 +204,9 @@ const getList = async _ref => {
       }, headers),
       credentials: 'include'
     };
+    setData(prevData => _objectSpread(_objectSpread({}, prevData), {}, {
+      records: [] // reset records to empty array before fetching new data
+    }));
     const response = await (0, _httpRequest.transport)(params);
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
