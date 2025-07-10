@@ -143,7 +143,7 @@ const ExportMenuItem = _ref => {
     "data-is-pivot-export": isPivotExport
   }, /*#__PURE__*/_react.default.createElement(_Box.default, {
     className: "grid-icons"
-  }, icon), tTranslate("Export", tOpts), " ", type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+  }, icon), type);
 };
 ExportMenuItem.propTypes = {
   hideMenu: _propTypes.default.func
@@ -152,38 +152,38 @@ const CustomExportButton = props => /*#__PURE__*/_react.default.createElement(_x
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.GridOn, {
     fontSize: "small"
   }),
-  type: "csv",
+  type: "CSV",
   contentType: "text/csv"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.TableChart, {
     fontSize: "small"
   }),
-  type: "excel",
+  type: "Excel",
   contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 })), props.showPivotExportBtn && /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.TableChart, {
     fontSize: "small"
   }),
-  type: "excel With Pivot",
+  type: "Excel with Pivot",
   contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   isPivotExport: true
 })), (props === null || props === void 0 ? void 0 : props.showOnlyExcelExport) !== true && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.Code, {
     fontSize: "small"
   }),
-  type: "xml",
+  type: "XML",
   contentType: "text/xml"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.Language, {
     fontSize: "small"
   }),
-  type: "html",
+  type: "HTML",
   contentType: "text/html"
 })), /*#__PURE__*/_react.default.createElement(ExportMenuItem, _extends({}, props, {
   icon: /*#__PURE__*/_react.default.createElement(_iconsMaterial.DataObject, {
     fontSize: "small"
   }),
-  type: "json",
+  type: "JSON",
   contentType: "application/json"
 }))));
 const areEqual = function areEqual() {
