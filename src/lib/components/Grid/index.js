@@ -55,14 +55,36 @@ const actionTypes = {
     Edit: "Edit",
     Delete: "Delete",
     History: "History",
-    Download: "Download",
-    NavigateToRelation: "NavigateToRelation"
+    Download: "Download"
 };
+const iconMapper = {
+    'article': <ArticleIcon />
+}
 const constants = {
     gridFilterModel: { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' },
-    permissions: { edit: true, add: true, export: true, delete: true, clearFilterText: "CLEAR THIS FILTER", showColumnsOrder: true, filter: true },
+    permissions: { edit: true, add: true, export: true, delete: true, showColumnsOrder: true, filter: true },
+    client: 'client',
+    server: 'server',
+    object: 'object',
+    startDate: 'startDate',
+    endDate: 'endDate',
+    oneToMany: 'oneToMany',
+    lookup: 'lookup',
+    Number: 'number',
+    string: 'string',
+    boolean: 'boolean',
+    right: 'right',
+    left: 'left',
+    dateTime: 'dateTime',
+    actions: 'actions',
+    function: 'function'
 }
-
+const auditColumnMappings = [
+    { key: 'addCreatedOnColumn', field: 'CreatedOn', type: 'dateTime', header: 'Created On' },
+    { key: 'addCreatedByColumn', field: 'CreatedByUser', type: 'string', header: 'Created By' },
+    { key: 'addModifiedOnColumn', field: 'ModifiedOn', type: 'dateTime', header: 'Modified On' },
+    { key: 'addModifiedByColumn', field: 'ModifiedByUser', type: 'string', header: 'Modified By' }
+];
 const booleanIconRenderer = (params) => {
     if (params.value) {
         return <CheckIcon style={{ color: 'green' }} />;
@@ -84,20 +106,21 @@ const useStyles = makeStyles({
 })
 
 const convertDefaultSort = (defaultSort) => {
-    const orderBy = [];
-    if (typeof defaultSort === 'string') {
-        const sortFields = defaultSort.split(',');
-        for (const sortField of sortFields) {
-            sortRegex.lastIndex = 0;
-            const sortInfo = sortRegex.exec(sortField);
-            if (sortInfo) {
-                const [, field, direction = 'ASC'] = sortInfo;
-                orderBy.push({ field: field.trim(), sort: direction.trim().toLowerCase() });
-            }
-        }
-    }
-    return orderBy;
+    if (typeof defaultSort !== constants.string) return [];
+
+    return defaultSort.split(',').map(sortField => {
+        sortRegex.lastIndex = 0;
+        const sortInfo = sortRegex.exec(sortField);
+        if (!sortInfo) return null;
+
+        const [, field, direction = 'ASC'] = sortInfo;
+        return {
+            field: field.trim(),
+            sort: direction.trim().toLowerCase()
+        };
+    }).filter(Boolean);
 };
+
 const ExportMenuItem = ({ tTranslate, tOpts, handleExport, contentType, type, isPivotExport = false }) => {
     return (
         <MenuItem
@@ -190,14 +213,14 @@ const GridBase = memo(({
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [record, setRecord] = useState(null);
-    const [visibilityModel, setVisibilityModel] = useState({ CreatedOn: false, CreatedByUser: false, ...model?.columnVisibilityModel });
+    const visibilityModel = { CreatedOn: false, CreatedByUser: false, ...model.columnVisibilityModel };
     const [showAddConfirmation, setShowAddConfirmation] = useState(false);
     const snackbar = useSnackbar();
-    const paginationMode = model.paginationMode === 'client' ? 'client' : 'server';
+    const paginationMode = model.paginationMode === constants.client ? constants.client : constants.server;
     const { t: translate, i18n } = useTranslation()
     const tOpts = { t: translate, i18n };
     const [errorMessage, setErrorMessage] = useState('');
-    const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model?.defaultSort));
+    const [sortModel, setSortModel] = useState(convertDefaultSort(defaultSort || model.defaultSort));
     const initialFilterModel = { items: [], logicOperator: 'and', quickFilterValues: Array(0), quickFilterLogicOperator: 'and' }
     if (model.defaultFilters) {
         initialFilterModel.items = [];
@@ -210,7 +233,7 @@ const GridBase = memo(({
     const { id: idWithOptions } = useParams() || getParams;
     const id = idWithOptions?.split('-')[0];
     const apiRef = useGridApiRef();
-    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, createdOnKeepLocal = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
+    const { idProperty = "id", showHeaderFilters = true, disableRowSelectionOnClick = true, hideBackButton = false, hideTopFilters = true, updatePageTitle = true, isElasticScreen = false, navigateBack = false, selectionApi = {} } = model;
     const isReadOnly = model.readOnly === true || readOnly;
     const isDoubleClicked = model.allowDoubleClick === false;
     const dataRef = useRef(data);
@@ -222,74 +245,63 @@ const GridBase = memo(({
     const { timeZone } = stateData;
     const effectivePermissions = { ...constants.permissions, ...stateData.gridSettings.permissions, ...model.permissions, ...permissions };
     const { Username } = stateData?.getUserData ? stateData.getUserData : {};
-    const routesWithNoChildRoute = stateData.gridSettings.permissions?.routesWithNoChildRoute || [];
-    const url = stateData?.gridSettings?.permissions?.Url;
-    const withControllersUrl = stateData?.gridSettings?.permissions?.withControllersUrl;
-    const currentPreference = stateData?.currentPreference;
-    const defaultPreferenceEnums = stateData?.gridSettings?.permissions?.defaultPreferenceEnums;
+    const {
+        gridSettings: {
+            permissions: {
+                routesWithNoChildRoute = [],
+                Url: url,
+                withControllersUrl,
+                defaultPreferenceEnums,
+                preferenceApi
+            } = {}
+        } = {},
+        currentPreference
+    } = stateData;
     const emptyIsAnyOfOperatorFilters = ["isEmpty", "isNotEmpty", "isAnyOf"];
     const userData = stateData.getUserData || {};
     const documentField = model.columns.find(ele => ele.type === 'fileUpload')?.field || "";
     const userDefinedPermissions = { add: effectivePermissions.add, edit: effectivePermissions.edit, delete: effectivePermissions.delete };
     const { canAdd, canEdit, canDelete } = getPermissions({ userData, model, userDefinedPermissions });
-    const filterFieldDataTypes = {
-        Number: 'number',
-        String: 'string',
-        Boolean: 'boolean'
-    };
     const tTranslate = model.tTranslate ?? ((key) => key);
-
-    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, navigateToRelation = [], breadcrumbColor } = model;
+    const { addUrlParamKey, searchParamKey, hideBreadcrumb = false, tableName, showHistory = true, hideBreadcrumbInGrid = false, breadcrumbColor } = model;
     const gridTitle = model.gridTitle || model.title;
-    const OrderSuggestionHistoryFields = {
-        OrderStatus: 'OrderStatusId'
-    }
-    const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
     const preferenceName = model.preferenceId || model.module?.preferenceId;
     const searchParams = new URLSearchParams(window.location.search);
 
-    let baseSaveData = {};
-
+    const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
+    const baseSaveData = (() => {
+        if (baseDataFromParams) {
+            const parsedData = JSON.parse(baseDataFromParams);
+            if (typeof parsedData === constants.object && parsedData !== null) {
+                return parsedData;
+            }
+        }
+        return {};
+    })();
     const selectedSet = useRef(new Set());
 
-    const baseDataFromParams = searchParams.has('baseData') && searchParams.get('baseData');
-    if (baseDataFromParams) {
-        const parsedData = JSON.parse(baseDataFromParams);
-        if (typeof parsedData === 'object' && parsedData !== null) {
-            baseSaveData = parsedData;
-        }
-    }
-
-    const handleSelectRow = (params) => {
-        const isAlreadySelected = Array.from(selectedSet.current).some(
-            (item) => item === params.row[idProperty]
-        );
-
-        if (isAlreadySelected) {
-            // Remove the object if it is already selected
-            selectedSet.current.delete(params.row[idProperty]);
-            setSelection(Array.from(selectedSet.current));
+    const handleSelectRow = ({ row }) => {
+        const rowId = row[idProperty];
+        const isSelected = selectedSet.current.has(rowId);
+        if (isSelected) {
+            selectedSet.current.delete(rowId);
         } else {
-            // Add the object if it is not selected
-            selectedSet.current.add(params.row[idProperty]);
-            setSelection(Array.from(selectedSet.current));
+            selectedSet.current.add(rowId);
         }
+        setSelection(Array.from(selectedSet.current));
     };
 
-
     const CustomCheckBox = (params) => {
-        const [isCheckedLocal, setIsCheckedLocal] = useState(false);
+        const rowId = params.row[idProperty];
+        const [isCheckedLocal, setIsCheckedLocal] = useState(selectedSet.current.has(rowId));
 
         useEffect(() => {
-            const isSelected = Array.from(selectedSet.current).some(
-                (item) => item === params.row[idProperty]
-            );
-            setIsCheckedLocal(isSelected);
+            setIsCheckedLocal(selectedSet.current.has(rowId));
+            // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [params.row, selectedSet.current.size]);
 
         const handleCheckboxClick = (event) => {
             event.stopPropagation();
-            setIsCheckedLocal(!isCheckedLocal);
             handleSelectRow(params);
         };
 
@@ -343,65 +355,41 @@ const GridBase = memo(({
     }, [data]);
 
     useEffect(() => {
-        if (customFilters && Object.keys(customFilters) != 0) {
-            if (customFilters.clear) {
-                let filterObject = {
-                    items: [],
-                    logicOperator: "and",
-                    quickFilterValues: [],
-                    quickFilterLogicOperator: "and"
-                }
-                setFilterModel(filterObject)
-                return
-            } else {
-                const newArray = [];
-                for (const key in customFilters) {
-                    if (key === 'startDate' || key === 'endDate') {
-                        newArray.push(customFilters[key])
-                    } else {
-                        if (customFilters.hasOwnProperty(key)) {
-                            const newObj = {
-                                field: key,
-                                value: customFilters[key],
-                                operator: "equals",
-                                type: "string"
-                            };
-                            newArray.push(newObj);
-                        }
-                    }
-                }
-                let filterObject = {
-                    items: newArray,
-                    logicOperator: "and",
-                    quickFilterValues: [],
-                    quickFilterLogicOperator: "and"
-                }
-                setFilterModel(filterObject)
-            }
+        if (!customFilters || !Object.keys(customFilters).length) return;
+        if (customFilters.clear) {
+            setFilterModel({ items: [], logicOperator: "and", quickFilterValues: [], quickFilterLogicOperator: "and" });
+            return;
         }
+        const items = Object.entries(customFilters).reduce((acc, [key, value]) => {
+            if (key === constants.startDate || key === constants.endDate) {
+                acc.push(value);
+            } else if (key in customFilters) {
+                acc.push({ field: key, value, operator: "equals", type: "string" });
+            }
+            return acc;
+        }, []);
+        setFilterModel({ items, logicOperator: "and", quickFilterValues: [], quickFilterLogicOperator: "and" });
     }, [customFilters]);
 
-    const lookupOptions = ({ row, field, id, ...others }) => {
+    const lookupOptions = ({ field }) => {
         const lookupData = dataRef.current.lookups || {};
         return lookupData[lookupMap[field].lookup] || [];
     };
 
     useEffect(() => {
-        if (props.isChildGrid) {
+        if (props.isChildGrid || !hideTopFilters) {
             return;
         }
-        if (hideTopFilters) {
-            dispatchData({
-                type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
-                    filterButton: null,
-                    hidden: { search: true, operation: true, export: true, print: true, filter: true }
-                }
-            });
-        }
+        dispatchData({
+            type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+                filterButton: null,
+                hidden: { search: true, operation: true, export: true, print: true, filter: true }
+            }
+        });
     }, []);
-
+    const { customActions = [] } = model;
     const { gridColumns, pinnedColumns, lookupMap } = useMemo(() => {
-        let baseColumnList = columns || model?.gridColumns || model?.columns;
+        let baseColumnList = columns || model.gridColumns || model.columns;
         if (dynamicColumns) {
             baseColumnList = [...dynamicColumns, ...baseColumnList];
         }
@@ -409,104 +397,81 @@ const GridBase = memo(({
         const finalColumns = [];
         const lookupMap = {};
         for (const column of baseColumnList) {
+            if (column.gridLabel === null || (parent && column.lookup === parent) || (column.type === constants.oneToMany && column.countInList === false)) continue;
             const overrides = {};
-            if (column.gridLabel === null) {
-                continue;
-            }
-            if (parent && column.lookup === parent) {
-                continue;
-            }
-            if (column.type === 'oneToMany') {
-                if (column.countInList === false) {
-                    continue;
-                }
+            if (column.type === constants.oneToMany) {
                 overrides.type = 'number';
                 overrides.field = column.field.replace(/s$/, 'Count');
             }
-
             if (gridColumnTypes[column.type]) {
                 Object.assign(overrides, gridColumnTypes[column.type]);
             }
-            if (overrides.valueOptions === "lookup") {
-                overrides.valueOptions = lookupOptions;
-                let lookupFilters = [...getGridDateOperators(), ...getGridStringOperators()].filter((operator) => ['is', 'not', 'isAnyOf'].includes(operator.value))
-                overrides.filterOperators = lookupFilters.map((operator) => ({
+            // Common filter operator pattern
+            if (overrides.valueOptions === constants.lookup || column.type === constants.boolean) {
+                let operators = [];
+
+                if (overrides.valueOptions === constants.lookup) {
+                    overrides.valueOptions = lookupOptions;
+                    const lookupFilters = [...getGridDateOperators(), ...getGridStringOperators()]
+                        .filter((op) => ['is', 'not', 'isAnyOf'].includes(op.value));
+                    operators = lookupFilters;
+                }
+
+                if (column.type === constants.boolean) {
+                    operators = getGridBooleanOperators();
+                }
+
+                overrides.filterOperators = operators.map((operator) => ({
                     ...operator,
-                    InputComponent: operator.InputComponent ? (params) => (
-                        <CustomDropdownmenu
-                            column={{
-                                ...column,
-                                dataRef: dataRef
-                            }}
-                            {...params}
-                            autoHighlight
-                        />
-                    ) : undefined
+                    InputComponent: operator.InputComponent
+                        ? (params) => (
+                            <CustomDropdownmenu
+                                column={{
+                                    ...column,
+                                    ...(column.type === constants.boolean
+                                        ? {
+                                            customLookup: [
+                                                { value: true, label: 'Yes' },
+                                                { value: false, label: 'No' },
+                                            ]
+                                        }
+                                        : {}),
+                                    dataRef,
+                                }}
+                                {...params}
+                                autoHighlight
+                            />
+                        )
+                        : undefined,
                 }));
             }
-            if (column.type === 'boolean') {
-                const booleanOperators = getGridBooleanOperators();
-                overrides.filterOperators = booleanOperators.map((operator) => ({
-                    ...operator,
-                    InputComponent: operator.InputComponent ? (params) => (
-                        <CustomDropdownmenu
-                            column={{
-                                ...column,
-                                customLookup: [
-                                    { value: true, label: 'Yes' },
-                                    { value: false, label: 'No' },
-                                ],
-                                dataRef
-                            }}
-                            {...params}
-                            autoHighlight
-                        />
-                    ) : undefined
-                }));
-            }
-            if (column.linkTo) {
-                overrides.cellClassName = "mui-grid-linkColumn";
-            }
-            if (column.link) {
-                overrides.cellClassName = "mui-grid-linkColumn";
+            if (column.linkTo || column.link) {
+                overrides.cellClassName = 'mui-grid-linkColumn';
             }
             const headerName = tTranslate(column.gridLabel || column.label, tOpts);
             finalColumns.push({ headerName, description: headerName, ...column, ...overrides });
             if (column.pinned) {
-                pinnedColumns[column.pinned === 'right' ? 'right' : 'left'].push(column.field);
+                pinnedColumns[column.pinned === constants.right ? constants.right : constants.left].push(column.field);
             }
             lookupMap[column.field] = column;
-            column.label = column?.label
         }
-
         let auditColumns = model.standard;
-        if (typeof auditColumns === 'boolean' && auditColumns) {
-            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true }
+        if (auditColumns === true) {
+            auditColumns = { addCreatedOnColumn: true, addCreatedByColumn: true, addModifiedOnColumn: true, addModifiedByColumn: true };
         }
-
-        if (auditColumns && typeof auditColumns === 'object' && Object.keys(auditColumns).length > 0) {
-            const columnDefinitions = [
-                { key: "addCreatedOnColumn", field: "CreatedOn", type: "dateTime", header: "Created On" },
-                { key: "addCreatedByColumn", field: "CreatedByUser", type: "string", header: "Created By" },
-                { key: "addModifiedOnColumn", field: "ModifiedOn", type: "dateTime", header: "Modified On" },
-                { key: "addModifiedByColumn", field: "ModifiedByUser", type: "string", header: "Modified By" }
-            ];
-
-            columnDefinitions.forEach(({ key, field, type, header }) => {
-                if (auditColumns[key] === true) {  // Ensure the value is explicitly true
+        if (auditColumns && typeof auditColumns === constants.object) {
+            auditColumnMappings.forEach(({ key, field, type, header }) => {
+                if (auditColumns[key] === true) {
                     const column = { field, type, headerName: header, width: 200 };
-
-                    if (type === "dateTime") {
-                        column.filterOperators = LocalizedDatePicker({ columnType: "date" });
+                    if (type === constants.dateTime) {
+                        column.filterOperators = LocalizedDatePicker({ columnType: 'date' });
                         column.valueFormatter = gridColumnTypes.dateTime.valueFormatter;
                         column.keepLocal = true;
                     }
-
                     finalColumns.push(column);
                 }
             });
         }
-
         const actions = [];
         if (!forAssignment && !isReadOnly) {
             if (canEdit) {
@@ -521,14 +486,23 @@ const GridBase = memo(({
             if (showHistory) {
                 actions.push(<GridActionsCellItem icon={<Tooltip title="History"><HistoryIcon /> </Tooltip>} data-action={actionTypes.History} label="History" color="primary" />);
             }
-            if (navigateToRelation.length > 0) {
-                actions.push(<GridActionsCellItem icon={<Tooltip title=""><ArticleIcon /> </Tooltip>} data-action={actionTypes.NavigateToRelation} color="primary" label="" />);
+            if (customActions.length) {
+                customActions.forEach(({ icon, action, color }) => {
+                    actions.push(
+                        <GridActionsCellItem
+                            icon={<Tooltip title={action}>{iconMapper[icon] || <CopyIcon />}</Tooltip>}
+                            data-action={action}
+                            label={action}
+                            color={color || "primary"}
+                        />
+                    );
+                });
             }
         }
         if (documentField.length) {
             actions.push(<GridActionsCellItem icon={<Tooltip title="Download document"><FileDownloadIcon /> </Tooltip>} data-action={actionTypes.Download} label="Download document" color="primary" />);
         }
-        if (actions.length > 0) {
+        if (actions.length) {
             finalColumns.push({
                 field: 'actions',
                 type: 'actions',
@@ -537,8 +511,8 @@ const GridBase = memo(({
                 hideable: false,
                 getActions: (params) => {
                     const rowActions = [...actions];
-                    const isDisabled = params.row.canEdit === false;
                     if (canEdit && !isReadOnly) {
+                        const isDisabled = params.row.canEdit === false;
                         rowActions[0] = (
                             <GridActionsCellItem
                                 icon={
@@ -560,77 +534,74 @@ const GridBase = memo(({
         pinnedColumns.right.push('actions');
         return { gridColumns: finalColumns, pinnedColumns, lookupMap };
     }, [columns, model, parent, permissions, forAssignment, dynamicColumns]);
+
     const fetchData = (action = "list", extraParams = {}, contentType, columns, isPivotExport, isElasticExport) => {
         const { pageSize, page } = paginationModel;
-        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url || ""}${model.api || api}`
 
-        let controllerType = model?.controllerType;
+        let controllerType = model.controllerType;
+        let gridApi = `${controllerType === "cs" ? withControllersUrl : url || ""}${model.api || api}`;
+
         if (isPivotExport) {
-            gridApi = `${withControllersUrl}${model?.pivotApi}`;
-            controllerType = 'cs';
+            gridApi = `${withControllersUrl}${model.pivotApi}`;
+            controllerType = "cs";
         }
+
         if (assigned || available) {
-            extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(',') : selected;
+            extraParams[assigned ? "include" : "exclude"] = Array.isArray(selected) ? selected.join(",") : selected;
         }
-        let filters = { ...filterModel }, finalFilters = { ...filterModel };
+
+        const filters = { ...filterModel };
         if (chartFilters?.items?.length > 0) {
-            let { columnField: field, operatorValue: operator } = chartFilters.items[0];
-            field = constants.chartFilterFields[field];
-            const chartFilter = [{ field: field, operator: operator, isChartFilter: false }];
-            filters.items = [...chartFilter];
+            const { columnField, operatorValue } = chartFilters.items[0] || {};
+            const chartField = constants.chartFilterFields[columnField];
+            filters.items = [{ field: chartField, operator: operatorValue, isChartFilter: false }];
             if (JSON.stringify(filterModel) !== JSON.stringify(filters)) {
                 setFilterModel({ ...filters });
-                finalFilters = filters;
                 chartFilters.items.length = 0;
             }
         }
+        const baseFilters = [];
         if (model.joinColumn && id) {
-            baseFilters = [
-                {
-                    field: model.joinColumn,
-                    operator: 'is',
-                    type: "number",
-                    value: Number(id)
-                }
-            ]
+            baseFilters.push({ field: model.joinColumn, operator: "is", type: "number", value: Number(id) });
         }
+
         if (additionalFilters) {
-            finalFilters.items = [...finalFilters.items, ...additionalFilters];
+            filters.items = [...(filters.items || []), ...additionalFilters];
         }
-        const isValidFilters = !finalFilters.items.length || finalFilters.items.every(item => item.hasOwnProperty('value') && item.value !== undefined);
-        if (!isValidFilters) {
-            return;
-        }
+
+        const isValidFilters = !filters.items.length || filters.items.every(item => "value" in item && item.value !== undefined);
+        if (!isValidFilters) return;
+
         getList({
             action,
             page: !contentType ? page : 0,
             pageSize: !contentType ? pageSize : 1000000,
             sortModel,
-            filterModel: finalFilters,
-            controllerType: controllerType,
+            filterModel: filters,
+            controllerType,
             api: gridApi,
             setIsLoading,
             setData,
             gridColumns,
-            modelConfig: model,
+            model,
             parentFilters,
             extraParams,
             setError: snackbar.showError,
             contentType,
             columns,
-            template: isPivotExport ? model?.exportTemplate : null,
-            configFileName: isPivotExport ? model?.configFileName : null,
+            template: isPivotExport ? model.exportTemplate : null,
+            configFileName: isPivotExport ? model.configFileName : null,
             dispatchData,
             showFullScreenLoader,
             history: navigate,
             baseFilters,
-            isElasticExport,
-            model: model
+            isElasticExport
         });
     };
+
     const openForm = ({ id, record = {}, mode }) => {
         if (setActiveRecord) {
-            getRecord({ id, api: api || model?.api, setIsLoading, setActiveRecord, modelConfig: model, parentFilters, where, model });
+            getRecord({ id, api: api || model.api, setIsLoading, setActiveRecord, model, parentFilters, where });
             return;
         }
         let path = pathname;
@@ -684,7 +655,7 @@ const GridBase = memo(({
     };
     const onCellClickHandler = async (cellParams, event, details) => {
         let action = cellParams.field === model.linkColumn ? actionTypes.Edit : null;
-        if (!action && cellParams.field === 'actions') {
+        if (!action && cellParams.field === constants.actions) {
             action = details?.action;
             if (!action) {
                 const el = event.target.closest('button');
@@ -697,7 +668,7 @@ const GridBase = memo(({
         if (!isReadOnly) {
             if (onCellClick) {
                 const result = await onCellClick({ cellParams, event, details });
-                if (typeof result !== "boolean") {
+                if (typeof result !== constants.boolean) {
                     return;
                 }
             }
@@ -708,56 +679,57 @@ const GridBase = memo(({
                 });
                 return;
             }
-            if (action === actionTypes.Edit) {
-                return openForm({ id: record[idProperty], record });
-            }
-            if (action === actionTypes.Copy) {
-                return openForm({ id: record[idProperty], mode: 'copy' });
-            }
-            if (action === actionTypes.Delete) {
-                setIsDeleting(true);
-                setRecord({ name: record[model?.linkColumn], id: record[idProperty] });
-            }
-            if (action === actionTypes.History) {
-                return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
-            }
-            if (action === actionTypes.NavigateToRelation) {
-                return navigate(`/masterScope/${record[idProperty]}?showRelation=${navigateToRelation}`);
+            switch (action) {
+                case actionTypes.Edit:
+                    return openForm({ id: record[idProperty], record });
+                case actionTypes.Copy:
+                    return openForm({ id: record[idProperty], mode: 'copy' });
+                case actionTypes.Delete:
+                    setIsDeleting(true);
+                    setRecord({ name: record[model.linkColumn], id: record[idProperty] });
+                    break;
+                case actionTypes.History:
+                    // navigates to history screen, specifying the tablename, id of record and breadcrumb to render title on history screen.
+                    return navigate(`historyScreen?tableName=${tableName}&id=${record[idProperty]}&breadCrumb=${searchParamKey ? searchParams.get(searchParamKey) : gridTitle}`);
+                default:
+                    // Check if action matches any customAction and call its onClick if found
+                    const foundCustomAction = customActions.find(ca => ca.action === action && typeof ca.onClick === constants.function);
+                    if (foundCustomAction) {
+                        foundCustomAction.onClick({ row: record, navigate });
+                        return;
+                    }
+                    break;
             }
         }
         if (action === actionTypes.Download) {
             handleDownload({ documentLink: record[documentField], fileName: record.FileName });
         }
-        if (toLink.length) {
-            if (model?.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
-                onCellClick(cellParams.row);
-                return;
-            }
-            const { row: record } = cellParams;
-            const columnConfig = lookupMap[cellParams.field] || {};
-            let historyObject = {
-                pathname: template.replaceTags(columnConfig.linkTo, record),
-            }
-
-            if (model.addRecordToState) {
-                historyObject.state = record
-            }
-            navigate(historyObject);
+        if (!toLink.length) {
+            return;
         }
+        if (model.isAcostaController && onCellClick && cellParams.colDef.customCellClick === true) {
+            onCellClick(cellParams.row);
+            return;
+        }
+        const { row } = cellParams;
+        const columnConfig = lookupMap[cellParams.field] || {};
+        const historyObject = {
+            pathname: template.replaceTags(columnConfig.linkTo, row)
+        }
+        if (model.addRecordToState) {
+            historyObject.state = row
+        }
+        navigate(historyObject);
     };
 
     const handleDelete = async function () {
-
-        let gridApi = `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`
-        const result = await deleteRecord({ id: record?.id, api: gridApi, setIsLoading, setError: snackbar.showError, setErrorMessage });
+        const result = await deleteRecord({ id: record.id, api: `${model.controllerType === 'cs' ? withControllersUrl : url}${model.api || api}`, setIsLoading, setError: snackbar.showError, setErrorMessage });
         if (result === true) {
             setIsDeleting(false);
             snackbar.showMessage('Record Deleted Successfully.');
             fetchData();
         } else {
-            setTimeout(() => {
-                setIsDeleting(false);
-            }, 200);
+            setIsDeleting(false);
         }
     }
     const clearError = () => {
@@ -766,38 +738,34 @@ const GridBase = memo(({
     };
 
     const processRowUpdate = (updatedRow) => {
-        if (props.processRowUpdate) {
+        if (typeof props.processRowUpdate === "function") {
             props.processRowUpdate(updatedRow, data);
         }
         return updatedRow;
     }
 
     const onCellDoubleClick = (event) => {
-        const { row: record } = event;
-        if (typeof onCellDoubleClickOverride === 'function') {
-            onCellDoubleClickOverride(event);
-            return;
-        }
-
         if (event.row.canEdit === false) {
             return;
         }
-
+        const { row: record } = event;
+        if (typeof onCellDoubleClickOverride === constants.function) {
+            onCellDoubleClickOverride(event);
+            return;
+        }
         if (!isReadOnly && !isDoubleClicked && !disableCellRedirect) {
             openForm({ id: record[idProperty], record });
         }
         if (isReadOnly && model.rowRedirectLink) {
-            let historyObject = {
+            const historyObject = {
                 pathname: template.replaceTags(model.rowRedirectLink, record),
             }
-
             if (model.addRecordToState) {
                 historyObject.state = record
             }
             navigate(historyObject);
         }
-
-        if (onRowDoubleClick) {
+        if (typeof onRowDoubleClick === constants.function) {
             onRowDoubleClick(event);
         }
     };
@@ -808,58 +776,58 @@ const GridBase = memo(({
         fetchData();
     };
 
-    const handleAddRecords = () => {
-        let gridApi = `${url}${selectionApi || api}/updateMany`;
-
+    const handleAddRecords = async () => {
         if (selectedSet.current.size < 1) {
+            snackbar.showError("Please select at least one record to proceed");
+            return;
+        }
+
+        const selectedIds = Array.from(selectedSet.current);
+        const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
+        let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
+
+        // If selectionUpdateKeys is defined, filter each record to only those keys
+        if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
+            selectedRecords = selectedRecords.map(item =>
+                Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
+            );
+        }
+
+        try {
+            const result = await saveRecord({
+                id: 0,
+                api: `${url}${selectionApi || api}/updateMany`,
+                values: { items: selectedRecords },
+                setIsLoading,
+                setError: snackbar.showError
+            });
+
+            if (result) {
+                fetchData();
+                snackbar.showMessage("Record Added Successfully.");
+            }
+        } catch (err) {
+            snackbar.showError(err.message || "An error occurred, please try again later.");
+        } finally {
+            selectedSet.current.clear();
+            setIsLoading(false);
+            setShowAddConfirmation(false);
+        }
+    };
+
+    const onAdd = () => {
+        if (selectionApi.length > 0) {
+            if (selectedSet.current.size) {
+                setShowAddConfirmation(true);
+                return;
+            }
             snackbar.showError(
                 "Please select atleast one record to proceed"
             );
             setIsLoading(false);
             return;
         }
-        const selectedIds = Array.from(selectedSet.current);
-        const recordMap = new Map(data.records.map(record => [record[idProperty], record]));
-        let selectedRecords = selectedIds.map(id => ({ ...baseSaveData, ...recordMap.get(id) }));
-
-        if (Array.isArray(model.selectionUpdateKeys) && model.selectionUpdateKeys.length) {
-            selectedRecords = selectedRecords.map(item =>
-                Object.fromEntries(model.selectionUpdateKeys.map(key => [key, item[key]]))
-            );
-        }
-        saveRecord({ id: 0, api: gridApi, values: { items: selectedRecords }, setIsLoading, setError: snackbar.showError }).then((success) => {
-            if (success) {
-                fetchData();
-                snackbar.showMessage("Record Added Successfully.");
-            }
-        })
-            .catch((err) => {
-                snackbar.showError(
-                    "An error occured, please try after some time.second",
-                    err
-                );
-            })
-            .finally(() => {
-                selectedSet.current.clear();
-                setIsLoading(false);
-                setShowAddConfirmation(false);
-            });
-    }
-
-    const onAdd = () => {
-        if (selectionApi.length > 0) {
-            const selectedCount = selectedSet.current.size;
-            if (selectedCount < 1) {
-                snackbar.showError(
-                    "Please select atleast one record to proceed"
-                );
-                setIsLoading(false);
-                return;
-            }
-            setShowAddConfirmation(true);
-            return;
-        }
-        if (typeof onAddOverride === 'function') {
+        if (typeof onAddOverride === constants.function) {
             onAddOverride();
         } else {
             openForm({ id: 0 });
@@ -867,18 +835,17 @@ const GridBase = memo(({
     }
 
     const clearFilters = () => {
-        if (filterModel?.items?.length > 0) {
-            const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
-            setFilterModel(filters);
-            if (clearChartFilter) {
-                clearChartFilter();
-            }
+        if (!filterModel?.items?.length) return;
+        const filters = JSON.parse(JSON.stringify(constants.gridFilterModel));
+        setFilterModel(filters);
+        if (clearChartFilter) {
+            clearChartFilter();
         }
     }
     const updateAssignment = ({ unassign, assign }) => {
         const assignedValues = Array.isArray(selected) ? selected : (selected.length ? selected.split(',') : []);
         const finalValues = unassign ? assignedValues.filter(id => !unassign.includes(parseInt(id))) : [...assignedValues, ...assign];
-        onAssignChange(typeof selected === 'string' ? finalValues.join(',') : finalValues);
+        onAssignChange(typeof selected === constants.string ? finalValues.join(',') : finalValues);
     }
 
     const onAssign = () => {
@@ -904,11 +871,12 @@ const GridBase = memo(({
     }
 
     useEffect(() => {
-        if (preferenceName && preferenceApi) {
-            removeCurrentPreferenceName({ dispatchData });
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
+        if (!preferenceName || !preferenceApi) {
+            return;
         }
+        removeCurrentPreferenceName({ dispatchData });
+        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
+        applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
     }, [preferenceApi])
 
     const CustomToolbar = function (props) {
@@ -950,7 +918,7 @@ const GridBase = memo(({
                     </>)}
 
                     {effectivePermissions.export && (
-                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model?.pivotApi} exportFormats={model.exportFormats || {}} tTranslate={tTranslate} tOpts={tOpts} />
+                        <CustomExportButton handleExport={handleExport} showPivotExportBtn={model.pivotApi} exportFormats={model.exportFormats || {}} tTranslate={tTranslate} tOpts={tOpts} />
                     )}
                     {preferenceName &&
                         <GridPreferences preferenceName={preferenceName} gridRef={apiRef} columns={gridColumns} setIsGridPreferenceFetched={setIsGridPreferenceFetched} />
@@ -963,45 +931,51 @@ const GridBase = memo(({
     const getGridRowId = (row) => {
         return row[idProperty];
     };
-
     const handleExport = (e) => {
         if (data?.recordCount > recordCounts) {
             snackbar.showMessage('Cannot export more than 60k records, please apply filters or reduce your results using filters');
             return;
         }
         const { orderedFields, columnVisibilityModel, lookup } = apiRef.current.state.columns;
-        const columns = {};
         const isPivotExport = e.target.dataset.isPivotExport === 'true';
         const hiddenColumns = Object.keys(columnVisibilityModel).filter(key => columnVisibilityModel[key] === false);
-        const nonExportColumns = new Set();
-        gridColumns.forEach(({ exportable, field }) => {
-            if (exportable === false) nonExportColumns.add(field);
-        })
-        const visibleColumns = orderedFields.filter(ele => !nonExportColumns.has(ele) && !hiddenColumns?.includes(ele) && ele !== '__check__' && ele !== 'actions');
-        if (visibleColumns?.length === 0) {
+
+        const nonExportColumns = new Set(gridColumns.filter(col => col.exportable === false).map(col => col.field));
+
+        const visibleColumns = orderedFields.filter(
+            field => !nonExportColumns.has(field) && !hiddenColumns.includes(field) && field !== '__check__' && field !== 'actions'
+        );
+
+        if (visibleColumns.length === 0) {
             snackbar.showMessage('You cannot export while all columns are hidden... please show at least 1 column before exporting');
             return;
         }
 
-        visibleColumns.forEach(ele => {
-            columns[ele] = { field: ele, width: lookup[ele].width, headerName: lookup[ele].headerName || lookup[ele].field, type: lookup[ele].type, keepLocal: lookup[ele].keepLocal === true, isParsable: lookup[ele]?.isParsable, lookup: lookup[ele].lookup };
-        })
-        fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
+        const columns = {};
+        visibleColumns.forEach(field => {
+            const col = lookup[field];
+            columns[field] = { field, width: col.width, headerName: col.headerName || col.field, type: col.type, keepLocal: col.keepLocal === true, isParsable: col.isParsable, lookup: col.lookup };
+        });
+        fetchData(
+            isPivotExport ? 'export' : undefined,
+            undefined,
+            e.target.dataset.contentType,
+            columns,
+            isPivotExport,
+            isElasticScreen
+        );
     };
+
     useEffect(() => {
-        if (url) {
-            fetchData();
-        }
+        if (!url) return;
+        fetchData();
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url])
 
     useEffect(() => {
-        if (props.isChildGrid) {
+        if (props.isChildGrid || forAssignment || !updatePageTitle) {
             return;
         }
-        if (forAssignment || !updatePageTitle) {
-            return;
-        }
-        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model?.pageTitle || model?.title, title: model?.title } })
+        dispatchData({ type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: { icon: "", titleHeading: model.pageTitle || model.title, title: model.title } })
         return () => {
             dispatchData({
                 type: actionsStateProvider.PAGE_TITLE_DETAILS, payload: null
@@ -1036,20 +1010,15 @@ const GridBase = memo(({
         const { items } = e;
         const updatedItems = items.map(item => {
             const { field, operator, type, value } = item;
-            const column = gridColumns.find(col => col.field === field);
-            const isNumber = column?.type === filterFieldDataTypes.Number;
+            const column = gridColumns.find(col => col.field === field) || {};
+            const isNumber = column.type === constants.number;
 
             if (isNumber && value < 0) {
                 return { ...item, value: null };
             }
 
-            if (field === OrderSuggestionHistoryFields.OrderStatus) {
-                const { filterField, ...newItem } = item;
-                return newItem;
-            }
-
             if ((emptyIsAnyOfOperatorFilters.includes(operator)) || (isNumber && !isNaN(value)) || ((!isNumber))) {
-                const isKeywordField = isElasticScreen && gridColumns.filter(element => element?.field === item?.field)[0]?.isKeywordField;
+                const isKeywordField = isElasticScreen && gridColumns.filter(element => element.field === field)[0]?.isKeywordField;
                 if (isKeywordField) {
                     item.filterField = `${item.field}.keyword`;
                 }
@@ -1061,30 +1030,24 @@ const GridBase = memo(({
         });
         e.items = updatedItems;
         setFilterModel(e);
-        if (e?.items?.findIndex(ele => ele.isChartFilter && !(['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) {
-            if (clearChartFilter) {
-                clearChartFilter();
-            }
-        }
-        if (chartFilters?.items?.length > 0) {
-            if (e.items.length === 0) {
-                if (clearChartFilter) {
-                    clearChartFilter();
-                }
-            } else {
-                const chartFilterIndex = chartFilters?.items.findIndex(ele => ele.columnField === e.items[0].field);
-                if (chartFilterIndex > -1) {
-                    if (clearChartFilter) {
-                        clearChartFilter();
-                    }
-                }
-            }
+        const shouldClearChartFilter =
+            (e.items.findIndex(ele => ele.isChartFilter && !(['isEmpty', 'isNotEmpty'].includes(ele.operator))) === -1) ||
+            (
+                chartFilters?.items?.length &&
+                (
+                    (!e.items.length) ||
+                    (chartFilters.items.findIndex(ele => ele.columnField === e.items[0]?.field) > -1)
+                )
+            );
+
+        if (shouldClearChartFilter && clearChartFilter) {
+            clearChartFilter();
         }
     };
 
     const updateSort = (e) => {
         const sort = e.map((ele) => {
-            const field = gridColumns.filter(element => element?.field === ele?.field)[0] || {};
+            const field = gridColumns.filter(element => element.field === ele.field)[0] || {};
             const isKeywordField = isElasticScreen && field.isKeywordField;
             const obj = { ...ele, filterField: isKeywordField ? `${ele.field}.keyword` : ele.field };
             if (field.dataIndex) {
@@ -1094,19 +1057,13 @@ const GridBase = memo(({
         });
         setSortModel(sort);
     }
-
-    let breadCrumbs;
-
-    if (searchParamKey) {
-        const subBreadcrumbs = searchParams.get(searchParamKey);
-        breadCrumbs = [{ text: subBreadcrumbs }];
-    }
-    else {
-        breadCrumbs = [{ text: title || model.gridTitle || model.title }];
-    }
+    const pageTitle = title || model.gridTitle || model.title;
+    const breadCrumbs = searchParamKey
+        ? [{ text: searchParams.get(searchParamKey) || pageTitle }]
+        : [{ text: pageTitle }];
     return (
         <>
-            <PageTitle showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
+            <PageTitle navigate={navigate} showBreadcrumbs={!hideBreadcrumb && !hideBreadcrumbInGrid}
                 breadcrumbs={breadCrumbs} enableBackButton={navigateBack} breadcrumbColor={breadcrumbColor} />
             <Card style={gridStyle || customStyle} elevation={0} sx={{ '& .MuiCardContent-root': { p: 0 } }}>
                 <CardContent>

@@ -73,7 +73,7 @@ const Field = _ref => {
       width: "180px",
       marginRight: 2
     }
-  }, key, " :"), /*#__PURE__*/React.createElement(_Input.default, {
+  }, key, ":"), /*#__PURE__*/React.createElement(_Input.default, {
     id: key,
     name: key,
     value: state[key],

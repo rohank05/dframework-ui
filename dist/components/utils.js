@@ -20,6 +20,11 @@ const utils = {
   },
   errorMapping: {
     413: "Upload failed: The file exceeds the 30 MB size limit. Please select a smaller file."
+  },
+  permissionsMapper: {
+    add: "Permission2",
+    edit: "Permission3",
+    delete: "Permission4"
   }
 };
 const getPermissions = _ref => {
@@ -45,9 +50,9 @@ const getPermissions = _ref => {
     };
   }
   return {
-    canAdd: userDefinedPermissions.add && Boolean(userPermissions.Permission2),
-    canEdit: userDefinedPermissions.edit && Boolean(userPermissions.Permission3),
-    canDelete: userDefinedPermissions.delete && Boolean(userPermissions.Permission4)
+    canAdd: userDefinedPermissions.add && Boolean(userPermissions[utils.permissionsMapper.add]),
+    canEdit: userDefinedPermissions.edit && Boolean(userPermissions[utils.permissionsMapper.edit]),
+    canDelete: userDefinedPermissions.delete && Boolean(userPermissions[[utils.permissionsMapper.delete]])
   };
 };
 exports.getPermissions = getPermissions;

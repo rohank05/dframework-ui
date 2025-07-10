@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCallback, useState } from 'react';
 import { Avatar, FormControl, FormControlLabel, FormHelperText, Radio, RadioGroup, styled, useTheme } from '@mui/material';
-import { deepOrange, grey } from '@mui/material/colors';
+import {  grey } from '@mui/material/colors';
 import { brandBackgroundColor } from './CustomRenderCell';
 
 
@@ -37,7 +37,7 @@ const DayAvatar = ({ day, onClick, isSelected }) => {
         </CustomAvator>
     );
 };
-const DaySelection = ({ name, field, formik, expired, ...props }) => {
+const DaySelection = ({ name, field, formik, expired }) => {
     const { setFieldValue } = formik;
     const { value } = formik.getFieldProps(name || field);
 

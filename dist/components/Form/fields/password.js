@@ -27,7 +27,6 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
 const Field = _ref => {
-  var _props$column, _props$column2, _props$column3, _props$column4;
   let {
       otherProps
     } = _ref,
@@ -37,11 +36,15 @@ const Field = _ref => {
   const handleMouseDownPassword = event => {
     event.preventDefault();
   };
+  const {
+    readOnly = false,
+    disabled = false
+  } = props.column || {};
   otherProps = _objectSpread({
     type: showPassword ? 'text' : 'password',
     InputProps: {
-      readOnly: ((_props$column = props.column) === null || _props$column === void 0 ? void 0 : _props$column.readOnly) || false,
-      disabled: ((_props$column2 = props.column) === null || _props$column2 === void 0 ? void 0 : _props$column2.disabled) || false,
+      readOnly,
+      disabled,
       endAdornment: /*#__PURE__*/_react.default.createElement(_material.InputAdornment, {
         position: "end"
       }, /*#__PURE__*/_react.default.createElement(_material.IconButton, {
@@ -49,8 +52,8 @@ const Field = _ref => {
         onClick: handleClickShowPassword,
         onMouseDown: handleMouseDownPassword,
         edge: "end",
-        disabled: ((_props$column3 = props.column) === null || _props$column3 === void 0 ? void 0 : _props$column3.disabled) || false,
-        readOnly: ((_props$column4 = props.column) === null || _props$column4 === void 0 ? void 0 : _props$column4.readOnly) || false,
+        disabled: disabled,
+        readOnly: readOnly,
         size: "large"
       }, showPassword ? /*#__PURE__*/_react.default.createElement(_VisibilityOff.default, null) : /*#__PURE__*/_react.default.createElement(_Visibility.default, null)))
     }

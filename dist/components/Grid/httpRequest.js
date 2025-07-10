@@ -21,7 +21,6 @@ require("core-js/modules/web.url-search-params.js");
 require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
-var _react = _interopRequireDefault(require("react"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 const _excluded = ["method", "url", "data", "headers", "credentials"];
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
@@ -41,8 +40,8 @@ const HTTP_STATUS_CODES = exports.HTTP_STATUS_CODES = {
   INTERNAL_SERVER_ERROR: 500
 };
 const getFormData = props => {
-  let formData = new FormData();
-  for (let key in props) {
+  const formData = new FormData();
+  for (const key in props) {
     if (typeof props[key] == "object") {
       formData.append(key, JSON.stringify(props[key]));
     } else {
@@ -53,7 +52,7 @@ const getFormData = props => {
 };
 const exportRequest = (url, query) => {
   const newURL = new URL(url);
-  for (let key in query) {
+  for (const key in query) {
     const value = typeof query[key] === 'object' ? JSON.stringify(query[key]) : query[key];
     newURL.searchParams.append(key, value);
   }
@@ -83,22 +82,16 @@ const transport = async config => {
     }
   }
   const response = await fetch(url, fetchOptions);
-  const contentType = response.headers.get('content-type');
-  const responseData = contentType && contentType.includes('application/json') ? await response.json() : await response.text();
-  if (!response.ok) {
-    throw {
-      response: {
-        status: response.status,
-        statusText: response.statusText,
-        data: responseData
-      }
-    };
-  }
-  return {
+  const contentType = response.headers.get('content-type') || {};
+  const repsonseObj = {
     status: response.status,
-    data: responseData,
+    data: contentType.includes('application/json') ? await response.json() : await response.text(),
     headers: Object.fromEntries(response.headers.entries())
   };
+  if (!response.ok) {
+    repsonseObj.status = response.INTERNAL_SERVER_ERROR;
+  }
+  return repsonseObj;
 };
 exports.transport = transport;
 const request = async _ref => {
@@ -122,7 +115,7 @@ const request = async _ref => {
     });
   }
   pendingRequests++;
-  let reqParams = _objectSpread({
+  const reqParams = _objectSpread({
     method: 'POST',
     credentials: 'include',
     url: url,
@@ -134,38 +127,32 @@ const request = async _ref => {
     reqParams.data = jsonPayload ? params : getFormData(params);
   }
   try {
-    let response = await transport(reqParams);
+    const response = await transport(reqParams);
     pendingRequests--;
-    let data = response.data;
-    if (response) {
-      if (pendingRequests === 0 && !disableLoader) {
-        dispatchData({
-          type: 'UPDATE_LOADER_STATE',
-          loaderOpen: false
-        });
-      }
-      if (response.status === 200) {
-        let json = response.data;
-        if (json.success === false) {
-          if (json.info === 'Session has expired!') {
-            history('/login');
-            return;
-          } else if (response.status === 200) {
-            return data;
-          }
-        } else {
-          return data;
-        }
-      }
-    } else {
+    const data = response.data;
+    if (!response) {
       dispatchData({
         type: _actions.default.UPDATE_LOADER_STATE,
         payload: false
       });
       return data;
     }
+    if (pendingRequests === 0 && !disableLoader) {
+      dispatchData({
+        type: 'UPDATE_LOADER_STATE',
+        loaderOpen: false
+      });
+    }
+    if (response.status === HTTP_STATUS_CODES.OK) {
+      const json = response.data;
+      if (json.success === false && json.info === 'Session has expired!') {
+        history('/login');
+        return;
+      }
+      return data;
+    }
   } catch (ex) {
-    var _ex$response, _ex$response2;
+    var _ex$response;
     pendingRequests--;
     if (pendingRequests === 0) {
       dispatchData({
@@ -173,19 +160,18 @@ const request = async _ref => {
         loaderOpen: false
       });
     }
-    if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === 401) {
+    if ((ex === null || ex === void 0 || (_ex$response = ex.response) === null || _ex$response === void 0 ? void 0 : _ex$response.status) === HTTP_STATUS_CODES.SESSION_EXPIRED) {
       dispatchData({
-        type: actions.SET_USER_DATA,
+        type: _actions.default.SET_USER_DATA,
         userData: {}
       });
       history('/login');
-    } else if ((ex === null || ex === void 0 || (_ex$response2 = ex.response) === null || _ex$response2 === void 0 ? void 0 : _ex$response2.status) === 500) {} else {
+    } else {
       console.error(ex);
       return {
         error: ex.response
       };
     }
   }
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null);
 };
 var _default = exports.default = request;

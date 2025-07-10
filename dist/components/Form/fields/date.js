@@ -12,25 +12,20 @@ var _dayjs = _interopRequireDefault(require("dayjs"));
 var _StateProvider = require("../../useRouter/StateProvider");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-const field = _ref => {
+const Field = _ref => {
   let {
     column,
     field,
     formik,
     otherProps,
-    classes,
-    fieldConfigs,
-    model,
+    fieldConfigs = {},
     mode
   } = _ref;
-  let isDisabled;
+  const isDisabled = mode !== 'copy' && fieldConfigs.disabled;
   const {
     systemDateTimeFormat,
     stateData
   } = (0, _StateProvider.useStateContext)(); //provider
-  if (mode !== 'copy') {
-    isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
-  }
   return /*#__PURE__*/_react.default.createElement(_DatePicker.DatePicker, _extends({}, otherProps, {
     variant: "standard",
     readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
@@ -58,4 +53,4 @@ const field = _ref => {
     }
   }));
 };
-var _default = exports.default = field;
+var _default = exports.default = Field;

@@ -2,7 +2,8 @@ import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
-const lookupDataTypes = ['singleSelect'];
+const lookupDataTypes = ['singleSelect']
+const timeInterval = 200;
 
 function shouldApplyFilter(filter) {
     const { operator, value, type } = filter;
@@ -15,7 +16,7 @@ function shouldApplyFilter(filter) {
     return isUnaryOperator || hasValidValue;
 }
 
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport, model }) => {
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, model, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
         if (showFullScreenLoader) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
@@ -42,7 +43,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             if (shouldApplyFilter(filter)) {
                 const { field, operator, filterField } = filter;
                 let { value } = filter;
-                const column = gridColumns.filter((item) => item?.field === filter?.field);
+                const column = gridColumns.filter((item) => item?.field === filter.field);
                 const type = column[0]?.type;
                 if (type === 'boolean') {
                     value = (value === 'true' || value === true) ? 1 : 0;
@@ -52,9 +53,9 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 value = filter.filterValues || value;
                 where.push({
                     field: filterField || field,
-                    operator: operator,
-                    value: value,
-                    type: type
+                    operator,
+                    value,
+                    type
                 });
             }
         });
@@ -68,24 +69,22 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
     const requestData = {
         start: page * pageSize,
-        limit: isElasticExport ? modelConfig.exportSize : pageSize,
+        limit: isElasticExport ? model.exportSize : pageSize,
         ...extraParams,
         logicalOperator: filterModel.logicOperator,
         sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
         where,
-        oderStatusId: oderStatusId,
         isElasticExport,
         model: model.module,
-        fileName: modelConfig?.overrideFileName,
-        userTimezoneOffset: new Date().getTimezoneOffset() * -1
+        fileName: model.overrideFileName
     };
 
     if (lookups) {
         requestData.lookups = lookups.join(',');
     }
 
-    if (modelConfig?.limitToSurveyed) {
-        requestData.limitToSurveyed = modelConfig?.limitToSurveyed
+    if (model?.limitToSurveyed) {
+        requestData.limitToSurveyed = model?.limitToSurveyed
     }
 
     const headers = {};
@@ -112,7 +111,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 } else if (typeof v !== 'string') {
                     v = JSON.stringify(v);
                 }
-                let hiddenTag = document.createElement('input');
+                const hiddenTag = document.createElement('input');
                 hiddenTag.type = "hidden";
                 hiddenTag.name = key;
                 hiddenTag.value = v;
@@ -171,14 +170,9 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                             }
                         }
                     });
-                    (modelConfig.columns || []).forEach(column => {
-                        const {
-                            field,
-                            displayIndex
-                        } = column;
-                        if (displayIndex) {
-                            record[field] = record[displayIndex];
-                        }
+                    model.columns.forEach(({ field, displayIndex }) => {
+                        if (!displayIndex) return;
+                        record[field] = record[displayIndex];
                     });
                 });
             }
@@ -187,35 +181,37 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             setError(response.statusText);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            setError('Session Expired!');
-            setTimeout(() => {
+        switch (error.response?.status) {
+            case HTTP_STATUS_CODES.SESSION_EXPIRED:
+                setError('Session Expired!');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, timeInterval);
+                break;
+            case HTTP_STATUS_CODES.FORBIDDEN:
                 window.location.href = '/';
-            }, 2000);
-        } else if (error.response && error.response.status === HTTP_STATUS_CODES.FORBIDDEN) {
-            window.location.href = '/';
-        } else {
-            setError('Could not list record', error.message || error.toString());
+                break;
+            default:
+                setError('Could not list record', error.message || error.toString());
+                break;
         }
     } finally {
-        if (!contentType) {
-            setIsLoading(false);
-            if (showFullScreenLoader) {
-                dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
-            }
+        setIsLoading(false);
+        if (!contentType && showFullScreenLoader) {
+            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
         }
     }
 };
 
-const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
-    api = api || modelConfig?.api;
+const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parentFilters, where = {}, setError }) => {
+    api = api || model.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/${id === undefined || id === null ? '-' : id}`;
     const lookupsToFetch = [];
-    const fields = modelConfig.formDef || modelConfig.columns;
+    const fields = model.formDef || model.columns;
     fields?.forEach(field => {
-        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !(id === 0 && field.parentComboField)) {
+        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
         }
     });
@@ -231,8 +227,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
             const { data: record, lookups } = response.data;
-            let title = record[modelConfig.linkColumn];
-            const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
+            let title = record[model.linkColumn];
+            const columnConfig = model.columns.find(a => a.field === model.linkColumn);
             if (columnConfig && columnConfig.lookup) {
                 if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup]?.length) {
                     const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
@@ -241,7 +237,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
                     }
                 }
             }
-            const defaultValues = { ...modelConfig.defaultValues };
+            const defaultValues = { ...model.defaultValues };
 
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
         }
@@ -254,7 +250,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
-            }, 2000);
+            }, timeInterval);
         }
         else {
             setError('Could not load record', error.message || error.toString());
@@ -289,11 +285,11 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
             setError('Delete failed', response.body);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+        if (error.response?.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
-            }, 2000);
+            }, timeInterval);
         } else {
             setError('Could not delete record', error.message || error.toString());
         }
@@ -328,7 +324,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const data = response.data  ;
+            const data = response.data;
             if (data.success) {
                 return data;
             }
@@ -341,7 +337,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             setError('Session Expired!');
             setTimeout(() => {
                 window.location.href = '/';
-            }, 2000);
+            }, timeInterval);
         } else {
 
             setError('Could not save record', error.message || error.toString());
@@ -353,8 +349,8 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
     return false;
 };
 
-const getLookups = async ({ api, setIsLoading, setActiveRecord, modelConfig, setError, lookups, scopeId }) => {
-    api = api || modelConfig?.api
+const getLookups = async ({ api, setIsLoading, setActiveRecord, model, setError, lookups, scopeId }) => {
+    api = api || model.api
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/lookups`;
@@ -369,9 +365,7 @@ const getLookups = async ({ api, setIsLoading, setActiveRecord, modelConfig, set
         if (response.status === HTTP_STATUS_CODES.OK) {
             setActiveRecord(response.data);
         } else if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 500);
+            window.location.href = '/';
         }
     } catch (error) {
         setError('Could not delete record', error.message || error.toString());

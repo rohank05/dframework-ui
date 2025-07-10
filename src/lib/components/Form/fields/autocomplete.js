@@ -4,21 +4,17 @@ import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 
-const Field = ({ column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
-    let inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
-    let options = lookups ? lookups[column?.lookup] : [];
+const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, mode }) => {
+    const inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
+    const options = lookups ? lookups[column.lookup] : [];
     const { filter } = column;
-
-    if (filter) {
-        options = filter({ options });
+    if (typeof filter === "function" && options.length) {
+        filter({ options });
     }
 
-    let filteredCombos = options?.filter(option => inputValue.includes(option.value)) || [];
-    let isDisabled;
-    if (mode !== 'copy') {
-        isDisabled = fieldConfigs?.disabled;
-    }
-    const handleAutoCompleteChange = (event, newValue) => {
+    const filteredCombos = options.filter(option => inputValue.includes(option.value)) || [];
+    const isDisabled = mode !== 'copy' && fieldConfigs.disabled;
+    const handleAutoCompleteChange = (_, newValue) => {
         formik?.setFieldValue(field, newValue ? newValue.map(val => val.value).join(', ') : '');
     }
 

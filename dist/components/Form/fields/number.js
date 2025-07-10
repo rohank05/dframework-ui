@@ -71,19 +71,22 @@ const Field = _ref2 => {
       formik.setFieldValue(field, value);
     }
   }, 400), [resolvedMin, resolvedMax, formik.values]);
+  const {
+    onBlur
+  } = props;
   otherProps = _objectSpread(_objectSpread({
     InputProps: {
       inputProps: {
         min,
         max: resolvedMax,
-        readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true,
+        readOnly: column.readOnly === true,
         onKeyPress: event => {
           const keyCode = event.which ? event.which : event.keyCode;
           if (!(keyCode > minKey && keyCode < maxKey)) {
             event.preventDefault();
           }
         },
-        sx: column !== null && column !== void 0 && column.readOnly ? {
+        sx: column.readOnly ? {
           backgroundColor: '#dfdede'
         } // Light grey background for read-only inputs
         : undefined
@@ -92,12 +95,9 @@ const Field = _ref2 => {
     type: 'number'
   }, otherProps), {}, {
     onChange: event => {
-      const {
-        value
-      } = event.target;
-      debouncedSetFieldValue(field, Number(value)); // Pass the updated value to the debounced function
-      if (props.onBlur) {
-        props.onBlur(event);
+      debouncedSetFieldValue(field, Number(event.target.value)); // Pass the updated value to the debounced function
+      if (typeof onBlur === "function") {
+        onBlur(event);
       }
     }
   });

@@ -11,11 +11,12 @@ const Field = ({ otherProps, ...props }) => {
 	const handleMouseDownPassword = (event) => {
 		event.preventDefault();
 	};
+    const { readOnly = false, disabled = false } = props.column || {};
     otherProps = {
 		type: showPassword ? 'text' : 'password',
 		InputProps: {
-			readOnly: props.column?.readOnly || false,
-			disabled: props.column?.disabled || false,
+			readOnly,
+			disabled,
 			endAdornment: (
 				<InputAdornment position="end">
 					<IconButton
@@ -23,8 +24,8 @@ const Field = ({ otherProps, ...props }) => {
                         onClick={handleClickShowPassword}
                         onMouseDown={handleMouseDownPassword}
                         edge="end"
-                        disabled={props.column?.disabled || false}
-                        readOnly={props.column?.readOnly || false}
+                        disabled={disabled}
+                        readOnly={readOnly}
                         size="large">
 						{showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
 					</IconButton>
