@@ -34,7 +34,7 @@ import { useStateContext, useRouter } from '../useRouter/StateProvider';
 import LocalizedDatePicker from './LocalizedDatePicker';
 import actionsStateProvider from '../useRouter/actions';
 import GridPreferences from './GridPreference';
-import CustomDropdownmenu from './CustomDropdownmenu';
+import CustomDropdownMenu from './CustomDropdownMenu';
 import { getPermissions } from '../utils';
 import HistoryIcon from '@mui/icons-material/History';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -312,7 +312,7 @@ const GridBase = memo(({
             return;
         }
         dispatchData({
-            type: actionsStateProvider.PASS_FILTERS_TOHEADER, payload: {
+            type: actionsStateProvider.PASS_FILTERS_TO_HEADER, payload: {
                 filterButton: null,
                 hidden: { search: true, operation: true, export: true, print: true, filter: true }
             }
@@ -356,7 +356,7 @@ const GridBase = memo(({
                     ...operator,
                     InputComponent: operator.InputComponent
                         ? (params) => (
-                            <CustomDropdownmenu
+                            <CustomDropdownMenu
                                 column={{
                                     ...column,
                                     ...(column.type === constants.boolean
@@ -439,7 +439,7 @@ const GridBase = memo(({
                 type: 'actions',
                 label: '',
                 width: actions.length * 50,
-                hideable: false,
+                hidable: false,
                 getActions: (params) => {
                     const rowActions = [...actions];
                     if (canEdit && !isReadOnly) {
@@ -742,7 +742,7 @@ const GridBase = memo(({
                 return;
             }
             snackbar.showError(
-                "Please select atleast one record to proceed"
+                "Please select at least one record to proceed"
             );
             setIsLoading(false);
             return;
@@ -800,7 +800,7 @@ const GridBase = memo(({
     }, [preferenceApi]);
 
     const CustomToolbar = function (props) {
-        const addtext = model.customAddText || (model.title ? `Add ${model.title}` : 'Add');
+        const addText = model.customAddText || (model.title ? `Add ${model.title}` : 'Add');
         return (
             <div
                 style={{
@@ -813,7 +813,7 @@ const GridBase = memo(({
                     {model.gridSubTitle && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }}> {tTranslate(model.gridSubTitle, tOpts)}</Typography>}
                     {currentPreference && model.showPreferenceInHeader && <Typography className="preference-name-text" variant="h6" component="h6" textAlign="center" sx={{ ml: 1 }} >{tTranslate('Applied Preference', tOpts)} - {currentPreference}</Typography>}
                     {(isReadOnly || (!canAdd && !forAssignment)) && <Typography variant="h6" component="h3" textAlign="center" sx={{ ml: 1 }} > {!canAdd || isReadOnly ? "" : model.title}</Typography>}
-                    {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addtext}</Button>}
+                    {!forAssignment && canAdd && !isReadOnly && <Button startIcon={!showAddIcon ? null : <AddIcon />} onClick={onAdd} size="medium" variant="contained" className={classes.buttons} >{addText}</Button>}
                     {(selectionApi.length && data.records.length) ? (
                         <Button
                             onClick={selectAll}

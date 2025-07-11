@@ -66,7 +66,7 @@ var _StateProvider = require("../useRouter/StateProvider");
 var _LocalizedDatePicker = _interopRequireDefault(require("./LocalizedDatePicker"));
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
 var _GridPreference = _interopRequireDefault(require("./GridPreference"));
-var _CustomDropdownmenu = _interopRequireDefault(require("./CustomDropdownmenu"));
+var _CustomDropdownMenu = _interopRequireDefault(require("./CustomDropdownMenu"));
 var _utils = require("../utils");
 var _History = _interopRequireDefault(require("@mui/icons-material/History"));
 var _FileDownload = _interopRequireDefault(require("@mui/icons-material/FileDownload"));
@@ -493,7 +493,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
       return;
     }
     dispatchData({
-      type: _actions.default.PASS_FILTERS_TOHEADER,
+      type: _actions.default.PASS_FILTERS_TO_HEADER,
       payload: {
         filterButton: null,
         hidden: {
@@ -546,7 +546,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
           operators = (0, _xDataGridPremium.getGridBooleanOperators)();
         }
         overrides.filterOperators = operators.map(operator => _objectSpread(_objectSpread({}, operator), {}, {
-          InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownmenu.default, _extends({
+          InputComponent: operator.InputComponent ? params => /*#__PURE__*/_react.default.createElement(_CustomDropdownMenu.default, _extends({
             column: _objectSpread(_objectSpread(_objectSpread({}, column), column.type === constants.boolean ? {
               customLookup: [{
                 value: true,
@@ -687,7 +687,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
         type: 'actions',
         label: '',
         width: actions.length * 50,
-        hideable: false,
+        hidable: false,
         getActions: params => {
           const rowActions = [...actions];
           if (canEdit && !isReadOnly) {
@@ -1047,7 +1047,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
         setShowAddConfirmation(true);
         return;
       }
-      snackbar.showError("Please select atleast one record to proceed");
+      snackbar.showError("Please select at least one record to proceed");
       setIsLoading(false);
       return;
     }
@@ -1127,7 +1127,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     });
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
-    const addtext = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
+    const addText = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
     return /*#__PURE__*/_react.default.createElement("div", {
       style: {
         display: 'flex',
@@ -1162,7 +1162,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
       size: "medium",
       variant: "contained",
       className: classes.buttons
-    }, addtext), selectionApi.length && data.records.length ? /*#__PURE__*/_react.default.createElement(_Button.default, {
+    }, addText), selectionApi.length && data.records.length ? /*#__PURE__*/_react.default.createElement(_Button.default, {
       onClick: selectAll,
       size: "medium",
       variant: "contained",

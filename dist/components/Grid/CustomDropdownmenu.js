@@ -24,7 +24,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
 const GridOperators = {
   IsAnyOf: 'isAnyOf'
 };
-const CustomDropdownmenu = props => {
+const CustomDropdownMenu = props => {
   var _column$dataRef, _currentFieldFilters$, _currentFieldFilters$2, _options;
   const {
     column,
@@ -101,4 +101,4 @@ const CustomDropdownmenu = props => {
     value: option.value
   }, option.label))));
 };
-var _default = exports.default = CustomDropdownmenu;
+var _default = exports.default = CustomDropdownMenu;

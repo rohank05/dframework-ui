@@ -70,7 +70,7 @@ const stateReducer = (state, action) => {
       return _objectSpread(_objectSpread({}, state), {}, {
         loaderOpen: action.payload
       });
-    case _actions.default.PASS_FILTERS_TOHEADER:
+    case _actions.default.PASS_FILTERS_TO_HEADER:
       return _objectSpread(_objectSpread({}, state), {}, {
         filtersInHeader: action.payload
       });

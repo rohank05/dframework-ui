@@ -10,7 +10,7 @@ const GridOperators = {
     IsAnyOf: 'isAnyOf'
 };
 
-const CustomDropdownmenu = (props) => {
+const CustomDropdownMenu = (props) => {
     const { column, item, applyValue, apiRef } = props;
     const lookupData = column?.dataRef?.current?.lookups;
     let options = column.customLookup || lookupData[column.lookup] || [];
@@ -91,4 +91,4 @@ const CustomDropdownmenu = (props) => {
     );
 };
 
-export default CustomDropdownmenu;
+export default CustomDropdownMenu;
