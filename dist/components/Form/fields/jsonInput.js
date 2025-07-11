@@ -33,8 +33,12 @@ const Field = _ref => {
   const [state, setState] = React.useState({});
   React.useEffect(() => {
     if (!formik.values[field]) return;
-    const inputJSON = JSON.parse(formik.values[field]);
-    setState(inputJSON);
+    try {
+      const inputJSON = JSON.parse(formik.values[field]);
+      setState(inputJSON);
+    } catch (e) {
+      setState({});
+    }
   }, [formik.values[field]]);
   const handleDebouncedChange = React.useMemo(() => (0, _debounce.default)(newState => {
     formik.setFieldValue(field, JSON.stringify(newState));

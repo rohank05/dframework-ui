@@ -9,7 +9,7 @@ const regexConfig = {
 	nonAlphaNumeric: /[^a-zA-Z0-9]/g,
 	compareValidatorRegex: /^compare:(.+)$/,
 	email: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
-}
+};
 
 const customStyle = {};
 const showRowsSelected = true;
@@ -18,19 +18,19 @@ const defaultValueConfigs = {
 	"boolean": false,
 	"radio": false,
 	"oneToMany": ""
-}
+};
 
 class UiModel {
 
 	static defaultPermissions = {
 		add: true,
 		edit: true,
-		delete: true,
-	}
+		delete: true
+	};
+
 	constructor(modelConfig) {
 		const { title = "", controllerType } = modelConfig;
 		let { api, idProperty = api + 'Id' } = modelConfig;
-		// if module is not specified, use title as module name after removing all alphanumeric characters
 		const module = "module" in modelConfig ? modelConfig.module : title.replace(/[^\w\s]/gi, "");
 		if (!api) {
 			api = `${title.replaceAll(regexConfig.nonAlphaNumeric, '-').toLowerCase()}`;
@@ -41,7 +41,7 @@ class UiModel {
 		const name = module || title;
 		Object.assign(this, {
 			standard: true,
-			name, // for child grid wuth no specific module but wants name to be identified in models list in relations.
+			name,
 			permissions: { ...UiModel.defaultPermissions },
 			idProperty,
 			linkColumn: `${name}Name`,
@@ -52,21 +52,31 @@ class UiModel {
 			...modelConfig,
 			api
 		});
+		this.columnVisibilityModel = this._getColumnVisibilityModel();
+		this.defaultValues = this._getDefaultValues(defaultValues);
+	}
+
+	_getColumnVisibilityModel() {
 		const columnVisibilityModel = {};
 		for (const col of this.columns) {
-			const name = col.field || col.id;
 			if (col.hide === true) {
 				columnVisibilityModel[col.id || col.field] = false;
 			}
+		}
+		return columnVisibilityModel;
+	}
+
+	_getDefaultValues(defaultValues) {
+		for (const col of this.columns) {
+			const name = col.field || col.id;
 			defaultValues[name] = col.defaultValue === undefined ? (defaultValueConfigs[col.type] || "") : col.defaultValue;
 		}
-		this.columnVisibilityModel = columnVisibilityModel;
-		this.defaultValues = defaultValues;
+		return defaultValues;
 	}
 
 	getValidationSchema({ id }) {
 		const { columns } = this;
-		let validationConfig = {};
+		const validationConfig = {};
 		for (const column of columns) {
 			const { field, label, header, type = 'string', requiredIfNew = false, required = false, min = '', max = '', validate } = column;
 			const formLabel = label || header || field;
@@ -120,13 +130,13 @@ class UiModel {
 					if (required) {
 						config = yup.string().trim().label(formLabel).required(`Select at least one ${formLabel}`);
 					} else {
-						config = yup.string().nullable()
+						config = yup.string().nullable();
 					}
 					break;
 				case 'password':
 					config = yup.string()
 						.label(formLabel)
-						.test("ignore-asterisks", `${formLabel} must be at least 8 characters and must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`, (value) => {
+						.test("ignore-asterisks", `${formLabel} must be a valid password.`, (value) => {
 							// Skip further validations if value is exactly "******"
 							if (value === "******") return true;
 							const minlength = Number(min) || 8;
@@ -136,7 +146,7 @@ class UiModel {
 							return yup.string()
 								.min(minlength, `${formLabel} must be at least ${minlength} characters`)
 								.max(maxlength, `${formLabel} must be at most ${maxlength} characters`)
-								.x(
+								.matches(
 									regex,
 									`${formLabel} must contain at least one lowercase letter, one uppercase letter, one digit, and one special character`
 								)
@@ -150,13 +160,13 @@ class UiModel {
 						.matches(
 							(column.regex || regexConfig.email),
 							'Email must be a valid email'
-						)
+						);
 					break;
 				case 'number':
 					if (required) {
 						config = yup.number().label(formLabel).required(`${formLabel} is required.`);
 					} else {
-						config = yup.number().nullable()
+						config = yup.number().nullable();
 					}
 					if (min !== undefined && min !== '') {
 						config = config.min(Number(min), `${formLabel} must be greater than or equal to ${min}`);
@@ -200,22 +210,22 @@ class UiModel {
 	}
 
 	Form = ({ match, ...props }) => {
-		return <Form model={this} Layout={this.Layout} {...props} />
-	}
+		return <Form model={this} Layout={this.Layout} {...props} />;
+	};
 
 	Grid = ({ match, ...props }) => {
-		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />
-	}
+		return <GridBase model={this} showRowsSelected={showRowsSelected} {...props} />;
+	};
 	ChildGrid = (props) => {
 		return <>
 			<GridBase model={this} {...props} customStyle={customStyle} showRowsSelected={showRowsSelected} />
 			<Divider orientation='horizontal' sx={{ mt: 2 }} />
-		</>
-	}
+		</>;
+	};
 }
 
 export {
 	UiModel
-}
+};
 
 

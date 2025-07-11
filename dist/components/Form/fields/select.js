@@ -87,11 +87,6 @@ const SelectField = _ref => {
     value: "".concat(inputValue),
     onChange: handleChange,
     onBlur: formik.handleBlur,
-    MenuProps: {
-      classes: {
-        // list: classes.select
-      }
-    },
     sx: {
       backgroundColor: column.readOnly ? '#dfdede' : ''
     }

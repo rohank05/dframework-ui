@@ -12,14 +12,14 @@ const HTTP_STATUS_CODES = {
 const getFormData = (props) => {
     const formData = new FormData();
     for (const key in props) {
-        if (typeof props[key] == "object") {
+        if (typeof props[key] === "object") {
             formData.append(key, JSON.stringify(props[key]));
         } else {
             formData.append(key, props[key]);
         }
     }
     return formData;
-}
+};
 
 const exportRequest = (url, query) => {
     const newURL = new URL(url);
@@ -28,7 +28,7 @@ const exportRequest = (url, query) => {
         newURL.searchParams.append(key, value);
     }
     window.open(newURL, '_blank').focus();
-}
+};
 
 const transport = async (config) => {
     const {
@@ -44,7 +44,7 @@ const transport = async (config) => {
         method,
         credentials,
         headers: {
-            ...headers,
+            ...headers
         },
         ...rest
     };
@@ -61,16 +61,16 @@ const transport = async (config) => {
 
     const response = await fetch(url, fetchOptions);
     const contentType = response.headers.get('content-type') || {};
-    const repsonseObj = {
+    const responseObj = {
         status: response.status,
         data: contentType.includes('application/json') ? await response.json() : await response.text(),
         headers: Object.fromEntries(response.headers.entries())
-    }
+    };
     if (!response.ok) {
-        repsonseObj.status = response.INTERNAL_SERVER_ERROR
+        responseObj.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
     }
 
-    return repsonseObj;
+    return responseObj;
 };
 
 const request = async ({ url, params = {}, history, jsonPayload = false, additionalParams = {}, additionalHeaders = {}, disableLoader = false, dispatchData }) => {
@@ -99,36 +99,29 @@ const request = async ({ url, params = {}, history, jsonPayload = false, additio
         pendingRequests--;
         const data = response.data;
 
-        if (!response) {
-            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
-            return data;
-        }
         if (pendingRequests === 0 && !disableLoader) {
-            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false });
         }
-        if (response.status === HTTP_STATUS_CODES.OK) {
-            const json = response.data;
-            if (json.success === false && json.info === 'Session has expired!') {
-                history('/login');
-                return;
-            }
-            return data;
+
+        // Handle HTTP errors here
+        if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+            history('/login');
+            return;
         }
+        if (response.status !== HTTP_STATUS_CODES.OK) {
+            // You can return the error object or handle as needed
+            return { data: { message: data.message || 'An error occurred' } };
+        }
+        return data;
     } catch (ex) {
         pendingRequests--;
         if (pendingRequests === 0) {
-            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false })
+            dispatchData({ type: 'UPDATE_LOADER_STATE', loaderOpen: false });
         }
-        if (ex?.response?.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            dispatchData({ type: actionsStateProvider.SET_USER_DATA, userData: {} });
-            history('/login');
-        }
-        else {
-            console.error(ex);
-            return { error: ex.response };
-        }
+        // Only network errors will be caught here
+        return { data: { message: ex.message || 'Network error' } };
     }
-}
+};
 
 export {
     HTTP_STATUS_CODES,

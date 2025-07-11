@@ -8,8 +8,12 @@ const Field = ({ field, formik }) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
         if (!formik.values[field]) return;
-        const inputJSON = JSON.parse(formik.values[field]);
-        setState(inputJSON);
+        try {
+            const inputJSON = JSON.parse(formik.values[field]);
+            setState(inputJSON);
+        } catch (e) {
+            setState({});
+        }
     }, [formik.values[field]]);
 
     const handleDebouncedChange = React.useMemo(
@@ -47,7 +51,7 @@ const Field = ({ field, formik }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        marginBottom: '0.5rem',
+                        marginBottom: '0.5rem'
                     }}
                 >
                     <Typography variant="body1" sx={{ width: "180px", marginRight: 2 }}>

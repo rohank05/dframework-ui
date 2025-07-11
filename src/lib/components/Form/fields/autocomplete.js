@@ -3,10 +3,15 @@ import { FormHelperText } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
+const consts = {
+    limitTags: 5
+}
 const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, mode }) => {
     const inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
-    const options = lookups ? lookups[column.lookup] : [];
+    const options = React.useMemo(
+        () => (lookups ? lookups[column.lookup] : []),
+        [lookups, column.lookup]
+    );
     const { filter } = column;
     if (typeof filter === "function" && options.length) {
         filter({ options });
@@ -29,7 +34,7 @@ const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, 
                 {...otherProps}
                 multiple
                 id={field}
-                limitTags={column.limitTags || 5}
+                limitTags={column.limitTags || consts.limitTags}
                 options={options || []}
                 getOptionLabel={(option) => option.label || ''}
                 defaultValue={filteredCombos}

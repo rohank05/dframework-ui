@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
@@ -29,7 +29,7 @@ const buildTree = (data = []) => {
           value: item.value?.toString(),
           label: item.label
         }]
-      }
+      };
     }
   });
   return Object.values(tree);
@@ -50,19 +50,19 @@ const buildTree = (data = []) => {
  * @param {string} props.mode - The mode of the form, such as 'edit' or 'copy'.
  * @returns {JSX.Element} The rendered tree view component.
  */
-export default function treeCheckBox({ column, field, formik, lookups, data, otherProps, model, fieldConfigs, mode }) {
+export default function treeCheckBox({ column, field, formik, lookups, fieldConfigs, mode }) {
   const options = lookups ? lookups[column.lookup] : [];
   const tree = buildTree(options);
-  let inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];
+  const inputValue = formik.values[field]?.length ? formik.values[field].split(", ") : [];
   let isDisabled;
   if (mode !== 'copy') {
     isDisabled = fieldConfigs?.disabled;
   }
-  const handleChange = (event, newValue) => {
+  const handleChange = (_, newValue) => {
     formik.setFieldValue(field, newValue?.join(', ') || '');
-  }
+  };
   return (
-    <Box sx={{ minHeight: 352, minWidth: 290 }}>
+    <Box sx={{ minHeight: 350 }}>
       <SimpleTreeView
         selectedItems={inputValue}
         onSelectedItemsChange={handleChange}

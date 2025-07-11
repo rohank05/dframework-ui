@@ -64,11 +64,6 @@ const SelectField = ({ column, field, formik, lookups, otherProps }) => {
                 value={`${inputValue}`}
                 onChange={handleChange}
                 onBlur={formik.handleBlur}
-                MenuProps={{
-                    classes: {
-                        // list: classes.select
-                    }
-                }}
                 sx={{
                     backgroundColor: column.readOnly ? '#dfdede' : ''
                 }}

@@ -2,9 +2,10 @@ import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
-const lookupDataTypes = ['singleSelect']
+const lookupDataTypes = ['singleSelect'];
 const timeInterval = 200;
 
+const isLocalTime = (dateValue) => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
 function shouldApplyFilter(filter) {
     const { operator, value, type } = filter;
 
@@ -84,7 +85,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
 
     if (model?.limitToSurveyed) {
-        requestData.limitToSurveyed = model?.limitToSurveyed
+        requestData.limitToSurveyed = model?.limitToSurveyed;
     }
 
     const headers = {};
@@ -102,7 +103,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         requestData.columns = columns;
         form.setAttribute("method", "POST");
         form.setAttribute("id", "exportForm");
-        form.setAttribute("target", "_blank")
+        form.setAttribute("target", "_blank");
         if (template === null) {
             for (const key in requestData) {
                 let v = requestData[key];
@@ -123,12 +124,12 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         form.submit();
         setTimeout(() => {
             document.getElementById("exportForm").remove();
-        }, 3000)
+        }, 3000);
         return;
     }
     try {
         setIsLoading(true);
-        let params = {
+        const params = {
             url,
             method: 'POST',
             data: requestData,
@@ -143,19 +144,10 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             records: [] // reset records to empty array before fetching new data
         }));
         const response = await transport(params);
-        function isLocalTime(dateValue) {
-            const date = new Date(dateValue);
-            const localOffset = new Date().getTimezoneOffset();
-            const dateOffset = date.getTimezoneOffset();
-            return localOffset === dateOffset;
-        }
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const { records, userCurrencySymbol } = response.data;
+            const { records } = response.data;
             if (records) {
                 records.forEach(record => {
-                    if (record.hasOwnProperty("TotalOrder")) {
-                        record["TotalOrder"] = `${userCurrencySymbol}${record["TotalOrder"]}`;
-                    }
                     dateColumns.forEach(column => {
                         const { field, keepLocal, keepLocalDate } = column;
                         if (record[field]) {
@@ -218,7 +210,7 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parent
     searchParams.set("lookups", lookupsToFetch);
     if (where && Object.keys(where)?.length) {
         searchParams.set("where", JSON.stringify(where));
-    };
+    }
     try {
         const response = await transport({
             url: `${url}?${searchParams.toString()}`,
@@ -260,8 +252,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parent
     }
 };
 
-const deleteRecord = async function ({ id, api, setIsLoading, setError, setErrorMessage }) {
-    let result = { success: false, error: '' };
+const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
+    const result = { success: false, error: '' };
     if (!id) {
         setError('Deleted failed. No active record.');
         return;
@@ -350,7 +342,7 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
 };
 
 const getLookups = async ({ api, setIsLoading, setActiveRecord, model, setError, lookups, scopeId }) => {
-    api = api || model.api
+    api = api || model.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/lookups`;

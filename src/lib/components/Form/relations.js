@@ -26,13 +26,13 @@ function CustomTabPanel(props) {
 CustomTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired
 };
 
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
   };
 }
 
@@ -88,7 +88,7 @@ const Relations = ({ relations, parent, where, models, relationFilters, readOnly
                 label={label}
                 {...a11yProps(idx)}
               />
-            )
+            );
           })}
         </Tabs>
       </Box>

@@ -99,6 +99,7 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
+const pageSizeOptions = [5, 10, 20, 50, 100];
 const GridPreferences = _ref => {
   var _stateData$gridSettin, _stateData$gridSettin2;
   let {
@@ -144,7 +145,7 @@ const GridPreferences = _ref => {
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
-    let schema = yup.object({
+    const schema = yup.object({
       prefName: yup.string().trim(true).required('Preference Name is Required').max(20, 'Maximum Length is 20'),
       prefDesc: yup.string().max(100, "Description maximum length is 100")
     });
@@ -173,7 +174,7 @@ const GridPreferences = _ref => {
     setOpenDialog(false);
   };
   const deletePreference = async (id, prefName) => {
-    let params = {
+    const params = {
       action: 'delete',
       id: preferenceName,
       Username,
@@ -380,6 +381,7 @@ const GridPreferences = _ref => {
     }
   };
   const prefName = formik.values.prefName.trim();
+  // represent manage preferences form type.
   const isManageForm = formType === formTypes.Manage;
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Button, {
     id: "grid-preferences-btn",
@@ -423,17 +425,17 @@ const GridPreferences = _ref => {
     dense: true,
     divider: (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0,
     onClick: () => openModal(formTypes.Manage, false)
-  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), tTranslate('Manage Preferences', tOpts)), (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.map((ele, key) => {
+  }, /*#__PURE__*/_react.default.createElement(_material.ListItemIcon, null, /*#__PURE__*/_react.default.createElement(_Settings.default, null)), tTranslate('Manage Preferences', tOpts)), (preferences === null || preferences === void 0 ? void 0 : preferences.length) > 0 && (preferences === null || preferences === void 0 ? void 0 : preferences.map(ele => {
     const {
       prefName,
       prefDesc,
       prefId
     } = ele;
     return /*#__PURE__*/_react.default.createElement(_material.MenuItem, {
-      onClick: () => applySelectedPreference(prefId, key),
+      onClick: () => applySelectedPreference(prefId),
       component: _material.ListItem,
       selected: currentPreference === prefName,
-      key: "pref-item-".concat(key),
+      key: "pref-item-".concat(prefId),
       title: tTranslate(prefDesc, tOpts),
       dense: true
     }, /*#__PURE__*/_react.default.createElement(_material.ListItemText, {
@@ -442,8 +444,6 @@ const GridPreferences = _ref => {
   }))), /*#__PURE__*/_react.default.createElement(_Dialog.DialogComponent, {
     open: openDialog,
     disableRestoreFocus: true,
-    onConfirm: formik.handleSubmit,
-    onCancel: handleDialogClose,
     title: /*#__PURE__*/_react.default.createElement(_material.Stack, {
       direction: "row",
       columnGap: 2
@@ -451,8 +451,7 @@ const GridPreferences = _ref => {
       variant: "h5"
     }, formType, " ", tTranslate("Preference".concat(formType === formTypes.Manage ? 's' : ''), tOpts))),
     maxWidth: isManageForm ? 'md' : 'sm',
-    fullWidth: true,
-    customActions: true
+    fullWidth: true
   }, openForm && /*#__PURE__*/_react.default.createElement(_material.Grid, {
     component: 'form',
     onSubmit: formik.handleSubmit,
@@ -550,7 +549,7 @@ const GridPreferences = _ref => {
     className: "pagination-fix",
     onCellClick: onCellClick,
     columns: gridColumns,
-    pageSizeOptions: [5, 10, 20, 50, 100],
+    pageSizeOptions: pageSizeOptions,
     pagination: true,
     rowCount: filteredPrefs.length,
     rows: filteredPrefs,

@@ -35,6 +35,9 @@ function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t =
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+const consts = {
+  maxLength: 500
+}; // Default max length for document link
 const {
   errorMapping
 } = _utils.default;
@@ -51,7 +54,8 @@ function FileUpload(_ref) {
     stateData
   } = (0, _StateProvider.useStateContext)();
   const {
-    maxSize
+    maxSize,
+    formats
   } = column;
   const {
     uploadApi,
@@ -88,6 +92,10 @@ function FileUpload(_ref) {
     if (!selectedFile) return;
     if (maxSize && selectedFile.size > maxSize * MB) {
       snackbar.showError("File size exceeds the maximum limit of ".concat(maxSize, " MB."));
+      return;
+    }
+    if (Array.isArray(formats) && !formats.includes(selectedFile.type)) {
+      snackbar.showError("Invalid file format. Allowed formats: ".concat(formats.join(", "), "."));
       return;
     }
     setFormState(prev => _objectSpread(_objectSpread({}, prev), {}, {
@@ -130,9 +138,9 @@ function FileUpload(_ref) {
     setFormState(_objectSpread(_objectSpread({}, formState), {}, {
       isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no"
     }));
-  }, [inputValue]);
-  const isLengthExceded = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > (column.max || 500);
-  const colorScheme = isLengthExceded ? 'red' : '';
+  }, [inputValue, setFormState]);
+  const isLengthExceeded = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.length) > (column.max || consts.maxLength);
+  const colorScheme = isLengthExceeded ? 'red' : '';
   return /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       display: "flex",
@@ -202,7 +210,7 @@ function FileUpload(_ref) {
     InputProps: {
       readOnly: true
     }
-  }), isLengthExceded && /*#__PURE__*/_react.default.createElement(_material.Typography, {
+  }), isLengthExceeded && /*#__PURE__*/_react.default.createElement(_material.Typography, {
     sx: {
       color: 'red'
     }

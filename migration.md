@@ -8,3 +8,4 @@
 
 - In `updateFilters`, removed CoolR specifc code, `OrderSuggestionHistoryFields`
 - In `onCellClickHandler`, removed custom code for isAcostaController
+- In  `GridBase` removed custom code for `isOrderDetailModalOpen`.

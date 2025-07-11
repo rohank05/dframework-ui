@@ -5,16 +5,17 @@ import { transport } from "../../Grid/httpRequest";
 import { useSnackbar } from "../../SnackBar";
 import utils from "../../utils";
 
+const consts = { maxLength: 500 }; // Default max length for document link
 const { errorMapping } = utils;
 const MB = 1024 * 1024;
 function FileUpload({ column, field, formik }) {
     const inputValue = formik.values[field] || "";
     const { stateData } = useStateContext();
-    const { maxSize } = column;
+    const { maxSize, formats } = column;
     const { uploadApi, mediaApi, Url } = stateData?.gridSettings?.permissions;
     const [formState, setFormState] = useState({
         isExternal: "no",
-        selectedFile: null,
+        selectedFile: null
     });
     const [loading, setLoading] = useState(false); // Add loading state
     const snackbar = useSnackbar();
@@ -27,7 +28,7 @@ function FileUpload({ column, field, formik }) {
         setFormState({
             ...formState,
             isExternal,
-            selectedFile: null,
+            selectedFile: null
         });
         formik.setFieldValue(field, formik.values[field]); // Reset form field value
     };
@@ -41,6 +42,10 @@ function FileUpload({ column, field, formik }) {
         if (!selectedFile) return;
         if (maxSize && selectedFile.size > maxSize * MB) {
             snackbar.showError(`File size exceeds the maximum limit of ${maxSize} MB.`);
+            return;
+        }
+        if (Array.isArray(formats) && !formats.includes(selectedFile.type)) {
+            snackbar.showError(`Invalid file format. Allowed formats: ${formats.join(", ")}.`);
             return;
         }
         setFormState((prev) => ({ ...prev, selectedFile }));
@@ -81,12 +86,12 @@ function FileUpload({ column, field, formik }) {
     React.useEffect(() => {
         setFormState({
             ...formState,
-            isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no",
+            isExternal: !inputValue.toLowerCase().includes(host) ? "yes" : "no"
         });
-    }, [inputValue]);
+    }, [inputValue, setFormState]);
 
-    const isLengthExceded = formik.values[field]?.length > (column.max || 500);
-    const colorScheme = isLengthExceded ? 'red' : '';
+    const isLengthExceeded = formik.values[field]?.length > (column.max || consts.maxLength);
+    const colorScheme = isLengthExceeded ? 'red' : '';
 
     return (
         <Box>
@@ -121,8 +126,8 @@ function FileUpload({ column, field, formik }) {
                                 "& .MuiOutlinedInput-root": {
                                     "& fieldset": { borderColor: colorScheme },
                                     "&.Mui-focused fieldset": { borderColor: colorScheme },
-                                    "&:hover fieldset": { borderColor: colorScheme },
-                                },
+                                    "&:hover fieldset": { borderColor: colorScheme }
+                                }
                             }}
                             onChange={handleInputChange}
                             placeholder="Enter external link"
@@ -135,7 +140,7 @@ function FileUpload({ column, field, formik }) {
                             InputProps={{ readOnly: true }}
                         />
                     )}
-                    {isLengthExceded && <Typography sx={{ color: 'red' }}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
+                    {isLengthExceeded && <Typography sx={{ color: 'red' }}>Maximum allowed length for the document link is {column.max} characters.</Typography>}
                 </Box>
             </Box>
 

@@ -20,11 +20,10 @@ function PageTitle({
   showBreadcrumbs,
   breadcrumbs = [],
   enableBackButton = false,
-  breadcrumbColor,
+  breadcrumbColor
 }) {
-  console.log(navigate);
   const isMobile = useMobile(true);
-  const breadcrumbsLasIndex = breadcrumbs.length - 1
+  const breadcrumbsLasIndex = breadcrumbs.length - 1;
   const needToShowBreadcrumbs = showBreadcrumbs && breadcrumbs.length;
   const handleBack = () => {
     navigate(-1);

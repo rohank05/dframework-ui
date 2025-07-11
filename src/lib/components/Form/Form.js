@@ -28,7 +28,8 @@ const consts = {
   string: "string",
   create: "Create",
   copy: "Copy",
-  edit: "Edit"
+  edit: "Edit",
+  number: "number"
 };
 
 const Form = ({
@@ -41,7 +42,8 @@ const Form = ({
   baseSaveData = {},
   sx,
   readOnly,
-  beforeSubmit
+  beforeSubmit,
+  deletePromptText
 }) => {
   const formTitle = model.formTitle || model.title;
   const { navigate, getParams, useParams, pathname } = useRouter();
@@ -95,15 +97,13 @@ const Form = ({
       case consts.function:
         navigatePath = navigateBack({ params, searchParams, data });
         break;
+      case consts.number:
       case consts.string:
         navigatePath = navigateBack;
         break;
       default:
         navigatePath = pathname.substring(0, pathname.lastIndexOf("/"));
         break;
-    }
-    if (navigatePath.includes("window.history")) {
-      window.history.back();
     }
     navigate(navigatePath);
   };
@@ -161,7 +161,7 @@ const Form = ({
         })
         .catch((err) => {
           snackbar.showError(
-            "An error occured, please try after some time.second",
+            "An error occured.",
             err
           );
           if (model.reloadOnSave) {
@@ -241,7 +241,7 @@ const Form = ({
     }
   };
   const clearError = () => {
-    setErrorMessage(null);
+    setErrorMessage(null)
     setIsDeleting(false);
   };
   if (isLoading) {
@@ -284,6 +284,7 @@ const Form = ({
   const showSaveButton = searchParams.has("showRelation");
   const recordEditable = !("canEdit" in data) || data.canEdit;
   const readOnlyRelations = !recordEditable || data.readOnlyRelations;
+  deletePromptText = deletePromptText || "Are you sure you want to delete ?";
   return (
     <>
       <PageTitle
@@ -366,8 +367,7 @@ const Form = ({
               setDeleteError(null);
             }}
             title={deleteError ? "Error Deleting Record" : "Confirm Delete"}
-          >{`Are you sure you want to delete ${data?.GroupName || data?.SurveyName
-            }?`}</DialogComponent>
+          >{deletePromptText}</DialogComponent>
           {showRelations ? (
             <Relations
               readOnly={readOnlyRelations}
