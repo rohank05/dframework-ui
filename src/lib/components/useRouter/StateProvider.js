@@ -77,6 +77,7 @@ const StateProvider = ({ children }) => {
     }
     dispatchData({ type: actionsStateProvider.UDPATE_PREFERENCES, payload: preferences });
     dispatchData({ type: actionsStateProvider.TOTAL_PREFERENCES, payload: preferences.length });
+    return preferences;
   }
 
   /**
@@ -105,15 +106,9 @@ const StateProvider = ({ children }) => {
    * @param {string} params.preferenceApi - API endpoint for preferences.
    * @param {Object} [params.defaultPreferenceEnums={}] - Default preferences mapping.
    */
-  async function applyDefaultPreferenceIfExists({ gridRef, history, dispatchData, Username, preferenceName, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums = {} }) {
-    const params = {
-      action: 'default',
-      id: preferenceName,
-      Username
-    }
-
-    const response = await request({ url: preferenceApi, params, history, dispatchData }) || {};
-    const userPreferenceCharts = response.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
+  async function applyDefaultPreferenceIfExists({ preferences = [], gridRef, dispatchData, preferenceName, setIsGridPreferenceFetched, defaultPreferenceEnums = {} }) {
+    const defaultPreference = preferences.find(pref => pref.isDefault && pref.GridId === preferenceName);
+    const userPreferenceCharts = defaultPreference ? JSON.parse(defaultPreference.prefValue) : defaultPreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
       userPreferenceCharts.gridColumn = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.gridColumn });
       userPreferenceCharts.sortModel = filterNonExistingColumns({ gridRef, data: userPreferenceCharts.sortModel });
@@ -122,7 +117,7 @@ const StateProvider = ({ children }) => {
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
       gridRef.current.setFilterModel(userPreferenceCharts?.filterModel);
-      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: response?.prefValue ? response.prefName : 'Default' });
+      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference?.prefValue ? defaultPreference.prefName : 'Default' });
     }
     if (setIsGridPreferenceFetched) {
       setIsGridPreferenceFetched(true);

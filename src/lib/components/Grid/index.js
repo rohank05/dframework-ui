@@ -791,12 +791,15 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
-        if (!preferenceName || !preferenceApi) {
-            return;
-        }
-        removeCurrentPreferenceName({ dispatchData });
-        getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
-        applyDefaultPreferenceIfExists({ preferenceName, history: navigate, dispatchData, Username, gridRef: apiRef, setIsGridPreferenceFetched, preferenceApi, defaultPreferenceEnums });
+        async function setupGridPreference() {
+            if (!preferenceName || !preferenceApi) {
+                return;
+            }
+            removeCurrentPreferenceName({ dispatchData });
+            const preferences = await getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
+            applyDefaultPreferenceIfExists({ preferenceName, dispatchData, gridRef: apiRef, setIsGridPreferenceFetched, defaultPreferenceEnums, preferences });
+            }
+        setupGridPreference();
     }, [preferenceApi]);
 
     const CustomToolbar = function (props) {
@@ -887,7 +890,7 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
-        if (!url) return;
+        if (!url || !isGridPreferenceFetched) return;
         fetchData();
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
 

@@ -1101,30 +1101,31 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     }
   };
   (0, _react.useEffect)(() => {
-    if (!preferenceName || !preferenceApi) {
-      return;
+    async function setupGridPreference() {
+      if (!preferenceName || !preferenceApi) {
+        return;
+      }
+      removeCurrentPreferenceName({
+        dispatchData
+      });
+      const preferences = await getAllSavedPreferences({
+        preferenceName,
+        history: navigate,
+        dispatchData,
+        Username,
+        preferenceApi,
+        defaultPreferenceEnums
+      });
+      applyDefaultPreferenceIfExists({
+        preferenceName,
+        dispatchData,
+        gridRef: apiRef,
+        setIsGridPreferenceFetched,
+        defaultPreferenceEnums,
+        preferences
+      });
     }
-    removeCurrentPreferenceName({
-      dispatchData
-    });
-    getAllSavedPreferences({
-      preferenceName,
-      history: navigate,
-      dispatchData,
-      Username,
-      preferenceApi,
-      defaultPreferenceEnums
-    });
-    applyDefaultPreferenceIfExists({
-      preferenceName,
-      history: navigate,
-      dispatchData,
-      Username,
-      gridRef: apiRef,
-      setIsGridPreferenceFetched,
-      preferenceApi,
-      defaultPreferenceEnums
-    });
+    setupGridPreference();
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
     const addText = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
@@ -1233,7 +1234,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
-    if (!url) return;
+    if (!url || !isGridPreferenceFetched) return;
     fetchData();
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {
