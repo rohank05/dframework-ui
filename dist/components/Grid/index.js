@@ -210,7 +210,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
       onAddOverride,
       dynamicColumns,
       readOnly = false,
-      baseFilters
+      baseFilters = []
     } = _ref,
     props = _objectWithoutProperties(_ref, _excluded);
   const [paginationModel, setPaginationModel] = (0, _react.useState)({

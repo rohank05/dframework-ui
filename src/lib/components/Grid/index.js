@@ -133,7 +133,7 @@ const GridBase = memo(({
     onAddOverride,
     dynamicColumns,
     readOnly = false,
-    baseFilters,
+    baseFilters = [],
     ...props
 }) => {
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });

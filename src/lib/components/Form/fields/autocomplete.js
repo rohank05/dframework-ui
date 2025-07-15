@@ -3,10 +3,12 @@ import { FormHelperText } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import { useStateContext } from "../../useRouter/StateProvider";
 const consts = {
     limitTags: 5
 }
 const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, mode }) => {
+    const { stateData } = useStateContext();
     const inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
     const options = React.useMemo(
         () => (lookups ? lookups[column.lookup] : []),
@@ -14,7 +16,7 @@ const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, 
     );
     const { filter } = column;
     if (typeof filter === "function" && options.length) {
-        filter({ options });
+        filter({ options, stateData });
     }
 
     const filteredCombos = options.filter(option => inputValue.includes(option.value)) || [];

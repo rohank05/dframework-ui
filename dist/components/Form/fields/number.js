@@ -52,7 +52,7 @@ const Field = _ref2 => {
     props = _objectWithoutProperties(_ref2, _excluded);
   const {
     minValue: min,
-    minvalueue: max
+    maxValue: max
   } = column;
   const resolvedMin = resolveValue({
     value: min,
