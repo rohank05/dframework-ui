@@ -12,7 +12,7 @@ const resolveValue = ({ value, state }) => {
 // allowing backspace, delete, tab, escape and enter;
 const allowedKeyCodes = [8, 46, 9, 27, 13];
 const Field = ({ column, otherProps, formik, field, ...props }) => {
-    const { minValue: min, maxValue: max } = column;
+    const { min, max } = column;
     const resolvedMin = resolveValue({ value: min, state: formik.values });
     const resolvedMax = resolveValue({ value: max, state: formik.values });
     const minKey = 47;

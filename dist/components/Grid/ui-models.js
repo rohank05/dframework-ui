@@ -161,10 +161,10 @@ class UiModel {
       switch (type) {
         case 'string':
           config = yup.string().nullable().trim().label(formLabel);
-          if (min) {
+          if (min && !isNaN(Number(min))) {
             config = config.min(Number(min), "".concat(formLabel, " must be at least ").concat(min, " characters long"));
           }
-          if (max) {
+          if (max && !isNaN(Number(max))) {
             config = config.max(Number(max), "".concat(formLabel, " must be at most ").concat(max, " characters long"));
           }
           if (required) {
@@ -223,10 +223,10 @@ class UiModel {
           } else {
             config = yup.number().nullable();
           }
-          if (min !== undefined && min !== '') {
+          if (min !== undefined && min !== '' && !isNaN(Number(min))) {
             config = config.min(Number(min), "".concat(formLabel, " must be greater than or equal to ").concat(min));
           }
-          if (max !== undefined && max !== '') {
+          if (max !== undefined && max !== '' && !isNaN(Number(max))) {
             config = config.max(Number(max), "".concat(formLabel, " must be less than or equal to ").concat(max));
           }
           break;
