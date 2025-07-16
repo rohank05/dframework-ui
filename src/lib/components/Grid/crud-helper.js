@@ -6,6 +6,35 @@ const lookupDataTypes = ['singleSelect'];
 const timeInterval = 200;
 
 const isLocalTime = (dateValue) => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
+
+/**
+ * Handles common HTTP error responses such as session expiration and forbidden access.
+ * If an error is detected, sets an appropriate error message and redirects the user after a delay.
+ * Returns true if a common error was handled, otherwise false.
+ * 
+ * @param {Object} response - The HTTP response object containing the status code.
+ * @param {Function} setError - Callback function to set the error message.
+ * @returns {boolean} Returns true if a common error was handled and a redirect is triggered, otherwise false.
+ */
+const handleCommonErrors = (response, setError) => {
+    if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+        setError('Session Expired!');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, timeInterval);
+        return true;
+    } else if (response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        setError('Access Denied!');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, timeInterval);
+        return true;
+    } else if (response.status === HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
+        setError('Internal Server Error');
+    }
+    return false;
+};
+
 function shouldApplyFilter(filter) {
     const { operator, value, type } = filter;
 
@@ -169,23 +198,12 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 });
             }
             setData(response.data);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError(response.statusText);
         }
     } catch (error) {
-        switch (error.response?.status) {
-            case HTTP_STATUS_CODES.SESSION_EXPIRED:
-                setError('Session Expired!');
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, timeInterval);
-                break;
-            case HTTP_STATUS_CODES.FORBIDDEN:
-                window.location.href = '/';
-                break;
-            default:
-                setError('Could not list record', error.message || error.toString());
-                break;
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not list record', error.message || error.toString());
         }
     } finally {
         setIsLoading(false);
@@ -230,21 +248,12 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parent
                 }
             }
             const defaultValues = { ...model.defaultValues };
-
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
-        }
-        else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Could not load record', response.body.toString());
         }
     } catch (error) {
-        // Handle 401 specifically in the error block
-        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, timeInterval);
-        }
-        else {
+        if (error.response && handleCommonErrors(error.response, setError)) {
             setError('Could not load record', error.message || error.toString());
         }
     } finally {
@@ -273,19 +282,13 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
             }
             result.success = true;
             return true;
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Delete failed', response.body);
         }
     } catch (error) {
-        if (error.response?.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, timeInterval);
-        } else {
+        if (error.response && !handleCommonErrors(error.response, setError)) {
             setError('Could not delete record', error.message || error.toString());
         }
-
     } finally {
         setIsLoading(false);
     }
@@ -321,17 +324,11 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
                 return data;
             }
             setError('Save failed', data.err || data.message);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Save failed', response.body);
         }
     } catch (error) {
-        if (error.response && error.response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, timeInterval);
-        } else {
-
+        if (error.response && !handleCommonErrors(error.response, setError)) {
             setError('Could not save record', error.message || error.toString());
         }
     } finally {
@@ -356,11 +353,13 @@ const getLookups = async ({ api, setIsLoading, setActiveRecord, model, setError,
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
             setActiveRecord(response.data);
-        } else if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
-            window.location.href = '/';
+        } else if (!handleCommonErrors(response, setError)) {
+            setError('Could not load lookups', response.statusText);
         }
     } catch (error) {
-        setError('Could not delete record', error.message || error.toString());
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not load lookups', error.message || error.toString());
+        }
     } finally {
         setIsLoading(false);
     }
