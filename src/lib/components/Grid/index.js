@@ -133,6 +133,7 @@ const GridBase = memo(({
     onAddOverride,
     dynamicColumns,
     readOnly = false,
+    baseFilters = [],
     ...props
 }) => {
     const [paginationModel, setPaginationModel] = useState({ pageSize: defaultPageSize, page: 0 });
@@ -491,7 +492,6 @@ const GridBase = memo(({
                 chartFilters.items.length = 0;
             }
         }
-        const baseFilters = [];
         if (model.joinColumn && id) {
             baseFilters.push({ field: model.joinColumn, operator: "is", type: "number", value: Number(id) });
         }
