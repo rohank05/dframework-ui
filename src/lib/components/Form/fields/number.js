@@ -1,7 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import StringField from './string';
 import debounce from 'lodash.debounce';
 
+// Key code constants
+const DIGIT_START = 47;
+const DIGIT_END = 58;
+const ARROW_LEFT = 37;
+const ARROW_RIGHT = 40;
+
+// Control key codes
+const CONTROL_KEYS = [8, 46, 9, 27, 13]; // backspace, delete, tab, escape, enter
 const resolveValue = ({ value, state }) => {
     if (typeof value === 'string' && value.startsWith('{') && value.endsWith('}')) {
         const key = value.slice(1, -1); // Extract key inside the braces
@@ -9,19 +17,22 @@ const resolveValue = ({ value, state }) => {
     }
     return value;
 };
-// allowing backspace, delete, tab, escape and enter;
-const allowedKeyCodes = [8, 46, 9, 27, 13];
 const Field = ({ column, otherProps, formik, field, ...props }) => {
     const { min, max } = column;
-    const resolvedMin = resolveValue({ value: min, state: formik.values });
-    const resolvedMax = resolveValue({ value: max, state: formik.values });
-    const minKey = 47;
-    const maxKey = 58;
-    const minvalue = Math.max(0, resolvedMin);
+
+    const resolvedMin = useMemo(
+        () => Math.max(0, resolveValue({ value: min, state: formik.values })),
+        [min, formik.values]
+    );
+    const resolvedMax = useMemo(
+        () => resolveValue({ value: max, state: formik.values }),
+        [max, formik.values]
+    );
+
     const debouncedSetFieldValue = useCallback(
         debounce((field, value) => {
-            if (value < minvalue) {
-                formik.setFieldValue(field, minvalue);
+            if (value < resolvedMin) {
+                formik.setFieldValue(field, resolvedMin);
             } else if (resolvedMax && value > resolvedMax) {
                 formik.setFieldValue(field, resolvedMax);
             } else {
@@ -30,21 +41,22 @@ const Field = ({ column, otherProps, formik, field, ...props }) => {
         }, 400),
         [resolvedMin, resolvedMax, formik.setFieldValue]
     );
+
     const { onBlur } = props;
     otherProps = {
         InputProps: {
             inputProps: {
-                min,
+                min: resolvedMin,
                 max: resolvedMax,
                 readOnly: column.readOnly === true,
-                onKeyPress: (event) => {
+                onKeyDown: (event) => {
                     const keyCode = event.which ? event.which : event.keyCode;
                     // Allow: backspace, delete, tab, escape, enter, arrows
-                    if (allowedKeyCodes.includes(keyCode) || (keyCode >= 37 && keyCode <= 40)) {
+                    if (CONTROL_KEYS.includes(keyCode) || (keyCode >= ARROW_LEFT && keyCode <= ARROW_RIGHT)) {
                         return;
                     }
                     // Allow number keys (0-9)
-                    if (!(keyCode > minKey && keyCode < maxKey)) {
+                    if (!(keyCode > DIGIT_START && keyCode < DIGIT_END)) {
                         event.preventDefault();
                     }
                 },

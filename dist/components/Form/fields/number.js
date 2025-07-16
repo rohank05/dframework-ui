@@ -29,6 +29,14 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
 function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
+// Key code constants
+const DIGIT_START = 47;
+const DIGIT_END = 58;
+const ARROW_LEFT = 37;
+const ARROW_RIGHT = 40;
+
+// Control key codes
+const CONTROL_KEYS = [8, 46, 9, 27, 13]; // backspace, delete, tab, escape, enter
 const resolveValue = _ref => {
   let {
     value,
@@ -40,8 +48,6 @@ const resolveValue = _ref => {
   }
   return value;
 };
-// allowing backspace, delete, tab, escape and enter;
-const allowedKeyCodes = [8, 46, 9, 27, 13];
 const Field = _ref2 => {
   let {
       column,
@@ -54,20 +60,17 @@ const Field = _ref2 => {
     min,
     max
   } = column;
-  const resolvedMin = resolveValue({
+  const resolvedMin = (0, _react.useMemo)(() => Math.max(0, resolveValue({
     value: min,
     state: formik.values
-  });
-  const resolvedMax = resolveValue({
+  })), [min, formik.values]);
+  const resolvedMax = (0, _react.useMemo)(() => resolveValue({
     value: max,
     state: formik.values
-  });
-  const minKey = 47;
-  const maxKey = 58;
-  const minvalue = Math.max(0, resolvedMin);
+  }), [max, formik.values]);
   const debouncedSetFieldValue = (0, _react.useCallback)((0, _lodash.default)((field, value) => {
-    if (value < minvalue) {
-      formik.setFieldValue(field, minvalue);
+    if (value < resolvedMin) {
+      formik.setFieldValue(field, resolvedMin);
     } else if (resolvedMax && value > resolvedMax) {
       formik.setFieldValue(field, resolvedMax);
     } else {
@@ -80,17 +83,17 @@ const Field = _ref2 => {
   otherProps = _objectSpread(_objectSpread({
     InputProps: {
       inputProps: {
-        min,
+        min: resolvedMin,
         max: resolvedMax,
         readOnly: column.readOnly === true,
-        onKeyPress: event => {
+        onKeyDown: event => {
           const keyCode = event.which ? event.which : event.keyCode;
           // Allow: backspace, delete, tab, escape, enter, arrows
-          if (allowedKeyCodes.includes(keyCode) || keyCode >= 37 && keyCode <= 40) {
+          if (CONTROL_KEYS.includes(keyCode) || keyCode >= ARROW_LEFT && keyCode <= ARROW_RIGHT) {
             return;
           }
           // Allow number keys (0-9)
-          if (!(keyCode > minKey && keyCode < maxKey)) {
+          if (!(keyCode > DIGIT_START && keyCode < DIGIT_END)) {
             event.preventDefault();
           }
         },
