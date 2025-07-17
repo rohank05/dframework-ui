@@ -1234,7 +1234,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
-    if (!url || !isGridPreferenceFetched) return;
+    if (!url || preferenceName && !isGridPreferenceFetched) return;
     fetchData();
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {

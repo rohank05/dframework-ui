@@ -16,7 +16,7 @@ import CopyIcon from '@mui/icons-material/FileCopy';
 import ArticleIcon from '@mui/icons-material/Article';
 import EditIcon from '@mui/icons-material/Edit';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
-import React, { useMemo, useEffect, memo, useRef, useState } from 'react';
+import React, { useMemo, useEffect, memo, useRef, useState, useCallback } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Typography from '@mui/material/Typography';
@@ -798,7 +798,7 @@ const GridBase = memo(({
             removeCurrentPreferenceName({ dispatchData });
             const preferences = await getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
             applyDefaultPreferenceIfExists({ preferenceName, dispatchData, gridRef: apiRef, setIsGridPreferenceFetched, defaultPreferenceEnums, preferences });
-            }
+        }
         setupGridPreference();
     }, [preferenceApi]);
 
@@ -890,7 +890,7 @@ const GridBase = memo(({
     };
 
     useEffect(() => {
-        if (!url || !isGridPreferenceFetched) return;
+        if (!url || (preferenceName && !isGridPreferenceFetched)) return;
         fetchData();
     }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
 

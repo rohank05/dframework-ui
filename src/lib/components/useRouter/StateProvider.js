@@ -117,7 +117,7 @@ const StateProvider = ({ children }) => {
       gridRef.current.setPinnedColumns(userPreferenceCharts.pinnedColumns);
       gridRef.current.setSortModel(userPreferenceCharts.sortModel || []);
       gridRef.current.setFilterModel(userPreferenceCharts?.filterModel);
-      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference?.prefValue ? defaultPreference.prefName : 'Default' });
+      dispatchData({ type: actionsStateProvider.SET_CURRENT_PREFERENCE_NAME, payload: defaultPreference ? defaultPreference.prefName : 'Default' });
     }
     if (setIsGridPreferenceFetched) {
       setIsGridPreferenceFetched(true);

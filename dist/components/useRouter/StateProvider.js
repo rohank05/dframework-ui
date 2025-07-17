@@ -182,7 +182,7 @@ const StateProvider = _ref => {
       gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
-        payload: defaultPreference !== null && defaultPreference !== void 0 && defaultPreference.prefValue ? defaultPreference.prefName : 'Default'
+        payload: defaultPreference ? defaultPreference.prefName : 'Default'
       });
     }
     if (setIsGridPreferenceFetched) {
