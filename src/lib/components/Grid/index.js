@@ -790,16 +790,17 @@ const GridBase = memo(({
         }
     };
 
+    const setupGridPreference = async ({ preferenceName, Username, preferenceApi, defaultPreferenceEnums }) => {
+        removeCurrentPreferenceName({ dispatchData });
+        const preferences = await getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
+        applyDefaultPreferenceIfExists({ preferenceName, dispatchData, gridRef: apiRef, setIsGridPreferenceFetched, defaultPreferenceEnums, preferences });
+    }
+
     useEffect(() => {
-        async function setupGridPreference() {
-            if (!preferenceName || !preferenceApi) {
-                return;
-            }
-            removeCurrentPreferenceName({ dispatchData });
-            const preferences = await getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, defaultPreferenceEnums });
-            applyDefaultPreferenceIfExists({ preferenceName, dispatchData, gridRef: apiRef, setIsGridPreferenceFetched, defaultPreferenceEnums, preferences });
+        if (!preferenceName || !preferenceApi) {
+            return;
         }
-        setupGridPreference();
+        setupGridPreference({ preferenceName, Username, preferenceApi, defaultPreferenceEnums });
     }, [preferenceApi]);
 
     const CustomToolbar = function (props) {

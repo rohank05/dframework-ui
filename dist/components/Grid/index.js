@@ -1100,32 +1100,43 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
       setSelection(data.records.map(record => record[idProperty]));
     }
   };
+  const setupGridPreference = async _ref1 => {
+    let {
+      preferenceName,
+      Username,
+      preferenceApi,
+      defaultPreferenceEnums
+    } = _ref1;
+    removeCurrentPreferenceName({
+      dispatchData
+    });
+    const preferences = await getAllSavedPreferences({
+      preferenceName,
+      history: navigate,
+      dispatchData,
+      Username,
+      preferenceApi,
+      defaultPreferenceEnums
+    });
+    applyDefaultPreferenceIfExists({
+      preferenceName,
+      dispatchData,
+      gridRef: apiRef,
+      setIsGridPreferenceFetched,
+      defaultPreferenceEnums,
+      preferences
+    });
+  };
   (0, _react.useEffect)(() => {
-    async function setupGridPreference() {
-      if (!preferenceName || !preferenceApi) {
-        return;
-      }
-      removeCurrentPreferenceName({
-        dispatchData
-      });
-      const preferences = await getAllSavedPreferences({
-        preferenceName,
-        history: navigate,
-        dispatchData,
-        Username,
-        preferenceApi,
-        defaultPreferenceEnums
-      });
-      applyDefaultPreferenceIfExists({
-        preferenceName,
-        dispatchData,
-        gridRef: apiRef,
-        setIsGridPreferenceFetched,
-        defaultPreferenceEnums,
-        preferences
-      });
+    if (!preferenceName || !preferenceApi) {
+      return;
     }
-    setupGridPreference();
+    setupGridPreference({
+      preferenceName,
+      Username,
+      preferenceApi,
+      defaultPreferenceEnums
+    });
   }, [preferenceApi]);
   const CustomToolbar = function CustomToolbar(props) {
     const addText = model.customAddText || (model.title ? "Add ".concat(model.title) : 'Add');
