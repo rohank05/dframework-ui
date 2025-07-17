@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 const initialState = {
   dataLocalization: 'en',
-  dateTime: 'DD-MM-YYYY',
+  dateTime: 'MM/DD/YYYY hh:mm:ss A',
   dataForm: '',
   pageTitleDetails: null,
   modal: null,
@@ -18,6 +18,7 @@ const initialState = {
   currentPreference: null,
   totalPreferences: null,
   loaderOpen: false,
-  filtersInHeader: {}
+  filtersInHeader: {},
+  timeZone: ""
 };
 var _default = exports.default = initialState;

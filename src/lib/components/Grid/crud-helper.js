@@ -1,14 +1,53 @@
 import actionsStateProvider from "../useRouter/actions";
 import { transport, HTTP_STATUS_CODES } from "./httpRequest";
-import request from "./httpRequest";
 
 const dateDataTypes = ['date', 'dateTime'];
+const lookupDataTypes = ['singleSelect'];
+const timeInterval = 200;
 
-const exportRecordSize = 10000;
+const isLocalTime = (dateValue) => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
 
-const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, oderStatusId = 0, modelConfig = null, baseFilters = null, isElasticExport }) => {
+/**
+ * Handles common HTTP error responses such as session expiration and forbidden access.
+ * If an error is detected, sets an appropriate error message and redirects the user after a delay.
+ * Returns true if a common error was handled, otherwise false.
+ * 
+ * @param {Object} response - The HTTP response object containing the status code.
+ * @param {Function} setError - Callback function to set the error message.
+ * @returns {boolean} Returns true if a common error was handled and a redirect is triggered, otherwise false.
+ */
+const handleCommonErrors = (response, setError) => {
+    if (response.status === HTTP_STATUS_CODES.SESSION_EXPIRED) {
+        setError('Session Expired!');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, timeInterval);
+        return true;
+    } else if (response.status === HTTP_STATUS_CODES.FORBIDDEN) {
+        setError('Access Denied!');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, timeInterval);
+        return true;
+    } else if (response.status === HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
+        setError('Internal Server Error');
+    }
+    return false;
+};
+
+function shouldApplyFilter(filter) {
+    const { operator, value, type } = filter;
+
+    const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+    const hasValidValue = value !== undefined &&
+        value !== null &&
+        (value !== '' || (type === 'number' && value === 0) || (type === 'boolean' && value === false));
+
+    return isUnaryOperator || hasValidValue;
+}
+
+const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sortModel, filterModel, api, parentFilters, action = 'list', setError, extraParams, contentType, columns, controllerType = 'node', template = null, configFileName = null, dispatchData, showFullScreenLoader = false, model, baseFilters = null, isElasticExport }) => {
     if (!contentType) {
-        setIsLoading(true);
         if (showFullScreenLoader) {
             dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: true });
         }
@@ -16,14 +55,14 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
 
     const lookups = [];
     const dateColumns = [];
-    gridColumns.forEach(({ lookup, type, field, keepLocal = false, keepLocalDate }) => {
+    gridColumns.forEach(({ lookup, type, field, keepLocal = false, keepLocalDate, filterable = true }) => {
         if (dateDataTypes.includes(type)) {
             dateColumns.push({ field, keepLocal, keepLocalDate });
         }
         if (!lookup) {
             return;
         }
-        if (!lookups.includes(lookup)) {
+        if (!lookups.includes(lookup) && lookupDataTypes.includes(type) && filterable) {
             lookups.push(lookup);
         }
     });
@@ -31,22 +70,22 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     const where = [];
     if (filterModel?.items?.length) {
         filterModel.items.forEach(filter => {
-            if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value) {
+            if (shouldApplyFilter(filter)) {
                 const { field, operator, filterField } = filter;
                 let { value } = filter;
-                const column = gridColumns.filter((item) => item.field === filter.field);
+                const column = gridColumns.filter((item) => item?.field === filter.field);
                 const type = column[0]?.type;
                 if (type === 'boolean') {
-                    value = value === 'true' ? 1 : 0;
+                    value = (value === 'true' || value === true) ? 1 : 0;
                 } else if (type === 'number') {
                     value = Array.isArray(value) ? value.filter(e => e) : value;
                 }
                 value = filter.filterValues || value;
                 where.push({
                     field: filterField || field,
-                    operator: operator,
-                    value: value,
-                    type: type
+                    operator,
+                    value,
+                    type
                 });
             }
         });
@@ -60,22 +99,22 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
     }
     const requestData = {
         start: page * pageSize,
-        limit: isElasticExport ? modelConfig.exportSize : pageSize,
+        limit: isElasticExport ? model.exportSize : pageSize,
         ...extraParams,
         logicalOperator: filterModel.logicOperator,
         sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
         where,
-        oderStatusId: oderStatusId,
         isElasticExport,
-        fileName: modelConfig?.overrideFileName
+        model: model.module,
+        fileName: model.overrideFileName
     };
 
     if (lookups) {
         requestData.lookups = lookups.join(',');
     }
 
-    if (modelConfig?.limitToSurveyed) {
-        requestData.limitToSurveyed = modelConfig?.limitToSurveyed
+    if (model?.limitToSurveyed) {
+        requestData.limitToSurveyed = model?.limitToSurveyed;
     }
 
     const headers = {};
@@ -93,7 +132,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         requestData.columns = columns;
         form.setAttribute("method", "POST");
         form.setAttribute("id", "exportForm");
-        form.setAttribute("target", "_blank")
+        form.setAttribute("target", "_blank");
         if (template === null) {
             for (const key in requestData) {
                 let v = requestData[key];
@@ -102,7 +141,7 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                 } else if (typeof v !== 'string') {
                     v = JSON.stringify(v);
                 }
-                let hiddenTag = document.createElement('input');
+                const hiddenTag = document.createElement('input');
                 hiddenTag.type = "hidden";
                 hiddenTag.name = key;
                 hiddenTag.value = v;
@@ -114,11 +153,12 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
         form.submit();
         setTimeout(() => {
             document.getElementById("exportForm").remove();
-        }, 3000)
+        }, 3000);
         return;
     }
     try {
-        let params = {
+        setIsLoading(true);
+        const params = {
             url,
             method: 'POST',
             data: requestData,
@@ -128,21 +168,15 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
             },
             credentials: 'include'
         };
-
+        setData(prevData => ({
+            ...prevData,
+            records: [] // reset records to empty array before fetching new data
+        }));
         const response = await transport(params);
-        function isLocalTime(dateValue) {
-            const date = new Date(dateValue);
-            const localOffset = new Date().getTimezoneOffset();
-            const dateOffset = date.getTimezoneOffset();
-            return localOffset === dateOffset;
-        }
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const { records, userCurrencySymbol } = response.data;
+            const { records } = response.data;
             if (records) {
                 records.forEach(record => {
-                    if (record.hasOwnProperty("TotalOrder")) {
-                        record["TotalOrder"] = `${userCurrencySymbol}${record["TotalOrder"]}`;
-                    }
                     dateColumns.forEach(column => {
                         const { field, keepLocal, keepLocalDate } = column;
                         if (record[field]) {
@@ -157,40 +191,44 @@ const getList = async ({ gridColumns, setIsLoading, setData, page, pageSize, sor
                             }
                         }
                     });
+                    model.columns.forEach(({ field, displayIndex }) => {
+                        if (!displayIndex) return;
+                        record[field] = record[displayIndex];
+                    });
                 });
             }
             setData(response.data);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError(response.statusText);
         }
-    } catch (err) {
-        setError(err);
+    } catch (error) {
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not list record', error.message || error.toString());
+        }
     } finally {
-        if (!contentType) {
-            setIsLoading(false);
-            if (showFullScreenLoader) {
-                dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
-            }
+        setIsLoading(false);
+        if (!contentType && showFullScreenLoader) {
+            dispatchData({ type: actionsStateProvider.UPDATE_LOADER_STATE, payload: false });
         }
     }
 };
 
-const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, parentFilters, where = {}, setError }) => {
-    api = api || modelConfig?.api
+const getRecord = async ({ api, id, setIsLoading, setActiveRecord, model, parentFilters, where = {}, setError }) => {
+    api = api || model.api;
     setIsLoading(true);
     const searchParams = new URLSearchParams();
     const url = `${api}/${id === undefined || id === null ? '-' : id}`;
     const lookupsToFetch = [];
-    const fields = modelConfig.formDef || modelConfig.columns;
+    const fields = model.formDef || model.columns;
     fields?.forEach(field => {
-        if (field.lookup && !lookupsToFetch.includes(field.lookup)) {
+        if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
             lookupsToFetch.push(field.lookup);
         }
     });
     searchParams.set("lookups", lookupsToFetch);
     if (where && Object.keys(where)?.length) {
         searchParams.set("where", JSON.stringify(where));
-    };
+    }
     try {
         const response = await transport({
             url: `${url}?${searchParams.toString()}`,
@@ -199,8 +237,8 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
             const { data: record, lookups } = response.data;
-            let title = record[modelConfig.linkColumn];
-            const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
+            let title = record[model.linkColumn];
+            const columnConfig = model.columns.find(a => a.field === model.linkColumn);
             if (columnConfig && columnConfig.lookup) {
                 if (lookups && lookups[columnConfig.lookup] && lookups[columnConfig.lookup]?.length) {
                     const lookupValue = lookups[columnConfig.lookup].find(a => a.value === title);
@@ -209,27 +247,22 @@ const getRecord = async ({ api, id, setIsLoading, setActiveRecord, modelConfig, 
                     }
                 }
             }
-
-            const defaultValues = { ...modelConfig.defaultValues };
-
+            const defaultValues = { ...model.defaultValues };
             setActiveRecord({ id, title: title, record: { ...defaultValues, ...record, ...parentFilters }, lookups });
-        } else if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 2000);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Could not load record', response.body.toString());
         }
     } catch (error) {
-        setError('Could not load record', error);
+        if (error.response && handleCommonErrors(error.response, setError)) {
+            setError('Could not load record', error.message || error.toString());
+        }
     } finally {
         setIsLoading(false);
     }
 };
 
-const deleteRecord = async function ({ id, api, setIsLoading, setError, setErrorMessage }) {
-    let result = { success: false, error: '' };
+const deleteRecord = async function ({ id, api, setIsLoading, setError }) {
+    const result = { success: false, error: '' };
     if (!id) {
         setError('Deleted failed. No active record.');
         return;
@@ -242,21 +275,20 @@ const deleteRecord = async function ({ id, api, setIsLoading, setError, setError
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
+            if (response.data && !response.data.success) {
+                result.success = false;
+                setError('Delete failed', response.data.message);
+                return false;
+            }
             result.success = true;
             return true;
-        }
-        if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 2000);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Delete failed', response.body);
         }
     } catch (error) {
-        const errorMessage = error?.response?.data?.error;
-        result.error = errorMessage;
-        setErrorMessage(errorMessage);
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not delete record', error.message || error.toString());
+        }
     } finally {
         setIsLoading(false);
     }
@@ -287,23 +319,18 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
             credentials: 'include'
         });
         if (response.status === HTTP_STATUS_CODES.OK) {
-            const { data = {} } = response.data;
+            const data = response.data;
             if (data.success) {
                 return data;
             }
             setError('Save failed', data.err || data.message);
-            return;
-        }
-        if (response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
-            setError('Session Expired!');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 2000);
-        } else {
+        } else if (!handleCommonErrors(response, setError)) {
             setError('Save failed', response.body);
         }
     } catch (error) {
-        setError('Save failed', error);
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not save record', error.message || error.toString());
+        }
     } finally {
         setIsLoading(false);
     }
@@ -311,9 +338,36 @@ const saveRecord = async function ({ id, api, values, setIsLoading, setError }) 
     return false;
 };
 
+const getLookups = async ({ api, setIsLoading, setActiveRecord, model, setError, lookups, scopeId }) => {
+    api = api || model.api;
+    setIsLoading(true);
+    const searchParams = new URLSearchParams();
+    const url = `${api}/lookups`;
+    searchParams.set("lookups", lookups);
+    searchParams.set("scopeId", scopeId);
+    try {
+        const response = await transport({
+            url: `${url}?${searchParams.toString()}`,
+            method: 'GET',
+            credentials: 'include'
+        });
+        if (response.status === HTTP_STATUS_CODES.OK) {
+            setActiveRecord(response.data);
+        } else if (!handleCommonErrors(response, setError)) {
+            setError('Could not load lookups', response.statusText);
+        }
+    } catch (error) {
+        if (error.response && !handleCommonErrors(error.response, setError)) {
+            setError('Could not load lookups', error.message || error.toString());
+        }
+    } finally {
+        setIsLoading(false);
+    }
+};
 export {
     getList,
     getRecord,
     deleteRecord,
     saveRecord,
+    getLookups
 };

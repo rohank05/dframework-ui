@@ -3,16 +3,25 @@ import { FormHelperText } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
-const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, model, fieldConfigs, mode }) => {
-    let inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
-    const options = lookups ? lookups[column?.lookup] : [];
-    let filteredCombos = options?.filter(option => inputValue.includes(option.value)) || [];
-    let isDisabled;
-    if (mode !== 'copy') {
-        isDisabled = fieldConfigs?.disabled;
+import { useStateContext } from "../../useRouter/StateProvider";
+const consts = {
+    limitTags: 5
+}
+const Field = ({ column, field, formik, lookups, otherProps, fieldConfigs = {}, mode }) => {
+    const { stateData } = useStateContext();
+    const inputValue = formik.values[field]?.split(", ")?.map(Number) || [];
+    const options = React.useMemo(
+        () => (lookups ? lookups[column.lookup] : []),
+        [lookups, column.lookup]
+    );
+    const { filter } = column;
+    if (typeof filter === "function" && options.length) {
+        filter({ options, stateData });
     }
-    const handleAutoCompleteChange = (event, newValue) => {
+
+    const filteredCombos = options.filter(option => inputValue.includes(option.value)) || [];
+    const isDisabled = mode !== 'copy' && fieldConfigs.disabled;
+    const handleAutoCompleteChange = (_, newValue) => {
         formik?.setFieldValue(field, newValue ? newValue.map(val => val.value).join(', ') : '');
     }
 
@@ -27,6 +36,7 @@ const Field = ({ column, field, fieldLabel, formik, lookups, data, otherProps, m
                 {...otherProps}
                 multiple
                 id={field}
+                limitTags={column.limitTags || consts.limitTags}
                 options={options || []}
                 getOptionLabel={(option) => option.label || ''}
                 defaultValue={filteredCombos}

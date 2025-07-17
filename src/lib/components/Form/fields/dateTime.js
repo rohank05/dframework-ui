@@ -3,7 +3,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs from 'dayjs';
 import { useStateContext } from '../../useRouter/StateProvider'
 
-const field = ({ column, field, fieldLabel, formik, otherProps, classes }) => {
+const Field = ({ column, field, formik, otherProps }) => {
     const { systemDateTimeFormat, stateData } = useStateContext();
     return <DateTimePicker
         {...otherProps}
@@ -17,10 +17,11 @@ const field = ({ column, field, fieldLabel, formik, otherProps, classes }) => {
         onChange={(value) => formik.setFieldValue(field, value)}
         onBlur={formik.handleBlur}
         helperText={formik.touched[field] && formik.errors[field]}
-        disablePast={column?.disablePast}
+        minDateTime={(column.min ? dayjs(column.min) : null)}
+        maxDateTime={(column.max ? dayjs(column.max) : null)}
         slotProps={{ textField: { fullWidth: true, helperText: formik.errors[field], variant: "standard" } }}
     />
 
 }
 
-export default field;
+export default Field;

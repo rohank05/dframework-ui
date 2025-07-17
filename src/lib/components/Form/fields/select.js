@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { FormHelperText } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FormControl from '@mui/material/FormControl';
@@ -6,10 +6,33 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
+const SelectField = ({ column, field, formik, lookups, otherProps }) => {
+    const userSelected = React.useRef(false);
+    const { filter, placeHolder } = column;
 
-const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, classes, onChange }) => {
-    const options = typeof column.lookup === 'string' ? activeRecord?.lookups[column.lookup] : column.lookup;
+    const initialOptions = useMemo(() => {
+        const options = typeof column.lookup === 'string' ? lookups[column.lookup] : column.lookup;
+        if (filter) {
+            return filter({ options, currentValue: formik.values[field], state: formik.values });
+        }
+        return options;
+    }, [column.lookup, filter, lookups, field, formik.values]);
+    const [options, setOptions] = React.useState(initialOptions);
+
+    useEffect(() => {
+        if (!userSelected.current) {
+            setOptions(initialOptions);
+        }
+    }, [initialOptions, userSelected.current]);
+
     let inputValue = formik.values[field];
+    if (options?.length && !inputValue && !column.multiSelect && "IsDefault" in options[0]) {
+        const isDefaultOption = options.find(e => e.IsDefault);
+        if (isDefaultOption) {
+            inputValue = isDefaultOption.value;
+            formik.setFieldValue(field, isDefaultOption.value);
+        }
+    }
     if (column.multiSelect) {
         if (!inputValue || inputValue.length === 0) {
             inputValue = [];
@@ -20,34 +43,40 @@ const field = ({ column, field, fieldLabel, formik, activeRecord, otherProps, cl
             }
         }
     }
+
+    const handleChange = (event) => {
+        formik.handleChange(event); // Update formik's state
+        userSelected.current = true;
+    };
     return (
         <FormControl
             fullWidth
             key={field}
+            error={formik.touched[field] && formik.errors[field]}
             variant="standard">
-            <InputLabel>{fieldLabel}</InputLabel>
+            <InputLabel>{placeHolder ? placeHolder : ""}</InputLabel> 
             <Select
                 IconComponent={KeyboardArrowDownIcon}
                 {...otherProps}
                 name={field}
                 multiple={column.multiSelect === true}
                 readOnly={column.readOnly === true}
-                value={inputValue}
-                // label={fieldLabel}
-                onChange={formik.handleChange}
-                // onChange={onChange}
+                value={`${inputValue}`}
+                onChange={handleChange}
                 onBlur={formik.handleBlur}
-                MenuProps={{
-                    classes: {
-                        // list: classes.select
-                    }
+                sx={{
+                    backgroundColor: column.readOnly ? '#dfdede' : ''
                 }}
             >
-                {Array.isArray(options) && options.map(option => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+                {Array.isArray(options) && options.map(option => (
+                    <MenuItem key={option.value} value={option.value} disabled={option.isDisabled}>
+                        {option.label}
+                    </MenuItem>
+                ))}
             </Select>
             <FormHelperText>{formik.touched[field] && formik.errors[field]}</FormHelperText>
         </FormControl>
-    )
-}
+    );
+};
 
-export default field;
+export default SelectField;

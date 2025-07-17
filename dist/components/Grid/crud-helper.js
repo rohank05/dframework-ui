@@ -1,34 +1,76 @@
 "use strict";
 
 require("core-js/modules/es.error.cause.js");
-require("core-js/modules/es.weak-map.js");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.saveRecord = exports.getRecord = exports.getList = exports.deleteRecord = void 0;
+exports.saveRecord = exports.getRecord = exports.getLookups = exports.getList = exports.deleteRecord = void 0;
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.array.sort.js");
 require("core-js/modules/es.json.stringify.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.regexp.to-string.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 require("core-js/modules/web.url-search-params.js");
 require("core-js/modules/web.url-search-params.delete.js");
 require("core-js/modules/web.url-search-params.has.js");
 require("core-js/modules/web.url-search-params.size.js");
 var _actions = _interopRequireDefault(require("../useRouter/actions"));
-var _httpRequest = _interopRequireWildcard(require("./httpRequest"));
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _httpRequest = require("./httpRequest");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 const dateDataTypes = ['date', 'dateTime'];
-const exportRecordSize = 10000;
+const lookupDataTypes = ['singleSelect'];
+const timeInterval = 200;
+const isLocalTime = dateValue => new Date().getTimezoneOffset() === new Date(dateValue).getTimezoneOffset();
+
+/**
+ * Handles common HTTP error responses such as session expiration and forbidden access.
+ * If an error is detected, sets an appropriate error message and redirects the user after a delay.
+ * Returns true if a common error was handled, otherwise false.
+ * 
+ * @param {Object} response - The HTTP response object containing the status code.
+ * @param {Function} setError - Callback function to set the error message.
+ * @returns {boolean} Returns true if a common error was handled and a redirect is triggered, otherwise false.
+ */
+const handleCommonErrors = (response, setError) => {
+  if (response.status === _httpRequest.HTTP_STATUS_CODES.SESSION_EXPIRED) {
+    setError('Session Expired!');
+    setTimeout(() => {
+      window.location.href = '/';
+    }, timeInterval);
+    return true;
+  } else if (response.status === _httpRequest.HTTP_STATUS_CODES.FORBIDDEN) {
+    setError('Access Denied!');
+    setTimeout(() => {
+      window.location.href = '/';
+    }, timeInterval);
+    return true;
+  } else if (response.status === _httpRequest.HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR) {
+    setError('Internal Server Error');
+  }
+  return false;
+};
+function shouldApplyFilter(filter) {
+  const {
+    operator,
+    value,
+    type
+  } = filter;
+  const isUnaryOperator = ["isEmpty", "isNotEmpty"].includes(operator);
+  const hasValidValue = value !== undefined && value !== null && (value !== '' || type === 'number' && value === 0 || type === 'boolean' && value === false);
+  return isUnaryOperator || hasValidValue;
+}
 const getList = async _ref => {
   var _filterModel$items;
   let {
@@ -51,13 +93,11 @@ const getList = async _ref => {
     configFileName = null,
     dispatchData,
     showFullScreenLoader = false,
-    oderStatusId = 0,
-    modelConfig = null,
+    model,
     baseFilters = null,
     isElasticExport
   } = _ref;
   if (!contentType) {
-    setIsLoading(true);
     if (showFullScreenLoader) {
       dispatchData({
         type: _actions.default.UPDATE_LOADER_STATE,
@@ -73,7 +113,8 @@ const getList = async _ref => {
       type,
       field,
       keepLocal = false,
-      keepLocalDate
+      keepLocalDate,
+      filterable = true
     } = _ref2;
     if (dateDataTypes.includes(type)) {
       dateColumns.push({
@@ -85,14 +126,14 @@ const getList = async _ref => {
     if (!lookup) {
       return;
     }
-    if (!lookups.includes(lookup)) {
+    if (!lookups.includes(lookup) && lookupDataTypes.includes(type) && filterable) {
       lookups.push(lookup);
     }
   });
   const where = [];
   if (filterModel !== null && filterModel !== void 0 && (_filterModel$items = filterModel.items) !== null && _filterModel$items !== void 0 && _filterModel$items.length) {
     filterModel.items.forEach(filter => {
-      if (["isEmpty", "isNotEmpty"].includes(filter.operator) || filter.value) {
+      if (shouldApplyFilter(filter)) {
         var _column$;
         const {
           field,
@@ -102,19 +143,19 @@ const getList = async _ref => {
         let {
           value
         } = filter;
-        const column = gridColumns.filter(item => item.field === filter.field);
+        const column = gridColumns.filter(item => (item === null || item === void 0 ? void 0 : item.field) === filter.field);
         const type = (_column$ = column[0]) === null || _column$ === void 0 ? void 0 : _column$.type;
         if (type === 'boolean') {
-          value = value === 'true' ? 1 : 0;
+          value = value === 'true' || value === true ? 1 : 0;
         } else if (type === 'number') {
           value = Array.isArray(value) ? value.filter(e => e) : value;
         }
         value = filter.filterValues || value;
         where.push({
           field: filterField || field,
-          operator: operator,
-          value: value,
-          type: type
+          operator,
+          value,
+          type
         });
       }
     });
@@ -127,20 +168,20 @@ const getList = async _ref => {
   }
   const requestData = _objectSpread(_objectSpread({
     start: page * pageSize,
-    limit: isElasticExport ? modelConfig.exportSize : pageSize
+    limit: isElasticExport ? model.exportSize : pageSize
   }, extraParams), {}, {
     logicalOperator: filterModel.logicOperator,
     sort: sortModel.map(sort => (sort.filterField || sort.field) + ' ' + sort.sort).join(','),
     where,
-    oderStatusId: oderStatusId,
     isElasticExport,
-    fileName: modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.overrideFileName
+    model: model.module,
+    fileName: model.overrideFileName
   });
   if (lookups) {
     requestData.lookups = lookups.join(',');
   }
-  if (modelConfig !== null && modelConfig !== void 0 && modelConfig.limitToSurveyed) {
-    requestData.limitToSurveyed = modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.limitToSurveyed;
+  if (model !== null && model !== void 0 && model.limitToSurveyed) {
+    requestData.limitToSurveyed = model === null || model === void 0 ? void 0 : model.limitToSurveyed;
   }
   const headers = {};
   let url = controllerType === 'cs' ? "".concat(api, "?action=").concat(action, "&asArray=0") : "".concat(api, "/").concat(action);
@@ -165,7 +206,7 @@ const getList = async _ref => {
         } else if (typeof v !== 'string') {
           v = JSON.stringify(v);
         }
-        let hiddenTag = document.createElement('input');
+        const hiddenTag = document.createElement('input');
         hiddenTag.type = "hidden";
         hiddenTag.name = key;
         hiddenTag.value = v;
@@ -181,7 +222,8 @@ const getList = async _ref => {
     return;
   }
   try {
-    let params = {
+    setIsLoading(true);
+    const params = {
       url,
       method: 'POST',
       data: requestData,
@@ -190,23 +232,16 @@ const getList = async _ref => {
       }, headers),
       credentials: 'include'
     };
+    setData(prevData => _objectSpread(_objectSpread({}, prevData), {}, {
+      records: [] // reset records to empty array before fetching new data
+    }));
     const response = await (0, _httpRequest.transport)(params);
-    function isLocalTime(dateValue) {
-      const date = new Date(dateValue);
-      const localOffset = new Date().getTimezoneOffset();
-      const dateOffset = date.getTimezoneOffset();
-      return localOffset === dateOffset;
-    }
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
       const {
-        records,
-        userCurrencySymbol
+        records
       } = response.data;
       if (records) {
         records.forEach(record => {
-          if (record.hasOwnProperty("TotalOrder")) {
-            record["TotalOrder"] = "".concat(userCurrencySymbol).concat(record["TotalOrder"]);
-          }
           dateColumns.forEach(column => {
             const {
               field,
@@ -225,47 +260,55 @@ const getList = async _ref => {
               }
             }
           });
+          model.columns.forEach(_ref3 => {
+            let {
+              field,
+              displayIndex
+            } = _ref3;
+            if (!displayIndex) return;
+            record[field] = record[displayIndex];
+          });
         });
       }
       setData(response.data);
-    } else {
+    } else if (!handleCommonErrors(response, setError)) {
       setError(response.statusText);
     }
-  } catch (err) {
-    setError(err);
+  } catch (error) {
+    if (error.response && !handleCommonErrors(error.response, setError)) {
+      setError('Could not list record', error.message || error.toString());
+    }
   } finally {
-    if (!contentType) {
-      setIsLoading(false);
-      if (showFullScreenLoader) {
-        dispatchData({
-          type: _actions.default.UPDATE_LOADER_STATE,
-          payload: false
-        });
-      }
+    setIsLoading(false);
+    if (!contentType && showFullScreenLoader) {
+      dispatchData({
+        type: _actions.default.UPDATE_LOADER_STATE,
+        payload: false
+      });
     }
   }
 };
 exports.getList = getList;
-const getRecord = async _ref3 => {
+const getRecord = async _ref4 => {
   var _Object$keys;
   let {
     api,
     id,
     setIsLoading,
     setActiveRecord,
-    modelConfig,
+    model,
     parentFilters,
     where = {},
     setError
-  } = _ref3;
-  api = api || (modelConfig === null || modelConfig === void 0 ? void 0 : modelConfig.api);
+  } = _ref4;
+  api = api || model.api;
   setIsLoading(true);
   const searchParams = new URLSearchParams();
   const url = "".concat(api, "/").concat(id === undefined || id === null ? '-' : id);
   const lookupsToFetch = [];
-  const fields = modelConfig.formDef || modelConfig.columns;
+  const fields = model.formDef || model.columns;
   fields === null || fields === void 0 || fields.forEach(field => {
-    if (field.lookup && !lookupsToFetch.includes(field.lookup)) {
+    if (field.lookup && !lookupsToFetch.includes(field.lookup) && !([null, 0].includes(id) && field.parentComboField)) {
       lookupsToFetch.push(field.lookup);
     }
   });
@@ -273,7 +316,6 @@ const getRecord = async _ref3 => {
   if (where && (_Object$keys = Object.keys(where)) !== null && _Object$keys !== void 0 && _Object$keys.length) {
     searchParams.set("where", JSON.stringify(where));
   }
-  ;
   try {
     const response = await (0, _httpRequest.transport)({
       url: "".concat(url, "?").concat(searchParams.toString()),
@@ -285,8 +327,8 @@ const getRecord = async _ref3 => {
         data: record,
         lookups
       } = response.data;
-      let title = record[modelConfig.linkColumn];
-      const columnConfig = modelConfig.columns.find(a => a.field === modelConfig.linkColumn);
+      let title = record[model.linkColumn];
+      const columnConfig = model.columns.find(a => a.field === model.linkColumn);
       if (columnConfig && columnConfig.lookup) {
         var _lookups$columnConfig;
         if (lookups && lookups[columnConfig.lookup] && (_lookups$columnConfig = lookups[columnConfig.lookup]) !== null && _lookups$columnConfig !== void 0 && _lookups$columnConfig.length) {
@@ -296,37 +338,33 @@ const getRecord = async _ref3 => {
           }
         }
       }
-      const defaultValues = _objectSpread({}, modelConfig.defaultValues);
+      const defaultValues = _objectSpread({}, model.defaultValues);
       setActiveRecord({
         id,
         title: title,
         record: _objectSpread(_objectSpread(_objectSpread({}, defaultValues), record), parentFilters),
         lookups
       });
-    } else if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
-      setError('Session Expired!');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
-    } else {
+    } else if (!handleCommonErrors(response, setError)) {
       setError('Could not load record', response.body.toString());
     }
   } catch (error) {
-    setError('Could not load record', error);
+    if (error.response && handleCommonErrors(error.response, setError)) {
+      setError('Could not load record', error.message || error.toString());
+    }
   } finally {
     setIsLoading(false);
   }
 };
 exports.getRecord = getRecord;
-const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
+const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref5) {
   let {
     id,
     api,
     setIsLoading,
-    setError,
-    setErrorMessage
-  } = _ref4;
-  let result = {
+    setError
+  } = _ref5;
+  const result = {
     success: false,
     error: ''
   };
@@ -342,35 +380,33 @@ const deleteRecord = exports.deleteRecord = async function deleteRecord(_ref4) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
+      if (response.data && !response.data.success) {
+        result.success = false;
+        setError('Delete failed', response.data.message);
+        return false;
+      }
       result.success = true;
       return true;
-    }
-    if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
-      setError('Session Expired!');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
-    } else {
+    } else if (!handleCommonErrors(response, setError)) {
       setError('Delete failed', response.body);
     }
   } catch (error) {
-    var _error$response;
-    const errorMessage = error === null || error === void 0 || (_error$response = error.response) === null || _error$response === void 0 || (_error$response = _error$response.data) === null || _error$response === void 0 ? void 0 : _error$response.error;
-    result.error = errorMessage;
-    setErrorMessage(errorMessage);
+    if (error.response && !handleCommonErrors(error.response, setError)) {
+      setError('Could not delete record', error.message || error.toString());
+    }
   } finally {
     setIsLoading(false);
   }
   return result;
 };
-const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
+const saveRecord = exports.saveRecord = async function saveRecord(_ref6) {
   let {
     id,
     api,
     values,
     setIsLoading,
     setError
-  } = _ref5;
+  } = _ref6;
   let url, method;
   if (id !== 0) {
     url = "".concat(api, "/").concat(id);
@@ -391,27 +427,56 @@ const saveRecord = exports.saveRecord = async function saveRecord(_ref5) {
       credentials: 'include'
     });
     if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
-      const {
-        data = {}
-      } = response.data;
+      const data = response.data;
       if (data.success) {
         return data;
       }
       setError('Save failed', data.err || data.message);
-      return;
-    }
-    if (response.status === _httpRequest.HTTP_STATUS_CODES.UNAUTHORIZED) {
-      setError('Session Expired!');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
-    } else {
+    } else if (!handleCommonErrors(response, setError)) {
       setError('Save failed', response.body);
     }
   } catch (error) {
-    setError('Save failed', error);
+    if (error.response && !handleCommonErrors(error.response, setError)) {
+      setError('Could not save record', error.message || error.toString());
+    }
   } finally {
     setIsLoading(false);
   }
   return false;
 };
+const getLookups = async _ref7 => {
+  let {
+    api,
+    setIsLoading,
+    setActiveRecord,
+    model,
+    setError,
+    lookups,
+    scopeId
+  } = _ref7;
+  api = api || model.api;
+  setIsLoading(true);
+  const searchParams = new URLSearchParams();
+  const url = "".concat(api, "/lookups");
+  searchParams.set("lookups", lookups);
+  searchParams.set("scopeId", scopeId);
+  try {
+    const response = await (0, _httpRequest.transport)({
+      url: "".concat(url, "?").concat(searchParams.toString()),
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (response.status === _httpRequest.HTTP_STATUS_CODES.OK) {
+      setActiveRecord(response.data);
+    } else if (!handleCommonErrors(response, setError)) {
+      setError('Could not load lookups', response.statusText);
+    }
+  } catch (error) {
+    if (error.response && !handleCommonErrors(error.response, setError)) {
+      setError('Could not load lookups', error.message || error.toString());
+    }
+  } finally {
+    setIsLoading(false);
+  }
+};
+exports.getLookups = getLookups;

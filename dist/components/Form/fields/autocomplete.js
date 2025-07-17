@@ -8,38 +8,50 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.string.includes.js");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var React = _interopRequireWildcard(require("react"));
 var _material = require("@mui/material");
 var _FormControl = _interopRequireDefault(require("@mui/material/FormControl"));
 var _Autocomplete = _interopRequireDefault(require("@mui/material/Autocomplete"));
 var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(e) { return e ? t : r; })(e); }
-function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && {}.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+var _StateProvider = require("../../useRouter/StateProvider");
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+const consts = {
+  limitTags: 5
+};
 const Field = _ref => {
   var _formik$values$field;
   let {
     column,
     field,
-    fieldLabel,
     formik,
     lookups,
-    data,
     otherProps,
-    model,
-    fieldConfigs,
+    fieldConfigs = {},
     mode
   } = _ref;
-  let inputValue = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 || (_formik$values$field = _formik$values$field.split(", ")) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.map(Number)) || [];
-  const options = lookups ? lookups[column === null || column === void 0 ? void 0 : column.lookup] : [];
-  let filteredCombos = (options === null || options === void 0 ? void 0 : options.filter(option => inputValue.includes(option.value))) || [];
-  let isDisabled;
-  if (mode !== 'copy') {
-    isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
+  const {
+    stateData
+  } = (0, _StateProvider.useStateContext)();
+  const inputValue = ((_formik$values$field = formik.values[field]) === null || _formik$values$field === void 0 || (_formik$values$field = _formik$values$field.split(", ")) === null || _formik$values$field === void 0 ? void 0 : _formik$values$field.map(Number)) || [];
+  const options = React.useMemo(() => lookups ? lookups[column.lookup] : [], [lookups, column.lookup]);
+  const {
+    filter
+  } = column;
+  if (typeof filter === "function" && options.length) {
+    filter({
+      options,
+      stateData
+    });
   }
-  const handleAutoCompleteChange = (event, newValue) => {
+  const filteredCombos = options.filter(option => inputValue.includes(option.value)) || [];
+  const isDisabled = mode !== 'copy' && fieldConfigs.disabled;
+  const handleAutoCompleteChange = (_, newValue) => {
     formik === null || formik === void 0 || formik.setFieldValue(field, newValue ? newValue.map(val => val.value).join(', ') : '');
   };
   return /*#__PURE__*/React.createElement(_FormControl.default, {
@@ -50,6 +62,7 @@ const Field = _ref => {
   }, /*#__PURE__*/React.createElement(_Autocomplete.default, _extends({}, otherProps, {
     multiple: true,
     id: field,
+    limitTags: column.limitTags || consts.limitTags,
     options: options || [],
     getOptionLabel: option => option.label || '',
     defaultValue: filteredCombos,

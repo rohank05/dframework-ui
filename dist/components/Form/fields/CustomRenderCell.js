@@ -5,9 +5,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RenderDayCell = RenderDayCell;
 exports.brandColor = exports.brandBackgroundColor = void 0;
-var _core = require("@material-ui/core");
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.map.js");
+var _makeStyles = _interopRequireDefault(require("@mui/styles/makeStyles"));
 var _material = require("@mui/material");
-const useStyles = (0, _core.makeStyles)({
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+const useStyles = (0, _makeStyles.default)({
   root: {
     display: 'flex'
   }
