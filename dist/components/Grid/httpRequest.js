@@ -88,9 +88,6 @@ const transport = async config => {
     data: contentType.includes('application/json') ? await response.json() : await response.text(),
     headers: Object.fromEntries(response.headers.entries())
   };
-  if (!response.ok) {
-    responseObj.status = HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR;
-  }
   return responseObj;
 };
 exports.transport = transport;
