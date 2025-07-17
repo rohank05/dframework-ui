@@ -1100,14 +1100,17 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
       setSelection(data.records.map(record => record[idProperty]));
     }
   };
-  (0, _react.useEffect)(() => {
-    if (!preferenceName || !preferenceApi) {
-      return;
-    }
+  const setupGridPreference = async _ref1 => {
+    let {
+      preferenceName,
+      Username,
+      preferenceApi,
+      defaultPreferenceEnums
+    } = _ref1;
     removeCurrentPreferenceName({
       dispatchData
     });
-    getAllSavedPreferences({
+    const preferences = await getAllSavedPreferences({
       preferenceName,
       history: navigate,
       dispatchData,
@@ -1117,11 +1120,20 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     });
     applyDefaultPreferenceIfExists({
       preferenceName,
-      history: navigate,
       dispatchData,
-      Username,
       gridRef: apiRef,
       setIsGridPreferenceFetched,
+      defaultPreferenceEnums,
+      preferences
+    });
+  };
+  (0, _react.useEffect)(() => {
+    if (!preferenceName || !preferenceApi) {
+      return;
+    }
+    setupGridPreference({
+      preferenceName,
+      Username,
       preferenceApi,
       defaultPreferenceEnums
     });
@@ -1233,7 +1245,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref => {
     fetchData(isPivotExport ? 'export' : undefined, undefined, e.target.dataset.contentType, columns, isPivotExport, isElasticScreen);
   };
   (0, _react.useEffect)(() => {
-    if (!url) return;
+    if (!url || preferenceName && !isGridPreferenceFetched) return;
     fetchData();
   }, [paginationModel, sortModel, filterModel, api, gridColumns, model, parentFilters, assigned, selected, available, chartFilters, isGridPreferenceFetched, reRenderKey, url]);
   (0, _react.useEffect)(() => {

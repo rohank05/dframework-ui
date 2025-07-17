@@ -12,6 +12,7 @@ require("core-js/modules/es.promise.js");
 require("core-js/modules/es.string.includes.js");
 require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.filter.js");
+require("core-js/modules/esnext.iterator.find.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireWildcard(require("react"));
 var _stateReducer = _interopRequireDefault(require("./stateReducer"));
@@ -118,6 +119,7 @@ const StateProvider = _ref => {
       type: _actions.default.TOTAL_PREFERENCES,
       payload: preferences.length
     });
+    return preferences;
   }
 
   /**
@@ -152,27 +154,15 @@ const StateProvider = _ref => {
    */
   async function applyDefaultPreferenceIfExists(_ref4) {
     let {
+      preferences = [],
       gridRef,
-      history,
       dispatchData,
-      Username,
       preferenceName,
       setIsGridPreferenceFetched,
-      preferenceApi,
       defaultPreferenceEnums = {}
     } = _ref4;
-    const params = {
-      action: 'default',
-      id: preferenceName,
-      Username
-    };
-    const response = (await (0, _httpRequest.default)({
-      url: preferenceApi,
-      params,
-      history,
-      dispatchData
-    })) || {};
-    const userPreferenceCharts = response.prefValue ? JSON.parse(response.prefValue) : defaultPreferenceEnums[preferenceName];
+    const defaultPreference = preferences.find(pref => pref.isDefault && pref.GridId === preferenceName);
+    const userPreferenceCharts = defaultPreference ? JSON.parse(defaultPreference.prefValue) : defaultPreferenceEnums[preferenceName];
     if (userPreferenceCharts && Object.keys(userPreferenceCharts).length) {
       userPreferenceCharts.gridColumn = filterNonExistingColumns({
         gridRef,
@@ -192,7 +182,7 @@ const StateProvider = _ref => {
       gridRef.current.setFilterModel(userPreferenceCharts === null || userPreferenceCharts === void 0 ? void 0 : userPreferenceCharts.filterModel);
       dispatchData({
         type: _actions.default.SET_CURRENT_PREFERENCE_NAME,
-        payload: response !== null && response !== void 0 && response.prefValue ? response.prefName : 'Default'
+        payload: defaultPreference ? defaultPreference.prefName : 'Default'
       });
     }
     if (setIsGridPreferenceFetched) {
