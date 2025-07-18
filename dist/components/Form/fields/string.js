@@ -8,40 +8,33 @@ exports.default = void 0;
 require("core-js/modules/web.dom-collections.iterator.js");
 var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
 var _react = _interopRequireDefault(require("react"));
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 const field = _ref => {
   let {
     column,
     field,
+    fieldLabel,
     formik,
-    otherProps
+    otherProps,
+    classes,
+    onChange
   } = _ref;
-  const rows = column.rows || (column.multiline ? 5 : 1);
   return /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({
     type: "text",
-    variant: column.variant || "standard",
+    variant: "standard",
     InputProps: {
-      readOnly: column.readOnly === true,
-      sx: column.readOnly ? {
-        backgroundColor: '#dfdede'
-      } // Light grey background for read-only inputs
-      : undefined
+      readOnly: (column === null || column === void 0 ? void 0 : column.readOnly) === true
     },
     key: field,
-    required: column.required,
-    multiline: column.multiline,
-    rows: rows,
+    required: column === null || column === void 0 ? void 0 : column.required,
     fullWidth: true,
     name: field,
     value: formik.values[field],
     onChange: formik.handleChange,
     onBlur: formik.handleBlur,
     error: formik.touched[field] && Boolean(formik.errors[field]),
-    helperText: formik.touched[field] && formik.errors[field],
-    autoComplete: column.autoComplete
-  }, otherProps, {
-    defaultValue: column.defaultValue
-  }));
+    helperText: formik.touched[field] && formik.errors[field]
+  }, otherProps));
 };
 var _default = exports.default = field;

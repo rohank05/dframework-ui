@@ -4,15 +4,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/esnext.iterator.constructor.js");
-require("core-js/modules/esnext.iterator.map.js");
 require("core-js/modules/web.dom-collections.iterator.js");
 var _react = _interopRequireDefault(require("react"));
 var _material = require("@mui/material");
 const _excluded = ["field", "formik", "orientation", "label", "lookups", "fieldConfigs", "mode"];
-function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
-function _objectWithoutProperties(e, t) { if (null == e) return {}; var o, r, i = _objectWithoutPropertiesLoose(e, t); if (Object.getOwnPropertySymbols) { var n = Object.getOwnPropertySymbols(e); for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]); } return i; }
-function _objectWithoutPropertiesLoose(r, e) { if (null == r) return {}; var t = {}; for (var n in r) if ({}.hasOwnProperty.call(r, n)) { if (-1 !== e.indexOf(n)) continue; t[n] = r[n]; } return t; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } } return target; }
 const Field = _ref => {
   let {
       field,
@@ -20,17 +18,20 @@ const Field = _ref => {
       orientation = "row",
       label,
       lookups,
-      fieldConfigs = {},
+      fieldConfigs,
       mode
     } = _ref,
     otherProps = _objectWithoutProperties(_ref, _excluded);
   const handleChange = event => {
     formik.setFieldValue(field, event.target.value);
   };
-  const options = lookups ? lookups[otherProps.column.lookup] : [];
+  const options = lookups ? lookups[otherProps === null || otherProps === void 0 ? void 0 : otherProps.column.lookup] : [];
   const theme = (0, _material.useTheme)();
   const isError = formik.touched[field] && Boolean(formik.errors[field]);
-  const isDisabled = mode !== 'copy' && fieldConfigs.disabled;
+  let isDisabled;
+  if (mode !== 'copy') {
+    isDisabled = fieldConfigs === null || fieldConfigs === void 0 ? void 0 : fieldConfigs.disabled;
+  }
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.FormControl, {
     component: "fieldset",
     error: isError

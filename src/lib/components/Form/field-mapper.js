@@ -17,15 +17,9 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import DaySelection from './fields/dayRadio';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from '@material-ui/core';
 import { Typography } from '@mui/material';
 import { ActiveStepContext } from './Form';
-import styled from '@emotion/styled';
-import ChipInput from './fields/chipInput';
-import TreeCheckbox from './fields/treeCheckBox';
-import FileUpload from './fields/fileUpload';
-import JSONInput from './fields/jsonInput';
-
 const fieldMappers = {
     "boolean": BooleanField,
     "select": SelectField,
@@ -35,21 +29,17 @@ const fieldMappers = {
     "date": DateField,
     "dateTime": DateTimeField,
     "time": TimeField,
+    "grid-transfer": GridTransfer,
     "oneToMany": GridTransfer,
     "radio": RadioField,
     "autocomplete": AutocompleteField,
-    "dayRadio": DaySelection,
-    "email": StringField,
-    "chipInput": ChipInput,
-    "treeCheckbox": TreeCheckbox,
-    "fileUpload": FileUpload,
-    "json": JSONInput
+    "dayRadio": DaySelection
 };
 
 const useStyles = makeStyles({
     root: {
-        marginTop: "1rem !important",
-        marginBottom: "1rem !important"
+        marginTop: "1rem",
+        marginBottom: "1rem"
     },
     childStyles: {
         paddingTop: "2.5px",
@@ -63,12 +53,8 @@ const useStyles = makeStyles({
     },
     renderSteps: {
         marginTop: "20px"
-    },
-    labelText: {
-        fontSize: "16px !important",
-        fontWeight: "bold !important"
     }
-});
+})
 
 const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, handleSubmit }) => {
     const [skipped, setSkipped] = React.useState(new Set());
@@ -76,7 +62,7 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
     const { activeStep, setActiveStep } = React.useContext(ActiveStepContext);
     const classes = useStyles();
 
-    const skipSteps = {};
+    let skipSteps = {};
     for (let index = 0, len = model.columns.length; index < len; index++) {
         const { field, skip } = model.columns[index];
         if (skip) {
@@ -146,87 +132,82 @@ const RenderSteps = ({ tabColumns, model, formik, data, onChange, combos, lookup
                 </Box>
             </React.Fragment>
         </>
-    );
-};
+    )
+}
 
-const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode, isAdd }) => {
+const RenderColumns = ({ formElements, model, formik, data, onChange, combos, lookups, fieldConfigs, mode }) => {
     const classes = useStyles();
     if (!formElements?.length) {
         return null;
     }
-    const ImportantSpan = styled.span` color: red !important; `; // * Style Css
-
     return (
         <>
             {
-                formElements.map(({ Component, column, field, label, otherProps }, key) => {
-                    const isGridComponent = typeof column.relation === 'function';
+                formElements.map(({ Component, column, field, fieldLabel, otherProps }, key) => {
+                    let isGridComponent = typeof column.relation === 'function';
                     return (
                         <Grid container spacing={2} key={key} className={classes.root} alignItems={isGridComponent ? "flex-start" : "center"}>
                             {column?.showLabel !== false ?
-                                <Grid size={{ xs: 3 }} className={classes.childStyles}>
-                                    <Typography className={classes.labelText}>{column.label || field}: {column.required && <ImportantSpan>*</ImportantSpan>}</Typography>
+                                <Grid item xs={1.5} className={classes.childStyles}>
+                                    <Typography sx={{ fontSize: '16px', fontWeight: isGridComponent ? 'bold' : 'normal' }}>{column.label}:</Typography>
                                 </Grid>
                                 : null
                             }
-                            <Grid size={{ xs: isGridComponent ? 12 : 9 }} className={classes.childStyles}>
-                                <Component isAdd={isAdd} model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} label={label} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
+                            <Grid item xs={isGridComponent ? 12 : 10.5} className={classes.childStyles}>
+                                <Component model={model} fieldConfigs={fieldConfigs[field]} mode={mode} column={column} field={field} fieldLabel={fieldLabel} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} {...otherProps} />
                             </Grid>
                         </Grid >
-                    );
+                    )
                 })
             }
         </>
-    );
-};
+    )
+}
 
-const getFormConfig = function ({ columns, tabs = {}, id, searchParams }) {
+const getFormConfig = function ({ columns, tabs = {} }) {
     const formElements = [], tabColumns = {};
     for (const tab in tabs) {
         tabColumns[tab] = [];
     }
     for (const column of columns) {
-        const fieldType = column.type;
-        if (column.label === null) { /* If the field should not be shown in form mode, specify label as null */
+        let fieldType = column.type;
+        if (column.fieldLabel === null) { /* If the field should not be shown in form mode, specify fieldLabel as null */
             continue;
         }
-        const { field, label, tab } = column;
+        const { field, fieldLabel = column.header, tab } = column;
         const otherProps = {};
         if (column.options) {
             otherProps.options = column.options;
         }
         const Component = fieldMappers[fieldType];
-        if (!Component || (column.hideInAddGrid && id === '0')) {
+        if (!Component) {
             continue;
         }
-
         const target = tab && tabs[tab] ? tabColumns[tab] : formElements;
-        target.push({ Component, field, label, column: { ...column, readOnly: searchParams.has('showRelation') || column.readOnly }, otherProps });
+        target.push({ Component, field, fieldLabel, column, otherProps });
     }
     const tabsData = [];
     for (const tabColumn in tabColumns) {
-        tabsData.push({ key: tabColumn, title: tabs[tabColumn], items: tabColumns[tabColumn] });
+        tabsData.push({ key: tabColumn, title: tabs[tabColumn], items: tabColumns[tabColumn] })
     }
     return { formElements, tabColumns: tabsData };
-};
+}
 
 const FormLayout = ({ model, formik, data, combos, onChange, lookups, id: displayId, fieldConfigs, mode, handleSubmit }) => {
     const classes = useStyles();
-    const isAdd = [0, undefined, null, ''].includes(displayId);
-    const { formElements, tabColumns } = React.useMemo(() => {
-        const showTabs = model.formConfig?.showTabbed;
-        const searchParams = new URLSearchParams(window.location.search);
-        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {}, id: displayId, searchParams });
+    const { formElements, tabColumns, showTabs } = React.useMemo(() => {
+        let showTabs = model?.formConfig?.showTabbed;
+        const { formElements, tabColumns } = getFormConfig({ columns: model.columns, tabs: showTabs ? model.tabs : {} });
         return { formElements, tabColumns, showTabs: showTabs && tabColumns.length > 0 };
     }, [model]);
     return (
         <div>
-            <RenderColumns isAdd={isAdd} formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
+            <RenderColumns formElements={formElements} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} />
             <div className={classes.renderSteps}>
                 <RenderSteps tabColumns={tabColumns} model={model} formik={formik} data={data} onChange={onChange} combos={combos} lookups={lookups} fieldConfigs={fieldConfigs} mode={mode} handleSubmit={handleSubmit} />
             </div>
         </div>
-    );
+    )
 };
 
 export {
@@ -239,6 +220,6 @@ export {
     SelectField,
     GridTransfer,
     fieldMappers
-};
+}
 
 export default FormLayout;
