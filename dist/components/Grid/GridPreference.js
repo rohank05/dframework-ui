@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
-require("core-js/modules/es.array.includes.js");
 require("core-js/modules/es.array.push.js");
 require("core-js/modules/es.promise.js");
 require("core-js/modules/es.string.trim.js");
@@ -105,27 +104,53 @@ const initialValues = {
   prefDesc: '',
   isDefault: false
 };
-const defaultCoolRPrefName = "coolr default";
-const GridPreferences = _ref => {
-  var _stateData$gridSettin, _stateData$gridSettin2;
+let coolrDefaultPreference = 'CoolR Default';
+const getGridColumnsFromRef = _ref => {
   let {
-    tTranslate = key => key,
-    preferenceName,
-    gridRef,
-    columns = [],
-    setIsGridPreferenceFetched
+    refColumns,
+    columns
   } = _ref;
   const {
-    systemDateTimeFormat,
+    orderedFields,
+    columnVisibilityModel,
+    lookup
+  } = refColumns;
+  const gridColumn = [];
+  orderedFields === null || orderedFields === void 0 || orderedFields.forEach(ele => {
+    const {
+      field
+    } = lookup[ele];
+    let col = (columns === null || columns === void 0 ? void 0 : columns.find(ele => ele.field === field)) || lookup[ele];
+    col = _objectSpread(_objectSpread({}, col), {}, {
+      width: lookup[ele].width
+    });
+    gridColumn.push(col);
+  });
+  return {
+    gridColumn,
+    columnVisibilityModel
+  };
+};
+const GridPreferences = _ref2 => {
+  var _stateData$gridSettin;
+  let {
+    tTranslate = key => key,
+    model,
+    gridRef,
+    columns = [],
+    setIsGridPreferenceFetched,
+    initialGridRef
+  } = _ref2;
+  const {
+    preferenceId: preferenceName
+  } = model;
+  const {
     stateData,
     dispatchData,
-    formatDate,
     removeCurrentPreferenceName,
-    getAllSavedPreferences,
-    applyDefaultPreferenceIfExists
+    getAllSavedPreferences
   } = (0, _StateProvider.useStateContext)();
   const {
-    pathname,
     navigate
   } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
@@ -150,7 +175,6 @@ const GridPreferences = _ref => {
   const preferences = stateData === null || stateData === void 0 ? void 0 : stateData.preferences;
   const currentPreference = stateData === null || stateData === void 0 ? void 0 : stateData.currentPreference;
   const preferenceApi = stateData === null || stateData === void 0 || (_stateData$gridSettin = stateData.gridSettings) === null || _stateData$gridSettin === void 0 || (_stateData$gridSettin = _stateData$gridSettin.permissions) === null || _stateData$gridSettin === void 0 ? void 0 : _stateData$gridSettin.preferenceApi;
-  const tablePreferenceEnums = stateData === null || stateData === void 0 || (_stateData$gridSettin2 = stateData.gridSettings) === null || _stateData$gridSettin2 === void 0 || (_stateData$gridSettin2 = _stateData$gridSettin2.permissions) === null || _stateData$gridSettin2 === void 0 ? void 0 : _stateData$gridSettin2.tablePreferenceEnums;
   const filterModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridFilterModelSelector);
   const sortModel = (0, _xDataGridPremium.useGridSelector)(gridRef, _xDataGridPremium.gridSortModelSelector);
   const validationSchema = (0, _react.useMemo)(() => {
@@ -212,7 +236,7 @@ const GridPreferences = _ref => {
   };
   function isNotCoolRDefault() {
     let prefName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    return [defaultCoolRPrefName].includes(prefName.trim().toLowerCase());
+    return coolrDefaultPreference.toLowerCase() === prefName.trim().toLowerCase();
   }
   const savePreference = async values => {
     var _filterModel$items;
@@ -227,20 +251,11 @@ const GridPreferences = _ref => {
       pinnedColumns
     } = gridRef.current.state;
     const {
-      orderedFields,
-      columnVisibilityModel,
-      lookup
-    } = gridRef.current.state.columns;
-    const gridColumn = [];
-    orderedFields === null || orderedFields === void 0 || orderedFields.forEach(ele => {
-      const {
-        field
-      } = lookup[ele];
-      let col = (columns === null || columns === void 0 ? void 0 : columns.find(ele => ele.field === field)) || lookup[ele];
-      col = _objectSpread(_objectSpread({}, col), {}, {
-        width: lookup[ele].width
-      });
-      gridColumn.push(col);
+      gridColumn,
+      columnVisibilityModel
+    } = getGridColumnsFromRef({
+      refColumns: gridRef.current.state.columns,
+      columns
     });
     const filter = filterModel === null || filterModel === void 0 || (_filterModel$items = filterModel.items) === null || _filterModel$items === void 0 ? void 0 : _filterModel$items.map(ele => {
       const {
@@ -286,21 +301,15 @@ const GridPreferences = _ref => {
       Username,
       history: navigate,
       dispatchData,
-      preferenceApi,
-      tablePreferenceEnums
+      preferenceApi
     });
   };
   const applyPreference = async prefId => {
     let userPreferenceCharts;
-    let coolrDefaultPreference = 'CoolR Default';
-    // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
-    if (prefId === 0) {
-      userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
-    } else {
+    if (prefId > 0) {
       const params = {
         action: 'load',
         id: preferenceName,
-        Username,
         prefId
       };
       const response = await (0, _httpRequest.default)({
@@ -311,9 +320,28 @@ const GridPreferences = _ref => {
       });
       userPreferenceCharts = response !== null && response !== void 0 && response.prefValue ? JSON.parse(response.prefValue) : null;
       coolrDefaultPreference = response !== null && response !== void 0 && response.prefValue ? response.prefName : '';
+    } else {
+      const {
+        sorting,
+        filter,
+        pinnedColumns
+      } = initialGridRef.current.state;
+      const {
+        gridColumn,
+        columnVisibilityModel
+      } = getGridColumnsFromRef({
+        refColumns: initialGridRef.current.state.columns,
+        columns
+      });
+      userPreferenceCharts = {
+        gridColumn,
+        columnVisibilityModel,
+        pinnedColumns,
+        sortModel: sorting.sortModel,
+        filterModel: filter.filterModel
+      };
+      coolrDefaultPreference = 'CoolR Default';
     }
-
-    // If userPreferenceCharts is available, apply preferences to the grid
     if (userPreferenceCharts) {
       const {
         gridColumn,
@@ -322,20 +350,20 @@ const GridPreferences = _ref => {
         sortModel,
         filterModel
       } = userPreferenceCharts;
-      gridColumn.forEach(_ref2 => {
+      gridColumn.forEach(_ref3 => {
         let {
           field,
           width
-        } = _ref2;
+        } = _ref3;
         if (gridRef.current.getColumnIndex(field) !== -1) {
           gridRef.current.setColumnWidth(field, width);
         }
       });
       gridRef.current.setColumnVisibilityModel(columnVisibilityModel);
-      gridRef.current.state.columns.orderedFields = gridColumn.map(_ref3 => {
+      gridRef.current.state.columns.orderedFields = gridColumn.map(_ref4 => {
         let {
           field
-        } = _ref3;
+        } = _ref4;
         return field;
       });
       gridRef.current.setPinnedColumns(pinnedColumns);
@@ -385,8 +413,7 @@ const GridPreferences = _ref => {
         history: navigate,
         dispatchData,
         Username,
-        preferenceApi,
-        tablePreferenceEnums
+        preferenceApi
       });
     }
   };

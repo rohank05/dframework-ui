@@ -41,10 +41,24 @@ const initialValues = {
     isDefault: false
 };
 
-const defaultCoolRPrefName= "coolr default"
-const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, columns = [], setIsGridPreferenceFetched }) => {
-    const { systemDateTimeFormat, stateData, dispatchData, formatDate, removeCurrentPreferenceName, getAllSavedPreferences, applyDefaultPreferenceIfExists } = useStateContext();
-    const { pathname, navigate } = useRouter();
+let coolrDefaultPreference = 'CoolR Default';
+
+const getGridColumnsFromRef = ({ refColumns, columns }) => {
+    const { orderedFields, columnVisibilityModel, lookup } = refColumns;
+    const gridColumn = [];
+    orderedFields?.forEach(ele => {
+        const { field } = lookup[ele];
+        let col = columns?.find(ele => ele.field === field) || lookup[ele];
+        col = { ...col, width: lookup[ele].width };
+        gridColumn.push(col);
+    })
+    return { gridColumn, columnVisibilityModel }
+};
+
+const GridPreferences = ({ tTranslate = (key) => key, model, gridRef, columns = [], setIsGridPreferenceFetched, initialGridRef }) => {
+    const { preferenceId: preferenceName } = model;
+    const { stateData, dispatchData, removeCurrentPreferenceName, getAllSavedPreferences } = useStateContext();
+    const { navigate } = useRouter();
     const apiRef = useGridApiRef();
     const snackbar = useSnackbar();
     const { t: translate, i18n } = useTranslation();
@@ -59,7 +73,6 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     const preferences = stateData?.preferences;
     const currentPreference = stateData?.currentPreference;
     const preferenceApi = stateData?.gridSettings?.permissions?.preferenceApi;
-    const tablePreferenceEnums = stateData?.gridSettings?.permissions?.tablePreferenceEnums;
     const filterModel = useGridSelector(gridRef, gridFilterModelSelector);
     const sortModel = useGridSelector(gridRef, gridSortModelSelector);
     const validationSchema = useMemo(() => {
@@ -124,7 +137,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
     }
 
     function isNotCoolRDefault(prefName = '') {
-        return [defaultCoolRPrefName].includes(prefName.trim().toLowerCase());
+        return coolrDefaultPreference.toLowerCase() === prefName.trim().toLowerCase();
     }
     const savePreference = async (values) => {
         const presetName = values.prefName.trim();
@@ -135,14 +148,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
             return;
         }
         const { pinnedColumns } = gridRef.current.state;
-        const { orderedFields, columnVisibilityModel, lookup } = gridRef.current.state.columns;
-        const gridColumn = [];
-        orderedFields?.forEach(ele => {
-            const { field } = lookup[ele];
-            let col = columns?.find(ele => ele.field === field) || lookup[ele];
-            col = { ...col, width: lookup[ele].width };
-            gridColumn.push(col);
-        })
+        const { gridColumn, columnVisibilityModel } = getGridColumnsFromRef({ refColumns: gridRef.current.state.columns, columns });
         const filter = filterModel?.items?.map(ele => {
             const { field, operator, value } = ele;
             return { field, operator, value }
@@ -163,28 +169,27 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         if (response === true) {
             snackbar.showMessage('Preference Saved Successfully.');
         }
-        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi, tablePreferenceEnums });
+        getAllSavedPreferences({ preferenceName, Username, history: navigate, dispatchData, preferenceApi });
     }
 
     const applyPreference = async (prefId) => {
         let userPreferenceCharts;
-        let coolrDefaultPreference = 'CoolR Default'
-        // Check if prefId is 0, if so, use tablePreferenceEnums, otherwise fetch from API
-        if (prefId === 0) {
-            userPreferenceCharts = tablePreferenceEnums[preferenceName] || null;
-        } else {
+        if (prefId > 0) {
             const params = {
                 action: 'load',
                 id: preferenceName,
-                Username,
                 prefId
             };
             const response = await request({ url: preferenceApi, params, history: navigate, dispatchData });
             userPreferenceCharts = response?.prefValue ? JSON.parse(response.prefValue) : null;
             coolrDefaultPreference = response?.prefValue ? response.prefName : '';
         }
-
-        // If userPreferenceCharts is available, apply preferences to the grid
+        else {
+            const { sorting, filter, pinnedColumns } = initialGridRef.current.state;
+            const { gridColumn, columnVisibilityModel } = getGridColumnsFromRef({ refColumns: initialGridRef.current.state.columns, columns });
+            userPreferenceCharts = { gridColumn, columnVisibilityModel, pinnedColumns, sortModel: sorting.sortModel, filterModel: filter.filterModel };
+            coolrDefaultPreference = 'CoolR Default';
+        }
         if (userPreferenceCharts) {
             const { gridColumn, columnVisibilityModel, pinnedColumns, sortModel, filterModel } = userPreferenceCharts;
             gridColumn.forEach(({ field, width }) => {
@@ -236,7 +241,7 @@ const GridPreferences = ({ tTranslate = (key) => key, preferenceName, gridRef, c
         }
         if (action === actionTypes.Delete) {
             await deletePreference(cellParams.id, cellParams?.row?.prefName);
-            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi, tablePreferenceEnums });
+            getAllSavedPreferences({ preferenceName, history: navigate, dispatchData, Username, preferenceApi });
         }
     }
 
