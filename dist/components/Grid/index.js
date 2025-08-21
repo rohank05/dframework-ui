@@ -301,6 +301,7 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
     navigate
   } = (0, _StateProvider.useRouter)();
   const apiRef = (0, _xDataGridPremium.useGridApiRef)();
+  const initialGridRef = (0, _react.useRef)(null);
   const {
     idProperty = "id",
     showHeaderFilters = true,
@@ -459,6 +460,15 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
           }
         }
       });
+    }
+    if (apiRef.current) {
+      // Wait for the grid to be fully initialized
+      const timer = setTimeout(() => {
+        if (!initialGridRef.current) {
+          initialGridRef.current = _objectSpread({}, apiRef.current);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, []);
   const {
@@ -943,10 +953,12 @@ const GridBase = /*#__PURE__*/(0, _react.memo)(_ref2 => {
       showOnlyExcelExport: model.showOnlyExcelExport
     }), model.preferenceId && /*#__PURE__*/_react.default.createElement(_GridPreference.default, {
       tTranslate: tTranslate,
-      preferenceName: model.preferenceId,
       gridRef: apiRef,
       columns: gridColumns,
-      setIsGridPreferenceFetched: setIsGridPreferenceFetched
+      setIsGridPreferenceFetched: setIsGridPreferenceFetched,
+      model: model,
+      initialGridRef: initialGridRef,
+      setIsLoading: setIsLoading
     })));
   };
   const getGridRowId = row => {
